@@ -18,11 +18,12 @@ Open `http://localhost:8780`. A WebGL2-capable browser and an internet connectio
 
 - [Data sources and licences](docs/data-sources.md)
 - [NYC and London reference inventory](docs/reference-inventory.md)
+- [Product requirements and user steering](requirements/README.md)
 
 Code is MIT. Geographic data, weather data and vendored libraries retain their own licences and attribution. Night window patterns are an illustration, not measured interior or occupancy information. Building geometry reflects the source survey dates, not a live reconstruction.
 
 ## Hosting
 
-The site is hosted on ChatGPT Sites at [010.jjpcodes.com](https://010.jjpcodes.com). Its source identity is retained in `.openai/hosting.json`. The public source repository is [joshp123/010](https://github.com/joshp123/010).
+Deployment targets ChatGPT Sites at [010.jjpcodes.com](https://010.jjpcodes.com). Its source identity is retained in `.openai/hosting.json`. The public source repository is [joshp123/010](https://github.com/joshp123/010).
 
 The coordinate-based viewer can be linked from other experiences. This public project contains public city data only.

@@ -1,0 +1,52 @@
+# Public transport and marine data
+
+Written by AI on 2026-10-24 by model GPT-6.1 Sol. Sources and endpoints checked on that date; feasibility research, not an implemented service.
+
+## Decision
+
+Use free NDOV live feeds plus the national GTFS timetable. All five RET metro lines, trams and buses have live operational data; NS has a separate GPS feed. A shared backend is necessary. Smooth animation between reports is a visual estimate, especially underground. Do not promise continuous measured positions for every vehicle. Marine traffic remains optional pending access and reuse terms.
+
+## Verified sources
+
+| Source | What it supplies | Access, cadence and limits |
+| --- | --- | --- |
+| [OVapi GTFS](https://gtfs.ovapi.nl/README), `https://gtfs.ovapi.nl/nl/gtfs-nl.zip` | National routes, stops, trips, times and shapes; use `route_type` to distinguish metro, tram, bus and rail | No account. Daily in normal operation; operational day begins 03:00 UTC. HEAD observed 242,385,631 bytes. Filter to Rotterdam during preprocessing rather than sending the national archive to browsers. |
+| `https://gtfs.ovapi.nl/nl/vehiclePositions.pb` | GTFS-Realtime protobuf vehicle reports, trip IDs, timestamps and delay extension | HTTP 200 verified, 168,223 bytes, 1,236 national entities. Two responses had Last-Modified exactly 60 seconds apart. No `Access-Control-Allow-Origin`, including with this site's Origin header: serve through our backend. |
+| `https://gtfs.ovapi.nl/nl/tripUpdates.pb`, `trainUpdates.pb`, `alerts.pb` | Expected stop times, train/platform updates, disruptions | Published companions; these are predictions/status, not additional GPS observations. Their payloads were not individually validated in this probe. |
+| [NDOV BISON](https://govi.nu/realtime.html), `tcp://pubsub.besteffort.ndovloket.nl:7658`, subscription `/RIG/KV6posinfo` | RET/HTM live position and operational events; add EBS/Qbuzz/Arriva subscriptions for regional services within the municipality | Raw ZeroMQ multipart envelope + gzip XML. Live RET messages received. Event-driven; older KV6 specification sets a 60-second maximum interval during an initialized trip, not a fixed GPS sample frequency. |
+| [NDOV NS train positions](https://data.ndovloket.nl/REALTIME.TXT), `tcp://pubsub.besteffort.ndovloket.nl:7664`, subscription `/RIG/NStreinpositiesInterface5` | NS train number, rolling stock, GPS timestamp, coordinates, speed and heading | Live payload received without an account. The older NS specification describes roughly 10-second onboard and publication intervals; current cadence was not measured. Scope is NS rolling stock, not every international/freight train. |
+
+At 2026-10-23 22:00:26 UTC, joining the live feed to current GTFS routes identified 31 RET trams, 27 metros and 37 buses; five additional RET reports did not match those routes. Metro reports covered **A, B, C, D and E**. RET report ages relative to the feed timestamp had median 8 seconds and maximum 58 seconds. This proves all requested RET modes are present, not continuous or complete coverage throughout the day.
+
+The NS snapshot contained 197 train entries, including old fixes. Its GPS timestamps must be checked individually: a fresh message envelope does not make every enclosed position fresh. The source documentation explicitly warns about fixes a day or more old. See [NS publication document, section 3](https://data.ndovloket.nl/docs/infoplus/TreinLocatie/Publicatiedocument_NDOV_NS-Treinposities-161202.pdf).
+
+## What “realtime” can honestly mean
+
+- **Buses/trams:** use reported coordinates or along-route progress when provided. Stop arrival/departure and delay events are real observations, but a point generated from a stop location is not a new GPS fix.
+- **Metro:** direct RET samples included `source=SERVER` events with stop IDs and sometimes no coordinates. Arrival/departure events can anchor motion accurately in time; movement through the tunnel between them remains estimated. GTFS coordinates alone do not prove independent GPS tracking underground.
+- **Trains:** display fresh NS GPS reports. Tunnel gaps and missing rolling stock remain possible. Expected departures are suitable for an explicitly estimated fallback, not proof of location.
+- **Ordinary road vehicles:** procedural simulation, separate from transit. Never quietly turn a stale transit report into a supposedly observed moving vehicle.
+
+Preserve observation time and source quality through the renderer. Keep the last reported position distinct from the animated estimate. The older NS publication document says consumers should not adjust supplied positions; retain raw fixes and review how that instruction applies before enabling extrapolated NS positions.
+
+## Free access and public reuse
+
+[NDOV publishes CC0](https://data.ndovloket.nl/LICENTIE-CC0.TXT); [OpenOV lists GTFS and GTFS-RT as CC0](https://www.openov.nl/). The MIT application can redistribute these data, with source credit recommended and no implication of official operator affiliation. Keep upstream licence/provenance separate from the code licence.
+
+OVapi asks for an identifying User-Agent, gzip, and conditional HTTP requests when polling faster than once a minute. NDOV best-effort streams permit **one connection per consumer per stream**, without an SLA. One collector should serve every browser. Raw ZeroMQ needs a persistent process with TCP egress; ordinary static hosting or a request-only edge function does not provide that collector. A free-to-access data source does not establish free deployment capacity.
+
+The credible default is GTFS preprocessing + a small persistent NDOV collector + a cached Rotterdam-only browser feed. Use GTFS-RT as the simpler bootstrap/fallback. Match the actual municipality polygon, including Hoek van Holland and Maasvlakte, rather than a city-centre radius. No dedicated RET API, NS account or paid feed is needed for this path. The [NS API portal](https://apiportal.ns.nl/) is an alternative requiring registration/subscription; no account was created and no token-based endpoint was tested.
+
+## Metro cutaway
+
+GTFS shapes supply a route in plan view, not tunnel depth. [RET's public procedure book, page 73](https://corporate.ret.nl/media/5yxaqnjv/prc-m-versie-4-1-online-versie_definitief_juni-2024-getekend.pdf) identifies tunnel, viaduct and surface sections but is schematic. Use it to check section classification, not to trace an engineering profile.
+
+Public geometry candidates were checked: Rotterdam's [Sporen service](https://diensten.rotterdam.nl/arcgis/rest/services/SO_IBURO/Sporen/MapServer?f=pjson) currently returns empty layers; the accessible [Metro_Rotterdam layer](https://services.arcgis.com/EragpxjtJzKxLUpv/arcgis/rest/services/Metro_Rotterdam/FeatureServer/0?f=pjson) has `hasZ=false` and no explicit reuse licence. Neither establishes a usable 3D metro tunnel model.
+
+Default: route geometry with carefully authored, explicitly approximate underground profiles. [The station architect documents Wilhelminaplein at 16 metres below ground](https://www.zja.nl/en/metrostation-voetgangerstunnel-Wilhelminaplein-Rotterdam), a useful check rather than a network profile. OSM tunnel/layer tags can supplement classification under [ODbL attribution/share-alike terms](https://www.openstreetmap.org/copyright); layer numbers are not metres. ProRail's [weekly geometry service](https://maps.prorail.nl/arcgis/rest/services/Spoorgeometrie/FeatureServer) includes vertical railway geometry, with attribution required, but does not establish RET metro tunnel coverage. A surveyed, network-wide free RET vertical alignment remains unverified.
+
+## Marine traffic
+
+[AISStream](https://aisstream.io/documentation) offers free live AIS at `wss://stream.aisstream.io/v0/stream`, geographic filters and position reports. It requires a GitHub login and API key; no account was created. Browser connections are explicitly prohibited: one backend subscription must filter/fan out results. Limits are three subscribed connections per account and three open connections per originating IP, with no delivery SLA. Reports are event-driven and may be missing or delayed. Its public documentation does not establish an unrestricted open-data redistribution licence; confirm public-map reuse before adopting it. An open-source client library's licence is not a data licence.
+
+[AISHub](https://www.aishub.net/terms) requires contributing a qualifying physical receiver; it permits public ship maps with attribution but prohibits onward raw vessel-position/track redistribution and limits API polling to once a minute. It is not a zero-setup free default. [Port of Rotterdam's API portal](https://portal.api.portofrotterdam.com/) requires a guest account through a port contact; its public page establishes neither free AIS access nor a redistribution grant. MarineTraffic was not established as a free API alternative. Ship simulation can proceed independently; a genuinely live Rotterdam marine layer is conditional.
