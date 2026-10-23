@@ -14,5 +14,33 @@ Detailed 3D model: Gemeente Rotterdam. Catalogue license: public domain.
 https://www.rotterdam.nl/rotterdam-in-3d
 https://data.overheid.nl/dataset/10230-rotterdam-3d
 
+Aerial imagery used for source research and validation: Samenwerkingsverband
+Beeldmateriaal / PDOK, Luchtfoto 2026, CC BY 4.0. Raw photographs are not
+displayed as the miniature's streets.
+https://www.pdok.nl/introductie/-/article/pdok-luchtfoto-rgb-open-
+
 CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
 These source-data notices are separate from the MIT license for application code.
+
+Large yards, paving and crane tracks: Kadaster / PDOK BGT, CC0 1.0.
+https://api.pdok.nl/kadaster/bgt/ogc/v1
+See industrial-ground/manifest.json for source inventory and display geometry.
+
+Street/path/rail tiles: Kadaster / PDOK BRT TOP10NL, CC BY 4.0. Source and transformation manifest: streets/manifest.json.
+Surrounding land: Made with Natural Earth. Public domain; generalised 1:10 million context, outside the municipality.
+
+Prepared streetlights: source positions and geometry from Gemeente Rotterdam,
+Rotterdam 3D public-domain model. Straight shafts and emitted light are illustrated.
+See lamps/manifest.json for source inventory and processing details.
+
+Prepared transit routes/trip links: OVapi / Stichting OpenGeo, GTFS NL, CC0 1.0.
+Transit shape database: OVapi / Stichting OpenGeo, GTFS NL, ODbL 1.0.
+https://gtfs.ovapi.nl/README
+https://opendatacommons.org/licenses/odbl/1-0/
+The municipal derivative is available in transit/map.pb.gz under ODbL 1.0;
+retain attribution and database share-alike terms. It is clipped to Kadaster /
+PDOK GM0599 (CC BY 4.0), without simplification, and quantised to 1e-7 degrees.
+The original table-specific licence, source hashes and rebuild transform are
+available in source-data/transit and scripts/build-transit.py in the project
+repository. These terms are separate from the MIT application code licence.
+Prepared geometry is not an observed vehicle position or measured tunnel depth.

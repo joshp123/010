@@ -13,7 +13,7 @@ PACKAGES = {
         'examples/jsm/utils/SkeletonUtils.js',
     ]),
     '3d-tiles-renderer': ('0.5.3', [
-        'LICENSE', 'build/index.three.js', 'build/renderer-CUfHAmYW.js', 'build/renderer-_7gAivIK.js',
+        'LICENSE', 'build/index.three.js', 'build/index.core.js', 'build/renderer-CUfHAmYW.js', 'build/renderer-_7gAivIK.js',
     ]),
 }
 for package, (version, files) in PACKAGES.items():

@@ -1,0 +1,5 @@
+licensed_table_name,license_spdx_id,custom_license_url
+,CC0-1.0,
+shapes.txt,ODbL-1.0,
+ticketing_identifiers.txt,CC-BY-NC-ND-4.0,
+ticketing_deep_links.txt,CC-BY-NC-ND-4.0,

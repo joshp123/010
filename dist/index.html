@@ -10,6 +10,10 @@
   <meta property="og:description" content="From the city to the sea. Explore, find your corner, and share a little Rotterdam. By @jjpcodes.">
   <meta property="og:url" content="https://010.jjpcodes.com/">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="https://010.jjpcodes.com/social-preview.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Rotterdam in miniature at night, with illuminated windows and streets along the Maas. By @jjpcodes.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:creator" content="@jjpcodes">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' rx='16' fill='%232d473e'/%3E%3Ctext x='40' y='51' text-anchor='middle' font-family='Helvetica,sans-serif' font-weight='700' font-size='36' letter-spacing='-4' fill='%23f3f1df'%3E010%3C/text%3E%3C/svg%3E">
@@ -30,7 +34,7 @@
       <button class="weather-readout" id="weather-toggle" aria-expanded="false" aria-controls="weather-details" title="Local time and weather in Rotterdam">
         <span class="live-dot" aria-hidden="true"></span><time id="city-time">—:—</time><span class="weather-divider"></span><span id="weather-summary">Weather loading</span>
       </button>
-      <button class="button share-trigger" id="share-open"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m-4 4 4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span>Share a view</span></button>
+      <button class="button share-trigger" id="share-open" aria-label="Share a view"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m-4 4 4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span>Share a view</span></button>
     </div>
   </header>
 
@@ -76,7 +80,7 @@
   </section>
 
   <footer class="map-footer">
-    <span class="map-hint">Drag to explore <span>·</span> Scroll to zoom <span>·</span> Compass to turn</span>
+    <span class="map-hint"><span class="hint-desktop">Drag to explore · Scroll to zoom · Compass to turn</span><span class="hint-touch">Pinch to zoom · Drag to explore</span></span>
     <button id="about-open" class="text-button">About &amp; sources</button>
   </footer>
   <div class="toast" id="toast" role="status" hidden></div>
@@ -86,7 +90,7 @@
     <h1>A city worth<br>looking closer at.</h1>
     <p>Explore the whole municipality, from the Maas to the North Sea. Real buildings, a miniature point of view, and windows that glow after dark.</p>
     <p><strong>Live</strong> follows Rotterdam’s time and current modelled weather. Day, Dusk and Night let you linger in a different light.</p>
-    <p class="source-copy">3D city model: <a href="https://www.rotterdam.nl/rotterdam-in-3d" target="_blank" rel="noreferrer">Gemeente Rotterdam</a>. Boundary, map and place data: <a href="https://www.pdok.nl/" target="_blank" rel="noreferrer">Kadaster / PDOK</a>, CC BY 4.0. Weather: <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a>. Building data is a snapshot; it may differ from the city today.</p>
+    <p class="source-copy">3D city model: <a href="https://www.rotterdam.nl/rotterdam-in-3d" target="_blank" rel="noreferrer">Gemeente Rotterdam</a>. Boundary, map and place data: <a href="https://www.pdok.nl/" target="_blank" rel="noreferrer">Kadaster / PDOK</a>, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>. Weather: <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a>. Building data is a snapshot; it may differ from the city today. Night lighting is illustrated.</p>
     <div class="about-foot"><a href="https://x.com/jjpcodes" target="_blank" rel="noreferrer">Made by @jjpcodes ↗</a><a id="source-link" href="https://github.com/joshp123/010" target="_blank" rel="noreferrer">Code · MIT ↗</a></div>
   </dialog>
 

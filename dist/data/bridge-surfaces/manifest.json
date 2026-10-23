@@ -1,0 +1,186 @@
+{
+  "writtenBy": "AI, GPT-6, 2026-10-24",
+  "coordinateFrame": {
+    "latitude": 51.915,
+    "longitude": 4.49,
+    "glTF": "X east, Y up, Z south",
+    "tiles": "X east, Y north, Z up"
+  },
+  "method": "Intersect surveyed bridge-tagged BRT polygons with explicit hash-pinned native deck triangles; barycentric native height. No structure geometry. No display offset baked in.",
+  "interpretation": "Double tram centreline uses existing street stage 6 m ribbon; single track 3.2 m. Unknown deck strips remain native. BRT was simplified 1 m upstream; original API responses remain cached.",
+  "license": "BRT CC BY 4.0 Kadaster / PDOK; native geometry public domain, credit Gemeente Rotterdam.",
+  "sourceReferences": [
+    "https://api.pdok.nl/brt/top10nl/ogc/v1/",
+    "https://data.overheid.nl/dataset/10230-rotterdam-3d"
+  ],
+  "reviews": "source-data/bridge-decks.json",
+  "omissions": [
+    {
+      "name": "Van Brienenoordbrug",
+      "url": "https://www.3drotterdam.nl/datasource-data/06595036-c78e-4081-ab25-e8f88b66bc19/15/33595/6935.b3dm",
+      "reason": "Multiple large shallow components and possible joined top/underside surfaces; no unambiguous reviewed upper deck selection yet. Original native bridge remains visible."
+    }
+  ],
+  "models": [
+    {
+      "name": "erasmus",
+      "nativeSource": "https://www.3drotterdam.nl/datasource-data/06595036-c78e-4081-ab25-e8f88b66bc19/15/33584/6934.b3dm",
+      "nativeSha256": "d5736323d3b404cf3b85dc6de4461f850077780415b9de846373a4856c067d08",
+      "transportSha256": "7d17c78f70bd4c51a0083f74d94a0568e2aab1f68e69f74754acff5efa3e91a6",
+      "features": [
+        {
+          "sourceId": "124693661",
+          "surfaceKind": "cycleway",
+          "areaSquareMetres": 2750.528444150223,
+          "physicalForm": "op vast deel van brug",
+          "railRibbonWidthMetres": null
+        },
+        {
+          "sourceId": "116753165",
+          "surfaceKind": "cycleway",
+          "areaSquareMetres": 330.3696079486491,
+          "physicalForm": "op vast deel van brug",
+          "railRibbonWidthMetres": null
+        },
+        {
+          "sourceId": "124693685",
+          "surfaceKind": "road",
+          "areaSquareMetres": 3746.1081037798012,
+          "physicalForm": "op vast deel van brug",
+          "railRibbonWidthMetres": null
+        },
+        {
+          "sourceId": "117045953",
+          "surfaceKind": "cycleway",
+          "areaSquareMetres": 344.5552686579996,
+          "physicalForm": "op beweegbaar deel van brug",
+          "railRibbonWidthMetres": null
+        },
+        {
+          "sourceId": "117052310",
+          "surfaceKind": "road",
+          "areaSquareMetres": 318.4304917688247,
+          "physicalForm": "op vast deel van brug",
+          "railRibbonWidthMetres": null
+        },
+        {
+          "sourceId": "116995443",
+          "surfaceKind": "road",
+          "areaSquareMetres": 367.3474338918582,
+          "physicalForm": "op beweegbaar deel van brug",
+          "railRibbonWidthMetres": null
+        },
+        {
+          "sourceId": "117047616",
+          "surfaceKind": "cycleway",
+          "areaSquareMetres": 215.82723818437822,
+          "physicalForm": "op beweegbaar deel van brug",
+          "railRibbonWidthMetres": null
+        },
+        {
+          "sourceId": "117055605",
+          "surfaceKind": "road",
+          "areaSquareMetres": 3995.970619326579,
+          "physicalForm": "op vast deel van brug",
+          "railRibbonWidthMetres": null
+        },
+        {
+          "sourceId": "117046638",
+          "surfaceKind": "road",
+          "areaSquareMetres": 302.63299233170534,
+          "physicalForm": "op beweegbaar deel van brug",
+          "railRibbonWidthMetres": null
+        },
+        {
+          "sourceId": "117047564",
+          "surfaceKind": "cycleway",
+          "areaSquareMetres": 276.8693101888174,
+          "physicalForm": "op vast deel van brug",
+          "railRibbonWidthMetres": null
+        },
+        {
+          "sourceId": "116992186",
+          "surfaceKind": "road",
+          "areaSquareMetres": 418.97306838355655,
+          "physicalForm": "op vast deel van brug",
+          "railRibbonWidthMetres": null
+        },
+        {
+          "sourceId": "124693634",
+          "surfaceKind": "cycleway",
+          "areaSquareMetres": 3651.26966173864,
+          "physicalForm": "op vast deel van brug",
+          "railRibbonWidthMetres": null
+        },
+        {
+          "sourceId": "105522540",
+          "surfaceKind": "rail",
+          "areaSquareMetres": 4006.532773552873,
+          "physicalForm": "op vast deel van brug",
+          "railRibbonWidthMetres": 6
+        }
+      ],
+      "triangles": 1592,
+      "bytes": 58852,
+      "box": [
+        -265.90105030986774,
+        -593.923762796094,
+        10.120058489189717,
+        272.16995540796836,
+        0,
+        0,
+        0,
+        211.528550356361,
+        0,
+        0,
+        0,
+        5.506917302590352
+      ]
+    },
+    {
+      "name": "willems",
+      "nativeSource": "https://www.3drotterdam.nl/datasource-data/06595036-c78e-4081-ab25-e8f88b66bc19/15/33586/6932.b3dm",
+      "nativeSha256": "9431c6c0bcaa959276f6cf1ef00d313a121739a6b4370533a7cf6ca197fa076f",
+      "transportSha256": "7d17c78f70bd4c51a0083f74d94a0568e2aab1f68e69f74754acff5efa3e91a6",
+      "features": [
+        {
+          "sourceId": "117044329",
+          "surfaceKind": "road",
+          "areaSquareMetres": 7666.375850111571,
+          "physicalForm": "op vast deel van brug",
+          "railRibbonWidthMetres": null
+        },
+        {
+          "sourceId": "116992141",
+          "surfaceKind": "cycleway",
+          "areaSquareMetres": 2895.657087240836,
+          "physicalForm": "op vast deel van brug",
+          "railRibbonWidthMetres": null
+        },
+        {
+          "sourceId": "116994210",
+          "surfaceKind": "cycleway",
+          "areaSquareMetres": 3300.3617974155245,
+          "physicalForm": "op vast deel van brug",
+          "railRibbonWidthMetres": null
+        }
+      ],
+      "triangles": 307,
+      "bytes": 12148,
+      "box": [
+        366.28991380113905,
+        235.70704614336358,
+        10.70050429518502,
+        156.27297169285873,
+        0,
+        0,
+        0,
+        154.0495657908911,
+        0,
+        0,
+        0,
+        2.983815169529798
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+syntax = "proto3";
+package rotterdam.transit;
+
+// Packed line/ring coordinates are alternating longitude/latitude deltas in
+// 1e-7 degrees. Deltas restart from (0,0) for every line or ring.
+message Route {
+  string id = 1;
+  string short_name = 2;
+  string long_name = 3;
+  uint32 gtfs_type = 4;
+  string agency_id = 5;
+  string agency_name = 6;
+}
+message Line {
+  repeated sint64 coordinate_deltas_e7 = 1 [packed = true];
+}
+message Shape {
+  string id = 1;
+  repeated Line lines = 2;
+}
+message Trip {
+  string id = 1;
+  uint32 route_index = 2;
+  uint32 shape_index = 3;
+}
+message Polygon {
+  repeated Line rings = 1; // Exterior first, then holes.
+}
+message TransitMap {
+  repeated Route routes = 1;
+  repeated Shape shapes = 2;
+  repeated Trip trips = 3;
+  repeated Polygon municipality = 4;
+  uint32 format_version = 5;
+}

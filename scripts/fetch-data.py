@@ -5,6 +5,7 @@ Written by AI, gpt-6-astra, 2026-10-24.
 """
 
 import concurrent.futures
+import gzip
 import hashlib
 import json
 from collections import defaultdict
@@ -15,8 +16,8 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 from pyproj import Transformer
-from shapely import make_valid
-from shapely.geometry import mapping, shape
+from shapely import make_valid, set_precision
+from shapely.geometry import MultiPolygon, Polygon, box, mapping, shape
 from shapely.ops import transform, unary_union
 
 PROJECT = Path(__file__).resolve().parents[1]
@@ -104,6 +105,65 @@ def polygons(geometry):
             yield from polygons(child)
 
 
+def lines(geometry):
+    if geometry.geom_type == "LineString":
+        yield geometry
+    elif geometry.geom_type in ("MultiLineString", "GeometryCollection"):
+        for child in geometry.geoms:
+            yield from lines(child)
+
+
+def build_transport_network():
+    boundary = fetch_json(BOUNDARY_URL)["features"][0]
+    municipality = make_valid(transform(TO_RD, shape(boundary["geometry"])))
+    geographic_bounds = shape(boundary["geometry"]).bounds
+    collections = {"wegdeel_vlak": "road", "wegdeel_lijn": "path", "spoorbaandeel_lijn": "rail"}
+    retained_properties = {
+        "lokaal_id", "typeweg", "hoofdverkeersgebruik", "verhardingstype",
+        "verhardingsbreedteklasse", "typespoorbaan", "aantalsporen", "hoofdspoor",
+        "fysiekvoorkomen", "typeinfrastructuur", "hoogteniveau", "status",
+    }
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        collected = list(executor.map(lambda collection: read_collection(collection, geographic_bounds), collections))
+
+    features = []
+    counts = {}
+    for (collection, kind), source_features in zip(collections.items(), collected):
+        counts[collection] = len(source_features)
+        for feature in source_features:
+            geometry = make_valid(transform(TO_RD, shape(feature["geometry"])))
+            if not geometry.intersects(municipality):
+                continue
+            clipped = geometry.intersection(municipality).simplify(1, preserve_topology=True)
+            pieces = list(polygons(clipped) if kind == "road" else lines(clipped))
+            if not pieces:
+                continue
+            properties = {key: value for key, value in feature["properties"].items()
+                          if key in retained_properties and value is not None}
+            properties["kind"] = kind
+            geometry = set_precision(transform(TO_LONLAT, unary_union(pieces)), 0.000001)
+            if geometry.is_empty:
+                continue
+            features.append({"type": "Feature", "id": feature["id"], "properties": properties,
+                             "geometry": mapping(geometry)})
+
+    network = {
+        "type": "FeatureCollection", "features": features,
+        "source": TOPOGRAPHY_API,
+        "sourceCollections": {name: f"{TOPOGRAPHY_API}/collections/{name}" for name in collections},
+        "sourceFeatureCounts": counts, "boundarySource": BOUNDARY_URL,
+        "simplificationMetres": 1,
+        "heightSemantics": "hoogteniveau is relative ordering, not elevation in metres; geometry is two-dimensional",
+        "license": "CC BY 4.0", "attribution": "Kadaster / PDOK, BRT TOP10NL",
+    }
+    source_file = PROJECT / "source-data" / "transport-network.geojson.gz"
+    source_file.parent.mkdir(parents=True, exist_ok=True)
+    source_bytes = (json.dumps(network, ensure_ascii=False, separators=(",", ":")) + "\n").encode()
+    source_file.write_bytes(gzip.compress(source_bytes, mtime=0))
+    print(f"source-data/{source_file.name}: {source_file.stat().st_size:,} bytes", flush=True)
+    print(f"Transport network: {len(features):,} municipality-clipped features", flush=True)
+
+
 def land_kind(properties):
     usage = (properties.get("typelandgebruik") or "").lower()
     if "bos" in usage:
@@ -117,6 +177,7 @@ def land_kind(properties):
     if "bebouwd" in usage or "spoor" in usage:
         return "urban"
     return "land"
+
 
 
 def main():
@@ -184,6 +245,9 @@ def main():
 if __name__ == "__main__":
     if "--destinations-only" in sys.argv:
         build_destinations()
+    elif "--transport-only" in sys.argv:
+        build_transport_network()
     else:
         main()
         build_destinations()
+        build_transport_network()

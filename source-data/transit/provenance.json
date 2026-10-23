@@ -1,0 +1,86 @@
+{
+  "writtenBy": "AI, GPT-6, 2026-10-24",
+  "sources": [
+    {
+      "url": "https://gtfs.ovapi.nl/nl/gtfs-nl.zip",
+      "file": "gtfs-nl.zip",
+      "lastModified": "Fri, 23 Oct 2026 16:52:36 GMT",
+      "etag": "\"6adb90d4=e7282df\"",
+      "bytes": 242385631,
+      "sha256": "196f5bac25c0de957fd642ee92d5e4354b1c05ab3a1c5942698a6f406a04b6d4",
+      "requestedAt": "20261023T233451Z",
+      "acquired": "2026-10-23T23:35:46.265976+00:00"
+    },
+    {
+      "url": "https://gtfs.ovapi.nl/nl/vehiclePositions.pb",
+      "file": "vehiclePositions-20261023T233451Z.pb",
+      "lastModified": "Fri, 23 Oct 2026 23:35:26 GMT",
+      "etag": "W/\"6adbef3e=5e4b\"",
+      "bytes": 24139,
+      "sha256": "bcda1bc20257bf3ffb8d0cc2c78322916cd5f09da7848e2515e80b9f844455a8",
+      "requestedAt": "20261023T233451Z",
+      "acquired": "2026-10-23T23:35:46.844202+00:00"
+    },
+    {
+      "url": "https://gtfs.ovapi.nl/README",
+      "file": "README.txt",
+      "lastModified": "Tue, 25 Aug 2026 12:18:18 GMT",
+      "etag": "\"6a8d880a=836\"",
+      "bytes": 2102,
+      "sha256": "a85c449cd870387891fdc0a8f1f5f8f68c03e63cbc01631577c3a232205d1d87",
+      "requestedAt": "20261023T233451Z",
+      "acquired": "2026-10-23T23:35:47.234001+00:00"
+    }
+  ],
+  "sourceArchive": {
+    "url": "https://gtfs.ovapi.nl/nl/gtfs-nl.zip",
+    "sha256": "196f5bac25c0de957fd642ee92d5e4354b1c05ab3a1c5942698a6f406a04b6d4",
+    "bytes": 242385631,
+    "retainedPath": "work/data-cache/transit/gtfs-nl.zip"
+  },
+  "boundary": {
+    "url": "https://api.pdok.nl/kadaster/brk-bestuurlijke-gebieden/ogc/v1/collections/gemeentegebied/items?naam=Rotterdam&f=json",
+    "sha256": "ac46f7b47fc23147b76d6fc1cbf51c88d275bcfcd46ea2d00f25d32486da6111",
+    "municipality": "GM0599"
+  },
+  "feedInfo": [
+    {
+      "feed_publisher_name": "OVapi",
+      "feed_id": "NL",
+      "feed_publisher_url": "http://www.ovapi.nl",
+      "feed_lang": "nl",
+      "feed_start_date": "20261023",
+      "feed_end_date": "20261212",
+      "feed_version": "9644"
+    }
+  ],
+  "licenses": {
+    "shapes.txt": "ODbL-1.0",
+    "otherUsedGtfsTables": "CC0-1.0",
+    "municipalBoundary": "CC-BY-4.0",
+    "derivedShapeDatabase": "ODbL-1.0"
+  },
+  "counts": {
+    "routes": 150,
+    "trips": 54584,
+    "shapes": 793,
+    "routesByGtfsType": {
+      "3": 95,
+      "2": 36,
+      "0": 12,
+      "1": 5,
+      "4": 2
+    }
+  },
+  "output": {
+    "protobufBytes": 1299033,
+    "gzipBytes": 233833,
+    "sha256": "bc35244500d1f772613294ecca08d79173a2544fdd661a6f7a5b3f2d1e5b9562"
+  },
+  "transformation": "Source GTFS shapes intersected with exact Kadaster municipality polygon. Interior vertices retained; boundary intersections interpolated by GEOS. No simplification. Coordinates quantized to 1e-7 degrees; at most 0.007 m displacement. Trips retain IDs, route indices and source-shape indices; no schedule positions are generated.",
+  "sourceCompleteness": {
+    "nationalTrips": 937368,
+    "tripsWithoutShapeId": 36882,
+    "limitation": "Geographic selection uses source shapes; trips without shape IDs cannot establish municipal geometry. Unmatched municipal observations remain available with null route/shape metadata."
+  }
+}

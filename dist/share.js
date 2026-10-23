@@ -1,7 +1,7 @@
 const FORMATS = {
-  landscape: { label: 'Landscape', width: 1200, height: 630 },
-  square: { label: 'Square', width: 1080, height: 1080 },
-  story: { label: 'Story', width: 1080, height: 1920 },
+  landscape: { label: 'Landscape', width: 3840, height: 2016, footerHeight: 301, footerScale: 3.2 },
+  square: { label: 'Square', width: 2160, height: 2160, footerHeight: 188, footerScale: 2 },
+  story: { label: 'Story', width: 2160, height: 3840, footerHeight: 304, footerScale: 2 },
 };
 
 function element(tag, className, text) {
@@ -26,49 +26,40 @@ function fitText(context, text, maxWidth, size) {
 }
 
 function drawPoster(source, format, context) {
-  const { width, height } = FORMATS[format];
+  const { width, height, footerHeight, footerScale } = FORMATS[format];
+  const imageHeight = height - footerHeight;
+  if (source.width !== width || source.height !== imageHeight) {
+    throw new Error(`The map capture must be rendered at ${width} × ${imageHeight} pixels.`);
+  }
   const canvas = document.createElement('canvas');
   canvas.width = width; canvas.height = height;
   const drawing = canvas.getContext('2d');
-  const footer = format === 'story' ? 152 : 94;
-  const imageHeight = height - footer;
-  const scale = Math.max(width / source.width, imageHeight / source.height);
-  const drawnWidth = source.width * scale, drawnHeight = source.height * scale;
-  drawing.fillStyle = '#19352f'; drawing.fillRect(0, 0, width, height);
-  drawing.imageSmoothingEnabled = false;
-  drawing.drawImage(source, (width - drawnWidth) / 2, (imageHeight - drawnHeight) / 2, drawnWidth, drawnHeight);
-  drawing.fillStyle = '#f2f2e8'; drawing.fillRect(0, imageHeight, width, footer);
-  const middle = imageHeight + footer / 2;
+  drawing.drawImage(source, 0, 0);
+  drawing.fillStyle = '#f2f2e8'; drawing.fillRect(0, imageHeight, width, footerHeight);
+  drawing.translate(0, imageHeight);
+  drawing.scale(footerScale, footerScale);
+  const footerWidth = width / footerScale;
+  const footer = footerHeight / footerScale;
+  const middle = footer / 2;
   drawing.fillStyle = '#2d473e'; drawing.textBaseline = 'middle';
   drawing.font = '800 51px "Helvetica Neue", Helvetica, sans-serif';
   drawing.fillText('010', 29, middle + 2);
   drawing.fillStyle = '#a5b2a1'; drawing.fillRect(132, middle - 22, 1, 44);
   const label = context.locationLabel === 'Rotterdam' ? 'Rotterdam in miniature' : context.locationLabel;
   drawing.fillStyle = '#2d473e';
-  fitText(drawing, label, width - 480, 24);
+  fitText(drawing, label, footerWidth - 480, 24);
   drawing.fillText(label, 157, middle - 11);
   drawing.fillStyle = '#68786b'; drawing.font = '400 13px "Avenir Next", "Segoe UI", sans-serif';
   drawing.fillText('FROM THE CITY TO THE SEA', 158, middle + 16);
   drawing.textAlign = 'right';
   drawing.fillStyle = '#2d473e'; drawing.font = '500 17px "Avenir Next", "Segoe UI", sans-serif';
-  drawing.fillText(context.domain, width - 30, middle - 11);
+  drawing.fillText(context.domain, footerWidth - 30, middle - 11);
   drawing.fillStyle = '#68786b'; drawing.font = '400 14px "Avenir Next", "Segoe UI", sans-serif';
-  drawing.fillText('by @jjpcodes', width - 30, middle + 16);
+  drawing.fillText('by @jjpcodes', footerWidth - 30, middle + 16);
   drawing.textAlign = 'left';
   drawing.font = '400 10px "Avenir Next", "Segoe UI", sans-serif';
-  drawing.fillText('Map data: Gemeente Rotterdam · Kadaster / PDOK (CC BY 4.0)', 29, height - 10);
+  drawing.fillText('Map data: Gemeente Rotterdam · Kadaster / PDOK (CC BY 4.0)', 29, footer - 10);
   return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('The browser could not create the image.')), 'image/png'));
-}
-
-async function captureScene(scene) {
-  scene.render();
-  await new Promise(resolve => requestAnimationFrame(resolve));
-  scene.render();
-  const source = scene.getCanvas();
-  const copy = document.createElement('canvas');
-  copy.width = source.width; copy.height = source.height;
-  copy.getContext('2d').drawImage(source, 0, 0);
-  return copy;
 }
 
 function downloadImage(blob, filename) {
@@ -99,7 +90,7 @@ export async function openShareDialog(context) {
   let blob;
   let previewUrl;
   let activeFormat = 'landscape';
-  let imageSource;
+  let captureQueue = Promise.resolve();
   let generation = 0;
   let dismissed = false;
 
@@ -130,11 +121,20 @@ export async function openShareDialog(context) {
   async function selectFormat(format) {
     const serial = ++generation;
     activeFormat = format;
+    blob = null;
     formatControls.querySelectorAll('button').forEach(item => { const selected = item.dataset.format === format; item.classList.toggle('selected', selected); item.setAttribute('aria-pressed', selected); });
     copyImage.disabled = true; download.disabled = true; nativeShare.disabled = true;
-    previewWrap.classList.add('loading'); notify('Preparing the image…');
+    previewWrap.hidden = false;
+    previewWrap.classList.add('loading'); notify('Rendering the high-resolution image…');
     try {
-      if (!imageSource) return;
+      const { width, height, footerHeight } = FORMATS[format];
+      const capture = captureQueue.then(() => {
+        if (serial !== generation || dismissed) return null;
+        return context.scene.captureCanvas(width, height - footerHeight);
+      });
+      captureQueue = capture.catch(() => {});
+      const imageSource = await capture;
+      if (serial !== generation || dismissed) return;
       const prepared = await drawPoster(imageSource, format, context);
       if (serial !== generation || dismissed) return;
       blob = prepared;
@@ -145,7 +145,12 @@ export async function openShareDialog(context) {
       const file = new File([blob], `010-${format}.png`, { type: 'image/png' });
       nativeShare.hidden = !(navigator.share && navigator.canShare?.({ files: [file] }));
       notify(`${FORMATS[format].width} × ${FORMATS[format].height} PNG · no map controls.`);
-    } catch (error) { console.error(error); notify('The image could not be prepared. You can still copy the view link.'); }
+    } catch (error) {
+      if (serial !== generation || dismissed) return;
+      console.error(error);
+      previewWrap.hidden = true;
+      notify('The high-resolution image could not be prepared. You can still copy the view link.');
+    }
   }
 
   for (const [format, details] of Object.entries(FORMATS)) {
@@ -161,6 +166,5 @@ export async function openShareDialog(context) {
     const box = dialog.getBoundingClientRect();
     if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) dialog.close();
   });
-  try { imageSource = await captureScene(context.scene); await selectFormat(activeFormat); }
-  catch (error) { console.error(error); notify('This view could not be captured. You can still copy its link.'); }
+  await selectFormat(activeFormat);
 }

@@ -1,23 +1,27 @@
 import * as THREE from 'three';
+import { createCityMaterial, featureColor, streetColor, yardColor, createLampPoolMaterial } from './miniature-style.js';
+import { createSourceFusion } from './source-fusion.js';
+import { createObjectDetail } from './object-detail.js';
+import { createTreeBatches } from './tree-batches.js';
 import { TilesRenderer } from '3d-tiles-renderer';
+import { LRUCache, unifiedPriorityCallback, FAILED, LOADED } from './vendor/3d-tiles-renderer/build/index.core.js';
 
 const ORIGIN = { lat: 51.915, lon: 4.49 };
 const DEFAULT_VIEW = { lat: 51.9105, lon: 4.4875, span: 1700, bearing: 35 };
 const DEGREES = Math.PI / 180;
 const DATA_BASE = 'https://www.3drotterdam.nl/datasource-data/';
 const LAYERS = [
+  ['streets', './data/streets/tileset.json'],
+  ['yards', './data/industrial-ground/tileset.json'],
+  ['lamps', './data/lamps/tileset.json'],
   ['buildings', '8b5d0ded-a222-4e44-bc70-2992bc2192fc'],
   ['ground', '0025cb58-e0f5-4169-bb4c-5339a3bc2a7e'],
   ['bridges', '06595036-c78e-4081-ab25-e8f88b66bc19'],
+  ['bridgeSurfaces', './data/bridge-surfaces/tileset.json'],
   ['tanks', 'c70023a7-2878-41e9-bb81-a7c454bc310a'],
   ['trees', 'b9294d5b-79e0-4744-ac88-b61e3e90d5bc'],
   ['lights', '2602863a-3d22-44c2-8c95-bbf88a20bf37'],
 ];
-const BUILDING_COLORS = ['#d5c9ad', '#bda58a', '#a77d62', '#c5c4b5', '#aebfc1', '#e0d4bb', '#a68c7b', '#8d9ea3'].map(color => new THREE.Color(color));
-const GROUND_COLORS = {
-  water: new THREE.Color('#367b86'), green: new THREE.Color('#73936d'), road: new THREE.Color('#9ba09a'),
-  pavement: new THREE.Color('#c8c2ac'), building: new THREE.Color('#b4ad98'), other: new THREE.Color('#b3b5a1'),
-};
 
 function earthPosition(lat, lon, height = 0) {
   const latitude = lat * DEGREES, longitude = lon * DEGREES;
@@ -42,71 +46,10 @@ function geographicPosition(local) {
   }
   return { lat: latitude / DEGREES, lon: Math.atan2(earth.y, earth.x) / DEGREES };
 }
-function hashNumber(value) { let hash = 2166136261; for (const char of String(value)) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619); return (hash >>> 0); }
-function batchTableFor(mesh) { let parent = mesh; while (parent && !parent.batchTable) parent = parent.parent; return parent?.batchTable; }
-function classOfGround(attributes) {
-  const type = String(attributes.KLASSE_IMG || attributes.KLASSE || '').toLowerCase();
-  const detail = String(attributes.FYSIEKVK || attributes.FUNCTIE || '').toLowerCase();
-  if (type.includes('water')) return 'water';
-  if (type.includes('begroeid') || type.includes('plant') || /gras|groen|struik|bos|tuin/.test(detail)) return 'green';
-  if (type.includes('pand')) return 'building';
-  if (type.includes('weg') && !/voet|fiets|ruiter|berm/.test(detail)) return 'road';
-  if (type.includes('weg') || type.includes('onbegroeid') || type.includes('ondersteunend')) return 'pavement';
-  return 'other';
-}
 
-function cityMaterial(kind, uniforms) {
-  const material = new THREE.MeshStandardMaterial({ color: 0xffffff, vertexColors: true, roughness: 0.94, metalness: 0, flatShading: true, side: THREE.DoubleSide });
-  material.onBeforeCompile = shader => {
-    shader.uniforms.cityNight = uniforms.night;
-    shader.uniforms.citySnow = uniforms.snow;
-    shader.uniforms.cityReflection = uniforms.reflection;
-    shader.uniforms.cityReflectionMatrix = uniforms.reflectionMatrix;
-    shader.vertexShader = `varying vec3 cityWorldPosition; varying vec3 cityWorldNormal;\n` + shader.vertexShader;
-    shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>\n vec4 cityVertex = vec4(transformed, 1.0);\n #ifdef USE_INSTANCING\n cityVertex = instanceMatrix * cityVertex;\n #endif\n cityWorldPosition = (modelMatrix * cityVertex).xyz; cityWorldNormal = normalize(mat3(modelMatrix) * objectNormal);`);
-    shader.fragmentShader = `uniform float cityNight; uniform float citySnow; uniform sampler2D cityReflection; uniform mat4 cityReflectionMatrix; varying vec3 cityWorldPosition; varying vec3 cityWorldNormal;\n float cityHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }\n` + shader.fragmentShader;
-    let surface = '';
-    if (kind === 'buildings') {
-      surface = `
-        vec3 cityNormal = normalize(cityWorldNormal);
-        float cityWall = 1.0 - smoothstep(0.15, 0.55, abs(cityNormal.y));
-        vec2 cityTangent = normalize(vec2(cityNormal.z + 0.00001, -cityNormal.x));
-        float cityHorizontal = dot(cityWorldPosition.xz, cityTangent);
-        vec2 cityWindowCell = vec2(cityHorizontal / 3.1, (cityWorldPosition.y - 1.1) / 3.25);
-        vec2 cityWindowUV = fract(cityWindowCell);
-        vec2 cityWindowAA = min(fwidth(cityWindowCell) * 0.5, vec2(0.24));
-        float cityWindow = smoothstep(0.19-cityWindowAA.x, 0.19+cityWindowAA.x, cityWindowUV.x) * (1.0-smoothstep(0.66-cityWindowAA.x, 0.66+cityWindowAA.x, cityWindowUV.x)) * smoothstep(0.18-cityWindowAA.y, 0.18+cityWindowAA.y, cityWindowUV.y) * (1.0-smoothstep(0.73-cityWindowAA.y, 0.73+cityWindowAA.y, cityWindowUV.y)) * cityWall;
-        cityWindow *= 1.0-smoothstep(0.8, 2.2, max(fwidth(cityWindowCell.x),fwidth(cityWindowCell.y)));
-        cityWindow *= smoothstep(3.2, 5.5, cityWorldPosition.y);
-        float cityWindowSeed = cityHash(floor(cityWindowCell) + floor(vColor.rg * 91.0));
-        float cityLit = step(0.57, cityWindowSeed);
-        vec3 cityWindowLight = mix(vec3(1.0, 0.29, 0.055), vec3(1.0, 0.61, 0.22), step(0.77, cityWindowSeed));
-        diffuseColor.rgb *= mix(1.0, 0.68, 1.0 - cityWall);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.12, 0.23, 0.27), cityWindow * 0.62);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.86, 0.90, 0.91), citySnow * smoothstep(0.4, 0.9, cityNormal.y));
-        totalEmissiveRadiance += cityWindowLight * cityWindow * cityLit * cityNight * 1.05;
-      `;
-    } else if (kind === 'ground') {
-      surface = `
-        float cityWater = step(vColor.r * 1.7, vColor.g) * step(vColor.r * 1.9, vColor.b);
-        vec4 cityReflectedPosition = cityReflectionMatrix * vec4(cityWorldPosition, 1.0);
-        vec2 cityReflectionUV = cityReflectedPosition.xy / cityReflectedPosition.w * 0.5 + 0.5;
-        cityReflectionUV.x += sin(cityWorldPosition.z * 0.42) * 0.0015;
-        vec3 cityReflectionLight = texture2D(cityReflection, cityReflectionUV).rgb;
-        float cityRipple = 0.52 + 0.22 * sin(cityWorldPosition.z * 0.6 + sin(cityWorldPosition.x * 0.12));
-        totalEmissiveRadiance += cityReflectionLight * cityWater * cityNight * cityRipple * 0.65;
-      `;
-    } else if (kind === 'bridges') {
-      surface = `
-        float cityEdgeLight = pow(1.0 - abs(normalize(cityWorldNormal).y), 3.0);
-        totalEmissiveRadiance += vec3(0.25, 0.52, 0.67) * cityEdgeLight * cityNight * 0.14;
-      `;
-    }
-    shader.fragmentShader = shader.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>\n${surface}`);
-  };
-  material.customProgramCacheKey = () => `010-${kind}-v1`;
-  return material;
-}
+function batchTableFor(mesh) { let parent = mesh; while (parent && !parent.batchTable) parent = parent.parent; return parent?.batchTable; }
+
+
 
 function solarDirection(date, lat, lon) {
   const day = (date.getTime() / 86400000) - 10957.5;
@@ -122,8 +65,8 @@ function solarDirection(date, lat, lon) {
 }
 
 export async function createScene({ canvas, onViewChange = () => {}, onStatus = () => {} }) {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(1);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.2;
@@ -147,7 +90,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   scene.add(sky);
   const reflectionTarget = new THREE.WebGLRenderTarget(512, 512, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, type: THREE.HalfFloatType });
   const reflectionCamera = camera.clone();
-  const cityTarget = new THREE.WebGLRenderTarget(512, 512, { type: THREE.HalfFloatType });
+  const cityTarget = new THREE.WebGLRenderTarget(512, 512, { type: THREE.HalfFloatType, samples: Math.min(4, renderer.capabilities.maxSamples) });
   const weatherUniforms = { city: { value: cityTarget.texture }, time: { value: 0 }, resolution: { value: new THREE.Vector2(512, 512) }, rain: { value: 0 }, snow: { value: 0 } };
   const presentationScene = new THREE.Scene();
   const presentationCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -177,19 +120,27 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
       }`,
   });
   const presentationQuad = new THREE.Mesh(new THREE.PlaneGeometry(2,2), presentationMaterial); presentationScene.add(presentationQuad);
-  const uniforms = { night: { value: 0 }, snow: { value: 0 }, reflection: { value: reflectionTarget.texture }, reflectionMatrix: { value: new THREE.Matrix4() } };
+  const uniforms = { night: { value: 0 }, snow: { value: 0 }, reflection: { value: reflectionTarget.texture }, reflectionMatrix: { value: new THREE.Matrix4() }, reflectionTexel: { value: new THREE.Vector2(1 / 512, 1 / 512) } };
   const glowUniforms = { night: uniforms.night, size: { value: 4 } };
   const lampGlowMaterial = new THREE.ShaderMaterial({
     uniforms: glowUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false,
     vertexShader: `uniform float size; void main() { gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); gl_PointSize = size; }`,
     fragmentShader: `uniform float night; void main() { float radius = length(gl_PointCoord - 0.5) * 2.0; if(radius > 1.0) discard; float glow = exp(-radius * radius * 10.0) * 0.38 + exp(-radius * radius * 3.0) * 0.07; gl_FragColor = vec4(vec3(1.0, 0.61, 0.23), glow * night); }`,
   });
-  const materials = Object.fromEntries(LAYERS.map(([kind]) => [kind, cityMaterial(kind, uniforms)]));
+  const lampPixelsPerMetre = { value: 1 };
+  const lampPoolMaterial = createLampPoolMaterial(uniforms.night, lampPixelsPerMetre);
+  const lampShaftMaterial = new THREE.LineBasicMaterial({ color: '#53666a', transparent: true, opacity: 0.55 });
+  const materials = Object.fromEntries(LAYERS.map(([kind]) => [kind, createCityMaterial(['streets', 'bridgeSurfaces'].includes(kind) ? 'ground' : kind, uniforms)]));
+  Object.assign(materials.bridgeSurfaces, { polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
   const seaGeometry = new THREE.PlaneGeometry(180000, 180000, 96, 96);
   const seaVertices = seaGeometry.getAttribute('position');
   for (let i = 0; i < seaVertices.count; i++) seaVertices.setZ(i, -((seaVertices.getX(i) ** 2 + seaVertices.getY(i) ** 2) / (2 * 6371000)));
   seaGeometry.computeVertexNormals();
-  const sea = new THREE.Mesh(seaGeometry, new THREE.MeshStandardMaterial({ color: '#347681', roughness: 0.65, metalness: 0.12 }));
+  const seaColors = new Float32Array(seaVertices.count * 3);
+  const waterColor = streetColor('water');
+  for (let index = 0; index < seaColors.length; index += 3) waterColor.toArray(seaColors, index);
+  seaGeometry.setAttribute('color', new THREE.BufferAttribute(seaColors, 3));
+  const sea = new THREE.Mesh(seaGeometry, materials.ground);
   sea.rotation.x = -Math.PI / 2;
   sea.position.y = -4;
   sea.receiveShadow = true;
@@ -198,113 +149,113 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   const loadedByLayer = {};
   let loadErrors = 0, loadedTiles = 0, lighting = { mode: 'day', date: new Date(), cloudCover: 0, rain: 0, snow: 0 };
   let sunVector = new THREE.Vector3(-0.65, 0.8, 0.45).normalize();
-  let lastStatus = '', lastPresentation = 0;
+  let lastStatus = '', lastPresentation = 0, lastCityRender = {};
+  let latestInputTime = null;
+  let overviewState = 'loading';
+  const loadMilestones = { firstBuildingsSubmittedMs: null, initialDetailSettledMs: null };
+  const frameTimes = [], inputRenderTimes = [];
+  function recordTiming(samples, value) { samples.push(value); if (samples.length > 240) samples.shift(); }
+  function timingSummary(samples) { const sorted = [...samples].sort((a, b) => a - b); return { samples: sorted.length, median: sorted[Math.floor(sorted.length / 2)] ?? null, p95: sorted[Math.floor(sorted.length * 0.95)] ?? null }; }
   const failedTileRetries = new Map();
   const tilesets = [];
+  const sourceFusion = createSourceFusion();
+  const objectDetail = createObjectDetail({ maximumPixelError: 1 });
+  const treeBatches = createTreeBatches(scene);
+  let capturingFullDetail = false;
+  const tileCaches = Object.fromEntries([['city', 224], ['trees', 24], ['lights', 12]].map(([name, megabytes]) => {
+    const cache = new LRUCache();
+    cache.maxBytesSize = megabytes * 1024 * 1024;
+    cache.minBytesSize = cache.maxBytesSize * 0.8;
+    return [name, cache];
+  }));
   const overview = new THREE.Group();
   scene.add(overview);
 
   function requestRender() { needsRender = true; if (!scheduledFrame && !disposed) scheduledFrame = requestAnimationFrame(frame); }
-  function surfaceDiagnostics() {
-    scene.updateMatrixWorld(true);
-    const groups = [...tilesets.filter(layer => layer.kind === 'ground').map(layer => ({ name: layer.kind, group: layer.group })), { name: 'overview', group: overview }, { name: 'sea', group: sea }];
-    const visibleMeshes = groups.flatMap(({ name, group }) => {
-      const entries = [];
-      group.traverseVisible(object => { if (object.isMesh) entries.push({ name, object }); });
-      return entries;
-    });
-    const samples = [['Kop van Zuid', 51.9045, 4.488], ['Noordereiland', 51.912, 4.498], ['north bank', 51.917, 4.494], ['river', 51.91, 4.486]];
-    return samples.map(([name, lat, lon]) => {
-      const origin = localPosition(lat, lon); origin.y = 10000;
-      const ray = new THREE.Raycaster(origin, new THREE.Vector3(0, -1, 0));
-      const hits = visibleMeshes.flatMap(entry => ray.intersectObject(entry.object, false).map(hit => ({ layer: entry.name, height: hit.point.y, color: hit.object.geometry.getAttribute('color') ? Array.from(hit.object.geometry.getAttribute('color').array.slice(hit.face.a * 3, hit.face.a * 3 + 3)) : null }))).sort((a,b) => b.height-a.height);
-      return { name, hits: hits.slice(0, 6) };
-    });
+  function viewReadiness() {
+    let pending = overviewState === 'loading' ? 1 : 0;
+    let failed = overviewState === 'error';
+    let refused = 0;
+    for (const tiles of tilesets) {
+      if (!tiles.group.visible) continue;
+      pending += tiles.stats.queued + tiles.stats.downloading + tiles.stats.parsing;
+      refused += tiles.stats.refused;
+      if (tiles.rootLoadingState !== LOADED) pending++;
+      failed ||= tiles.rootLoadingState === FAILED;
+      for (const tile of tiles.usedSet) {
+        if (tile.traversal.inFrustum && tile.internal.loadingState === FAILED && (tile.traversal.isLeaf || tile.internal.hasUnrenderableContent)) failed = true;
+      }
+    }
+    return { pending, refused, failed, ready: !pending && !refused && !failed };
   }
   function reportStatus() {
-    const pending = tilesets.reduce((sum, tile) => sum + (tile.stats.downloading || 0) + (tile.stats.parsing || 0), 0);
-    const state = loadedTiles ? (pending ? 'loading' : 'ready') : (loadErrors ? 'error' : 'loading');
-    const message = state === 'error' ? 'The city data could not be loaded. Reload to retry.' : pending || !loadedTiles ? 'Bringing Rotterdam into view…' : 'Rotterdam, in miniature';
+    const { pending, failed, ready } = viewReadiness();
+    const state = failed ? 'error' : ready ? 'ready' : 'loading';
+    const message = failed ? 'Some city detail is unavailable. You can keep exploring.' : ready ? 'Rotterdam, in miniature' : 'Bringing Rotterdam into view…';
     const key = `${state}:${loadedTiles}:${pending}`;
     if (key !== lastStatus) { lastStatus = key; onStatus({ state, message, loadedTiles, loadingTiles: pending }); }
   }
   function colorModel(model, kind) {
     model.traverse(mesh => {
+      if (kind === 'lamps') {
+        if (mesh.isPoints) mesh.material = mesh.userData.objectKind === 'lampPools' ? lampPoolMaterial : lampGlowMaterial;
+        if (mesh.isLineSegments) mesh.material = lampShaftMaterial;
+        return;
+      }
       if (!mesh.isMesh) return;
       const position = mesh.geometry.getAttribute('position');
       const batchIds = mesh.geometry.getAttribute('_batchid');
       const table = batchTableFor(mesh);
       const colors = new Float32Array(position.count * 3);
       const cachedColors = new Map();
-      const originalMaterial = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material;
       for (let index = 0; index < position.count; index++) {
         const batchId = batchIds ? batchIds.getX(index) : 0;
         let color = cachedColors.get(batchId);
         if (!color) {
           let attributes = {};
           if (table && batchIds) { try { attributes = table.getDataFromId(batchId)?.attributes || {}; } catch {} }
-          if (kind === 'ground') color = GROUND_COLORS[classOfGround(attributes)];
-          else if (kind === 'trees') color = new THREE.Color('#638168');
-          else if (kind === 'bridges') color = new THREE.Color('#d1d7cb');
-          else if (kind === 'tanks') color = new THREE.Color('#d9d9cb');
-          else if (kind === 'lights') color = new THREE.Color('#586564');
-          else {
-            const identifier = attributes.GEBOUWNUMMER || attributes['gml:id'] || `${batchId}:${Math.round(position.getX(index))}:${Math.round(position.getZ(index))}`;
-            color = BUILDING_COLORS[hashNumber(identifier) % BUILDING_COLORS.length];
-          }
+          color = ['streets', 'bridgeSurfaces'].includes(kind) ? streetColor(mesh.userData.surfaceKind) : kind === 'yards' ? yardColor(mesh.userData.surfaceKind) : featureColor(kind, attributes, `${batchId}:${Math.round(position.getX(index))}:${Math.round(position.getZ(index))}`);
           cachedColors.set(batchId, color);
         }
         color.toArray(colors, index * 3);
       }
       mesh.geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
       mesh.material = materials[kind];
-      mesh.castShadow = kind !== 'ground';
+      mesh.castShadow = !['ground', 'streets', 'yards', 'bridgeSurfaces'].includes(kind);
       mesh.receiveShadow = true;
     });
-    if (kind === 'lights') addLampGlows(model);
-  }
-  function addLampGlows(model) {
-    model.updateMatrixWorld(true);
-    const meshes = []; model.traverse(mesh => { if(mesh.isInstancedMesh) meshes.push(mesh); });
-    const instanceMatrix = new THREE.Matrix4(), fullMatrix = new THREE.Matrix4();
-    const vertex = new THREE.Vector3(), topVertex = new THREE.Vector3();
-    for (const mesh of meshes) {
-      const positions = [], vertices = mesh.geometry.getAttribute('position');
-      for (let instance = 0; instance < mesh.count; instance++) {
-        mesh.getMatrixAt(instance, instanceMatrix);
-        fullMatrix.multiplyMatrices(mesh.matrixWorld, instanceMatrix);
-        let highest = -Infinity;
-        for (let index = 0; index < vertices.count; index++) {
-          vertex.fromBufferAttribute(vertices, index).applyMatrix4(fullMatrix);
-          const elevation = vertex.dot(up);
-          if (elevation > highest) { highest = elevation; topVertex.fromBufferAttribute(vertices, index); }
-        }
-        topVertex.applyMatrix4(instanceMatrix); positions.push(topVertex.x, topVertex.y, topVertex.z);
-      }
-      const geometry = new THREE.BufferGeometry(); geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-      mesh.add(new THREE.Points(geometry, lampGlowMaterial));
-    }
+    if (kind === 'trees' || kind === 'lights') objectDetail.addModel(model);
+    if (kind === 'trees') treeBatches.addModel(model);
   }
 
   for (const [kind, id] of LAYERS) {
-    const tiles = new TilesRenderer(`${DATA_BASE}${id}/tileset.json`);
+    const tiles = new TilesRenderer(id.startsWith('./') ? id : `${DATA_BASE}${id}/tileset.json`);
     tiles.kind = kind;
-    tiles.errorTarget = kind === 'buildings' ? 2 : 0;
+    if (kind === 'buildings') tiles.registerPlugin({
+      name: 'Reach the first available building geometry',
+      preprocessNode(tile) {
+        if (!tile.internal.hasContent && tile.children?.length) tile.geometricError = Infinity;
+      },
+    });
+    if (kind !== 'buildings') { tiles.loadSiblings = false; tiles.loadAncestors = false; }
+    tiles.errorTarget = kind === 'buildings' ? 8 : 0;
     tiles.setCamera(camera);
     tiles.group.matrixAutoUpdate = false;
     tiles.group.matrix.copy(earthToLocal);
     if (tilesets.length) {
-      tiles.lruCache = tilesets[0].lruCache;
       tiles.downloadQueue = tilesets[0].downloadQueue;
       tiles.parseQueue = tilesets[0].parseQueue;
       tiles.processNodeQueue = tilesets[0].processNodeQueue;
     } else {
-      tiles.lruCache.maxBytesSize = 260 * 1024 * 1024;
-      tiles.lruCache.minBytesSize = 200 * 1024 * 1024;
       tiles.downloadQueue.maxJobsPerOrigin = 10;
       tiles.parseQueue.maxJobs = 2;
     }
-    tiles.addEventListener('load-model', event => { colorModel(event.scene, kind); loadedTiles++; loadedByLayer[kind] = (loadedByLayer[kind] || 0) + 1; renderer.shadowMap.needsUpdate = true; requestRender(); });
+    const originalCache = tiles.lruCache;
+    tiles.lruCache = tileCaches[kind] || tileCaches.city;
+    tiles.lruCache.unloadPriorityCallback = originalCache.unloadPriorityCallback;
+    tiles.addEventListener('load-model', event => { colorModel(event.scene, kind); if (kind === 'ground') sourceFusion.addGround(event.scene); loadedTiles++; loadedByLayer[kind] = (loadedByLayer[kind] || 0) + 1; renderer.shadowMap.needsUpdate = true; requestRender(); });
+    if (kind === 'ground') tiles.addEventListener('dispose-model', event => sourceFusion.removeGround(event.scene));
+    if (kind === 'trees' || kind === 'lights') tiles.addEventListener('dispose-model', event => { if (kind === 'trees') treeBatches.removeModel(event.scene); objectDetail.removeModel(event.scene); });
     for (const event of ['load-tileset', 'needs-update', 'tile-visibility-change', 'tiles-load-end']) tiles.addEventListener(event, requestRender);
     tiles.addEventListener('load-error', event => {
       loadErrors++; console.warn(`010: ${kind} tile could not load`, event.error);
@@ -315,8 +266,16 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     scene.add(tiles.group);
     tilesets.push(tiles);
   }
+  const layerPriority = { lamps: 6, streets: 6, yards: 5, ground: 5, bridges: 4, bridgeSurfaces: 3, buildings: 3, tanks: 2, lights: 1, trees: 0 };
+  const prioritizeCitySurfaces = (a, b) => {
+    const firstLayer = a.internal?.renderer?.kind, secondLayer = b.internal?.renderer?.kind;
+    if (firstLayer && secondLayer && firstLayer !== secondLayer) return layerPriority[firstLayer] - layerPriority[secondLayer];
+    return unifiedPriorityCallback(a, b);
+  };
+  tilesets[0].downloadQueue.priorityCallback = prioritizeCitySurfaces;
+  tilesets[0].parseQueue.priorityCallback = prioritizeCitySurfaces;
   async function loadOverview() {
-    const palette = { water: '#397d86', farmland: '#a6af7b', forest: '#678368', grass: '#869c72', land: '#b7baa2', urban: '#b9b7a6', sand: '#d7c8a4' };
+    const palette = { context: '#b5bfad', water: '#367b86', farmland: '#a6af7b', forest: '#678368', grass: '#869c72', land: '#b7baa2', urban: '#b9b7a6', sand: '#d7c8a4' };
     const positionsByKind = new Map();
     function addPolygon(rings, kind, height) {
       const contours = rings.map(ring => ring.slice(0, -1).map(([lon, lat]) => localPosition(lat, lon, height)));
@@ -327,52 +286,67 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
       const faces = THREE.ShapeUtils.triangulateShape(polygon, holes);
       if (!positionsByKind.has(kind)) positionsByKind.set(kind, []);
       const positions = positionsByKind.get(kind);
-      for (const face of faces) for (const index of face) positions.push(points[index].x, points[index].y, points[index].z);
+      const pendingTriangles = faces.map(face => face.map(index => points[index]));
+      while (pendingTriangles.length) {
+        const triangle = pendingTriangles.pop();
+        const edgeLengths = triangle.map((point, index) => point.distanceToSquared(triangle[(index + 1) % 3]));
+        const longestEdge = edgeLengths.indexOf(Math.max(...edgeLengths));
+        if (edgeLengths[longestEdge] > 1200 * 1200) {
+          const a = triangle[longestEdge], b = triangle[(longestEdge + 1) % 3], c = triangle[(longestEdge + 2) % 3];
+          const geographicMidpoint = geographicPosition(a.clone().add(b).multiplyScalar(0.5));
+          const midpoint = localPosition(geographicMidpoint.lat, geographicMidpoint.lon, height);
+          pendingTriangles.push([a, midpoint, c], [midpoint, b, c]);
+        } else {
+          for (const point of triangle) positions.push(point.x, point.y, point.z);
+        }
+      }
     }
-    function addFeatures(collection, base = false) {
+    function addFeatures(collection, base = false, context = false) {
       for (const feature of collection.features) {
-        const kind = base ? 'land' : feature.properties.kind || 'land';
+        const kind = context ? 'context' : base ? 'land' : feature.properties.kind || 'land';
         const heights = { land: -2.7, urban: -2.4, farmland: -2.1, grass: -1.8, forest: -1.5, sand: -1.2, water: -0.9 };
-        const height = base ? -3.0 : heights[kind] ?? -2.4;
+        const height = context ? -3.2 : base ? -3.0 : heights[kind] ?? -2.4;
         const polygons = feature.geometry.type === 'Polygon' ? [feature.geometry.coordinates] : feature.geometry.type === 'MultiPolygon' ? feature.geometry.coordinates : [];
         for (const polygon of polygons) addPolygon(polygon, kind, height);
       }
     }
-    const responses = await Promise.all([fetch('./data/municipality.geojson'), fetch('./data/overview.geojson')]);
-    if (responses[0].ok) addFeatures(await responses[0].json(), true);
-    if (responses[1].ok) addFeatures(await responses[1].json());
+    const responses = await Promise.all(['municipality.geojson', 'overview.geojson', 'context-land.geojson'].map(name => fetch(`./data/${name}`)));
+    if (responses.some(response => !response.ok)) throw new Error('Overview data could not load.');
+    addFeatures(await responses[0].json(), true);
+    addFeatures(await responses[1].json());
+    for (const response of responses.slice(2)) addFeatures(await response.json(), false, true);
     for (const [kind, positions] of positionsByKind) {
       const geometry = new THREE.BufferGeometry();
       geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
       geometry.computeVertexNormals();
-      let material;
-      if (kind === 'water') {
-        const color = new THREE.Color(palette.water); const vertexColors = new Float32Array(positions.length);
-        for (let index = 0; index < vertexColors.length; index += 3) color.toArray(vertexColors, index);
-        geometry.setAttribute('color', new THREE.BufferAttribute(vertexColors, 3)); material = materials.ground;
-      } else material = new THREE.MeshStandardMaterial({ color: palette[kind] || palette.land, roughness: 0.96, side: THREE.DoubleSide });
-      const mesh = new THREE.Mesh(geometry, material); mesh.receiveShadow = true;
+      const color = new THREE.Color(palette[kind] || palette.land), vertexColors = new Float32Array(positions.length);
+      for (let index = 0; index < vertexColors.length; index += 3) color.toArray(vertexColors, index);
+      geometry.setAttribute('color', new THREE.BufferAttribute(vertexColors, 3));
+      const mesh = new THREE.Mesh(geometry, materials.ground); mesh.receiveShadow = true;
       overview.add(mesh);
     }
+    overviewState = 'ready';
     renderer.shadowMap.needsUpdate = true;
     requestRender();
   }
-  loadOverview().catch(error => console.warn('010: overview could not load', error));
+  loadOverview().catch(error => { overviewState = 'error'; console.warn('010: overview could not load', error); requestRender(); });
 
   function updateCamera() {
     const aspect = width / height;
+    lampPixelsPerMetre.value = height * renderer.getPixelRatio() / view.span;
     glowUniforms.size.value = Math.max(1.5, Math.min(6, 6 * height / view.span));
     camera.left = -view.span * aspect / 2;
     camera.right = view.span * aspect / 2;
     camera.top = view.span / 2;
     camera.bottom = -view.span / 2;
     const bearing = view.bearing * DEGREES, distance = 40000;
-    camera.position.copy(target).add(new THREE.Vector3(Math.sin(bearing) * 0.8, 0.82, Math.cos(bearing) * 0.8).normalize().multiplyScalar(distance));
+    camera.position.copy(target).add(new THREE.Vector3(Math.sin(bearing), 1 / Math.sqrt(2), Math.cos(bearing)).normalize().multiplyScalar(distance));
     camera.lookAt(target);
     camera.updateProjectionMatrix();
     camera.updateMatrixWorld();
     updateShadowCamera();
-    for (const tiles of tilesets) tiles.setResolutionFromRenderer(camera, renderer);
+    const drawingSize = renderer.getDrawingBufferSize(new THREE.Vector2());
+    for (const tiles of tilesets) tiles.setResolution(camera, drawingSize.x, drawingSize.y);
     requestRender();
   }
   function updateShadowCamera() {
@@ -388,33 +362,58 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     const precipitation = weatherUniforms.rain.value > 0 || weatherUniforms.snow.value > 0;
     if (disposed || !needsRender && !precipitation) return;
     const now = performance.now();
+    const renderingCity = needsRender;
     if (!needsRender && now - lastPresentation < 32) { scheduledFrame = requestAnimationFrame(frame); return; }
     if (needsRender) {
     needsRender = false;
     scene.updateMatrixWorld(true);
     for (const tiles of tilesets) {
-      const visible = tiles.kind === 'ground' ? view.span < 6500 : tiles.kind === 'trees' ? view.span < 3500 && (loadedByLayer.buildings || 0) >= 6 : tiles.kind === 'lights' ? view.span < 5000 && uniforms.night.value > 0.1 && (loadedByLayer.ground || 0) > 0 : tiles.kind === 'bridges' ? view.span < 12000 : tiles.kind === 'tanks' ? view.span < 18000 : true;
+      const visible = tiles.kind === 'streets' ? true : tiles.kind === 'lamps' ? uniforms.night.value > 0.1 : tiles.kind === 'ground' ? view.span < 1400 : tiles.kind === 'trees' ? view.span < 3500 && (loadedByLayer.buildings || 0) >= 6 : tiles.kind === 'lights' ? view.span < 700 && uniforms.night.value > 0.1 : ['bridges', 'bridgeSurfaces'].includes(tiles.kind) ? view.span < 12000 : tiles.kind === 'tanks' ? view.span < 18000 : true;
+      if (!visible && tiles.group.visible) {
+        for (const tile of tiles.usedSet) tiles.lruCache.markUnused(tile);
+        tiles.lruCache.scheduleUnload();
+      }
       tiles.group.visible = visible;
       if (visible) tiles.update();
     }
-    if (uniforms.night.value > 0.1 && view.span < 6500) {
+    if (tilesets.find(tiles => tiles.kind === 'ground').group.visible) {
+      sourceFusion.setVisibleBridges(tilesets.filter(tiles => tiles.kind === 'bridges' && tiles.group.visible).flatMap(tiles => [...tiles.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean)));
+      if (sourceFusion.update()) renderer.shadowMap.needsUpdate = true;
+    }
+    const reflectCity = uniforms.night.value > 0.1 && view.span < 6500;
+    if (reflectCity) {
       reflectionCamera.copy(camera);
-      reflectionCamera.position.y *= -1;
+      const waterPlaneHeight = localPosition(view.lat, view.lon, -0.9).y;
+      reflectionCamera.position.y = 2 * waterPlaneHeight - camera.position.y;
       reflectionCamera.up.set(0, -1, 0);
-      reflectionCamera.lookAt(target.x, -target.y, target.z);
+      reflectionCamera.lookAt(target.x, 2 * waterPlaneHeight - target.y, target.z);
       reflectionCamera.updateMatrixWorld();
       uniforms.reflectionMatrix.value.multiplyMatrices(reflectionCamera.projectionMatrix, reflectionCamera.matrixWorldInverse);
+    }
+    sun.shadow.updateMatrices(sun);
+    const detail = objectDetail.update(camera, renderer.getDrawingBufferSize(new THREE.Vector2()).y, { fullDetail: capturingFullDetail, cullingCameras: reflectCity ? [camera, reflectionCamera, sun.shadow.camera] : [camera, sun.shadow.camera] });
+    if (detail.changed) renderer.shadowMap.needsUpdate = true;
+    if (detail.pending) requestRender();
+    const treeLayer = tilesets.find(tiles => tiles.kind === 'trees');
+    treeBatches.update(new Set(treeLayer.group.visible ? [...treeLayer.visibleTiles].map(tile => tile.engineData.scene) : []));
+    for (const tile of tilesets.find(tiles => tiles.kind === 'lamps').visibleTiles) tile.engineData.scene?.traverse(object => { if (object.isLineSegments) object.visible = view.span >= 700 && view.span < 3500; });
+    if (reflectCity) {
       const background = scene.background; scene.background = new THREE.Color(0x000000);
       const groundLayer = tilesets.find(layer => layer.kind === 'ground');
       const groundVisible = groundLayer.group.visible; groundLayer.group.visible = false; overview.visible = false; sea.visible = false;
       renderer.setRenderTarget(reflectionTarget); renderer.render(scene, reflectionCamera); renderer.setRenderTarget(null);
       groundLayer.group.visible = groundVisible; overview.visible = true; sea.visible = true; scene.background = background;
     }
-    renderer.setRenderTarget(cityTarget); renderer.render(scene, camera); renderer.setRenderTarget(null);
+    renderer.setRenderTarget(cityTarget); renderer.render(scene, camera); lastCityRender = { ...renderer.info.render }; renderer.setRenderTarget(null);
+    if (loadMilestones.firstBuildingsSubmittedMs === null && tilesets.find(tiles => tiles.kind === 'buildings').visibleTiles.size) loadMilestones.firstBuildingsSubmittedMs = performance.now();
+    if (loadMilestones.initialDetailSettledMs === null && viewReadiness().ready) loadMilestones.initialDetailSettledMs = performance.now();
     reportStatus();
     }
     weatherUniforms.time.value = now / 1000;
     renderer.render(presentationScene, presentationCamera); lastPresentation = now;
+    const submitted = performance.now();
+    if (renderingCity) recordTiming(frameTimes, submitted - now);
+    if (latestInputTime !== null) { recordTiming(inputRenderTimes, submitted - latestInputTime); latestInputTime = null; }
     if (needsRender || precipitation) scheduledFrame = requestAnimationFrame(frame);
   }
   function setView(nextView, notify = true) {
@@ -442,9 +441,6 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     sky.groundColor.set(night > 0.5 ? '#28344b' : '#9b8975');
     sky.intensity = night > 0.5 ? 0.8 : 1.25 + cloud * 0.35;
     scene.background.set(night > 0.5 ? '#152b40' : golden ? '#cfc5ab' : '#adc8c7');
-    sea.material.color.set(night > 0.5 ? '#173746' : golden ? '#53858a' : '#397d86');
-    sea.material.emissive.set(night > 0.5 ? '#102b3c' : '#000000');
-    sea.material.emissiveIntensity = night > 0.5 ? 0.35 : 0;
     const wetness = Math.min(1, Number(lighting.rain) || 0);
     weatherUniforms.rain.value = wetness > 0 ? Math.max(0.2, wetness) : 0;
     weatherUniforms.snow.value = Math.min(1, Number(lighting.snow) || 0);
@@ -454,15 +450,74 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     updateShadowCamera();
     requestRender();
   }
-  function resize() {
-    const bounds = canvas.getBoundingClientRect();
-    width = Math.max(1, bounds.width); height = Math.max(1, bounds.height);
-    const pixelScale = 1;
-    renderer.setSize(Math.round(width / pixelScale), Math.round(height / pixelScale), false);
-    reflectionTarget.setSize(Math.round(width / 2), Math.round(height / 2));
-    cityTarget.setSize(Math.round(width / pixelScale), Math.round(height / pixelScale));
+  function setRenderDimensions(nextWidth, nextHeight, pixelRatio) {
+    width = nextWidth; height = nextHeight;
+    renderer.setPixelRatio(pixelRatio);
+    renderer.setSize(Math.round(width), Math.round(height), false);
+    const drawingSize = renderer.getDrawingBufferSize(new THREE.Vector2());
+    reflectionTarget.setSize(Math.round(drawingSize.x / 2), Math.round(drawingSize.y / 2));
+    uniforms.reflectionTexel.value.set(1 / reflectionTarget.width, 1 / reflectionTarget.height);
+    cityTarget.setSize(drawingSize.x, drawingSize.y);
     weatherUniforms.resolution.value.set(width, height);
     updateCamera();
+  }
+  function resize() {
+    const bounds = canvas.getBoundingClientRect();
+    setRenderDimensions(Math.max(1, bounds.width), Math.max(1, bounds.height), Math.min(window.devicePixelRatio || 1, 2));
+  }
+  let capturePending = false;
+  async function captureCanvas(captureWidth, captureHeight) {
+    if (capturePending) throw new Error('An image is already being rendered.');
+    if (disposed) throw new Error('The city view has closed.');
+    if (!Number.isInteger(captureWidth) || !Number.isInteger(captureHeight) || captureWidth < 1 || captureHeight < 1 || Math.max(captureWidth, captureHeight) > renderer.capabilities.maxTextureSize) throw new Error('The requested image size is not supported by this device.');
+    capturePending = true;
+    const previousTreeCacheLimit = tileCaches.trees.maxBytesSize;
+    tileCaches.trees.maxBytesSize = Math.max(previousTreeCacheLimit, 64 * 1024 * 1024);
+    const captureView = { ...view }, captureTarget = target.clone(), captureCamera = camera.clone();
+    const captureAspect = captureWidth / captureHeight;
+    captureCamera.left = -captureView.span * captureAspect / 2;
+    captureCamera.right = captureView.span * captureAspect / 2;
+    captureCamera.updateProjectionMatrix(); captureCamera.updateMatrixWorld();
+    for (const tiles of tilesets) { tiles.setCamera(captureCamera); tiles.setResolution(captureCamera, captureWidth, captureHeight); }
+    try {
+      const started = performance.now();
+      let settledFrames = 0;
+      while (settledFrames < 3) {
+        if (disposed) throw new Error('The city view has closed.');
+        scene.updateMatrixWorld(true);
+        for (const tiles of tilesets) if (tiles.group.visible) tiles.update();
+        settledFrames = viewReadiness().ready && loadedTiles > 0 ? settledFrames + 1 : 0;
+        if (performance.now() - started > 20000) throw new Error('City detail is still loading. Please try exporting again shortly.');
+        await new Promise(resolve => requestAnimationFrame(resolve));
+      }
+      const liveView = { ...view }, liveTarget = target.clone();
+      try {
+        Object.assign(view, captureView); target.copy(captureTarget);
+        setRenderDimensions(captureWidth, captureHeight, 1);
+        capturingFullDetail = true;
+        if (scheduledFrame) cancelAnimationFrame(scheduledFrame);
+        scheduledFrame = null; needsRender = true; frame();
+        const output = document.createElement('canvas');
+        output.width = captureWidth; output.height = captureHeight;
+        const context = output.getContext('2d');
+        if (!context) throw new Error('The image canvas could not be created.');
+        context.drawImage(canvas, 0, 0);
+        return output;
+      } finally {
+        capturingFullDetail = false;
+        Object.assign(view, liveView); target.copy(liveTarget);
+        for (const tiles of tilesets) tiles.deleteCamera(captureCamera);
+        resize();
+        if (scheduledFrame) cancelAnimationFrame(scheduledFrame);
+        scheduledFrame = null; needsRender = true; frame();
+      }
+    } finally {
+      for (const tiles of tilesets) tiles.deleteCamera(captureCamera);
+      tileCaches.trees.maxBytesSize = previousTreeCacheLimit;
+      tileCaches.trees.scheduleUnload();
+      capturePending = false;
+      requestRender();
+    }
   }
   const pointers = new Map();
   let drag = null;
@@ -482,6 +537,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   function pointerDistance() { const [a, b] = [...pointers.values()]; return Math.hypot(a.x - b.x, a.y - b.y); }
   function pointerMove(event) {
     if (!pointers.has(event.pointerId)) return;
+    latestInputTime = event.timeStamp;
     pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
     if (drag.rotating) { setView({ bearing: drag.bearing + (event.clientX - drag.startX) * 0.25 });
     } else if (pointers.size === 2 && drag.distance) {
@@ -493,6 +549,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   }
   function pointerUp(event) { pointers.delete(event.pointerId); drag = null; pointers.clear(); canvas.style.cursor = 'grab'; }
   function wheel(event) {
+    latestInputTime = event.timeStamp;
     event.preventDefault();
     const anchor = groundAt(event.clientX, event.clientY);
     setView({ span: view.span * Math.exp(Math.max(-200, Math.min(200, event.deltaY)) * 0.0022) }, false);
@@ -512,16 +569,17 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   const observer = new ResizeObserver(resize); observer.observe(canvas);
   resize(); setLighting(lighting); reportStatus();
   return {
-    setView, getView: () => ({ ...view }), setLighting,
+    setView, getView: () => ({ ...view }), setLighting, captureCanvas,
     zoom: factor => setView({ span: view.span / factor }), reset: () => setView(DEFAULT_VIEW),
     render: () => { needsRender = true; frame(); }, getCanvas: () => canvas, resize,
-    getDiagnostics: () => ({ loadedTiles, loadErrors, surfaceSamples: surfaceDiagnostics(), cacheBytes: tilesets[0].lruCache.cachedBytes, cacheFull: tilesets[0].lruCache.isFull(), groundTiles: [...tilesets.find(layer => layer.kind === 'ground').visibleTiles].map(tile => { const bounds = new THREE.Box3().setFromObject(tile.engineData.scene); return { uri: tile.content?.uri || tile.content?.url, bounds: [bounds.min.toArray(), bounds.max.toArray()] }; }), layers: tilesets.map(tiles => ({ kind: tiles.kind, visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing })), rendering: renderer.info.render, memory: renderer.info.memory }),
+    getDiagnostics: () => ({ readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), sourceFusion: sourceFusion.getDiagnostics(), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count || mesh.geometry.getAttribute('position')?.count || 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
     dispose() {
       disposed = true; if (scheduledFrame) cancelAnimationFrame(scheduledFrame); observer.disconnect();
       for (const [event, handler] of [['pointerdown', pointerDown], ['pointermove', pointerMove], ['pointerup', pointerUp], ['pointercancel', pointerUp], ['wheel', wheel], ['dblclick', doubleClick], ['contextmenu', contextMenu]]) canvas.removeEventListener(event, handler);
+      sourceFusion.dispose(); treeBatches.dispose(); objectDetail.dispose();
       for (const tiles of tilesets) tiles.dispose();
       for (const material of Object.values(materials)) material.dispose();
-      lampGlowMaterial.dispose(); reflectionTarget.dispose(); cityTarget.dispose(); presentationQuad.geometry.dispose(); presentationMaterial.dispose();
+      lampGlowMaterial.dispose(); lampPoolMaterial.dispose(); lampShaftMaterial.dispose(); reflectionTarget.dispose(); cityTarget.dispose(); presentationQuad.geometry.dispose(); presentationMaterial.dispose();
       overview.traverse(object => { object.geometry?.dispose(); object.material?.dispose(); });
       sea.geometry.dispose(); sea.material.dispose(); renderer.dispose();
     },

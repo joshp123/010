@@ -3,7 +3,6 @@ import { watchWeather, rotterdamTime } from './weather.js';
 
 export const PUBLIC_DOMAIN = '010.jjpcodes.com';
 const INITIAL_VIEW = { lat: 51.9105, lon: 4.4875, span: 1700, bearing: 35 };
-const MUNICIPALITY_VIEW = { lat: 51.925, lon: 4.265, span: 30000, bearing: 0 };
 const byId = id => document.getElementById(id);
 const url = new URL(location.href);
 let lightingMode = ['live', 'day', 'golden', 'night'].includes(url.searchParams.get('light')) ? url.searchParams.get('light') : 'live';
@@ -72,6 +71,22 @@ function navigateTo(destination) {
   scene?.setView(view);
   document.querySelectorAll('.destination-row button').forEach(button => button.classList.toggle('active', button.dataset.destination === destination.id));
   closeSearch();
+}
+
+function showMunicipality() {
+  const bounds = byId('city').getBoundingClientRect();
+  const aspect = bounds.width / bounds.height;
+  const portrait = aspect < 1;
+  const extent = minimapProjection || { minX: 3.942, maxX: 4.603, minY: 51.842, maxY: 52.002 };
+  const eastWest = (extent.maxX - extent.minX) * 69000;
+  const northSouth = (extent.maxY - extent.minY) * 111000;
+  const horizontal = portrait ? northSouth : eastWest;
+  const vertical = (portrait ? eastWest : northSouth) / Math.sqrt(3);
+  navigateTo({
+    lon: (extent.minX + extent.maxX) / 2, lat: (extent.minY + extent.maxY) / 2,
+    span: Math.max(horizontal / aspect, vertical) * 1.18,
+    bearing: portrait ? 90 : 0, name: 'Gemeente Rotterdam',
+  });
 }
 
 function applyLighting() {
@@ -220,7 +235,7 @@ async function loadMinimap() {
     const minY = Math.min(...points.map(p => p[1])), maxY = Math.max(...points.map(p => p[1]));
     const horizontalScale = 170 / (maxX - minX), verticalScale = 65 / (maxY - minY);
     const point = ([lon, lat]) => [5 + (lon - minX) * horizontalScale, 72 - (lat - minY) * verticalScale];
-    minimapProjection = { point, minX, minY, horizontalScale, verticalScale };
+    minimapProjection = { point, minX, maxX, minY, maxY, horizontalScale, verticalScale };
     for (const polygon of polygons) {
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('d', polygon.map(ring => ring.map((p, index) => `${index ? 'L' : 'M'}${point(p).map(n => n.toFixed(2)).join(',')}`).join(' ') + 'Z').join(' '));
@@ -238,9 +253,9 @@ byId('zoom-in').addEventListener('click', () => scene?.zoom(1.4));
 byId('zoom-out').addEventListener('click', () => scene?.zoom(.7));
 byId('rotate').addEventListener('click', () => scene?.setView({ ...currentView, bearing: currentView.bearing + 45 }));
 byId('home').addEventListener('click', () => navigateTo({ ...INITIAL_VIEW, name: 'Erasmusbrug' }));
-byId('whole-city').addEventListener('click', () => navigateTo({ ...MUNICIPALITY_VIEW, name: 'Gemeente Rotterdam' }));
+byId('whole-city').addEventListener('click', showMunicipality);
 byId('minimap').addEventListener('click', event => {
-  if (!minimapProjection) return navigateTo({ ...MUNICIPALITY_VIEW, name: 'Gemeente Rotterdam' });
+  if (!minimapProjection) return showMunicipality();
   const bounds = byId('minimap-svg').getBoundingClientRect();
   const x = (event.clientX - bounds.left) / bounds.width * 180, y = (event.clientY - bounds.top) / bounds.height * 80;
   const { minX, minY, horizontalScale, verticalScale } = minimapProjection;

@@ -67,3 +67,9 @@ The attachment is not stored here because it includes private browser chrome. Th
 ## Bitter Lesson: hard requirement
 
 > btw recall also that maybe new models will come in the future that are better at this than you, so you should design things in a way that its easy for a new model to come along again, understand what you did from first principles, and re-do all the work that its better at. we must be BITTER LESSON PILLED! HARD REQUIREMENT!
+
+## Fidelity and data combination
+
+> overall idea for fidelity: ensure the highest fidelity within reason by sensibly combining as many datasets as necessary to ensrue appropritaley high quatliy data. pareto efficiency type idea
+
+> well remember to think holistically across the entire city not just individual details

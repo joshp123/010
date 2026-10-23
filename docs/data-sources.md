@@ -4,6 +4,8 @@ Written by AI, gpt-6-astra, 2026-10-24.
 
 The map uses public geographic records. Its geometry is not generated from a visual prompt. Code is MIT; the source datasets retain their own licenses.
 
+The visible map uses a coherent miniature style. Raw photographic streets beside stylised buildings were explicitly rejected by the user. The photographic sources below are retained as research inputs and potential inputs to a future style-generation stage; they are not the desired final appearance. See [the requirements](../requirements/README.md).
+
 ## Municipality and overview
 
 `dist/data/municipality.geojson` is the exact, unsimplified GM0599 geometry returned by [Kadaster's official municipal boundaries API](https://api.pdok.nl/kadaster/brk-bestuurlijke-gebieden/ogc/v1/collections/gemeentegebied/items?naam=Rotterdam&f=json). It includes the port, Maasvlakte, Hoek van Holland, Rozenburg, Pernis and the eastern and southern districts. Coordinates are longitude, latitude (CRS84).
@@ -86,7 +88,7 @@ License: **CC BY 4.0**. Credit **Samenwerkingsverband Beeldmateriaal / PDOK — 
 
 Downloaded and visually inspected WMS samples in `work/source-quality/` show real streets, roofs, road markings and port infrastructure at Kop van Zuid, Hoek van Holland and Maasvlakte. `pdok-2026-street-detail.jpg` requests a 100-metre area at 1250 pixels (8 cm per output pixel); this is sampling resolution, not an independent measurement of the source ground resolution. Each `*-source.json` records the exact request. The national coverage statement plus these samples supports using the service throughout the municipality. Stream only the visible area rather than preloading the municipality at maximum resolution.
 
-Project the imagery onto correctly placed terrain and ground surfaces. Upward roof surfaces can also use it, but orthophotos contain building lean, shadows and the source's acquisition-time state. They do not supply street-facing facade photography. The Rotterdam elevation layer supplies terrain shape, not photo color. Preserve real source textures where available and apply styling as a later rendering step.
+The projection experiment was rejected as the visible presentation. Orthophotos contain building lean, shadows and the acquisition-time state; projecting them indiscriminately onto ground and roofs creates false geometry cues. Retain these images as evidence and as input to a replaceable reconstruction/stylisation stage. They do not supply street-facing facade photographs. The Rotterdam elevation layer supplies terrain shape, not colour.
 
 ## Rebuilding
 
@@ -97,3 +99,33 @@ Run `python3 scripts/fetch-data.py` in a Nix or devenv environment containing Py
 [3DBAG](https://3dbag.bk.tudelft.nl/nl/download) provides nationwide LoD2.2 roof geometry derived from BAG footprints and AHN airborne laser data. The [official release notes](https://github.com/3DBAG/3dbag-docs/blob/master/includes/release_notes.md) describe the 2025-09-03 release with 3D Tiles 1.1 and GLB content. Its published LoD2.2 endpoint is `https://data.3dbag.nl/v20250903/cesium3dtiles/lod22/tileset.json`. That host timed out during this investigation, so no actual Rotterdam sample from this edition was verified. It is a geometry alternative, not verified photographic facade coverage.
 
 The [3DBAG copyright terms](https://docs.3dbag.nl/nl/copyright/) specify **CC BY 4.0**, credit **© 3DBAG by tudelft3d and 3DGI**, a source link and an indication of changes. These must be added if the data is used. The verified Rotterdam photo textures plus current PDOK imagery provide a more direct fidelity improvement than changing the building geometry source alone.
+
+## Conflicting bridge surfaces
+
+Native bridge meshes and BGT bridge parts overlap in the supplied datasets. `dist/source-fusion.js` gives the complete native structure precedence: overlapping BGT bridge parts are suppressed, and paving within three metres of a native horizontal surface is clipped to its footprint. Adjacent paving remains. Source geometries and attributes are retained and restored when the native bridge unloads. This is geometric source reconciliation, not a correction to the upstream survey. The tolerance is a documented current choice; future source editions should be checked against it.
+
+## Street network at neighbourhood scale
+
+The same public Kadaster BRT TOP10NL API supplies `wegdeel_vlak`, `wegdeel_lijn` and `spoorbaandeel_lijn`. The retained municipality subset contains 64,204 road polygons, 2,495 paths and 1,925 rail lines. `source-data/transport-network.geojson.gz` preserves coordinates, source identities and the Dutch classification fields. It is input to the build, not downloaded by the browser.
+
+`dist/data/streets/manifest.json` records the exact source hash and transformation. The generated 354 standard 3D Tiles contain 233,864 triangles. The browser selects geographic tiles; a checked default desktop view requested 19 content tiles. Topology remains intact and quantisation error is bounded to 2 cm. Surface classes are styled at runtime.
+
+`hoogteniveau` is relative ordering, not height in metres. Bridge/tunnel structures, underground levels, ferry links and disused features are excluded from this flat street layer. Narrow path widths and rail corridor widths are illustrations derived from supplied width classes/track counts. This source is not a live transport feed. Public transport observations remain a separate requirement.
+
+## Surrounding land
+
+[Natural Earth land](https://www.naturalearthdata.com/downloads/10m-physical-vectors/10m-land/) supplies quiet context outside Rotterdam. Its scale is 1:10 million, not 10-metre resolution. The source commit, checksum and acquisition metadata are recorded in `context-land.geojson`; the exact municipal polygon is subtracted after simplification so this coarse source cannot cover city water. Natural Earth is [public domain](https://www.naturalearthdata.com/about/terms-of-use/). Measured BRT and municipal geometry retain authority inside Rotterdam.
+
+## Prepared municipal streetlights
+
+`scripts/build-lamps.mjs` acquired all 653 advertised municipal light tiles and 154 prototypes. It extracts 104,728 unique source instance origins and source-derived head positions within GM0599 into 193 compact glTF/3D Tiles files. The full display layer is 3.88 MB raw, approximately 2.50 MB gzip; only nearby tiles are requested. The source manifest records every URL, hash, acquisition time, exclusion and coordinate assumption. Source positions are retained to roughly one-centimetre output quantisation; that is a processing bound, not survey accuracy. Straight distant shafts and glowing heads are stylistic interpretations, not observations that each lamp is currently on. Native pole geometry remains available at close range.
+
+## Prepared public transport linkage
+
+Written by AI on 2026-10-24 by model GPT-6.
+
+The free [OVapi national GTFS archive](https://gtfs.ovapi.nl/nl/gtfs-nl.zip), feed version 9644 (2026-10-23 through 2026-12-12), supplies 150 routes, 793 municipality-clipped shapes and 54,584 trip links. `dist/data/transit/map.pb.gz` is a 234 kB compact protobuf, defined in `source-data/transit/map.proto`. The exact Kadaster GM0599 polygon includes Hoek van Holland and the port. Source vertices are retained without simplification; clipping introduces boundary intersections and coordinates are quantised to 1e-7 degrees (at most 7 mm processing displacement). Shapes contain plan geometry, not measured tunnel depth or live positions.
+
+The archive’s retained `licenses.txt` assigns **ODbL 1.0 to shapes.txt**, with **CC0 1.0** for the other timetable tables used. Ticketing tables with restrictive terms are excluded. Attribute **OVapi / Stichting OpenGeo, GTFS NL; shape database under ODbL 1.0** and link the [source](https://gtfs.ovapi.nl/README) and [licence](https://opendatacommons.org/licenses/odbl/1-0/). The adapted municipal shape database is available under ODbL, with share-alike terms; the MIT code licence does not replace these terms. Retain **Kadaster / PDOK, Bestuurlijke Gebieden, CC BY 4.0** for the clipping boundary and identify the transformations.
+
+`python3 scripts/build-transit.py` in a Shapely 2 environment rebuilds retained raw input; `--download` refreshes the free sources. Full national ZIP/live snapshots remain on the SSD in ignored `work/data-cache/transit/`; public provenance, exact source licence and boundary are in `source-data/transit/`. The 23:35:26 UTC snapshot yielded 21 municipal reports (8 metro, 13 bus), all individually timestamped, ages 3–57 seconds. No municipal tram or train observation was present at that late hour; this is not a completeness result. `dist/transit-feed.js` decodes upstream protobuf reports and joins metadata, preserving observation time separately from feed publication time. It is not yet wired to the app. A shared backend/cache is needed for browser access, and separate NS observations remain to be collected. The national archive has 36,882 of 937,368 trips without a shape ID, so selection through shapes cannot establish geographic completeness for those services. Unmatched municipal reports are preserved with unknown metadata.

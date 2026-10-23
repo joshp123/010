@@ -6,8 +6,9 @@ Build a beautiful, geographically faithful, living miniature of the entire gemee
 
 ## Product contract
 
-- Cover the whole municipality, including Hoek van Holland, Maasvlakte and the port. Expansion to the Netherlands is a possible later direction.
+- Cover the whole municipality, including Hoek van Holland, Maasvlakte and the port. Assess source coverage, visual quality and performance across the whole city; a polished landmark is not enough. Expansion to the Netherlands is a possible later direction.
 - Start from measured geography, buildings and imagery. Keep this model separate from the pixel/isometric presentation so visual fidelity can improve incrementally and support a more realistic view later.
+- Combine the best sources for each feature when the fidelity gain justifies acquisition, processing, runtime and maintenance costs. Seek the highest reasonable quality, not either one-source purity or maximal dataset count. Resolve disagreements and duplicate geometry explicitly; more data must not produce overlapping streets or bridges.
 - Aim for recognisable detail approaching satellite/Street View usefulness **within a coherent stylised miniature**. Photographically realistic streets are not the goal. The user explicitly prefers the stylistic buildings and rejected mixing them with raw photographic roads. Higher output resolution alone does not satisfy this: roof shapes, facades, streets, shoreline, infrastructure and ordinary neighbourhoods must be recognisable.
 - Make night look inhabited: lit windows, streets, landmarks and plausible water reflections. A uniformly dark city is unacceptable. Current weather should affect the scene.
 - Provide effortless exploration and shareable views. Copy/download high-resolution images suitable for Twitter and Instagram, with the view link and @jjpcodes credit. Use lessons from Nice Weather and monemap.
