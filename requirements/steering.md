@@ -53,3 +53,17 @@ Corrected domain selection:
 > btw i will want accurate public transport, simulated vehicles, but REALTIME accurate trams, trains, buses, metros, etc. plus cutaway view of metro. plus keep all my steering in some kinda requirements folder. capice?
 
 > if you really wanna go nuts then add in marine traffic
+
+## Continued visual review
+
+> some of this stuff doesn't look so good. so keep on checking and keep on improving
+
+The assistant initially misidentified the defects in the attached night close-up. The user corrected that interpretation:
+
+> no the problem is the weird street halfway in the bridge and the jarring contrast between "photographically realistic" streets (not the goal) and the stylistic buildings (the goal)
+
+The attachment is not stored here because it includes private browser chrome. The correction overrides the assistant's earlier interpretation: stylistic buildings are the desired direction; photographic streets are not.
+
+## Bitter Lesson: hard requirement
+
+> btw recall also that maybe new models will come in the future that are better at this than you, so you should design things in a way that its easy for a new model to come along again, understand what you did from first principles, and re-do all the work that its better at. we must be BITTER LESSON PILLED! HARD REQUIREMENT!

@@ -8,7 +8,7 @@ Build a beautiful, geographically faithful, living miniature of the entire gemee
 
 - Cover the whole municipality, including Hoek van Holland, Maasvlakte and the port. Expansion to the Netherlands is a possible later direction.
 - Start from measured geography, buildings and imagery. Keep this model separate from the pixel/isometric presentation so visual fidelity can improve incrementally and support a more realistic view later.
-- Aim for recognisable detail approaching satellite/Street View usefulness. Higher output resolution alone does not satisfy this: roof shapes, facades, streets, shoreline, infrastructure and ordinary neighbourhoods must be recognisable.
+- Aim for recognisable detail approaching satellite/Street View usefulness **within a coherent stylised miniature**. Photographically realistic streets are not the goal. The user explicitly prefers the stylistic buildings and rejected mixing them with raw photographic roads. Higher output resolution alone does not satisfy this: roof shapes, facades, streets, shoreline, infrastructure and ordinary neighbourhoods must be recognisable.
 - Make night look inhabited: lit windows, streets, landmarks and plausible water reflections. A uniformly dark city is unacceptable. Current weather should affect the scene.
 - Provide effortless exploration and shareable views. Copy/download high-resolution images suitable for Twitter and Instagram, with the view link and @jjpcodes credit. Use lessons from Nice Weather and monemap.
 - Include accurate public transport: real-time trams, trains, buses and metros, alongside clearly simulated general traffic. Never present timetable interpolation as an observed position. Include a metro cutaway; source route geometry and underground depth where available, and distinguish measured geometry from illustration.
@@ -34,5 +34,15 @@ Compare real rendered locations with independent source imagery and reference ex
 ## Scope sequencing
 
 The current priority is the rejected visual fidelity gap. Source investigations for transit, underground infrastructure and optional marine traffic can proceed independently. They must not justify shipping the coarse prototype or interrupt the source-to-render fidelity work. Keep unavailable data and unfinished features explicit; do not claim this file means they are implemented.
+
+## Bitter Lesson: hard requirement
+
+Design for a future, more capable model to understand the work from first principles and redo whatever it can do better.
+
+- Retain raw source data, provenance, acquisition dates and source licenses. A styled screenshot must never become the only surviving description of a place.
+- Keep acquisition, geographic reconstruction, visual interpretation and runtime presentation separate. Raw photographs can inform detail and validation without becoming the visible style.
+- Make transformations and asset generation reproducible, with explicit inputs and outputs. Generated assets and styling decisions must be replaceable without rewriting the map controls, geography or live-data plumbing.
+- Explain the actual source formats, coordinates, transformation commands and known gaps in concise repository documentation. Preserve the user's steering and real visual comparisons, not a narrative that asks the next model to trust this implementation.
+- Prefer generally useful source data and model-replaceable transformations to accumulating hand-coded exceptions, guessed semantics or a large custom framework. Architecture is justified by an actual replacement path, not hypothetical abstractions.
 
 The [steering record](steering.md) preserves the user's words, with private conversation references removed. [Transport data](transport-data.md) records source feasibility separately from requirements.
