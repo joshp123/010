@@ -34,18 +34,59 @@ All URLs below start with `https://www.3drotterdam.nl/datasource-data/`:
 
 | Layer | Tileset |
 |---|---|
-| Buildings, LOD2 | `8b5d0ded-a222-4e44-bc70-2992bc2192fc/tileset.json` |
-| Bridges | `06595036-c78e-4081-ab25-e8f88b66bc19/tileset.json` |
+| Buildings, LOD2, newer untextured model | `8b5d0ded-a222-4e44-bc70-2992bc2192fc/tileset.json` |
+| Buildings with photographic textures, mixed coverage | `a6aee273-9406-41c4-a504-de2a59f7d514/tileset.json` |
+| Bridges with photographic textures | `69926a30-444d-46bb-995e-bb14b151d3ab/tileset.json` |
+| Bridges, untextured alternative | `06595036-c78e-4081-ab25-e8f88b66bc19/tileset.json` |
 | Storage tanks | `c70023a7-2878-41e9-bb81-a7c454bc310a/tileset.json` |
 | Trees | `b9294d5b-79e0-4744-ac88-b61e3e90d5bc/tileset.json` |
 | BGT streets, water, ground and quays | `0025cb58-e0f5-4169-bb4c-5339a3bc2a7e/tileset.json` |
 | Light masts | `2602863a-3d22-44c2-8c95-bbf88a20bf37/tileset.json` |
+| Terrain elevation, quantized mesh | `d60bdba8-c40b-42e2-bc47-78c8adabbb29/layer.json` |
 
 The geometry uses 3D Tiles 1.0 with embedded glTF 2.0, batched models and instanced models. Cross-origin browser requests receive `Access-Control-Allow-Origin: *`. Buildings have multiple detail levels; the BGT surface set has 1,463 fixed-detail tiles and should not all be loaded at municipality zoom. The lightweight overview supplies that view.
 
 The model's public-space objects and building records do not all have the same date. Rotterdam describes building updates as annual or biennial and public-space object updates as monthly. A centre building sample had a 2023-09-04 creation date. This is a dataset observation, not a claim that all buildings are current. The map must not imply live construction or live traffic data.
 
-The textured building layer is intentionally not the primary source: a sampled tile was older, heavier and used legacy glTF shader extensions. Stylized colors are applied to the more suitable untextured geometry. BGT surface colors derive from each feature's `KLASSE_IMG`, `KLASSE`, `FYSIEKVK` and `FUNCTIE` metadata, indexed through the geometry's batch ID.
+### Photographic building and bridge textures
+
+Inspection on 2026-10-24 confirmed that the textured building service contains actual photographic facade and roof atlases, including windows, balconies and roof equipment. Replacing these materials with flat or random colors discards source detail. The legacy material format is an adaptation task, not a reason to reject the imagery.
+
+Downloaded samples are retained in `work/source-quality/`. Filenames describe the sample area, not a claim that a particular landmark is present:
+
+| Sample | Content path within its tileset | Verified content |
+|---|---|---|
+| Buildings near Wilhelminakade | `16/67169/13869.cmpt` | Three BAG objects; two JPEG atlases, 1024 × 1024 and 256 × 256; object creation dates 2018-06-05 |
+| Buildings near Markthal | `17/134338/27729.cmpt` | One 2048 × 2048 JPEG atlas; object creation dates 2018-06-05 |
+| Buildings in Hoek van Holland | `17/134074/27685.cmpt` | One 1024 × 512 JPEG atlas; object creation dates 2018-06-05 |
+| Another Kop van Zuid tile | `17/134340/27739.cmpt` | Three objects dated 2019-06-05, but no image textures |
+| Erasmusbrug | `17/134338/27736.b3dm` | Four JPEG atlases, including a 2048 × 2048 atlas with road and cycle-lane markings |
+
+The building tileset HTTP `Last-Modified` value was 2019-11-22; the textured bridge tileset's was 2023-07-04. These are file dates. Object creation dates are model metadata, not verified photography capture dates. The examples prove useful textures and mixed ages; they do not prove current or complete textured coverage across the municipality. In particular, a textured sample in Hoek van Holland does not establish full port and Maasvlakte coverage.
+
+The legacy building GLB materials store their image in `KHR_techniques_webgl.values.u_diffuse_tex` and their color in `u_diffuse_mat`; vertices have `TEXCOORD_0`. These can be expressed as standard glTF PBR `baseColorTexture` and `baseColorFactor`, with non-metallic rough materials, while retaining the original UVs. Composite `.cmpt` samples contain a building `.b3dm` part and a vector part. Preserve the source transforms and `CESIUM_RTC` origin. The inspected Erasmusbrug GLB already uses standard `pbrMetallicRoughness.baseColorTexture` and needs no legacy shader conversion.
+
+Building identity matching is possible: the old and newer versions of the exact same tile `16/67169/13869` contain the same three BAG numbers, with a different order and `ID_` versus `BAG_` prefixes. The numbers also appear as `gebouwnummer` versus `GEBOUWNUMMER` in object metadata. All three newer records have creation date 2023-09-04. However, each object's vertex count changed, and maximum differences between corresponding local bounding coordinates are 1.03 m, 2.31 m and 0.032 m. Both tiles have the same origin and transform, so these are geometry differences. Copying UVs or materials by vertex index onto the newer model is not valid. An unchanged BAG number alone does not prove unchanged facades.
+
+The practical route to photographic facades is to retain each textured mesh together with its own UVs and images. If combining old textured objects with newer geometry, match by BAG number and choose one version per object; do not render both on top of each other. Whole-municipality correspondence and selective texture transfer to changed surfaces remain unproved. The source age should remain explicit. Apply the pixel treatment after preserving this measured detail.
+
+BGT surface colors derive from each feature's `KLASSE_IMG`, `KLASSE`, `FYSIEKVK` and `FUNCTIE` metadata, indexed through the geometry's batch ID. They describe surface classes, not photographic detail.
+
+## Aerial imagery
+
+The [PDOK open RGB aerial imagery service](https://www.pdok.nl/introductie/-/article/pdok-luchtfoto-rgb-open-) supplies the strongest verified improvement to ground detail. [PDOK announced nationwide 2026 high-resolution coverage on 2026-09-15](https://www.pdok.nl/-/hoge-resolutie-luchtfoto-2026-nu-beschikbaar-bij-pdok), available since 2026-09-14. The source is spring 2026 photography, at 5 cm or 8 cm depending on the acquisition parcel; do not describe every Rotterdam pixel as 5 cm.
+
+The live [WMTS capabilities](https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0?request=GetCapabilities&service=WMTS) were checked on 2026-10-24. Use the explicit `2026_orthoHR` layer for a reproducible edition; `Actueel_orthoHR` currently resolves to 2026 and can change. The EPSG:3857 tile matrix reaches zoom 21, with 256-pixel tiles and wildcard CORS:
+
+```text
+https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/2026_orthoHR/EPSG:3857/{z}/{x}/{y}.jpeg
+```
+
+License: **CC BY 4.0**. Credit **Samenwerkingsverband Beeldmateriaal / PDOK — Luchtfoto 2026**, link to the [source](https://www.pdok.nl/introductie/-/article/pdok-luchtfoto-rgb-open-) and [license](https://creativecommons.org/licenses/by/4.0/), and identify display modifications such as reprojection or pixel styling. This dataset remains separately licensed from the MIT code and public-domain Rotterdam 3D model.
+
+Downloaded and visually inspected WMS samples in `work/source-quality/` show real streets, roofs, road markings and port infrastructure at Kop van Zuid, Hoek van Holland and Maasvlakte. `pdok-2026-street-detail.jpg` requests a 100-metre area at 1250 pixels (8 cm per output pixel); this is sampling resolution, not an independent measurement of the source ground resolution. Each `*-source.json` records the exact request. The national coverage statement plus these samples supports using the service throughout the municipality. Stream only the visible area rather than preloading the municipality at maximum resolution.
+
+Project the imagery onto correctly placed terrain and ground surfaces. Upward roof surfaces can also use it, but orthophotos contain building lean, shadows and the source's acquisition-time state. They do not supply street-facing facade photography. The Rotterdam elevation layer supplies terrain shape, not photo color. Preserve real source textures where available and apply styling as a later rendering step.
 
 ## Rebuilding
 
@@ -53,4 +94,6 @@ Run `python3 scripts/fetch-data.py` in a Nix or devenv environment containing Py
 
 ## Future national coverage
 
-[3DBAG](https://3dbag.nl/nl/download) provides nationwide LoD2.2 building geometry under [CC BY 4.0](https://docs.3dbag.nl/nl/copyright/). It is a possible future source for extending the product beyond Rotterdam, not a dependency of the current municipal map. Its required attribution differs from the Rotterdam model and must be added if that data is used.
+[3DBAG](https://3dbag.bk.tudelft.nl/nl/download) provides nationwide LoD2.2 roof geometry derived from BAG footprints and AHN airborne laser data. The [official release notes](https://github.com/3DBAG/3dbag-docs/blob/master/includes/release_notes.md) describe the 2025-09-03 release with 3D Tiles 1.1 and GLB content. Its published LoD2.2 endpoint is `https://data.3dbag.nl/v20250903/cesium3dtiles/lod22/tileset.json`. That host timed out during this investigation, so no actual Rotterdam sample from this edition was verified. It is a geometry alternative, not verified photographic facade coverage.
+
+The [3DBAG copyright terms](https://docs.3dbag.nl/nl/copyright/) specify **CC BY 4.0**, credit **© 3DBAG by tudelft3d and 3DGI**, a source link and an indication of changes. These must be added if the data is used. The verified Rotterdam photo textures plus current PDOK imagery provide a more direct fidelity improvement than changing the building geometry source alone.
