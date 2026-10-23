@@ -1,0 +1,18 @@
+Geographic data for 010
+
+Municipal boundary: Kadaster / PDOK, Bestuurlijke Gebieden, CC BY 4.0.
+https://api.pdok.nl/kadaster/brk-bestuurlijke-gebieden/ogc/v1
+
+Overview terrain and water: Kadaster / PDOK, BRT TOP10NL, CC BY 4.0.
+https://api.pdok.nl/kadaster/brt-top10nl/ogc/v1
+The source geometry was clipped to Rotterdam, classified and simplified for display.
+
+Public destinations: PDOK Locatieserver, using Kadaster BAG and CBS place records.
+Every destination retains a source URL and record ID.
+
+Detailed 3D model: Gemeente Rotterdam. Catalogue license: public domain.
+https://www.rotterdam.nl/rotterdam-in-3d
+https://data.overheid.nl/dataset/10230-rotterdam-3d
+
+CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+These source-data notices are separate from the MIT license for application code.

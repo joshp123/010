@@ -1,0 +1,10 @@
+work/
+.outputs/
+.DS_Store
+node_modules/
+.devenv/
+.direnv/
+.env
+*.zip
+__pycache__/
+*.pyc
