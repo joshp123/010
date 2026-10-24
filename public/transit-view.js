@@ -93,7 +93,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
   let snapshot = { vehicles: [] }, records = [], railSegments = [], cutaway = false, cutawayMask = null;
   let span = 1700, viewportHeight = 900, camera = null;
   const maskViewDirection = new THREE.Vector3();
-  let physicalData = null, sectionAnchor = null, sectionSegments = [], sectionDiagnostics = null, selectedReportId = null, mouthPolygons = [], openingPolygons = [];
+  let physicalData = null, sectionAnchor = null, sectionSegments = [], sectionDiagnostics = null, selectedReportId = null, mouthPolygons = [];
   let inspectionTarget = null, stationAssociations = [];
   let tunnelSegments = [], maskRebuilds = 0, maskMilliseconds = 0, maskMetresPerPixel = Infinity;
 
@@ -278,7 +278,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
 
   function drawSection(segments, halfWidth, viewDirection) {
     for (const child of [...cutawayGroup.children]) { cutawayGroup.remove(child); child.geometry.dispose(); }
-    mouthPolygons=[];openingPolygons=[];
+    mouthPolygons=[];
     const surfaces = [[], [], [], [], [], [], []]; // floor, earth banks, concrete, bed, sleepers, rail, surface edge
     const addQuad = (a,b,c,d,out) => { for (const point of [a,b,c,a,c,d]) out.push(point.x,point.y,point.z); };
     for (const segment of segments) {
@@ -318,7 +318,6 @@ export function createTransitView({ project, localPosition, requestRender = () =
         }
         return result;
       };
-      openingPolygons.push([0,1,2,3].map(mouthPoint));
       const faces=[[0,3],[1,2],...(segment.capStart?[[0,1]]:[]),...(segment.capEnd?[[3,2]]:[])];
       for(const [a,b]of faces){
         const topA=mouthPoint(a),topB=mouthPoint(b);
@@ -427,14 +426,18 @@ export function createTransitView({ project, localPosition, requestRender = () =
     const projection=cutawayMask.projection.set(viewDirection.x/Math.min(-.1,viewDirection.y),viewDirection.z/Math.min(-.1,viewDirection.y));
     const projectToOpening=point=>new THREE.Vector3(point.x-point.y*projection.x,0,point.z-point.y*projection.y);
     const bounds=new THREE.Box3();
-    // Remove the finite surface mouth, not the silhouette of the underground
-    // furniture. Intact terrain at the near lip and both ends must occlude the
-    // train: it continues underground beyond this small inspection window.
+    // The aperture follows the finite chamber itself. A separate surface-mouth
+    // polygon exposes background wherever its projection misses the chamber.
+    // Floor and banks reveal the inspection window; trains beyond it stay hidden.
     const triangles=[];
-    for(const polygon of openingPolygons)for(const indices of [[0,1,2],[0,2,3]]){
-      const triangle=indices.map(index=>projectToOpening(polygon[index]));
-      for(const point of triangle)bounds.expandByPoint(point);
-      triangles.push(triangle);
+    for(const mesh of cutawayGroup.children){
+      if(![floorMaterial,earthMaterial,tunnelMaterial].includes(mesh.material))continue;
+      const positions=mesh.geometry.getAttribute('position');
+      for(let vertex=0;vertex<positions.count;vertex+=3){
+        const triangle=[0,1,2].map(offset=>projectToOpening(new THREE.Vector3().fromBufferAttribute(positions,vertex+offset)));
+        for(const point of triangle)bounds.expandByPoint(point);
+        triangles.push(triangle);
+      }
     }
     if(bounds.isEmpty()){bounds.min.set(-1,0,-1);bounds.max.set(1,0,1);}
     bounds.expandByScalar(1);
