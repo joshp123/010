@@ -92,7 +92,7 @@ def encode(records):
     return struct.pack('<4sII',b'glTF',2,28+len(js)+len(binary))+struct.pack('<II',len(js),0x4e4f534a)+js+struct.pack('<II',len(binary),0x004e4942)+binary, points
 
 def main(acquire):
-    municipality=shape(json.loads((ROOT/'public/data/municipality.geojson').read_bytes())['features'][0]['geometry'])
+    municipality=shape(json.loads((ROOT/'public/data/municipality.json').read_bytes())['features'][0]['geometry'])
     if acquire:
         CACHE.mkdir(parents=True,exist_ok=True)
         west,south_bound,east_bound,north=municipality.bounds

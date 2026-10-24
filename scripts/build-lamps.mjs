@@ -94,7 +94,7 @@ const east = new THREE.Vector3(-Math.sin(longitude), Math.cos(longitude), 0), up
 const north = new THREE.Vector3(-Math.sin(latitude) * Math.cos(longitude), -Math.sin(latitude) * Math.sin(longitude), Math.cos(latitude));
 const earthToLocal = new THREE.Matrix4().set(east.x, east.y, east.z, -east.dot(earthOrigin), up.x, up.y, up.z, -up.dot(earthOrigin), -north.x, -north.y, -north.z, north.dot(earthOrigin), 0, 0, 0, 1);
 const enuToEarth = new THREE.Matrix4().set(east.x, north.x, up.x, earthOrigin.x, east.y, north.y, up.y, earthOrigin.y, east.z, north.z, up.z, earthOrigin.z, 0, 0, 0, 1);
-const municipalityBytes = await readFile(new URL('public/data/municipality.geojson', project)), municipality = JSON.parse(municipalityBytes).features.find(feature => feature.properties.identificatie === 'GM0599');
+const municipalityBytes = await readFile(new URL('public/data/municipality.json', project)), municipality = JSON.parse(municipalityBytes).features.find(feature => feature.properties.identificatie === 'GM0599');
 if (!municipality) throw Error('Missing GM0599 municipality');
 const polygons = municipality.geometry.type === 'MultiPolygon' ? municipality.geometry.coordinates : [municipality.geometry.coordinates];
 function inRing(x, y, ring) {
@@ -272,7 +272,7 @@ await writeFile(new URL('tileset.json', output), JSON.stringify(generated));
 const manifest = {
   writtenBy: 'AI, GPT-6, 2026-10-24', generatedAt: new Date().toISOString(), source, sourceAsset: tileset.asset,
   publisher: 'Gemeente Rotterdam', license: 'Public domain, Rotterdam 3D catalogue', sourcePage: 'https://www.rotterdam.nl/rotterdam-in-3d', licensePage: 'https://data.overheid.nl/dataset/10230-rotterdam-3d',
-  municipality: { identifier: 'GM0599', file: '../municipality.geojson', sha256: hash(municipalityBytes), test: 'source instance origin lies within municipality polygon including holes' },
+  municipality: { identifier: 'GM0599', file: '../municipality.json', sha256: hash(municipalityBytes), test: 'source instance origin lies within municipality polygon including holes' },
   acquisition: { complete: true, tiles: sourceTiles.length, prototypes: prototypeUrls.size, decodedBytes: [...inventory.values()].reduce((sum, record) => sum + record.bytes, 0), cache: 'work/data-cache/light-cost/', inventory: [...inventory.values()].sort((a, b) => a.url.localeCompare(b.url)) },
   counts, pools: { ...poolCounts, maximumRadiusMetres: poolRadiusMetres, clearanceMetres: poolClearanceMetres, surveyFeatures: surveyFeatures.length, source: 'Kadaster / PDOK BRT TOP10NL waterdeel_vlak; CC BY 4.0', license: 'https://creativecommons.org/licenses/by/4.0/', surveyInventory, method: 'No geometry simplification or minimum water-body area. Municipal land is the exact municipality minus surveyed water. Exclude centres in water and any base within the 9.1 m clearance of a water or municipal boundary. Pool indices reference unchanged source bases. The extra 0.1 m covers local projection and output quantization rounding.' }, output: { tiles: tiles.length, bytes: rawBytes, gzipBytes, maximumPositionErrorMetres: maximumPositionError },
   coordinates: { source: 'I3DM ECEF placement/orientation/scale and glTF prototype vertices; all tile/node transforms retained', output: 'glTF X east, Y up, Z south; tileset bounding boxes in Z-up ENU', origin, bucketMetres, quantization: 'unsigned 16-bit KHR_mesh_quantization; <=2 cm per axis; actual Euclidean error reported per tile' },

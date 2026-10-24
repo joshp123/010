@@ -2,7 +2,7 @@
 
 Written by AI on 2026-10-24 by model GPT-6.
 
-`python3 scripts/fetch-context-land.py` rebuilds `public/data/context-land.geojson` with the existing Shapely/pyproj environment. The source is [Kadaster BRT TOP10NL through PDOK](https://api.pdok.nl/kadaster/brt-top10nl/ogc/v1), licensed CC BY 4.0. Credit Kadaster / PDOK. Natural Earth is no longer used for this asset: its 1:10 million shoreline put visible land over sea near the Rotterdam coast.
+`python3 scripts/fetch-context-land.py` rebuilds `public/data/context-land.json` with the existing Shapely/pyproj environment. The source is [Kadaster BRT TOP10NL through PDOK](https://api.pdok.nl/kadaster/brt-top10nl/ogc/v1), licensed CC BY 4.0. Credit Kadaster / PDOK. Natural Earth is no longer used for this asset: its 1:10 million shoreline put visible land over sea near the Rotterdam coast.
 
 The stage uses official sea polygons for the regional extent 3.3–5.2 E / 51.4–52.4 N. Every connected candidate land component needs an official terrestrial source record at its interior point; this prevents the outer edge of mapped sea coverage from becoming false offshore land. Retained source water records also remove major adjoining estuary/harbour waters. Covered or culverted water is excluded, and open water below one hectare is omitted in this quiet context. This is surrounding context, not complete regional hydrography.
 

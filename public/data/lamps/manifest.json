@@ -12,7 +12,7 @@
   "licensePage": "https://data.overheid.nl/dataset/10230-rotterdam-3d",
   "municipality": {
     "identifier": "GM0599",
-    "file": "../municipality.geojson",
+    "file": "../municipality.json",
     "sha256": "f7604042230b2271df702857a29fbfe4a43bc56c808ca96be66c8cdb55d1ad4c",
     "test": "source instance origin lies within municipality polygon including holes"
   },

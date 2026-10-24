@@ -8,9 +8,9 @@ The visible map uses a coherent miniature style. Raw photographic streets beside
 
 ## Municipality and overview
 
-`public/data/municipality.geojson` is the exact, unsimplified GM0599 geometry returned by [Kadaster's official municipal boundaries API](https://api.pdok.nl/kadaster/brk-bestuurlijke-gebieden/ogc/v1/collections/gemeentegebied/items?naam=Rotterdam&f=json). It includes the port, Maasvlakte, Hoek van Holland, Rozenburg, Pernis and the eastern and southern districts. Coordinates are longitude, latitude (CRS84).
+`public/data/municipality.json` is the exact, unsimplified GM0599 geometry returned by [Kadaster's official municipal boundaries API](https://api.pdok.nl/kadaster/brk-bestuurlijke-gebieden/ogc/v1/collections/gemeentegebied/items?naam=Rotterdam&f=json). It includes the port, Maasvlakte, Hoek van Holland, Rozenburg, Pernis and the eastern and southern districts. Coordinates are longitude, latitude (CRS84).
 
-`public/data/overview.geojson` contains polygons from [Kadaster BRT TOP10NL](https://api.pdok.nl/kadaster/brt-top10nl/ogc/v1), restricted to the municipality. It is intended for wide map views, not street-scale inspection. Features have `properties.kind`: `land`, `water`, `urban`, `farmland`, `grass`, `forest` or `sand`.
+`public/data/overview.json` contains polygons from [Kadaster BRT TOP10NL](https://api.pdok.nl/kadaster/brt-top10nl/ogc/v1), restricted to the municipality. It is intended for wide map views, not street-scale inspection. Features have `properties.kind`: `land`, `water`, `urban`, `farmland`, `grass`, `forest` or `sand`.
 
 The build reads the `waterdeel_vlak` and `terrein_vlak` collections over the municipal bounding box, follows pagination to completion, projects the features to RD New (EPSG:28992), clips them to GM0599, merges surfaces of each class and simplifies them with a 6-metre tolerance. Individual source polygons smaller than 100 m² are excluded from this overview. The base land geometry is the municipal polygon minus the source water polygons. Municipal boundary geometry itself remains unsimplified.
 

@@ -63,7 +63,7 @@ def encode_json(value):
 
 
 def main(snapshot, rebuild):
-    boundary = json.loads((PROJECT / "public/data/municipality.geojson").read_bytes())
+    boundary = json.loads((PROJECT / "public/data/municipality.json").read_bytes())
     boundary_geometry = shape(boundary["features"][0]["geometry"])
     municipality = make_valid(transform(TO_RD, boundary_geometry))
     bounds = boundary_geometry.bounds

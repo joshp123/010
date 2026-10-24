@@ -99,3 +99,9 @@ The local centre view settled with zero pending/refused tiles or loading errors.
 Sites version10 published successfully at05:55UTC. A cache-bypassed public centre/night check fetched one startup bundle (212,508transfer bytes) and one municipality outline, then settled with zero pending/refused tiles and zero load errors. First buildings took5.02s and complete detail17.21s; this still misses the loading aspiration and is not a controlled timing comparison. Public diagnostics and navigation/resource timing are retained as `work/visual-qa/published-v10-bundle.json`. Browser caching was restored.
 
 The published bundled share dialog also copied a PNG and the exact centre/night link with @jjpcodes onto the browser clipboard. The correct new text and image bytes were read back after the UI confirmed copying; the earlier local fallback was not reproduced on either the preceding public release or version10. Public share capture: `work/visual-qa/published-v10-share.jpg`.
+
+### Compress geographic JSON through the standard host
+
+Written by AI on 2026-10-24 by model GPT-6.
+
+Production serves `.geojson` as `application/octet-stream` without HTTP compression, while `.json` receives `application/json` and gzip. Rename the three unchanged GeoJSON assets to `.json` and update their consumers and acquisition scripts. This uses normal host/browser content decoding; no runtime compressor, loader or sidecars are added. The three source files total5,465,005bytes; local gzip estimates total1,391,114bytes. Exact comparison against their preceding Git versions confirms byte-for-byte identity. The local full-municipality render settled with zero pending/refused tiles and errors; all three new URLs returned200. Evidence: `work/visual-qa/geojson-delivery-parity.json` and `json-delivery-municipality.jpg`. Public compression and transfer verification follows deployment.

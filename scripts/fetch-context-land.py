@@ -17,7 +17,7 @@ from shapely.ops import transform, unary_union
 
 PROJECT = Path(__file__).resolve().parents[1]
 CACHE = PROJECT / 'work/data-cache/context-land'
-OUTPUT = PROJECT / 'public/data/context-land.geojson'
+OUTPUT = PROJECT / 'public/data/context-land.json'
 API = 'https://api.pdok.nl/kadaster/brt-top10nl/ogc/v1'
 BOUNDS = [3.3, 51.4, 5.2, 52.4]
 SIMPLIFICATION_METRES = 2
@@ -72,7 +72,7 @@ def main():
         if records:land.append(component)
     if not land:raise ValueError('No terrestrial source-confirmed land components')
     land=unary_union(land)
-    boundary_bytes=(PROJECT/'public/data/municipality.geojson').read_bytes()
+    boundary_bytes=(PROJECT/'public/data/municipality.json').read_bytes()
     boundary_collection=json.loads(boundary_bytes)
     municipality=unary_union([shape(feature['geometry'])for feature in boundary_collection['features']if feature['properties'].get('identificatie')=='GM0599'])
     if municipality.is_empty:raise ValueError('Rotterdam GM0599 is missing')

@@ -184,7 +184,7 @@ def main():
     boundary_response = fetch_json(BOUNDARY_URL)
     boundary = boundary_response["features"][0]
     assert boundary["properties"]["identificatie"] == "GM0599"
-    write_json("municipality.geojson", {
+    write_json("municipality.json", {
         "type": "FeatureCollection", "features": [boundary], "source": BOUNDARY_URL
     })
     municipality = make_valid(transform(TO_RD, shape(boundary["geometry"])))
@@ -233,7 +233,7 @@ def main():
         if polygonal_geometry.is_empty:
             continue
         serialized_overview.append({**feature, "geometry": mapping(polygonal_geometry)})
-    write_json("overview.geojson", {
+    write_json("overview.json", {
         "type": "FeatureCollection", "features": serialized_overview,
         "source": TOPOGRAPHY_API, "sourceFeatureCounts": source_counts,
         "simplificationMetres": 6, "minimumPolygonAreaSquareMetres": 100,

@@ -29,7 +29,7 @@ BASE = 'https://www.3drotterdam.nl/datasource-data/0025cb58-e0f5-4169-bb4c-5339a
 CACHE.mkdir(parents=True, exist_ok=True)
 OUTPUT.mkdir(parents=True, exist_ok=True)
 fetch_data = SourceFileLoader('map_source_fetch', str(PROJECT/'scripts/fetch-data.py')).load_module()
-municipality = shape(json.loads((PROJECT/'public/data/municipality.geojson').read_bytes())['features'][0]['geometry'])
+municipality = shape(json.loads((PROJECT/'public/data/municipality.json').read_bytes())['features'][0]['geometry'])
 
 
 def acquire(url):

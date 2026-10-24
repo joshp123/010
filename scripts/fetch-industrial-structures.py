@@ -135,7 +135,7 @@ def main():
     collection = json.loads(gzip.decompress((PROJECT / 'source-data/industrial-ground.geojson.gz').read_bytes()))
     rails = unary_union([transform(TO_RD, shape(feature['geometry'])) for feature in collection['features']
                          if feature['properties'].get('plus_functie') == '(haven)kraan'])
-    municipality = json.loads((PROJECT / 'public/data/municipality.geojson').read_text())
+    municipality = json.loads((PROJECT / 'public/data/municipality.json').read_text())
     municipality = transform(TO_RD, unary_union([shape(feature['geometry']) for feature in municipality['features']]))
     selection = rails.buffer(80).intersection(municipality)
     regions = sorted(list(selection.geoms), key=lambda polygon: (polygon.centroid.x, polygon.centroid.y))

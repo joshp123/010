@@ -6,7 +6,7 @@ export const PUBLIC_DOMAIN = '010.jjpcodes.com';
 const INITIAL_VIEW = { lat: 51.9105, lon: 4.4875, span: 1700, bearing: 35 };
 const byId = id => document.getElementById(id);
 const url = new URL(location.href);
-const municipalityData = fetch('./data/municipality.geojson').then(response => {
+const municipalityData = fetch('./data/municipality.json').then(response => {
   if (!response.ok) throw new Error('Municipality outline could not load.');
   return response.json();
 });

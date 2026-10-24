@@ -439,14 +439,14 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       renderer.shadowMap.needsUpdate = true;
       requestRender();
     }
-    fetchCollection('context-land.geojson').then(collection => {
+    fetchCollection('context-land.json').then(collection => {
       if (disposed) return;
       addFeatures(collection, false, true);
       drawCollectedSurfaces();
       contextState = 'ready';
       requestRender();
     }).catch(error => { contextState = 'error'; console.warn('010: surrounding context could not load', error); requestRender(); });
-    const collections = await Promise.all([municipalityData, fetchCollection('overview.geojson')]);
+    const collections = await Promise.all([municipalityData, fetchCollection('overview.json')]);
     if (disposed) return;
     addFeatures(collections[0], true);
     addFeatures(collections[1]);
