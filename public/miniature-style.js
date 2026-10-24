@@ -5,9 +5,9 @@ const observedColors = new Map(featureAppearance.map(record => [`${record.layer}
 
 const BUILDING_COLORS = ['#d5c9ad', '#bda58a', '#a77d62', '#c5c4b5', '#aebfc1', '#e0d4bb', '#a68c7b', '#8d9ea3'].map(color => new THREE.Color(color));
 const GROUND_COLORS = Object.fromEntries(Object.entries({
-  water: '#367b86', green: '#73936d', road: '#8d9694', cycleway: '#b78770',
-  footway: '#c9c4b2', transit: '#a5a999', paving: '#b5b5a7', quay: '#9ca99e',
-  building: '#b4ad98', sand: '#d7c8a4', other: '#b3b5a1',
+  water: '#526a65', green: '#839452', road: '#777b76', cycleway: '#ad7760',
+  footway: '#d0c5a7', transit: '#9c9b83', paving: '#bcb398', quay: '#a6a58b',
+  building: '#b4ad98', sand: '#d7c8a4', other: '#bcb69e',
 }).map(([kind, color]) => [kind, new THREE.Color(color)]));
 
 function hashNumber(value) { let hash = 2166136261; for (const char of String(value)) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619); return (hash >>> 0); }
@@ -46,7 +46,7 @@ export function streetColor(kind) {
 }
 
 export function yardColor(kind) {
-  return new THREE.Color({ 'open-paving': '#b5b5a7', 'closed-paving': '#929b98', yard: '#b4b29b', 'crane-rail': '#687770' }[kind] || '#b4b29b');
+  return new THREE.Color({ 'open-paving': '#bcb398', 'closed-paving': '#777b76', yard: '#bcb69e', 'crane-rail': '#62695d' }[kind] || '#b4b29b');
 }
 
 export function createCityMaterial(kind, uniforms) {
@@ -87,7 +87,7 @@ export function createCityMaterial(kind, uniforms) {
       `;
     } else if (kind === 'ground') {
       surface = `
-        float cityWater = step(vColor.r * 1.7, vColor.g) * step(vColor.r * 1.9, vColor.b);
+        float cityWater = step(vColor.r * 1.13, vColor.g) * step(vColor.r * 1.10, vColor.b) * step(vColor.b, vColor.g * 1.08);
         if (cityWater > 0.5 && cityNight > 0.1) {
         vec4 cityReflectedPosition = cityReflectionMatrix * vec4(cityWorldPosition, 1.0);
         vec2 cityReflectionUV = cityReflectedPosition.xy / cityReflectedPosition.w * 0.5 + 0.5;

@@ -1,6 +1,6 @@
 {
   "status": "review-candidate",
-  "texture": "schiedamseweg-ground.png",
+  "texture": "schiedamseweg-ground-materials.png",
   "boundsRD": [
     90249,
     436036,
@@ -90,5 +90,8 @@
   "projectionMaximumErrorPixels": 0.0026995997098043065,
   "generation": "Native imagegen material swatches; geographic model output rejected. No photographic RGB. Exact source-supported paint masks.",
   "notSurveyed": "Individual slab/brick joints are bounded material illustration, not individual mapped objects.",
-  "acceptance": "Pending actual WebGL front/rear/phone/night review."
+  "acceptance": "Pending actual WebGL front/rear/phone/night review.",
+  "retainedMaterialTexture": "schiedamseweg-ground.png",
+  "alphaEncoding": "material128-marking255",
+  "materialEncoding": "Source material eligibility in alpha128; exact reviewed paint pixels in alpha255. RGB unchanged. Reviewed paint recovered from compiler exact ivory formula, count equals original manifest."
 }

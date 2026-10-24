@@ -3,7 +3,7 @@
 // Local surface light continues to come from retained municipal fixture heads.
 export function miniatureLighting({night=0,golden=false,cloud=0}={}) {
   const t=Math.max(0,Math.min(1,night));
-  const day={sun:golden?'#ffc077':'#fff0d1',sky:golden?'#b8d7ef':'#cfe9ff',ground:'#9b8975',background:golden?'#cfc5ab':'#adc8c7',sunIntensity:(golden?3.3:3.0)*(1-cloud*.68),skyIntensity:1.25+cloud*.35};
+  const day={sun:golden?'#ffc077':'#fff4e4',sky:golden?'#e2dcc9':'#d9e0e5',ground:'#a09885',background:golden?'#cfc5ab':'#adc8c7',sunIntensity:(golden?2.8:2.6)*(1-cloud*.68),skyIntensity:1.45+cloud*.35};
   // Neutral dim skylight retains source paint colours. The previous saturated
   // blue key and equally strong blue hemisphere made all surfaces look alike.
   const dark={sun:'#c1c7ce',sky:'#a4afb9',ground:'#55504a',background:'#18232b',sunIntensity:.27,skyIntensity:.46};

@@ -70,11 +70,11 @@ export function preparePublicSpaceGeometry(mesh) {
     edge.subVectors(b,a); const length=edge.length(); if(length<.02) continue; edge.divideScalar(length);
     inward.subVectors(c,a).addScaledVector(edge,-inward.dot(edge));
     const altitude=inward.length(); if(altitude<.015) continue;
-    inward.multiplyScalar(Math.min(.10,altitude*.35)/altitude);
+    inward.multiplyScalar(Math.min(.16,altitude*.35)/altitude);
     const aa=a.clone().add(inward),bb=b.clone().add(inward);
     for (const v of [a,b,aa,b,bb,aa]) {
       vertices.push(v.x,v.y,v.z); batchValues.push(batch.getX(item.a)); surfaceValues.push(item.record.surface);
-      const factor=.72; colors.push((sourceColor?.getX(item.a)??.3)*factor,(sourceColor?.getY(item.a)??.3)*factor,(sourceColor?.getZ(item.a)??.3)*factor);
+      const factor=.49; colors.push((sourceColor?.getX(item.a)??.3)*factor,(sourceColor?.getY(item.a)??.3)*factor,(sourceColor?.getZ(item.a)??.3)*factor);
     }
     boundaries++;
   }
@@ -85,7 +85,7 @@ export function preparePublicSpaceGeometry(mesh) {
   border.setAttribute('_batchid',new THREE.Float32BufferAttribute(batchValues,1));
   border.setAttribute('_surfaceClass',new THREE.Float32BufferAttribute(surfaceValues,1));
   border.computeVertexNormals(); border.computeBoundingSphere();
-  border.userData={sourceBoundarySegments:boundaries,illustration:'10 cm maximum painted seam inside exact surveyed adjacent surface boundaries; no curb geometry'};
+  border.userData={sourceBoundarySegments:boundaries,illustration:'16 cm maximum painted seam inside exact surveyed adjacent surface boundaries; no curb geometry'};
   return border;
 }
 
@@ -104,14 +104,12 @@ export function applyPublicSpaceMaterial(material) {
     shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
       vec2 spaceXY=cityWorldPosition.xz;
       float spaceFootprint=max(length(dFdx(spaceXY)),length(dFdy(spaceXY)));
-      float spaceGrain=cityHash(floor(spaceXY*5.0))-.5;
-      float spaceFine=(1.0-smoothstep(.09,.32,spaceFootprint));
-      float spaceMottle=cityHash(floor(spaceXY*.65))-.5;
-      float spaceMottleVisible=1.0-smoothstep(.6,2.2,spaceFootprint);
-      float spaceWater=max(step(4.5,spaceClass)*step(spaceClass,5.5),step(vColor.r*1.7,vColor.g)*step(vColor.r*1.9,vColor.b));
+      float spaceBrush=sin(spaceXY.x*.31+sin(spaceXY.y*.17)*1.7)*sin(spaceXY.y*.23-spaceXY.x*.07);
+      float spaceBrushVisible=1.0-smoothstep(.6,2.2,spaceFootprint);
+      float spaceWater=max(step(4.5,spaceClass)*step(spaceClass,5.5),step(vColor.r*1.13,vColor.g)*step(vColor.r*1.10,vColor.b)*step(vColor.b,vColor.g*1.08));
       if(spaceClass>0.5 && spaceWater<.5) {
-        float spaceTexture=spaceClass>2.5 ? .065 : .025;
-        diffuseColor.rgb*=1.0+spaceGrain*spaceTexture*spaceFine+spaceMottle*.035*spaceMottleVisible;
+        float spaceTexture=spaceClass>3.5 ? .055 : .018;
+        diffuseColor.rgb*=1.0+spaceBrush*spaceTexture*spaceBrushVisible;
       }
       if(spaceWater>.5) {
         // Restrained painted wavelets. No boats, wakes or geographically false
@@ -127,7 +125,7 @@ export function applyPublicSpaceMaterial(material) {
       }
     `);
   };
-  material.customProgramCacheKey=()=>key+'-source-public-space-v1';
+  material.customProgramCacheKey=()=>key+'-source-public-space-v2';
 }
 
 export function createPublicSpaceStyle({material,applyCutaway=()=>{}}={}) {

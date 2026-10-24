@@ -1,0 +1,148 @@
+{
+  "status": "review-candidate",
+  "texture": "adjoining-ground-materials.png",
+  "boundsRD": [
+    90249,
+    436036,
+    90377,
+    436212
+  ],
+  "imageSize": [
+    1600,
+    2200
+  ],
+  "worldToImageUV": [
+    [
+      0.0078114229963571055,
+      3.6164485143069802e-06,
+      -9.64292708965963e-05,
+      23.61404136821393
+    ],
+    [
+      7.013067817243009e-05,
+      -4.5975798561260703e-07,
+      0.005681035201044091,
+      -2.544076340044285
+    ]
+  ],
+  "sourceFeatureIds": [
+    "10237863",
+    "12955070",
+    "12955075",
+    "13778512",
+    "15029227",
+    "15029237",
+    "15029239",
+    "15029242",
+    "15029243",
+    "15029244",
+    "15029255",
+    "15029256",
+    "15217014",
+    "15217983",
+    "15218771",
+    "15218985",
+    "15295661",
+    "15296890",
+    "15296896",
+    "15297060",
+    "15373319",
+    "15558094",
+    "15925472",
+    "15925473",
+    "15979919",
+    "16087974",
+    "16087975",
+    "16087976",
+    "16087977",
+    "16087978",
+    "16087979",
+    "16087980",
+    "16087981",
+    "16087983",
+    "16092393",
+    "16092394",
+    "16228432",
+    "16228433",
+    "16228439",
+    "16228443",
+    "16228444",
+    "16271256",
+    "16271261",
+    "16271262",
+    "16327451",
+    "16327452",
+    "16327453",
+    "16327454",
+    "16327455",
+    "16327456",
+    "16327457",
+    "16340756",
+    "16340757",
+    "16340762",
+    "16408909",
+    "9545462",
+    "9545471",
+    "9545481",
+    "9545482",
+    "9545485",
+    "9545486",
+    "9545489",
+    "9545490",
+    "9545491",
+    "9545497",
+    "9545498",
+    "9677373",
+    "9677375",
+    "9677376",
+    "9677483",
+    "9677484"
+  ],
+  "areas": [
+    {
+      "directory": "public/data/ground-artwork-north",
+      "areaId": "schiedamseweg-north",
+      "boundsRD": [
+        90249,
+        436164,
+        90377,
+        436212
+      ],
+      "orthophotoAvailable": false,
+      "sourceDecodedSha256": "2c625dbdfbea8fae4627b725c90e2caf95d43a526e76fb4fc937f67453dcdeb1",
+      "orthophotoSha256": null,
+      "textureSha256": "4a5c3ee21da3bb45947443a28a5e6636db5f12a1b224b96fbee261e7957367bf",
+      "offsetPixels": [
+        0,
+        0
+      ],
+      "paintPixels": 0
+    },
+    {
+      "directory": "public/data/ground-artwork-frontage",
+      "areaId": "schiedamseweg-frontage",
+      "boundsRD": [
+        90249,
+        436036,
+        90377,
+        436164
+      ],
+      "orthophotoAvailable": true,
+      "sourceDecodedSha256": "2c625dbdfbea8fae4627b725c90e2caf95d43a526e76fb4fc937f67453dcdeb1",
+      "orthophotoSha256": "ee869533880c4c7cc42ef9c8df8bbc88a878b13fa8614e75295482399af8f848",
+      "textureSha256": "21a892f8109e5e648433bea88e2bd6a2781fd03ccf43338b97257a9cbb0a9e4d",
+      "offsetPixels": [
+        0,
+        600
+      ],
+      "paintPixels": 6343
+    }
+  ],
+  "projectionJoinMaximumErrorPixels": 0.0014055952975075836,
+  "paintPixels": 6343,
+  "eligiblePixels": 1013908,
+  "acceptance": "Unaccepted source-bound review candidate; actual whole-scene review required.",
+  "retainedMaterialTexture": "adjoining-ground.png",
+  "alphaEncoding": "material128-marking255",
+  "materialEncoding": "Source material eligibility in alpha128; exact reviewed paint pixels in alpha255. RGB unchanged. Reviewed paint recovered from compiler exact ivory formula, count equals original manifest."
+}
