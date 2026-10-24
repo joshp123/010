@@ -52,3 +52,20 @@ The whole-feature metro candidate removes the worst roof fragments and makes the
 ![Actual rotated section](metro-whole-features-rotated.png)
 
 [Actual runtime section and report](metro-whole-features-runtime.json).
+
+
+## First illustrated row inside the actual city
+
+The manager prepared the delivered original eight-building runtime asset unchanged, rebuilt the candidate and inspected native desktop and390×844 phone at51.90963,4.44711,100m span,35/125degree bearings,day/night. All eight actual source identities render with ground and surrounding fallback, no pending/refused tiles or loading errors. This establishes placement and complete material delivery only.
+
+The row has much richer architectural identity, but remains a photographic-looking island among generic window-grid buildings. Rear surfaces retain projection/photographic artifacts; frontage loses crispness in the runtime compared with the supplied isolated render. Sampling and drawing treatment need separate assessment rather than assuming one cause. New tree crowns have smaller masses yet retain a repetitive clustered plastic appearance. The quieter neutral night palette is a supporting improvement; the illustrated row still lacks lit windows while surrounding fallback windows glow. Source-aligned emission is under independent art work. Bare adjoining street surfaces still fall short. Whole-scene and architectural acceptance remain open.
+
+![Illustrated street block in the actual city](illustrated-row-day-front-desktop.png)
+
+![Actual phone street frontage](illustrated-row-day-front-phone.png)
+
+![Actual phone rear surfaces](illustrated-row-day-rear-phone.png)
+
+![Actual phone night with source block not yet emissive](illustrated-row-night-front-phone.png)
+
+[Exact runtime identities, readiness and appearance state](illustrated-row-runtime-audit.json). The ten unchanged2048² textures use223.7MB decoded including mipmaps. This is not a final performance decision or permission to reduce detail before art quality is established.
