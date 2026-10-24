@@ -57,7 +57,7 @@ function showVehicle(report) {
     const term = document.createElement('dt'), description = document.createElement('dd'); term.textContent = title; description.textContent = value; details.append(term, description);
   }
   const positionDescription = represented ? `Approximate track position, ${represented.offsetMetres.toFixed(1)} m from the report. No movement is inferred between reports.` : 'Reported position.';
-  byId('vehicle-presentation').textContent = `${presentation.physicalForm === 'tunnel' ? 'Underground section · 12 m depth is illustrated, not surveyed. ' : ''}${positionDescription} Height: ${presentation.surfacePlacement || 'graphic surface height'}. Size illustrated. ${presentation.orientation === 'reported-bearing' ? 'Reported bearing: ' + Math.round(report.bearing) + '°.' : presentation.orientation === 'source-track-axis' || presentation.orientation === 'source-route-axis' ? 'Aligned with source route; direction unreported.' : 'Heading unreported; camera-facing symbol.'}`;
+  byId('vehicle-presentation').textContent = `${presentation.physicalForm === 'tunnel' ? 'Underground section · depth illustrated, not surveyed. ' : ''}${positionDescription} Height: ${presentation.surfacePlacement || 'graphic surface height'}. Size illustrated. ${presentation.orientation === 'reported-bearing' ? 'Reported bearing: ' + Math.round(report.bearing) + '°.' : presentation.orientation === 'source-track-axis' || presentation.orientation === 'source-route-axis' ? 'Aligned with source route; direction unreported.' : 'Heading unreported; camera-facing symbol.'}`;
 }
 function showTransit(snapshot) {
   latestTransitSnapshot = snapshot;
@@ -380,7 +380,7 @@ function focusNextMetro() {
   byId('metro-cutaway').checked = true;
   scene.setMetroCutaway(true);
   setViewPanel(false);
-  navigateTo({ lat: target.latitude, lon: target.longitude, span: 170, name: `Metro ${target.label || ''}`.trim() });
+  navigateTo({ lat: target.latitude, lon: target.longitude, span: 170, bearing: target.preferredBearing, name: `Metro ${target.label || ''}`.trim() });
   showMetroViewStatus();
 }
 byId('metro-find').addEventListener('click', focusNextMetro);
