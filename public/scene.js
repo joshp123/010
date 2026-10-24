@@ -3,6 +3,7 @@ import { createCityMaterial, featureColor, streetColor, yardColor, createLampPoo
 import { createSourceFusion } from './source-fusion.js';
 import { omitInvalidGroundTriangles } from './ground-height-filter.js';
 import { createSurfaceQuery } from './surface-query.js';
+import { createCompressedModelsPlugin } from './compressed-models.js';
 import { createObjectDetail } from './object-detail.js';
 import { createSimulatedTraffic } from './simulated-traffic.js';
 import { createTransitView } from './transit-view.js';
@@ -327,6 +328,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
 
   for (const [kind, id] of LAYERS) {
     const tiles = new TilesRenderer(id.startsWith('./') ? id : `${DATA_BASE}${id}/tileset.json`);
+    tiles.registerPlugin(createCompressedModelsPlugin());
     tiles.kind = kind;
     if (kind === 'buildings') tiles.registerPlugin({
       name: 'Reach the first available building geometry',
