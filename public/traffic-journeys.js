@@ -13,9 +13,9 @@ class MinHeap {
   get length() { return this.items.length; }
 }
 
-export function createJourneyPlanner(roads) {
+export function createJourneyPlanner(roads, { turnRestrictions = [] } = {}) {
   const edges=[], lookup=new Map(), outgoing=new Map();
-  const stats={directedEdges:0,connections:0,rejectedEndpointGaps:0,rejectedHeightGaps:0,rejectedReversals:0,terminalEdges:0,components:0,largestComponentEdges:0};
+  const stats={directedEdges:0,connections:0,rejectedEndpointGaps:0,rejectedHeightGaps:0,rejectedReversals:0,terminalEdges:0,components:0,largestComponentEdges:0,turnRestrictionRules:0,unresolvedTurnRestrictions:0,restrictedTransitions:0};
   for(let i=0;i<roads.length;i++) {
     const road=roads[i];
     for(const direction of road.direction===3?[1,-1]:road.direction===1?[1]:road.direction===2?[-1]:[]) {
@@ -27,6 +27,14 @@ export function createJourneyPlanner(roads) {
       if(edge.from) { if(!outgoing.has(edge.from))outgoing.set(edge.from,[]);outgoing.get(edge.from).push(edge); }
     }
   }
+  const restrictionsByEdge=new Map();
+  for(const rule of turnRestrictions) {
+    const from=edges.filter(edge=>edge.road.id===rule.from && edge.to===rule.via && edge.direction===rule.fromDirection);
+    const to=edges.filter(edge=>edge.road.id===rule.to && edge.from===rule.via && edge.direction===rule.toDirection);
+    if(from.length!==1 || to.length!==1 || !/^(no_|only_)/.test(rule.restriction)) {stats.unresolvedTurnRestrictions++;continue;}
+    if(!restrictionsByEdge.has(from[0].index))restrictionsByEdge.set(from[0].index,[]);
+    restrictionsByEdge.get(from[0].index).push({only:rule.restriction.startsWith('only_'),to:to[0].index});stats.turnRestrictionRules++;
+  }
   const parent=edges.map((_,i)=>i), sizes=edges.map(()=>1);
   function root(i) { while(parent[i]!==i) { parent[i]=parent[parent[i]];i=parent[i]; } return i; }
   function join(a,b) { a=root(a);b=root(b);if(a!==b){parent[b]=a;sizes[a]+=sizes[b];} }
@@ -37,6 +45,8 @@ export function createJourneyPlanner(roads) {
       // Do not bridge a projected vertical discontinuity. A graphic fallback
       // height is not surveyed elevation; source junction identity is still required.
       if(Math.abs(edge.end.y-next.start.y)>3) {stats.rejectedHeightGaps++;continue;}
+      const restrictions=restrictionsByEdge.get(edge.index)||[];
+      if(restrictions.some(rule=>rule.only?next.index!==rule.to:next.index===rule.to)) {stats.restrictedTransitions++;continue;}
       const weight=turnWeight(edge.arrival,next.departure);
       if(!weight) {stats.rejectedReversals++;continue;}
       edge.next.push({edge:next,weight});join(edge.index,next.index);stats.connections++;

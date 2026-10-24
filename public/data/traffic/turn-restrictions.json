@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "mode": "motorcar",
+  "license": "ODbL-1.0",
+  "attribution": "\u00a9 OpenStreetMap contributors",
+  "attributionUrl": "https://www.openstreetmap.org/copyright",
+  "source": "https://github.com/joshp123/010/tree/main/source-data/traffic",
+  "rawSourceSha256": "e2635e4ec394de6b7e25a70a74c05ce9ef54ec8e1d67a987678a7da4ec11be58",
+  "nwbSourceSha256": "f9a8276b154d16eb2c7fd2b0a27f604ff660df3a7c1923a5ec5c22c1de6688ce",
+  "auditSha256": "3f5ace0cc65f1a6dc11312bd650c391d0d6d73fad844604e771283c45802c177",
+  "coverage": "Seven manually selected geometrically unambiguous pilot matches, not exhaustive legal routing; conditional and via-way restrictions unsupported",
+  "rules": [
+    {
+      "osmRelation": 4063857,
+      "restriction": "only_straight_on",
+      "from": 601722926,
+      "via": 185274231,
+      "to": 601723271,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 11231184,
+      "restriction": "only_straight_on",
+      "from": 186274186,
+      "via": 186274256,
+      "to": 600729096,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 11758547,
+      "restriction": "no_right_turn",
+      "from": 601249162,
+      "via": 183271076,
+      "to": 601078581,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 11783357,
+      "restriction": "no_left_turn",
+      "from": 600995603,
+      "via": 600376106,
+      "to": 600995615,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 13774733,
+      "restriction": "only_right_turn",
+      "from": 184273077,
+      "via": 184273051,
+      "to": 600909852,
+      "fromDirection": -1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 14966195,
+      "restriction": "no_left_turn",
+      "from": 601044903,
+      "via": 185274202,
+      "to": 601300569,
+      "fromDirection": -1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 18990384,
+      "restriction": "only_right_turn",
+      "from": 601116660,
+      "via": 186276180,
+      "to": 601214699,
+      "fromDirection": 1,
+      "toDirection": 1
+    }
+  ]
+}

@@ -18,22 +18,35 @@ def bearing(points):
     for point in points[1:]:
         delta=(point[0]-origin[0],point[1]-origin[1]);length=math.hypot(*delta)
         if length>=4:return delta[0]/length,delta[1]/length
-    return None
+    return (delta[0]/length,delta[1]/length) if len(points)>1 and length>.1 else None
 
-def match_restrictions(osm,features):
+def match_restrictions(osm,features,diagnostics=None):
     nodes={n['id']:PROJECT(n['lon'],n['lat']) for n in osm['elements'] if n['type']=='node'}
     ways={w['id']:w for w in osm['elements'] if w['type']=='way'}
-    endpoints=defaultdict(list);grid=defaultdict(set)
+    endpoints=defaultdict(list);grid=defaultdict(set);inventory={'features':len(features),'lineStrings':0,'multiLineStrings':0,'unsupportedGeometry':0,'usableEndpoints':0}
     for feature in features:
-        p=feature['properties'];coords=feature['geometry']['coordinates']
-        if feature['geometry']['type']!='LineString':continue
-        points=[PROJECT(*xy) for xy in coords]
+        p=feature['properties'];geometry=feature['geometry'];coords=geometry['coordinates']
+        if geometry['type']=='LineString':
+            parts=[coords];inventory['lineStrings']+=1
+        elif geometry['type']=='MultiLineString':
+            parts=coords;inventory['multiLineStrings']+=1
+        else:
+            inventory['unsupportedGeometry']+=1;continue
+        if not parts:continue
+        # Original source junctions belong only to the overall first/last
+        # endpoints. Never assign them to every part or connect gaps between parts.
         for start,junction in [(True,p['jte_id_beg']),(False,p['jte_id_end'])]:
             if not junction:continue
-            local=points if start else points[::-1];heading=bearing(local)
+            local=[PROJECT(*xy) for xy in (parts[0] if start else parts[-1][::-1])]
+            if len(local)<2:continue
+            heading=bearing(local)
             if not heading:continue
             item={'id':p['wvk_id'],'junction':junction,'point':local[0],'heading':heading,'start':start,'direction':p['rijrichtng'],'name':p.get('stt_naam')}
+            inventory['usableEndpoints']+=1
             endpoints[junction].append(item);grid[(int(local[0][0]//10),int(local[0][1]//10))].add(junction)
+    inventory['junctions']=len(endpoints)
+    if diagnostics is not None:diagnostics.update(inventory)
+    if features and not inventory['usableEndpoints']:raise ValueError('No usable NWB endpoint inventory; audit cannot establish absence of restrictions')
     results=[]
     for rel in [r for r in osm['elements'] if r['type']=='relation']:
         result={'osmRelation':rel['id'],'tags':rel.get('tags',{}),'status':'unmatched'};results.append(result)
@@ -51,12 +64,16 @@ def match_restrictions(osm,features):
         candidates=sorted((min(math.dist(point,e['point']) for e in endpoints[j]),j) for j in nearby)
         candidates=[c for c in candidates if c[0]<=8]
         if not candidates or (len(candidates)>1 and candidates[1][0]-candidates[0][0]<2):result['reason']='missing or ambiguous NWB junction within 8m';continue
-        distance,junction=candidates[0];matched={};failed=False
+        distance,junction=candidates[0];matched={};failed=False;result['osmViaNode']=via;result['nwbJunction']=junction;result['junctionDistanceMetres']=round(distance,3);result['matches']={}
         for role in ['from','to']:
             member=roles[role][0];way=ways.get(member['ref']);possibilities=[]
             if not way or via not in way.get('nodes',[]):failed=True;break
             i=way['nodes'].index(via)
-            for refs in [way['nodes'][i:],way['nodes'][:i+1][::-1]]:
+            for after,refs in [(True,way['nodes'][i:]),(False,way['nodes'][:i+1][::-1])]:
+                oneway=way.get('tags',{}).get('oneway')
+                traverses_forward=after if role=='to' else not after
+                if oneway in ('yes','1','true') and not traverses_forward:continue
+                if oneway=='-1' and traverses_forward:continue
                 pts=[nodes[n] for n in refs if n in nodes];heading=bearing(pts) if len(pts)>1 else None
                 if not heading:continue
                 for edge in endpoints[junction]:
@@ -68,10 +85,11 @@ def match_restrictions(osm,features):
                     if nwbname and osmname:
                         if nwbname!=osmname or dot<.94:continue
                     elif distance>2 or dot<.985:continue
-                    possibilities.append(edge)
+                    possibilities.append(dict(edge,alignmentCosine=round(dot,6)))
             unique={e['id']:e for e in possibilities}
             if len(unique)!=1:failed=True;break
-            matched[role]=next(iter(unique.values()))['id']
+            edge=next(iter(unique.values()));matched[role]=edge['id']
+            result['matches'][role]={'osmWay':way['id'],'osmName':way.get('tags',{}).get('name'),'nwbName':edge['name'],'nwbRoad':edge['id'],'nwbAtStart':edge['start'],'nwbMotorDirection':edge['direction'],'alignmentCosine':edge['alignmentCosine']}
         if failed:result['reason']='missing or ambiguous name/direction/local-tangent match';continue
         result.update({'status':'review-candidate','restriction':restriction,'nwbJunction':junction,'fromNWB':matched['from'],'toNWB':matched['to'],'junctionDistanceMetres':round(distance,3)})
     return results
@@ -88,9 +106,11 @@ def main():
     else:p.error('Use --download or --input overpass-response.json')
     osm=json.loads(raw)
     if osm.get('remark'):raise SystemExit('Incomplete Overpass response: '+osm['remark'])
-    source.write_bytes(gzip.compress(raw,mtime=0))
+    if a.download or a.input:source.write_bytes(gzip.compress(raw,mtime=0))
     features=json.loads(gzip.decompress((SOURCE/'nwb-roads.geojson.gz').read_bytes()))['features']
-    results=match_restrictions(osm,features)
-    report={'acquiredAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'endpoint':a.endpoint if a.download else None,'query':QUERY,'license':'OpenStreetMap ODbL-1.0; attribution OpenStreetMap contributors required before runtime use','schema':'https://wiki.openstreetmap.org/wiki/Relation:restriction','rawSha256':hashlib.sha256(raw).hexdigest(),'nwbSha256':hashlib.sha256((SOURCE/'nwb-roads.geojson.gz').read_bytes()).hexdigest(),'status':'review only, not activated; matching source geometry is not proof of legal completeness','relations':results}
+    inventory={};results=match_restrictions(osm,features,inventory)
+    report={'auditedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'endpoint':a.endpoint if a.download else None,'query':QUERY,'license':'OpenStreetMap ODbL-1.0; attribution OpenStreetMap contributors required before runtime use','schema':'https://wiki.openstreetmap.org/wiki/Relation:restriction','rawSha256':hashlib.sha256(raw).hexdigest(),'nwbSha256':hashlib.sha256((SOURCE/'nwb-roads.geojson.gz').read_bytes()).hexdigest(),'status':'review only, not activated; matching source geometry is not proof of legal completeness','inventory':inventory,'relations':results}
+    strict=[r for r in results if r['status']=='review-candidate' and r['junctionDistanceMetres']<=2 and all(m.get('osmName') and norm(m['osmName'])==norm(m['nwbName']) and m['alignmentCosine']>=.985 for m in r['matches'].values())]
+    report['strictCandidateRelations']=[r['osmRelation'] for r in strict]
     (SOURCE/'osm-turn-restriction-audit.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({'relations':len(results),'reviewCandidates':sum(r['status']=='review-candidate' for r in results)}))
 if __name__=='__main__':main()

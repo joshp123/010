@@ -1,0 +1,1149 @@
+{
+  "auditedAt": "2026-10-24T08:04:57.332910+00:00",
+  "endpoint": null,
+  "query": "[out:json][timeout:45];rel[type=restriction](51.900,4.465,51.930,4.505);(._;>;);out body;",
+  "license": "OpenStreetMap ODbL-1.0; attribution OpenStreetMap contributors required before runtime use",
+  "schema": "https://wiki.openstreetmap.org/wiki/Relation:restriction",
+  "rawSha256": "e2635e4ec394de6b7e25a70a74c05ce9ef54ec8e1d67a987678a7da4ec11be58",
+  "nwbSha256": "f9a8276b154d16eb2c7fd2b0a27f604ff660df3a7c1923a5ec5c22c1de6688ce",
+  "status": "review only, not activated; matching source geometry is not proof of legal completeness",
+  "inventory": {
+    "features": 28924,
+    "lineStrings": 0,
+    "multiLineStrings": 28924,
+    "unsupportedGeometry": 0,
+    "usableEndpoints": 57848,
+    "junctions": 22544
+  },
+  "relations": [
+    {
+      "osmRelation": 376766,
+      "tags": {
+        "name": "Vasteland: geen u-bocht toegestaan",
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "multi-member or via-way restriction requires path state"
+    },
+    {
+      "osmRelation": 1312594,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 1029946459,
+      "nwbJunction": 600476512,
+      "junctionDistanceMetres": 0.873,
+      "matches": {
+        "from": {
+          "osmWay": 88726447,
+          "osmName": "Nassaukade",
+          "nwbName": "Nassaukade",
+          "nwbRoad": 601214659,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.999858
+        }
+      },
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 2329782,
+      "tags": {
+        "restriction": "only_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 768930373,
+      "nwbJunction": 187273085,
+      "junctionDistanceMetres": 3.143,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 2329783,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 768930373,
+      "nwbJunction": 187273085,
+      "junctionDistanceMetres": 3.143,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 2376098,
+      "tags": {
+        "except": "bicycle",
+        "restriction": "only_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 44368714,
+      "nwbJunction": 600485213,
+      "junctionDistanceMetres": 1.571,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 2378091,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "review-candidate",
+      "osmViaNode": 576339795,
+      "nwbJunction": 183273031,
+      "junctionDistanceMetres": 6.014,
+      "matches": {
+        "from": {
+          "osmWay": 48244689,
+          "osmName": "Rochussenstraat",
+          "nwbName": "Rochussenstraat",
+          "nwbRoad": 600726978,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.999303
+        },
+        "to": {
+          "osmWay": 48534332,
+          "osmName": "Rochussenstraat",
+          "nwbName": "Rochussenstraat",
+          "nwbRoad": 600727009,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.991738
+        }
+      },
+      "restriction": "only_straight_on",
+      "fromNWB": 600726978,
+      "toNWB": 600727009
+    },
+    {
+      "osmRelation": 2591984,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 2724052941,
+      "nwbJunction": 600111021,
+      "junctionDistanceMetres": 1.99,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 2772521,
+      "tags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 612933648,
+      "nwbJunction": 186274114,
+      "junctionDistanceMetres": 0.93,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 4063857,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "review-candidate",
+      "osmViaNode": 3094601407,
+      "nwbJunction": 185274231,
+      "junctionDistanceMetres": 0.38,
+      "matches": {
+        "from": {
+          "osmWay": 1498886614,
+          "osmName": "Blaak",
+          "nwbName": "Blaak",
+          "nwbRoad": 601722926,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.999965
+        },
+        "to": {
+          "osmWay": 304873645,
+          "osmName": "Blaak",
+          "nwbName": "Blaak",
+          "nwbRoad": 601723271,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.999976
+        }
+      },
+      "restriction": "only_straight_on",
+      "fromNWB": 601722926,
+      "toNWB": 601723271
+    },
+    {
+      "osmRelation": 6426685,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 771254498,
+      "nwbJunction": 186275103,
+      "junctionDistanceMetres": 2.98,
+      "matches": {
+        "from": {
+          "osmWay": 142153166,
+          "osmName": "Goudsesingel",
+          "nwbName": "Goudsesingel",
+          "nwbRoad": 600361259,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.984922
+        }
+      },
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 6981125,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 1555848111,
+      "nwbJunction": 184275068,
+      "junctionDistanceMetres": 2.193,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 7377866,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 44297103,
+      "nwbJunction": 187269020,
+      "junctionDistanceMetres": 2.377,
+      "matches": {
+        "from": {
+          "osmWay": 7513679,
+          "osmName": "Dordtselaan",
+          "nwbName": "Dordtselaan",
+          "nwbRoad": 187269064,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.997379
+        }
+      },
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 7671697,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 8108528,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 9613131,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 9797262,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 771254627,
+      "nwbJunction": 188274084,
+      "junctionDistanceMetres": 6.697,
+      "matches": {
+        "from": {
+          "osmWay": 325822867,
+          "osmName": "Maasboulevard",
+          "nwbName": "Maasboulevard",
+          "nwbRoad": 600909978,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.991705
+        }
+      },
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 9797263,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "review-candidate",
+      "osmViaNode": 745722541,
+      "nwbJunction": 188274084,
+      "junctionDistanceMetres": 4.906,
+      "matches": {
+        "from": {
+          "osmWay": 662219145,
+          "osmName": "Willem Ruyslaan",
+          "nwbName": "Willem Ruyslaan",
+          "nwbRoad": 188274062,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "B",
+          "alignmentCosine": 0.940566
+        },
+        "to": {
+          "osmWay": 325822867,
+          "osmName": "Maasboulevard",
+          "nwbName": "Maasboulevard",
+          "nwbRoad": 600909975,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.994988
+        }
+      },
+      "restriction": "no_left_turn",
+      "fromNWB": 188274062,
+      "toNWB": 600909975
+    },
+    {
+      "osmRelation": 9797264,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 771254628,
+      "nwbJunction": 188274083,
+      "junctionDistanceMetres": 1.36,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 9802311,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 9802312,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 4395390956,
+      "nwbJunction": 188274008,
+      "junctionDistanceMetres": 4.484,
+      "matches": {
+        "from": {
+          "osmWay": 325822857,
+          "osmName": "Maasboulevard",
+          "nwbName": "Maasboulevard",
+          "nwbRoad": 600729922,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.968912
+        }
+      },
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 9802313,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 4395390932,
+      "nwbJunction": 600376132,
+      "junctionDistanceMetres": 0.717,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 9802314,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 44398718,
+      "nwbJunction": 188274008,
+      "junctionDistanceMetres": 5.934,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 9802315,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "review-candidate",
+      "osmViaNode": 670854762,
+      "nwbJunction": 600376131,
+      "junctionDistanceMetres": 2.182,
+      "matches": {
+        "from": {
+          "osmWay": 325822856,
+          "osmName": "Maasboulevard",
+          "nwbName": "Maasboulevard",
+          "nwbRoad": 600995671,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.999348
+        },
+        "to": {
+          "osmWay": 142153187,
+          "osmName": "Oostmolenwerf",
+          "nwbName": "Oostmolenwerf",
+          "nwbRoad": 600995674,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "B",
+          "alignmentCosine": 0.978032
+        }
+      },
+      "restriction": "no_left_turn",
+      "fromNWB": 600995671,
+      "toNWB": 600995674
+    },
+    {
+      "osmRelation": 9802316,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 770739582,
+      "nwbJunction": 600376131,
+      "junctionDistanceMetres": 5.225,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 9802317,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 770739581,
+      "nwbJunction": 187274031,
+      "junctionDistanceMetres": 1.773,
+      "matches": {
+        "from": {
+          "osmWay": 142153187,
+          "osmName": "Oostmolenwerf",
+          "nwbName": "Oostmolenwerf",
+          "nwbRoad": 600995674,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "B",
+          "alignmentCosine": 0.978032
+        }
+      },
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 10152588,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10164942,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10164943,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 44394052,
+      "nwbJunction": 185274094,
+      "junctionDistanceMetres": 3.074,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 10164945,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "review-candidate",
+      "osmViaNode": 3479454465,
+      "nwbJunction": 188270014,
+      "junctionDistanceMetres": 1.975,
+      "matches": {
+        "from": {
+          "osmWay": 492374065,
+          "osmName": "Paul Krugerstraat",
+          "nwbName": "Paul Krugerstraat",
+          "nwbRoad": 601109105,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.990763
+        },
+        "to": {
+          "osmWay": 735291333,
+          "osmName": "Paul Krugerstraat",
+          "nwbName": "Paul Krugerstraat",
+          "nwbRoad": 601109099,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.941758
+        }
+      },
+      "restriction": "no_u_turn",
+      "fromNWB": 601109105,
+      "toNWB": 601109099
+    },
+    {
+      "osmRelation": 10164946,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 4831762066,
+      "nwbJunction": 600423371,
+      "junctionDistanceMetres": 3.461,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 10477620,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 6486682605,
+      "nwbJunction": 600699206,
+      "junctionDistanceMetres": 2.772,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 10477621,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 6486682609,
+      "nwbJunction": 600698576,
+      "junctionDistanceMetres": 4.338,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 10579275,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 6629908794,
+      "nwbJunction": 600426506,
+      "junctionDistanceMetres": 7.201,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 10579276,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10668056,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10668057,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10668388,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 4843721860,
+      "nwbJunction": 600699580,
+      "junctionDistanceMetres": 5.826,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 10786629,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10902776,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 768935955,
+      "nwbJunction": 186273103,
+      "junctionDistanceMetres": 3.056,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 10902777,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 307156957,
+      "nwbJunction": 186273103,
+      "junctionDistanceMetres": 5.833,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 10902779,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 768935955,
+      "nwbJunction": 186273103,
+      "junctionDistanceMetres": 3.056,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 11231184,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "review-candidate",
+      "osmViaNode": 44395387,
+      "nwbJunction": 186274256,
+      "junctionDistanceMetres": 1.044,
+      "matches": {
+        "from": {
+          "osmWay": 75399486,
+          "osmName": "Blaak",
+          "nwbName": "Blaak",
+          "nwbRoad": 186274186,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.998541
+        },
+        "to": {
+          "osmWay": 7523381,
+          "osmName": "Blaak",
+          "nwbName": "Blaak",
+          "nwbRoad": 600729096,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.994131
+        }
+      },
+      "restriction": "only_straight_on",
+      "fromNWB": 186274186,
+      "toNWB": 600729096
+    },
+    {
+      "osmRelation": 11510291,
+      "tags": {
+        "restriction": "no_left_turn",
+        "traffic_sign": "NL:F07",
+        "type": "restriction"
+      },
+      "status": "review-candidate",
+      "osmViaNode": 1426610348,
+      "nwbJunction": 186271059,
+      "junctionDistanceMetres": 1.347,
+      "matches": {
+        "from": {
+          "osmWay": 495199189,
+          "osmName": "Laan op Zuid",
+          "nwbName": "Laan op Zuid",
+          "nwbRoad": 600386813,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.994682
+        },
+        "to": {
+          "osmWay": 129271683,
+          "osmName": "Stieltjesstraat",
+          "nwbName": "Stieltjesstraat",
+          "nwbRoad": 600113971,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.961034
+        }
+      },
+      "restriction": "no_left_turn",
+      "fromNWB": 600386813,
+      "toNWB": 600113971
+    },
+    {
+      "osmRelation": 11758547,
+      "tags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      },
+      "status": "review-candidate",
+      "osmViaNode": 582730460,
+      "nwbJunction": 183271076,
+      "junctionDistanceMetres": 1.752,
+      "matches": {
+        "from": {
+          "osmWay": 859375370,
+          "osmName": "Westzeedijk",
+          "nwbName": "Westzeedijk",
+          "nwbRoad": 601249162,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.987524
+        },
+        "to": {
+          "osmWay": 141883050,
+          "osmName": "Droogleever Fortuynplein",
+          "nwbName": "Droogleever Fortuynplein",
+          "nwbRoad": 601078581,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.986534
+        }
+      },
+      "restriction": "no_right_turn",
+      "fromNWB": 601249162,
+      "toNWB": 601078581
+    },
+    {
+      "osmRelation": 11783357,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "review-candidate",
+      "osmViaNode": 1445365071,
+      "nwbJunction": 600376106,
+      "junctionDistanceMetres": 1.547,
+      "matches": {
+        "from": {
+          "osmWay": 321883656,
+          "osmName": "Boezemweg",
+          "nwbName": "Boezemweg",
+          "nwbRoad": 600995603,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.999998
+        },
+        "to": {
+          "osmWay": 1463167890,
+          "osmName": "Gerdesiaweg",
+          "nwbName": "Gerdesiaweg",
+          "nwbRoad": 600995615,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.988069
+        }
+      },
+      "restriction": "no_left_turn",
+      "fromNWB": 600995603,
+      "toNWB": 600995615
+    },
+    {
+      "osmRelation": 11876154,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "review-candidate",
+      "osmViaNode": 4946874501,
+      "nwbJunction": 600482388,
+      "junctionDistanceMetres": 0.24,
+      "matches": {
+        "from": {
+          "osmWay": 504538928,
+          "osmName": "Rochussenstraat",
+          "nwbName": "Rochussenstraat",
+          "nwbRoad": 601225109,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.977188
+        },
+        "to": {
+          "osmWay": 504538926,
+          "osmName": "Rochussenstraat",
+          "nwbName": "Rochussenstraat",
+          "nwbRoad": 601722285,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.987487
+        }
+      },
+      "restriction": "only_straight_on",
+      "fromNWB": 601225109,
+      "toNWB": 601722285
+    },
+    {
+      "osmRelation": 12535522,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 12829048,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "review-candidate",
+      "osmViaNode": 771254445,
+      "nwbJunction": 600376111,
+      "junctionDistanceMetres": 1.102,
+      "matches": {
+        "from": {
+          "osmWay": 142153150,
+          "osmName": "Boezemweg",
+          "nwbName": "Boezemweg",
+          "nwbRoad": 600995605,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.999844
+        },
+        "to": {
+          "osmWay": 61888288,
+          "osmName": "Ammanplein",
+          "nwbName": "Ammanplein",
+          "nwbRoad": 600995616,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.981259
+        }
+      },
+      "restriction": "no_left_turn",
+      "fromNWB": 600995605,
+      "toNWB": 600995616
+    },
+    {
+      "osmRelation": 13160894,
+      "tags": {
+        "restriction": "only_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "multi-member or via-way restriction requires path state"
+    },
+    {
+      "osmRelation": 13160895,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "multi-member or via-way restriction requires path state"
+    },
+    {
+      "osmRelation": 13309876,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 13422382,
+      "tags": {
+        "restriction": "only_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 13774733,
+      "tags": {
+        "restriction": "only_right_turn",
+        "type": "restriction"
+      },
+      "status": "review-candidate",
+      "osmViaNode": 3880908844,
+      "nwbJunction": 184273051,
+      "junctionDistanceMetres": 0.79,
+      "matches": {
+        "from": {
+          "osmWay": 1025817069,
+          "osmName": "Kromme Elleboog",
+          "nwbName": "Kromme Elleboog",
+          "nwbRoad": 184273077,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "B",
+          "alignmentCosine": 0.999827
+        },
+        "to": {
+          "osmWay": 1029321390,
+          "osmName": "Boomgaardsstraat",
+          "nwbName": "Boomgaardsstraat",
+          "nwbRoad": 600909852,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.999882
+        }
+      },
+      "restriction": "only_right_turn",
+      "fromNWB": 184273077,
+      "toNWB": 600909852
+    },
+    {
+      "osmRelation": 14966194,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 44404046,
+      "nwbJunction": 185274202,
+      "junctionDistanceMetres": 0.77,
+      "matches": {
+        "from": {
+          "osmWay": 7523402,
+          "osmName": "Coolsingel",
+          "nwbName": "Coolsingel",
+          "nwbRoad": 601724275,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "B",
+          "alignmentCosine": 0.999709
+        }
+      },
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 14966195,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "review-candidate",
+      "osmViaNode": 44404046,
+      "nwbJunction": 185274202,
+      "junctionDistanceMetres": 0.77,
+      "matches": {
+        "from": {
+          "osmWay": 130303139,
+          "osmName": "Coolsingel",
+          "nwbName": "Coolsingel",
+          "nwbRoad": 601044903,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "B",
+          "alignmentCosine": 0.999094
+        },
+        "to": {
+          "osmWay": 7525968,
+          "osmName": "Meent",
+          "nwbName": "Meent",
+          "nwbRoad": 601300569,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "B",
+          "alignmentCosine": 0.998959
+        }
+      },
+      "restriction": "no_left_turn",
+      "fromNWB": 601044903,
+      "toNWB": 601300569
+    },
+    {
+      "osmRelation": 14966196,
+      "tags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 44404046,
+      "nwbJunction": 185274202,
+      "junctionDistanceMetres": 0.77,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 14985911,
+      "tags": {
+        "implicit": "yes",
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 14985912,
+      "tags": {
+        "implicit": "yes",
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 16707377,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 17428898,
+      "tags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 610226818,
+      "nwbJunction": 182271096,
+      "junctionDistanceMetres": 0.363,
+      "matches": {
+        "from": {
+          "osmWay": 80584750,
+          "osmName": "G.J. de Jonghweg",
+          "nwbName": "G.J. de Jonghweg",
+          "nwbRoad": 601077591,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.992377
+        }
+      },
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    },
+    {
+      "osmRelation": 18990384,
+      "tags": {
+        "except": "moped;psv;emergency",
+        "restriction": "only_right_turn",
+        "type": "restriction"
+      },
+      "status": "review-candidate",
+      "osmViaNode": 2736033388,
+      "nwbJunction": 186276180,
+      "junctionDistanceMetres": 1.847,
+      "matches": {
+        "from": {
+          "osmWay": 52656334,
+          "osmName": "Noorderbrug",
+          "nwbName": "Noorderbrug",
+          "nwbRoad": 601116660,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "B",
+          "alignmentCosine": 0.998768
+        },
+        "to": {
+          "osmWay": 268261174,
+          "osmName": "Jonker Fransstraat",
+          "nwbName": "Jonker Fransstraat",
+          "nwbRoad": 601214699,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.999643
+        }
+      },
+      "restriction": "only_right_turn",
+      "fromNWB": 601116660,
+      "toNWB": 601214699
+    },
+    {
+      "osmRelation": 21011676,
+      "tags": {
+        "restriction:bus": "only_left_turn",
+        "restriction:hgv": "only_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "unsupported motor restriction type"
+    },
+    {
+      "osmRelation": 21622541,
+      "tags": {
+        "restriction": "only_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "osmViaNode": 44409272,
+      "nwbJunction": 600176314,
+      "junctionDistanceMetres": 0.233,
+      "matches": {},
+      "reason": "missing or ambiguous name/direction/local-tangent match"
+    }
+  ],
+  "strictCandidateRelations": [
+    4063857,
+    11231184,
+    11758547,
+    11783357,
+    13774733,
+    14966195,
+    18990384
+  ]
+}

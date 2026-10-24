@@ -79,6 +79,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
   const cruiseSpeed = roadClass => bicycles ? 4.2 : speedForRoadClass(roadClass);
   const transform = new THREE.Object3D(), color = new THREE.Color(), position = new THREE.Vector3(), tangent = new THREE.Vector3();
   const frustum = new THREE.Frustum(), cameraMatrix = new THREE.Matrix4();
+  let restrictionStatus=bicycles?'not-applicable':'not-loaded';
   let sourceNetwork = null, roads = [], planner = null, candidates = [], cars = [];
   let span = 1700, viewportHeight = 900, hasView = false, enabled = true, paused = false, lastTime = null, elapsed = 0, sequence = 1;
   let desiredCount = 0, seeded = false, plannedJourneys = 0, completedJourneys = 0;
@@ -119,7 +120,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
       const road = { ...source, sourceIndex: roads.length, points, distances, length: distances.at(-1), bounds: new THREE.Box3().setFromPoints(points).expandByScalar(5) };
       roads.push(road);
     }
-    planner = createJourneyPlanner(roads);
+    planner = createJourneyPlanner(roads,{turnRestrictions:bicycles?[]:(network.turnRestrictions||[])});
     if (preserveCars) {
       cars = previousCars.flatMap(car => {
         const road = roads[car.road.sourceIndex];
@@ -213,11 +214,21 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     if (!response.ok) throw new Error(`Traffic roads HTTP ${response.status}`);
     let bytes = new Uint8Array(await response.arrayBuffer());
     if (bytes[0] === 31 && bytes[1] === 139) bytes = new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
-    setRoads(decodeTrafficRoads(bytes));
+    const network=decodeTrafficRoads(bytes);
+    if(!bicycles) {
+      try {
+        const response=await fetch('./data/traffic/turn-restrictions.json');
+        if(!response.ok)throw new Error(`HTTP ${response.status}`);
+        const data=await response.json();
+        if(data.version!==1 || data.mode!=='motorcar' || !Array.isArray(data.rules))throw new Error('Unsupported turn restriction format');
+        network.turnRestrictions=data.rules;restrictionStatus=`loaded:${data.rules.length}`;
+      } catch(error) {restrictionStatus=`unavailable:${error.message}`;}
+    }
+    setRoads(network);
     return statistics();
   }
 
-  function statistics() { return { simulated: true, sourceRoads: roads.length, visibleRoads: candidates.length, cars: bicycles ? 0 : body.count, cyclists: bicycles ? body.count : 0, vehicles: body.count, maximumVehicles, drawCalls: body.count && group.visible ? (bicycles ? 5 : 3) : 0, paused, enabled, simulationSeconds: elapsed, plannedJourneys, completedJourneys, unroutableOrigins: unroutableOrigins.size, network: planner?.diagnostics() || null }; }
+  function statistics() { return { simulated: true, sourceRoads: roads.length, visibleRoads: candidates.length, cars: bicycles ? 0 : body.count, cyclists: bicycles ? body.count : 0, vehicles: body.count, maximumVehicles, drawCalls: body.count && group.visible ? (bicycles ? 5 : 3) : 0, paused, enabled, simulationSeconds: elapsed, plannedJourneys, completedJourneys, restrictionStatus, unroutableOrigins: unroutableOrigins.size, network: planner?.diagnostics() || null }; }
 
   return {
     group, load, setRoads,
