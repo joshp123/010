@@ -1,6 +1,7 @@
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
+import { compressedModelDirectories } from '../public/compressed-models.js';
 
 let models = 0, sourceBytes = 0, compressedBytes = 0;
 async function compressDirectory(directory) {
@@ -14,5 +15,5 @@ async function compressDirectory(directory) {
     }
   }
 }
-await compressDirectory(join(process.argv[2] || 'dist/client', 'data'));
+for (const directory of compressedModelDirectories) await compressDirectory(join(process.argv[2] || 'dist/client', 'data', directory));
 console.log(`Prepared ${models} lossless model sidecars: ${sourceBytes} → ${compressedBytes} bytes.`);
