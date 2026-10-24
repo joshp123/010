@@ -86,12 +86,32 @@ export function prepareAppearanceModel(model, { applyLighting, applyCutaway }) {
       seen.add(material);
       material.roughness = 1; material.metalness = 0;
       material.flatShading = true;
+      // The native KHR_techniques edition did not consistently encode culling
+      // state in glTF PBR. Match the existing municipal renderer's two-sided
+      // surfaces: front-face winding must not erase whole source facades.
+      material.side = THREE.DoubleSide;
       if (material.map) {
         material.map.magFilter = THREE.NearestFilter;
         material.map.minFilter = THREE.LinearMipmapLinearFilter;
         material.map.colorSpace = THREE.SRGBColorSpace;
         material.map.needsUpdate = true;
       }
+      // The fixture field consumes this varying. Standard glTF materials do
+      // not have the city material's shader prelude; supply the same world
+      // coordinate contract before composing lighting and cutaway hooks.
+      const compile = material.onBeforeCompile;
+      material.onBeforeCompile = function(shader, renderer) {
+        compile.call(this, shader, renderer);
+        shader.vertexShader = 'varying vec3 cityWorldPosition;\n' + shader.vertexShader;
+        shader.fragmentShader = 'varying vec3 cityWorldPosition;\n' + shader.fragmentShader;
+        shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+          vec4 appearanceVertex = vec4(transformed, 1.0);
+          #ifdef USE_INSTANCING
+          appearanceVertex = instanceMatrix * appearanceVertex;
+          #endif
+          cityWorldPosition = (modelMatrix * appearanceVertex).xyz;`);
+      };
+      material.customProgramCacheKey = () => '010-source-appearance-world-v1';
       applyLighting(material); applyCutaway(material);
       material.needsUpdate = true;
     }

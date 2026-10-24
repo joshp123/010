@@ -89,6 +89,9 @@ def accessor(doc,binary,index):
 def stylise(raw,style=None):
     style=style or STYLE
     original=Image.open(io.BytesIO(raw)).convert('RGB')
+    if style=='source':
+        out=io.BytesIO();original.save(out,format='PNG',optimize=True)
+        return out.getvalue(),original,original
     # Edge-preserving median removes photographic noise, not semantic details.
     # No hue randomisation, super-resolution, hallucinated windows or equipment.
     image=original.filter(ImageFilter.MedianFilter(3))
@@ -189,7 +192,7 @@ def convert(doc,binary,batch,feature,label):
 
 def main():
     global STYLE
-    ap=argparse.ArgumentParser();ap.add_argument('--acquire',action='store_true');ap.add_argument('--style',choices=['baseline','miniature'],default='miniature');args=ap.parse_args();STYLE=args.style
+    ap=argparse.ArgumentParser();ap.add_argument('--acquire',action='store_true');ap.add_argument('--style',choices=['source','baseline','miniature'],default='miniature');args=ap.parse_args();STYLE=args.style
     SOURCE.mkdir(parents=True,exist_ok=True);OUTPUT.mkdir(parents=True,exist_ok=True)
     selected=select_tiles(args.acquire)
     print(f'Selected {len(selected)} source tiles',flush=True)
