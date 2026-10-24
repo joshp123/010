@@ -485,7 +485,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
       visibleUndergroundObservations: underground.length,
       visibleFreshMetroObservations: visible.filter(fresh).length,
       visibleFreshUndergroundObservations: freshCount,
-      metroFocusCandidates:focusCandidates.map(({report,uncertainTrackPosition})=>({inSection:report.id===selectedReportId,presentationState:uncertainTrackPosition?'marker':'train',id:report.id,latitude:report.latitude,longitude:report.longitude,label:report.label,observedAt:report.observedAt,freshness:report.freshness,sourceConnected:report.sourceConnected})),
+      metroFocusCandidates:focusCandidates.map(({report,uncertainTrackPosition,routeHeading})=>({preferredBearing:Number.isFinite(routeHeading)?(routeHeading*180/Math.PI+425)%360:undefined,inSection:report.id===selectedReportId,presentationState:uncertainTrackPosition?'marker':'train',id:report.id,latitude:report.latitude,longitude:report.longitude,label:report.label,observedAt:report.observedAt,freshness:report.freshness,sourceConnected:report.sourceConnected})),
       metroFocus: focus ? {id:focus.id,latitude:focus.latitude,longitude:focus.longitude,label:focus.label,observedAt:focus.observedAt,freshness:focus.freshness,sourceConnected:focus.sourceConnected} : null,
       cutawayShortMessage:!cutaway?null:underground.some(record=>record.uncertainTrackPosition)?'Report off mapped track':freshCount?'Fresh metro · depth illustrated':underground.length?'Older/unverified metro · not live':'No metro report in this section',
       cutawayMessage: !cutaway ? null : underground.some(record=>record.uncertainTrackPosition)
