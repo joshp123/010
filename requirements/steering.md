@@ -79,3 +79,7 @@ The attachment is not stored here because it includes private browser chrome. Th
 > btw ensure we do not degrade into proof port and ensure that the worker thread keeps on actually advancing the goal in line with steering and the better/ambition skills
 
 Recorded by AI on 2026-10-24 by model GPT-6. Workers must keep advancing the whole product. Verification supports decisions; archives, counts and repeated local fixes are not the deliverable.
+
+> *proof porn. anyway this assessment (better, raise ambition, correct hill climbing on deliverable vs proof porn) must be invoked at every time you asssess what the worker model is doing
+
+This applies to every manager/worker assessment, including scheduled continuations.
