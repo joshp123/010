@@ -37,3 +37,7 @@ Reviewed by GPT-6 Astra on 2026-10-24. Sites version 6 deployed successfully at 
 - **Lighting:** `terminal-measured-masts-night.jpg` and `neighbourhood-after-measured-masts-night.jpg`. Supported measured tall fixtures produce broader illustrated pools; ordinary native pools remain consistent. This does not establish complete private-terminal fixture coverage or operational lighting state.
 
 An isolated upper structural member at the small quay is supported by retained same-flight returns, but its lower connections are incomplete. The source check is retained in `work/source-quality/port-form-prototype/isolated-member-source-check.json`. It must not be described as a complete reconstructed crane.
+
+## Woodland loading and terrain selection release
+
+Reviewed by GPT-6 Astra on 2026-10-24. Sites version 9 deployed successfully at 05:44 UTC. Local centre, forest, Hoek and port views were inspected with the source-derived terrain bounds; all settled without pending/refused tiles or errors. The public forest direct load at 51.940,4.519, span200, bearing0 now renders 133 registered trees with three ground models and no load errors. This fixes the first-load dependency on nearby buildings, not missing forest survey coverage. Terrain bounds preserve source geometry and avoid some offscreen requests; no cold-loading speedup is claimed. Current screenshots and diagnostics are retained in `work/visual-qa/ground-bounds-*` and `published-v9-*`.
