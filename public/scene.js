@@ -17,7 +17,7 @@ import { createBuildingBatches } from './building-batches.js';
 import { createTreeBatches } from './tree-batches.js';
 import { createVegetationStyle } from './vegetation-style.js';
 import { applyPublicSpaceMaterial, createPublicSpaceStyle } from './public-space-style.js';
-import { applyMiniatureLighting } from './miniature-lighting.js';
+import { miniatureLightingState, applyMiniatureLighting } from './miniature-lighting.js';
 import { createGroundArtwork } from './ground-artwork.js';
 import { setAppearanceSampling } from './appearance-sampling.js';
 import { estimateAppearanceBytes } from './appearance-memory.js';
@@ -199,7 +199,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   for (const material of [...['ground', 'streets', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain', 'yards'].map(kind => materials[kind]), cartographicMaterial, contextLandMaterial]) applyPublicSpaceMaterial(material);
   const publicSpaceStyle = createPublicSpaceStyle({ material: materials.ground });
   const groundArtworkEnabled = !['native', 'off'].includes(new URLSearchParams(location.search).get('ground'));
-  const groundArtwork = createGroundArtwork({ baseUrl: (!new URLSearchParams(location.search).get('appearance') || new URLSearchParams(location.search).get('appearance') === 'illustrated-neighbourhood') ? './data/ground-artwork-neighbourhood-v2/' : './data/ground-artwork/', enabled: groundArtworkEnabled, requestRender, anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()) });
+  const groundArtwork = createGroundArtwork({ baseUrl: (!new URLSearchParams(location.search).get('appearance') || new URLSearchParams(location.search).get('appearance') === 'illustrated-neighbourhood') ? './data/ground-artwork-neighbourhood-v3/' : './data/ground-artwork/', enabled: groundArtworkEnabled, requestRender, anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()) });
   groundArtwork.apply(materials.ground);
   let groundArtworkPending = groundArtworkEnabled, groundArtworkFailed = false;
   groundArtwork.ready.then(() => { groundArtworkPending = false; groundArtworkFailed = Boolean(groundArtwork.diagnostics().error); requestRender(); });
@@ -335,6 +335,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   metroReady.catch(() => {});
   function updateTransit(snapshot) {
     if (disposed) return;
+    if (capturePending) { pendingTransitSnapshot = snapshot; return; }
     const previous = transitSnapshot;
     transitSnapshot = snapshot;
     if (snapshot.sources?.ndov?.receivedAt !== previous.sources?.ndov?.receivedAt || snapshot.sources?.ns?.receivedAt !== previous.sources?.ns?.receivedAt) transitSurfaceCache.clear();
@@ -406,6 +407,20 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   function visibleBuildingAppearanceModels(role = null) {
     return tilesets.filter(layer => layer.kind === 'appearanceBuildings' && layer.group.visible && (!role || layer.appearanceRole === role))
       .flatMap(layer => [...layer.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean));
+  }
+  function visiblePaintedBuildingAssets() {
+    return tilesets.filter(layer => layer.appearanceRole === 'painted').flatMap(layer =>
+      [...layer.visibleTiles].map(tile => {
+        const meshes = [];
+        tile.engineData.scene?.traverseVisible(mesh => {
+          if (!mesh.isMesh) return;
+          const materialList = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          meshes.push({ bagId: mesh.userData.bagId,
+            triangles: (mesh.geometry.index?.count ?? mesh.geometry.getAttribute('position')?.count ?? 0) / 3,
+            maps: materialList.map(material => ({ width: material.map?.image?.width, height: material.map?.image?.height })) });
+        });
+        return { uri: new URL(tile.content.uri, tile.internal.basePath + '/').href, bags: tile.extras?.bagIds, meshes };
+      }));
   }
   function visiblePaintedBuildingIds() {
     const ids = new Set();
@@ -838,9 +853,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     lighting = { ...lighting, ...nextLighting };
     const mode = lighting.mode;
     const solar = solarDirection(new Date(lighting.date), view.lat, view.lon);
-    const night = mode === 'night' ? 1 : mode === 'live' ? 1 - THREE.MathUtils.smoothstep(solar.altitude / DEGREES, -5, 8) : 0;
-    const golden = mode === 'golden' || mode === 'live' && solar.altitude > 0 && solar.altitude < 13 * DEGREES;
-    const cloud = Math.min(1, Math.max(0, Number(lighting.cloudCover) / 100));
+    const { night, golden, cloud } = miniatureLightingState({ mode, solarAltitudeRadians: solar.altitude, cloudCover: lighting.cloudCover });
     uniforms.night.value = night;
     fixtureSurfaceLighting.setView(camera);
     uniforms.snow.value = Math.min(1, Number(lighting.snow) || 0);
@@ -854,7 +867,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     cartographicMaterial.color.copy(materials.ground.color); cartographicMaterial.roughness = materials.ground.roughness;
     contextLandMaterial.color.copy(cartographicMaterial.color).multiplyScalar(0.72 - night * 0.27);
     contextLandMaterial.roughness = cartographicMaterial.roughness;
-    renderer.toneMappingExposure = night > 0.5 ? 1.35 : 1.12;
+    renderer.toneMappingExposure = 1.12 + night * .23;
     updateShadowCamera();
     requestRender();
   }
@@ -873,7 +886,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     const bounds = canvas.getBoundingClientRect();
     setRenderDimensions(Math.max(1, bounds.width), Math.max(1, bounds.height), Math.min(window.devicePixelRatio || 1, 2));
   }
-  let capturePending = false;
+  let capturePending = false, pendingTransitSnapshot = null;
   async function captureCanvas(captureWidth, captureHeight) {
     if (capturePending) throw new Error('An image is already being rendered.');
     if (disposed) throw new Error('The city view has closed.');
@@ -940,6 +953,10 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       tileCaches.trees.scheduleUnload();
       tileCaches.lights.scheduleUnload();
       capturePending = false;
+      if (pendingTransitSnapshot) {
+        const snapshot = pendingTransitSnapshot; pendingTransitSnapshot = null;
+        updateTransit(snapshot);
+      }
       requestRender();
     }
   }
@@ -1055,7 +1072,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     setView, getView: () => ({ ...view }), setLighting, captureCanvas,
     zoom: factor => setView({ span: view.span / factor }), reset: () => setView(DEFAULT_VIEW),
     render: () => { needsRender = true; frame(); }, getCanvas: () => canvas, resize,
-    getDiagnostics: () => ({ groundArtwork: groundArtwork.diagnostics(), publicSpace: publicSpaceStyle.diagnostics(), tankAppearance: { enabled: tankAppearanceEnabled, ...tankAppearance.diagnostics(), textures: appearanceTextureDiagnostics(visibleTankAppearanceModels()) }, vegetation: { mode: vegetationEnabled ? 'clustered' : 'native', ...vegetationStyle.diagnostics() }, shaderErrors: shaderErrors.slice(), buildingAppearance: { sourceTextureResidency: sourceTextureResidency.diagnostics(), municipal: municipalBuildingVisibility.diagnostics(), edition: appearanceEdition, sampling: appearanceSamplingPreset, ...buildingAppearance.diagnostics(), textures: appearanceTextureDiagnostics(visibleBuildingAppearanceModels()), roles: Object.fromEntries(['painted', 'current', 'municipal', 'legacy'].map(role => [role, visibleBuildingAppearanceModels(role).length])) }, fixtureSurfaceLighting: fixtureSurfaceLighting.diagnostics(), readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, cyclists: { ...cyclists.statistics(), state: cyclistsState }, transit: { ...transit.statistics(), metroState, cityCut: metroCityCut.diagnostics() }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize, pressureEvictions: cache.pressureEvictions }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count ?? mesh.geometry.getAttribute('position')?.count ?? 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
+    getDiagnostics: () => ({ groundArtwork: groundArtwork.diagnostics(), publicSpace: publicSpaceStyle.diagnostics(), tankAppearance: { enabled: tankAppearanceEnabled, ...tankAppearance.diagnostics(), textures: appearanceTextureDiagnostics(visibleTankAppearanceModels()) }, vegetation: { mode: vegetationEnabled ? 'clustered' : 'native', ...vegetationStyle.diagnostics() }, shaderErrors: shaderErrors.slice(), buildingAppearance: { sourceTextureResidency: sourceTextureResidency.diagnostics(), municipal: municipalBuildingVisibility.diagnostics(), edition: appearanceEdition, sampling: appearanceSamplingPreset, paintedAssets: visiblePaintedBuildingAssets(), ...buildingAppearance.diagnostics(), textures: appearanceTextureDiagnostics(visibleBuildingAppearanceModels()), roles: Object.fromEntries(['painted', 'current', 'municipal', 'legacy'].map(role => [role, visibleBuildingAppearanceModels(role).length])) }, fixtureSurfaceLighting: fixtureSurfaceLighting.diagnostics(), readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, cyclists: { ...cyclists.statistics(), state: cyclistsState }, transit: { ...transit.statistics(), metroState, cityCut: metroCityCut.diagnostics() }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize, pressureEvictions: cache.pressureEvictions }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count ?? mesh.geometry.getAttribute('position')?.count ?? 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
     dispose() {
       metroLocationCue.dispose();
       sourceTextureResidency.dispose();

@@ -1,6 +1,17 @@
 // Written by AI, GPT-6, 2026-10-24.
 // Viewing illumination, not a measurement of Rotterdam's sky or luminaires.
 // Local surface light continues to come from retained municipal fixture heads.
+export function miniatureLightingState({mode, solarAltitudeRadians, cloudCover=0}) {
+  const altitudeDegrees = solarAltitudeRadians * 180 / Math.PI;
+  const daylight = Math.max(0, Math.min(1, (altitudeDegrees + 5) / 13));
+  const liveNight = 1 - daylight * daylight * (3 - 2 * daylight);
+  return {
+    night: mode === 'night' ? 1 : mode === 'golden' ? .55 : mode === 'live' ? liveNight : 0,
+    golden: mode === 'golden' || mode === 'live' && altitudeDegrees > 0 && altitudeDegrees < 13,
+    cloud: Math.max(0, Math.min(1, Number(cloudCover) / 100)),
+  };
+}
+
 export function miniatureLighting({night=0,golden=false,cloud=0}={}) {
   const t=Math.max(0,Math.min(1,night));
   const day={sun:golden?'#ffc077':'#fff4e4',sky:golden?'#e2dcc9':'#d9e0e5',ground:'#a09885',background:golden?'#cfc5ab':'#adc8c7',sunIntensity:(golden?2.8:2.6)*(1-cloud*.68),skyIntensity:1.45+cloud*.35};

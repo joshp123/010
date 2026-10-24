@@ -429,6 +429,8 @@ byId('place-search').addEventListener('keydown', event => {
 document.addEventListener('pointerdown', event => {
   if (!event.target.closest('.search-wrap')) closeSearch();
   if (!event.target.closest('#view-panel,#view-toggle')) setViewPanel(false);
+});
+document.addEventListener('click', event => {
   if (!event.target.closest('#weather-details,#weather-toggle')) { byId('weather-details').hidden = true; byId('weather-toggle').setAttribute('aria-expanded', 'false'); }
 });
 document.addEventListener('keydown', event => {

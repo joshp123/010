@@ -1,49 +1,55 @@
 #!/usr/bin/env python3
 """Written by AI, GPT-6, 2026-10-24. Bind model drawing to surveyed public space."""
 from pathlib import Path
-import hashlib,json
+import json
 import numpy as np
 from PIL import Image
 from scipy import ndimage
 ROOT=Path(__file__).resolve().parents[1]
-source=ROOT/'source-data/public-space-neighbourhood';work=ROOT/'work/public-space-neighbourhood';out=ROOT/'public/data/ground-artwork-neighbourhood-v2';out.mkdir(parents=True,exist_ok=True)
+source=ROOT/'source-data/public-space-neighbourhood';work=ROOT/'work/public-space-neighbourhood';out=ROOT/'public/data/ground-artwork-neighbourhood-v3';out.mkdir(parents=True,exist_ok=True)
 metadata=json.loads((work/'source-mask.json').read_text());surface=np.load(work/'source-mask.npz');feature=surface['feature'];height,width=feature.shape
 # Source material footprints carry geography. Small joints are illustrative,
 # aligned with the observed street axes; no generated geographic field transfers.
 rows,columns=np.indices((height,width));pixel=(metadata['boundsRD'][2]-metadata['boundsRD'][0])/width
-angle=.14970488
-along=(columns*np.cos(angle)+rows*np.sin(angle))*pixel
-across=(-columns*np.sin(angle)+rows*np.cos(angle))*pixel
 rgb=np.zeros((height,width,3),float);eligible=surface['surface']>0;material=np.zeros((height,width),np.uint8)
-colours={1:[107,113,114],2:[157,110,95],3:[179,177,163],4:[112,133,76],5:[68,97,102],6:[143,132,117],7:[160,118,99]}
-pavingPath=source/'drawing/pavement-material.png'
-pavingImage=Image.open(pavingPath).convert('RGB')
-pavingResolution=round(2.7/pixel)
-paving=np.array(pavingImage.resize((pavingResolution,pavingResolution),Image.Resampling.BOX),float)
-# Nine drawn units span2.7m; the source-bound atlas therefore keeps .30m units.
-pavingCoordinates=[np.mod(across,2.7)/2.7*(paving.shape[0]-1),np.mod(along,2.7)/2.7*(paving.shape[1]-1)]
-pavingField=np.stack([ndimage.map_coordinates(paving[:,:,channel],pavingCoordinates,order=1,mode='wrap') for channel in range(3)],axis=-1)
 sourceIds=[]
+# Values are a visual interpretation of the retained aerial: parking brick is
+# darker than walking stone, asphalt cooler, and the observed tram strip muted red.
+# Source feature geometry supplies every regional shape. No generated map transfers.
+compositionColours={1:[101,110,112],2:[160,111,96],3:[181,181,169],4:[105,123,76],5:[67,91,95],6:[132,120,108],7:[150,112,96]}
 for record in metadata['features']:
  mask=feature==record['batchId'];a=record['attributes'];physical=a.get('FYSIEKVK','').lower();purpose=a.get('FUNCTIE','').lower();kind=int(surface['surface'][mask][0]) if mask.any() else 0
  if not kind:continue
  if purpose=='fietspad':kind=2
  elif 'open verharding' in physical and purpose in {'rijbaan lokale weg','parkeervlak'}:kind=6
- elif purpose=='ov-baan' and 'open verharding' in physical:kind=7
+ elif purpose=='ov-baan':kind=7
  sourceIds.append(str(a.get('DGDT_ID',record['id'])));material[mask]=kind
- if purpose=='ov-baan':kind=7;material[mask]=kind
- # At this view individual joints remain quiet. Unit layout is illustrative;
- # the source confirms small paving and orientation, not every slab boundary.
- field=np.ones((height,width))
+ rgb[mask]=compositionColours[kind]
+ # The long axis belongs to this retained feature, so north/south footways do
+ # not inherit east/west paving. Individual unit boundaries remain illustration.
+ points=np.column_stack(np.nonzero(mask))[:,::-1].astype(float)
+ axis=np.linalg.eigh(np.cov(points.T))[1][:,-1] if len(points)>2 else np.array([1.,0.])
+ localAlong=(columns*axis[0]+rows*axis[1])*pixel
+ localAcross=(-columns*axis[1]+rows*axis[0])*pixel
  if kind in {3,6,7}:
-  spacing=.30 if kind==3 else .21
-  lineWidth=.012
-  def joint_coverage(axis):
-   phase=np.mod(axis,spacing);distance=np.minimum(phase,spacing-phase)
-   return np.clip((pixel*.5+lineWidth*.5-distance)/pixel,0,lineWidth/pixel)
-  coverage=np.maximum(joint_coverage(along),joint_coverage(across))
-  field-=coverage*.22
- rgb[mask]=pavingField[mask] if kind==3 else np.array(colours[kind])*field[mask,None]
+  unitAlong,unitAcross=(.30,.30) if kind==3 else (.21,.105)
+  stagger=(np.floor(localAcross/unitAcross)%2)*unitAlong*.5 if kind!=3 else 0
+  def joint_coverage(coordinate,spacing):
+   phase=np.mod(coordinate,spacing);distance=np.minimum(phase,spacing-phase)
+   return np.clip((pixel*.5+.008*.5-distance)/pixel,0,.008/pixel)
+  coverage=np.maximum(joint_coverage(localAlong+stagger,unitAlong),joint_coverage(localAcross,unitAcross))
+  rgb[mask]*=(1-coverage[mask,None]*.20)
+ if kind==4:
+  # A connected, drawn planted mass inside its exact inventory footprint.
+  # A narrow dark underside establishes the observed bed edge; no new greenery.
+  insideDistance=ndimage.distance_transform_edt(mask)*pixel
+  broadMass=np.clip(insideDistance/1.1,0,1)
+  rgb[mask]*=(.82+.18*broadMass[mask,None])
+ if kind==5:
+  # Quiet source shoreline, with no inferred water depth, wakes or boats.
+  insideDistance=ndimage.distance_transform_edt(mask)*pixel
+  shore=np.clip(insideDistance/2.0,0,1)
+  rgb[mask]*=(.88+.12*shore[mask,None])
 # Exact source material boundaries are quietly inked inside the native footprint.
 edge=np.zeros_like(eligible)
 for axis in [0,1]:
@@ -64,5 +70,5 @@ road=np.isin(material,[1,2,6,7]);paint&=eligible&road;rgb[paint]=[222,219,200]
 nearest=ndimage.distance_transform_edt(~eligible,return_distances=False,return_indices=True);rgb[~eligible]=rgb[nearest[0][~eligible],nearest[1][~eligible]]
 rgba=np.dstack([np.clip(rgb,0,255).astype('uint8'),eligible.astype('uint8')*255]);Image.fromarray(rgba).save(out/'neighbourhood-ground.png')
 preview=rgba[:,:,:3].copy();preview[~eligible]=[42,46,48];Image.fromarray(preview).save(work/'drawn-ground-review.png')
-manifest={k:metadata[k] for k in ['boundsRD','imageSize','worldToImageUV','sourceDecodedSha256','orthophotoSha256','projectionMaximumErrorPixels']};manifest.update(status='review-candidate',texture='neighbourhood-ground.png',areaId='adjoining-neighbourhood',sourceFeatureIds=sourceIds,eligiblePixels=int(eligible.sum()),paintPixels=int(paint.sum()),pavementMaterialSha256=hashlib.sha256(pavingPath.read_bytes()).hexdigest(),interpretation='Model-drawn local .30m pavement units inside exact source footway regions. Exact source material footprints and observed crossing fragments. Small quiet local paving joints follow observed street axes; generated geographic bands are excluded. Source OV reservation remains red-brown.',notSurveyed='Individual paving unit boundaries and .30/.21m drawing units are approximate illustration, not measured slab inventory.',acceptance='Unaccepted whole-neighbourhood actual city candidate.')
+manifest={k:metadata[k] for k in ['boundsRD','imageSize','worldToImageUV','sourceDecodedSha256','orthophotoSha256','projectionMaximumErrorPixels']};manifest.update(status='review-candidate',texture='neighbourhood-ground.png',areaId='adjoining-neighbourhood',sourceFeatureIds=sourceIds,eligiblePixels=int(eligible.sum()),paintPixels=int(paint.sum()),interpretation='Complete source-feature composition: cool asphalt, pale walking stone, darker parking brick, muted red source tram reservation, connected planted beds and quiet canal shore. All regional forms are retained BGT footprints. Local unit directions follow each source feature. Observed crossing fragments retain their original support; generated aerial-map output is rejected.',notSurveyed='Individual paving unit boundaries and .30m stone and .21x.105m brick drawing units are approximate illustration, not measured slab inventory.',acceptance='Unaccepted whole-neighbourhood actual city candidate.')
 (out/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');(source/'drawing/source-marking-review.json').write_text(json.dumps({'sourceSha256':metadata['orthophotoSha256'],'regions':regions,'method':'Observed crossing bars retain source local-contrast support only; no gap filling. Existing reviewed source paint retained at exact RD coordinates.'},indent=2)+'\n');print(json.dumps({'features':len(sourceIds),'paintPixels':int(paint.sum())}))
