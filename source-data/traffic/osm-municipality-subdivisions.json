@@ -1,0 +1,7 @@
+{
+  "boundarySha256": "8ad975faec184b943517adc582316edee8251a9d7114481a0b9b29de00ffe404",
+  "splitIds": [
+    "36-865"
+  ],
+  "coverage": "Each split replaces its parent with four exact children; original responses remain archived"
+}

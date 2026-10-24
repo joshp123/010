@@ -2,6 +2,13 @@
   "license": "ODbL-1.0",
   "attribution": "\u00a9 OpenStreetMap contributors",
   "boundarySha256": "8ad975faec184b943517adc582316edee8251a9d7114481a0b9b29de00ffe404",
+  "originalTiles": 17,
+  "subdividedTiles": [
+    "36-865"
+  ],
+  "selection": [],
+  "requestBudget": 12,
+  "errorsThisRun": [],
   "tiles": [
     {
       "id": "35-864",
@@ -100,14 +107,56 @@
       "rawSha256": "27997d30dded1e46b980d0a4aa4bb93f4886a56590c927ad759fc4d733b5fa61"
     },
     {
-      "id": "36-865",
+      "id": "36-865.0",
       "bbox": [
         51.9,
         4.32,
+        51.93,
+        4.38
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.32,51.93,4.38);(._;>;);out body;",
+      "parentId": "36-865",
+      "file": "source-data/traffic/osm-municipality-tiles/36-865.0.json.gz",
+      "rawSha256": "e1b0b478272bf823c4d3b057be2cc0a5f420cefd3a1907fb43a3aadb0009ede2"
+    },
+    {
+      "id": "36-865.1",
+      "bbox": [
+        51.9,
+        4.38,
+        51.93,
+        4.44
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.38,51.93,4.44);(._;>;);out body;",
+      "parentId": "36-865",
+      "file": "source-data/traffic/osm-municipality-tiles/36-865.1.json.gz",
+      "rawSha256": "ecd201052a2ba436d01560e2f0018f7940ac21b4cb0ce91e0361f743fffb8363"
+    },
+    {
+      "id": "36-865.2",
+      "bbox": [
+        51.93,
+        4.32,
+        51.96,
+        4.38
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.93,4.32,51.96,4.38);(._;>;);out body;",
+      "parentId": "36-865",
+      "file": "source-data/traffic/osm-municipality-tiles/36-865.2.json.gz",
+      "rawSha256": "e499e10404a080105917badd1cc4742d51e04b5f2c04902983b158fca6051000"
+    },
+    {
+      "id": "36-865.3",
+      "bbox": [
+        51.93,
+        4.38,
         51.96,
         4.44
       ],
-      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.32,51.96,4.44);(._;>;);out body;"
+      "query": "[out:json][timeout:45];rel[type=restriction](51.93,4.38,51.96,4.44);(._;>;);out body;",
+      "parentId": "36-865",
+      "file": "source-data/traffic/osm-municipality-tiles/36-865.3.json.gz",
+      "rawSha256": "3f01ee502fc06db6e2f45cc7905f24701c523717ee3d3b66bc46505c542d26e0"
     },
     {
       "id": "37-865",
@@ -117,7 +166,9 @@
         51.96,
         4.56
       ],
-      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.44,51.96,4.56);(._;>;);out body;"
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.44,51.96,4.56);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/37-865.json.gz",
+      "rawSha256": "234e09be21840f1fdd163bd443221a8f992016086dece862b5a787eda6ee0927"
     },
     {
       "id": "38-865",
@@ -127,7 +178,9 @@
         51.96,
         4.68
       ],
-      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.56,51.96,4.68);(._;>;);out body;"
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.56,51.96,4.68);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/38-865.json.gz",
+      "rawSha256": "c0e8182a7bdad9840656d38221b4369dbd437076eb882d772ec11be7e60d4464"
     },
     {
       "id": "32-866",
@@ -137,7 +190,9 @@
         52.02,
         3.96
       ],
-      "query": "[out:json][timeout:45];rel[type=restriction](51.96,3.84,52.02,3.96);(._;>;);out body;"
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,3.84,52.02,3.96);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/32-866.json.gz",
+      "rawSha256": "6f6c9f4298abd8bb7351615da87458d7d84a175bbb594b2c37fd0a23527af068"
     },
     {
       "id": "33-866",
@@ -147,7 +202,9 @@
         52.02,
         4.08
       ],
-      "query": "[out:json][timeout:45];rel[type=restriction](51.96,3.96,52.02,4.08);(._;>;);out body;"
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,3.96,52.02,4.08);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/33-866.json.gz",
+      "rawSha256": "7a1322ecf01469c0130047be3592bf767508472bbd9681e6477c5691b993ee0c"
     },
     {
       "id": "34-866",
@@ -157,7 +214,9 @@
         52.02,
         4.2
       ],
-      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.08,52.02,4.2);(._;>;);out body;"
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.08,52.02,4.2);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/34-866.json.gz",
+      "rawSha256": "c5be55d1eac34bffa70ea7ec54fd5ff7b507c7bda70ae356cd071f411f620fd4"
     },
     {
       "id": "36-866",
@@ -167,7 +226,9 @@
         52.02,
         4.44
       ],
-      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.32,52.02,4.44);(._;>;);out body;"
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.32,52.02,4.44);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/36-866.json.gz",
+      "rawSha256": "8a2c2c78dc8fd61ed95b503d2292d023c0a5325e07a3b4f213ca18a5fd8b0818"
     },
     {
       "id": "37-866",
@@ -177,7 +238,9 @@
         52.02,
         4.56
       ],
-      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.44,52.02,4.56);(._;>;);out body;"
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.44,52.02,4.56);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/37-866.json.gz",
+      "rawSha256": "e759c3ac0ca245fd3a5c0393e41d76015682552ed5084253448c4c5c96e8d845"
     },
     {
       "id": "38-866",
@@ -187,10 +250,12 @@
         52.02,
         4.68
       ],
-      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.56,52.02,4.68);(._;>;);out body;"
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.56,52.02,4.68);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/38-866.json.gz",
+      "rawSha256": "437c0f85761add3f89ec2bad9456ae423d41d97c398f3bb3abe0b1a70e24f6e7"
     }
   ],
-  "completed": 8,
-  "required": 17,
-  "complete": false
+  "completed": 20,
+  "required": 20,
+  "complete": true
 }

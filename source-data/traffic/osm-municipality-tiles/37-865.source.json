@@ -1,0 +1,13 @@
+{
+  "id": "37-865",
+  "bbox": [
+    51.9,
+    4.44,
+    51.96,
+    4.56
+  ],
+  "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.44,51.96,4.56);(._;>;);out body;",
+  "endpoint": "https://overpass-api.de/api/interpreter",
+  "retrievedAt": "2026-10-24T08:44:04.698745+00:00",
+  "rawSha256": "234e09be21840f1fdd163bd443221a8f992016086dece862b5a787eda6ee0927"
+}
