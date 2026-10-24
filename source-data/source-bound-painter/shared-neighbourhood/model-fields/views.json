@@ -1,0 +1,361 @@
+{
+  "authorship": "Written by AI on 2026-10-24 by model GPT-6",
+  "status": "Model drawing fields require actual source architecture review before acceptance",
+  "sourceSha256": "078bd6824553e6c4ae39c7b72b1973a0965e7381d98b9bffce1cfefb45e426ac",
+  "sourcePath": "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/raw",
+  "views": [
+    {
+      "name": "view-0-0",
+      "camera": {
+        "centre": [
+          3.9042816162109375,
+          66.55652841494569,
+          -9.19442648508793
+        ],
+        "basis": [
+          [
+            1.0,
+            -0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "scale": 9.494489311638391,
+        "mid": [
+          0.0,
+          0.0
+        ],
+        "size": 1600,
+        "angle": 0,
+        "elevation": 0
+      },
+      "source": "view-0-0-source.png",
+      "paint": "view-0-0-paint.png",
+      "depth": "view-0-0-depth.npy",
+      "drawingConfidence": 1
+    },
+    {
+      "name": "view-90-0",
+      "camera": {
+        "centre": [
+          3.9042816162109375,
+          66.55652841494569,
+          -9.19442648508793
+        ],
+        "basis": [
+          [
+            6.123233995736766e-17,
+            -0.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -1.0,
+            0.0,
+            6.123233995736766e-17
+          ]
+        ],
+        "scale": 8.215651790419669,
+        "mid": [
+          0.0,
+          0.0
+        ],
+        "size": 1600,
+        "angle": 90,
+        "elevation": 0
+      },
+      "source": "view-90-0-source.png",
+      "paint": "view-90-0-paint.png",
+      "depth": "view-90-0-depth.npy",
+      "drawingConfidence": 1
+    },
+    {
+      "name": "view-180-0",
+      "camera": {
+        "centre": [
+          3.9042816162109375,
+          66.55652841494569,
+          -9.19442648508793
+        ],
+        "basis": [
+          [
+            -1.0,
+            0.0,
+            1.2246467991473532e-16
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -1.2246467991473532e-16,
+            0.0,
+            -1.0
+          ]
+        ],
+        "scale": 9.494489311638391,
+        "mid": [
+          0.0,
+          0.0
+        ],
+        "size": 1600,
+        "angle": 180,
+        "elevation": 0
+      },
+      "source": "view-180-0-source.png",
+      "paint": "view-180-0-paint.png",
+      "depth": "view-180-0-depth.npy",
+      "drawingConfidence": 1
+    },
+    {
+      "name": "view-270-0",
+      "camera": {
+        "centre": [
+          3.9042816162109375,
+          66.55652841494569,
+          -9.19442648508793
+        ],
+        "basis": [
+          [
+            -1.8369701987210297e-16,
+            0.0,
+            -1.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0,
+            -1.8369701987210297e-16
+          ]
+        ],
+        "scale": 8.215651790419669,
+        "mid": [
+          0.0,
+          0.0
+        ],
+        "size": 1600,
+        "angle": 270,
+        "elevation": 0
+      },
+      "source": "view-270-0-source.png",
+      "paint": "view-270-0-paint.png",
+      "depth": "view-270-0-depth.npy",
+      "drawingConfidence": 1
+    },
+    {
+      "name": "view-0-90",
+      "camera": {
+        "centre": [
+          3.9042816162109375,
+          66.55652841494569,
+          -9.19442648508793
+        ],
+        "basis": [
+          [
+            1.0,
+            -0.0,
+            0.0
+          ],
+          [
+            0.0,
+            6.123233995736766e-17,
+            1.0
+          ],
+          [
+            -0.0,
+            -1.0,
+            6.123233995736766e-17
+          ]
+        ],
+        "scale": 8.215651790419669,
+        "mid": [
+          0.0,
+          0.0
+        ],
+        "size": 1600,
+        "angle": 0,
+        "elevation": 90
+      },
+      "source": "view-0-90-source.png",
+      "paint": "view-0-90-paint.png",
+      "depth": "view-0-90-depth.npy",
+      "drawingConfidence": 0.65
+    },
+    {
+      "name": "view-120-28",
+      "camera": {
+        "centre": [
+          3.9042816162109375,
+          66.55652841494569,
+          -9.19442648508793
+        ],
+        "basis": [
+          [
+            -0.49999999999999983,
+            -0.4065742997269626,
+            0.7646550456261504
+          ],
+          [
+            0.0,
+            0.8829475928589268,
+            0.4694715627858908
+          ],
+          [
+            -0.8660254037844387,
+            0.23473578139294532,
+            -0.4414737964294633
+          ]
+        ],
+        "scale": 7.830376982813035,
+        "mid": [
+          -7.883848435109449,
+          -18.129455720193267
+        ],
+        "size": 1600,
+        "angle": 120,
+        "elevation": 28
+      },
+      "source": "view-120-28-source.png",
+      "paint": "view-120-28-paint.png",
+      "depth": "view-120-28-depth.npy",
+      "drawingConfidence": 1
+    },
+    {
+      "name": "view-300-28",
+      "camera": {
+        "centre": [
+          3.9042816162109375,
+          66.55652841494569,
+          -9.19442648508793
+        ],
+        "basis": [
+          [
+            0.5000000000000001,
+            0.4065742997269625,
+            -0.7646550456261504
+          ],
+          [
+            0.0,
+            0.8829475928589271,
+            0.4694715627858908
+          ],
+          [
+            0.8660254037844386,
+            -0.23473578139294546,
+            0.4414737964294636
+          ]
+        ],
+        "scale": 7.830376982813035,
+        "mid": [
+          7.883848435109456,
+          -1.4996915728945197
+        ],
+        "size": 1600,
+        "angle": 300,
+        "elevation": 28
+      },
+      "source": "view-300-28-source.png",
+      "paint": "view-300-28-paint.png",
+      "depth": "view-300-28-depth.npy",
+      "drawingConfidence": 1
+    },
+    {
+      "name": "view-0-45",
+      "camera": {
+        "centre": [
+          3.9042816162109375,
+          66.55652841494569,
+          -9.19442648508793
+        ],
+        "basis": [
+          [
+            1.0,
+            -0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.7071067811865476,
+            0.7071067811865475
+          ],
+          [
+            -0.0,
+            -0.7071067811865475,
+            0.7071067811865476
+          ]
+        ],
+        "scale": 9.494489311638391,
+        "mid": [
+          0.0,
+          -2.9234520793088947
+        ],
+        "size": 1600,
+        "angle": 0,
+        "elevation": 45
+      },
+      "source": "view-0-45-source.png",
+      "paint": "view-0-45-paint.png",
+      "depth": "view-0-45-depth.npy",
+      "drawingConfidence": 1
+    },
+    {
+      "name": "view-180-45",
+      "camera": {
+        "centre": [
+          3.9042816162109375,
+          66.55652841494569,
+          -9.19442648508793
+        ],
+        "basis": [
+          [
+            -1.0,
+            -8.659560562354932e-17,
+            8.659560562354934e-17
+          ],
+          [
+            0.0,
+            0.7071067811865476,
+            0.7071067811865475
+          ],
+          [
+            -1.2246467991473532e-16,
+            0.7071067811865475,
+            -0.7071067811865476
+          ]
+        ],
+        "scale": 9.494489311638391,
+        "mid": [
+          0.0,
+          -1.8399075017134408
+        ],
+        "size": 1600,
+        "angle": 180,
+        "elevation": 45
+      },
+      "source": "view-180-45-source.png",
+      "paint": "view-180-45-paint.png",
+      "depth": "view-180-45-depth.npy",
+      "drawingConfidence": 1
+    }
+  ],
+  "drawingPixelsPerMetre": 6,
+  "handoffDirectory": "bound-shared-neighbourhood"
+}

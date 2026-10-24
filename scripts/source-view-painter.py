@@ -8,6 +8,33 @@ import numpy as np
 from PIL import Image
 spec=importlib.util.spec_from_file_location('bound',Path(__file__).with_name('source-bound-painter.py'));m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 
+class SourceCollection:
+ """Observe adjoining sources together; export their original geometry separately."""
+ def __init__(self,folder):
+  self.path=folder;self.sources=[m.Source(p) for p in sorted(folder.glob('*.b3dm'))];assert self.sources,'No retained municipal sources'
+  anchor=self.sources[0];anchor_rotation=np.array(anchor.doc['nodes'][0]['matrix']).reshape(4,4,order='F')[:3,:3];anchor_centre=np.array(anchor.feature['RTC_CENTER'])
+  self.images=[];self.triangles=[];self.source_image_ranges=[]
+  for source in self.sources:
+   image_start=len(self.images);self.images.extend(source.images);self.source_image_ranges.append((image_start,len(self.images)))
+   rotation=np.array(source.doc['nodes'][0]['matrix']).reshape(4,4,order='F')[:3,:3];relative_rotation=anchor_rotation.T@rotation;relative_centre=anchor_rotation.T@(np.array(source.feature['RTC_CENTER'])-anchor_centre)
+   for triangle in source.triangles:
+    original_identity=str(source.batch['id'][triangle['batch']])
+    if not original_identity.startswith('BAG_'):continue
+    self.triangles.append({**triangle,'positions':triangle['positions']@relative_rotation.T+relative_centre,'image':triangle['image']+image_start})
+  self.positions=np.array([t['positions'] for t in self.triangles]);self.normals=np.cross(self.positions[:,1]-self.positions[:,0],self.positions[:,2]-self.positions[:,0]);self.areas=np.linalg.norm(self.normals,axis=1)/2;self.normals/=np.maximum(self.areas[:,None]*2,1e-12)
+  self.raw='\n'.join(m.digest(s.raw) for s in self.sources).encode();self.anchor_rotation=anchor_rotation;self.anchor_centre=anchor_centre
+
+ def export_handoff(self,images,identities,folder):
+  folder.mkdir(parents=True,exist_ok=True);tiles=[]
+  for source,(first,last) in zip(self.sources,self.source_image_ranges):
+   selected={str(i).removeprefix('BAG_') for i in source.batch['id'] if str(i).startswith('BAG_')} & identities
+   if not selected:continue
+   tile_folder=folder/source.path.stem;source.export_handoff(images[first:last],selected,tile_folder);tiles.append({'directory':source.path.stem,'sourceDecodedSha256':m.digest(source.raw),'bagIds':sorted(selected)})
+  m.save_json(folder/'collection.json',{'authorship':'Written by AI on 2026-10-25 by model GPT-6','status':'Shared neighbourhood drawing candidate, requires actual source/opposing city review','observationFingerprint':m.digest(self.raw),'tiles':tiles})
+
+def load_source(path):
+ return SourceCollection(path) if path.is_dir() else m.Source(path)
+
 def camera(source,angle,elevation,size=1600):
  points=source.positions.reshape(-1,3);centre=(points.min(0)+points.max(0))/2;yaw=np.radians(angle);elev=np.radians(elevation);toward=np.array([np.sin(yaw)*np.cos(elev),np.sin(elev),np.cos(yaw)*np.cos(elev)]);right=np.array([np.cos(yaw),0,-np.sin(yaw)]);up=np.cross(toward,right);basis=np.stack([right,up,toward],axis=1);projected=(points-centre)@basis;scale=(size-48)/max(np.ptp(projected[:,:2],axis=0));mid=(projected[:,:2].max(0)+projected[:,:2].min(0))/2
  return {'centre':centre.tolist(),'basis':basis.tolist(),'scale':float(scale),'mid':mid.tolist(),'size':size,'angle':angle,'elevation':elevation}
@@ -37,6 +64,7 @@ def bake(source,out):
   path=out/view['paint']
   if not path.exists():continue
   c=view['camera'];size=c['size'];drawing=Image.open(path).convert('RGB');pixel_size=plan.get('drawingPixelSize')
+  if plan.get('drawingPixelsPerMetre'):pixel_size=round(size*plan['drawingPixelsPerMetre']/c['scale'])
   if pixel_size:drawing=drawing.resize((pixel_size,pixel_size),Image.Resampling.BOX)
   paint=np.asarray(drawing.resize((size,size),Image.Resampling.NEAREST));depth=np.load(out/view['depth']);toward=np.array(c['basis'])[:,2]
   for index,t in enumerate(source.triangles):
@@ -46,10 +74,11 @@ def bake(source,out):
    tex=images[t['image']];h,w=tex.shape[:2]
    for x0,y0,x1,y1,weights,inside in m.raster_triangle(t['uv']*[w,h],w,h):
     q,xy=project(weights@t['positions'],c);px=np.rint(xy).astype(int);valid=inside&(px[:,:,0]>=0)&(px[:,:,0]<size)&(px[:,:,1]>=0)&(px[:,:,1]<size);px[:,:,0]=px[:,:,0].clip(0,size-1);px[:,:,1]=px[:,:,1].clip(0,size-1);valid&=abs(q[:,:,2]-depth[px[:,:,1],px[:,:,0]])<.12;valid&=score>scores[t['image']][y0:y1+1,x0:x1+1];tex[y0:y1+1,x0:x1+1][valid]=paint[px[:,:,1][valid],px[:,:,0][valid]];scores[t['image']][y0:y1+1,x0:x1+1][valid]=score
- source.export(images,out/'model-drawn-block.glb');source.export_handoff(images,{t['identity'] for t in source.triangles},out/plan.get('handoffDirectory','bound-model-drawn-block'));np.savez_compressed(out/'painted-atlases.npz',**{f'image_{i}':a for i,a in enumerate(images)})
+ if not isinstance(source,SourceCollection):source.export(images,out/'model-drawn-block.glb')
+ source.export_handoff(images,{t['identity'] for t in source.triangles},out/plan.get('handoffDirectory','bound-model-drawn-block'));np.savez_compressed(out/'painted-atlases.npz',**{f'image_{i}':a for i,a in enumerate(images)})
  m.save_json(out/'baked.json',{'sourceSha256':m.digest(source.raw),'paintedViews':[v['paint'] for v in plan['views'] if (out/v['paint']).exists()],'identities':sorted({t['identity'] for t in source.triangles}),'status':'Whole model drawing field candidate; source aperture and opposing view inspection required, no fidelity acceptance inferred from geometry'})
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('operation',choices=['prepare','bake']);p.add_argument('source',type=Path);p.add_argument('output',type=Path);a=p.parse_args();s=m.Source(a.source)
+ p=argparse.ArgumentParser();p.add_argument('operation',choices=['prepare','bake']);p.add_argument('source',type=Path);p.add_argument('output',type=Path);a=p.parse_args();s=load_source(a.source)
  if a.operation=='prepare':prepare(s,a.output)
  else:bake(s,a.output)
