@@ -1,0 +1,29 @@
+{
+  "id": "schiedamseweg-north",
+  "boundsRD": [
+    90249,
+    436164,
+    90377,
+    436212
+  ],
+  "imageSize": [
+    1600,
+    600
+  ],
+  "pixelMetres": 0.08,
+  "year": "2026",
+  "sourceDirectory": "source-data/public-space-north",
+  "workDirectory": "work/public-space-north",
+  "outputDirectory": "public/data/ground-artwork-north",
+  "imageName": "schiedamseweg-north-2026.jpg",
+  "nativeTile": "source-data/public-space-pilot/33577-6934.b3dm.gz",
+  "nativeMetadata": "source-data/public-space-pilot/33577-6934.b3dm.json",
+  "materialSwatches": "source-data/public-space-pilot/generation/material-swatches.png",
+  "materialOriginRD": [
+    90249,
+    436164
+  ],
+  "pavingOrientationRadians": 0.14970488,
+  "materialOverridesBySourceId": {},
+  "evidence": "Northern strip adjoining source-covered Schiedamseweg frontage, supporting selected eighteen-BAG Schiedamseweg25\u201339 / Noordschans14\u201328 courtyard block. Retained native BGT; no invented rear markings."
+}

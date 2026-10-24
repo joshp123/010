@@ -1,0 +1,291 @@
+{
+  "sourceAttributes": {
+    "featureId": "BAG_0599100000638397",
+    "LAAGSTE_BOUWLAAG": -1,
+    "HOOGSTE_BOUWLAAG": -1,
+    "Address": "Jan Kruijffstraat55",
+    "interpretation": "Possible underground structure under public space; ground-like photographic plane is not proven source defect"
+  },
+  "triangles": [
+    {
+      "tile": 1,
+      "part": 0,
+      "node": 6,
+      "mesh": 5,
+      "primitive": 0,
+      "sourceTriangle": 65,
+      "sourceIndices": [
+        195,
+        196,
+        197
+      ],
+      "sourceMaterial": 5,
+      "sourceBatchId": 6,
+      "featureId": "BAG_0599100000638397",
+      "triangle": 1540,
+      "areaSquareMeters": 1101.626226819525,
+      "sharedFramePositions": [
+        [
+          -132.49935214210683,
+          2.936420448645629,
+          -47.78673190167524
+        ],
+        [
+          28.724181845012208,
+          2.937845450638013,
+          -28.34170740562682
+        ],
+        [
+          26.89778093103316,
+          2.9378989842118663,
+          -14.896163883443677
+        ]
+      ]
+    },
+    {
+      "tile": 1,
+      "part": 0,
+      "node": 3,
+      "mesh": 2,
+      "primitive": 0,
+      "sourceTriangle": 68,
+      "sourceIndices": [
+        204,
+        205,
+        206
+      ],
+      "sourceMaterial": 2,
+      "sourceBatchId": 6,
+      "featureId": "BAG_0599100000638397",
+      "triangle": 1300,
+      "areaSquareMeters": 741.90832500683,
+      "sharedFramePositions": [
+        [
+          26.89778713468792,
+          3.0980139880609476,
+          -14.89616502104492
+        ],
+        [
+          -56.28815688816696,
+          3.4377517225306695,
+          -39.95409258712134
+        ],
+        [
+          -58.62695144055626,
+          3.437815212518849,
+          -22.821394393180285
+        ]
+      ]
+    },
+    {
+      "tile": 1,
+      "part": 0,
+      "node": 6,
+      "mesh": 5,
+      "primitive": 0,
+      "sourceTriangle": 67,
+      "sourceIndices": [
+        201,
+        202,
+        203
+      ],
+      "sourceMaterial": 5,
+      "sourceBatchId": 6,
+      "featureId": "BAG_0599100000638397",
+      "triangle": 1542,
+      "areaSquareMeters": 632.2636197989178,
+      "sharedFramePositions": [
+        [
+          -132.49935214210683,
+          2.936420448645629,
+          -47.78673190167524
+        ],
+        [
+          26.385394683683774,
+          2.9379087024567028,
+          -11.209009212095598
+        ],
+        [
+          -58.62694686775111,
+          2.9376633402687706,
+          -22.821392746573174
+        ]
+      ]
+    },
+    {
+      "tile": 1,
+      "part": 0,
+      "node": 3,
+      "mesh": 2,
+      "primitive": 0,
+      "sourceTriangle": 67,
+      "sourceIndices": [
+        201,
+        202,
+        203
+      ],
+      "sourceMaterial": 2,
+      "sourceBatchId": 6,
+      "featureId": "BAG_0599100000638397",
+      "triangle": 1299,
+      "areaSquareMeters": 582.1275902303213,
+      "sharedFramePositions": [
+        [
+          26.89778713468792,
+          3.0980139880609476,
+          -14.89616502104492
+        ],
+        [
+          28.724188048421727,
+          3.097991448722472,
+          -28.341708543977305
+        ],
+        [
+          -56.28815688816696,
+          3.4377517225306695,
+          -39.95409258712134
+        ]
+      ]
+    },
+    {
+      "tile": 1,
+      "part": 0,
+      "node": 3,
+      "mesh": 2,
+      "primitive": 0,
+      "sourceTriangle": 34,
+      "sourceIndices": [
+        102,
+        103,
+        104
+      ],
+      "sourceMaterial": 2,
+      "sourceBatchId": 6,
+      "featureId": "BAG_0599100000638397",
+      "triangle": 1266,
+      "areaSquareMeters": 386.74955991063246,
+      "sharedFramePositions": [
+        [
+          -93.10064916665345,
+          3.4372758636222924,
+          -46.69904074731154
+        ],
+        [
+          -100.58492171320536,
+          3.4372769128757206,
+          -26.83941674398905
+        ],
+        [
+          -56.05988934925211,
+          3.4377429859942343,
+          -41.6372853460993
+        ]
+      ]
+    },
+    {
+      "tile": 1,
+      "part": 0,
+      "node": 3,
+      "mesh": 2,
+      "primitive": 0,
+      "sourceTriangle": 32,
+      "sourceIndices": [
+        96,
+        97,
+        98
+      ],
+      "sourceMaterial": 2,
+      "sourceBatchId": 6,
+      "featureId": "BAG_0599100000638397",
+      "triangle": 1264,
+      "areaSquareMeters": 364.1252851814371,
+      "sharedFramePositions": [
+        [
+          -56.28815688816696,
+          3.4377517225306695,
+          -39.95409258712134
+        ],
+        [
+          -100.58492171320536,
+          3.4372769128757206,
+          -26.83941674398905
+        ],
+        [
+          -58.62695144055626,
+          3.437815212518849,
+          -22.821394393180285
+        ]
+      ]
+    },
+    {
+      "tile": 1,
+      "part": 0,
+      "node": 6,
+      "mesh": 5,
+      "primitive": 0,
+      "sourceTriangle": 69,
+      "sourceIndices": [
+        207,
+        208,
+        209
+      ],
+      "sourceMaterial": 5,
+      "sourceBatchId": 6,
+      "featureId": "BAG_0599100000638397",
+      "triangle": 1544,
+      "areaSquareMeters": 346.08714761749155,
+      "sharedFramePositions": [
+        [
+          -132.49935214210683,
+          2.936420448645629,
+          -47.78673190167524
+        ],
+        [
+          -58.855214347048886,
+          2.9376670696122043,
+          -21.13820022531103
+        ],
+        [
+          -100.5849134449814,
+          2.9371250400098323,
+          -26.83941318994035
+        ]
+      ]
+    },
+    {
+      "tile": 1,
+      "part": 0,
+      "node": 6,
+      "mesh": 5,
+      "primitive": 0,
+      "sourceTriangle": 66,
+      "sourceIndices": [
+        198,
+        199,
+        200
+      ],
+      "sourceMaterial": 5,
+      "sourceBatchId": 6,
+      "featureId": "BAG_0599100000638397",
+      "triangle": 1541,
+      "areaSquareMeters": 302.28727927817636,
+      "sharedFramePositions": [
+        [
+          -132.49935214210683,
+          2.936420448645629,
+          -47.78673190167524
+        ],
+        [
+          26.89778093103316,
+          2.9378989842118663,
+          -14.896163883443677
+        ],
+        [
+          26.385394683683774,
+          2.9379087024567028,
+          -11.209009212095598
+        ]
+      ]
+    }
+  ]
+}

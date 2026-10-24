@@ -1,0 +1,431 @@
+{
+  "command": "python scripts/prepare-adjoining-source.py --bounds 4.4465 51.90925 4.4479 51.91005 --output work/adjoining-source-2048 --size 2048 --panel-size 768 --acquire",
+  "features": 117,
+  "triangles": 6284,
+  "panels": 76,
+  "cameras": {
+    "ne": {
+      "imageSize": [
+        2048,
+        2048
+      ],
+      "localToImageDepth": [
+        [
+          -5.903810995595044,
+          0.0,
+          -5.903810995595044,
+          767.8165984517098
+        ],
+        [
+          2.9068355916318906,
+          -7.267088979079728,
+          -2.9068355916318906,
+          1170.521544624952
+        ],
+        [
+          0.6154574548966637,
+          0.49236596391733095,
+          -0.6154574548966637,
+          8.969672166575373
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "imageDepthToLocal": [
+        [
+          -0.08469105809333334,
+          0.041698994453302746,
+          0.6154574548966637,
+          10.697177144814196
+        ],
+        [
+          -1.5785910463131623e-18,
+          -0.10424748613325685,
+          0.49236596391733095,
+          117.60756720964973
+        ],
+        [
+          -0.08469105809333334,
+          -0.041698994453302746,
+          -0.6154574548966637,
+          119.3572231441845
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "pixelsPerMeter": 8.349249579657915,
+      "sampleConvention": "integer pixel centres; source top-left UV; depth increases toward camera; uncovered=-1/NaN"
+    },
+    "se": {
+      "imageSize": [
+        2048,
+        2048
+      ],
+      "localToImageDepth": [
+        [
+          5.903810995595044,
+          0.0,
+          -5.903810995595044,
+          1161.3256273015986
+        ],
+        [
+          2.9068355916318906,
+          -7.267088979079728,
+          2.9068355916318906,
+          1229.0430672109926
+        ],
+        [
+          0.6154574548966637,
+          0.49236596391733095,
+          0.6154574548966637,
+          21.360296339187123
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "imageDepthToLocal": [
+        [
+          0.08469105809333334,
+          0.041698994453302746,
+          0.6154574548966637,
+          -162.75010983033246
+        ],
+        [
+          1.5785910463131623e-18,
+          -0.10424748613325685,
+          0.49236596391733095,
+          117.60756720964973
+        ],
+        [
+          -0.08469105809333334,
+          0.041698994453302746,
+          0.6154574548966637,
+          33.95768250382048
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "pixelsPerMeter": 8.349249579657915,
+      "sampleConvention": "integer pixel centres; source top-left UV; depth increases toward camera; uncovered=-1/NaN"
+    },
+    "sw": {
+      "imageSize": [
+        2048,
+        2048
+      ],
+      "localToImageDepth": [
+        [
+          5.903810995595044,
+          -0.0,
+          5.903810995595044,
+          1280.1834015482902
+        ],
+        [
+          -2.9068355916318906,
+          -7.267088979079728,
+          2.9068355916318906,
+          1035.2926149111443
+        ],
+        [
+          -0.6154574548966637,
+          0.49236596391733095,
+          0.6154574548966637,
+          -19.66203068915305
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "imageDepthToLocal": [
+        [
+          0.08469105809333334,
+          -0.041698994453302746,
+          -0.6154574548966637,
+          -77.35056918996843
+        ],
+        [
+          -1.5785910463131623e-18,
+          -0.10424748613325685,
+          0.49236596391733095,
+          117.6075672096497
+        ],
+        [
+          0.08469105809333334,
+          0.041698994453302746,
+          0.6154574548966637,
+          -139.48960447132623
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "pixelsPerMeter": 8.349249579657915,
+      "sampleConvention": "integer pixel centres; source top-left UV; depth increases toward camera; uncovered=-1/NaN"
+    },
+    "nw": {
+      "imageSize": [
+        2048,
+        2048
+      ],
+      "localToImageDepth": [
+        [
+          -5.903810995595044,
+          0.0,
+          5.903810995595044,
+          886.6743726984013
+        ],
+        [
+          -2.9068355916318906,
+          -7.267088979079728,
+          -2.9068355916318906,
+          976.7710923251035
+        ],
+        [
+          -0.6154574548966637,
+          0.49236596391733095,
+          -0.6154574548966637,
+          -32.0526548617648
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "imageDepthToLocal": [
+        [
+          -0.08469105809333334,
+          -0.041698994453302746,
+          -0.6154574548966637,
+          96.09671778517821
+        ],
+        [
+          1.5785910463131623e-18,
+          -0.10424748613325685,
+          0.49236596391733095,
+          117.60756720964973
+        ],
+        [
+          0.08469105809333334,
+          -0.041698994453302746,
+          -0.6154574548966637,
+          -54.09006383096219
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "pixelsPerMeter": 8.349249579657915,
+      "sampleConvention": "integer pixel centres; source top-left UV; depth increases toward camera; uncovered=-1/NaN"
+    },
+    "roof": {
+      "imageSize": [
+        2048,
+        2048
+      ],
+      "localToImageDepth": [
+        [
+          8.349249579657915,
+          -0.0,
+          0.0,
+          1302.2529027578892
+        ],
+        [
+          -0.0,
+          -0.0,
+          8.349249579657915,
+          1108.0451381665753
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -10.858141409194708
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "imageDepthToLocal": [
+        [
+          0.1197712429673197,
+          0.0,
+          0.0,
+          -155.9724488211125
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          10.858141409194708
+        ],
+        [
+          0.0,
+          0.1197712429673197,
+          0.0,
+          -132.7119434621062
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "pixelsPerMeter": 8.349249579657915,
+      "sampleConvention": "integer pixel centres; source top-left UV; depth increases toward camera; uncovered=-1/NaN"
+    }
+  },
+  "sources": [
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268619/55473.b3dm",
+      "sourceSha256": "a88ba7544b0a29465df68c8ebd6dd50b0cd4246d1bdcde007077f35f236c4d10",
+      "rawPath": "source-data/current-building-appearance/raw/18_268619_55473.b3dm.gz",
+      "decodedBytes": 8912600,
+      "nativeGLBSha256": "5d9b32406e7ec67958135df1ab98fc08be67d8cf3bd9eca493775226c91a2af4",
+      "sourceBoundingVolume": {
+        "region": [
+          0.077597856,
+          0.905983409,
+          0.07760984,
+          0.905997188,
+          2.6,
+          21.0
+        ]
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268619/55472.b3dm",
+      "sourceSha256": "2a84cc9ab10e13a81bbe0053da3692330daf74bb745da5d8e2966436c8017f84",
+      "rawPath": "source-data/current-building-appearance/raw/18_268619_55472.b3dm.gz",
+      "decodedBytes": 6502472,
+      "nativeGLBSha256": "c0126bb266945132058caddc019303db6f51108764b0dc8c08a4cdf43fd3c31d",
+      "sourceBoundingVolume": {
+        "region": [
+          0.077583974,
+          0.905994058,
+          0.077625658,
+          0.906007402,
+          -1.4,
+          21.0
+        ]
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268620/55473.b3dm",
+      "sourceSha256": "c51f35cc165e106b2d77a00f8614fecd1e22d977f35a0406f2efb8acfacf4425",
+      "rawPath": "source-data/current-building-appearance/raw/18_268620_55473.b3dm.gz",
+      "decodedBytes": 9644080,
+      "nativeGLBSha256": "07672ff987ca10cfa0d71cde1529dcd0ed5cd883b817b3c1b7a786e9a19e80e9",
+      "sourceBoundingVolume": {
+        "region": [
+          0.07760984,
+          0.905983282,
+          0.077621824,
+          0.905995977,
+          2.4,
+          18.4
+        ]
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268621/55473.b3dm",
+      "sourceSha256": "432baec1beb1ddc6b33debf9328764860d308761a6b1cae2dd219220e3d08f20",
+      "rawPath": "source-data/current-building-appearance/raw/18_268621_55473.b3dm.gz",
+      "decodedBytes": 7610688,
+      "nativeGLBSha256": "eb6eb287d30c849934335d71b35cbbf2a1e805360382a4be65f8bc08f078c1d5",
+      "sourceBoundingVolume": {
+        "region": [
+          0.077621824,
+          0.905983434,
+          0.077635696,
+          0.905995418,
+          2.0,
+          22.0
+        ]
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268620/55472.b3dm",
+      "sourceSha256": "d898d44dc9d6440779d5c5b9784da9e9361a771b344e630ca523749c6c6ad596",
+      "rawPath": "source-data/current-building-appearance/raw/18_268620_55472.b3dm.gz",
+      "decodedBytes": 8142520,
+      "nativeGLBSha256": "efd8ba652aa29d164738b8ea283900ac03f16f7827e3af91ce02486e1c83acc5",
+      "sourceBoundingVolume": {
+        "region": [
+          0.077609595,
+          0.905995418,
+          0.077623515,
+          0.906008488,
+          2.3,
+          18.3
+        ]
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268621/55472.b3dm",
+      "sourceSha256": "5489aaa793e8812ae228977fe81e5515265a9455e79bc399c3b15e2c5b8a6f4b",
+      "rawPath": "source-data/current-building-appearance/raw/18_268621_55472.b3dm.gz",
+      "decodedBytes": 6403208,
+      "nativeGLBSha256": "404db87a25c119f58324cc0d10a60ed6e14875a228fbed4a97964435f3ed49f7",
+      "sourceBoundingVolume": {
+        "region": [
+          0.077620762,
+          0.905995418,
+          0.07763539,
+          0.906007739,
+          2.1,
+          23.1
+        ]
+      }
+    }
+  ],
+  "sourceViews": {
+    "ne": {
+      "sha256": "34f9c41ac755626d2c120e1a0f2fec6597a28ca6a41d3ea44d0f06f47b6f066e"
+    },
+    "se": {
+      "sha256": "98c2e722d292dda418542196b2655e41a1429e19cb618f3ca2c6b292ce16ef62"
+    },
+    "sw": {
+      "sha256": "0369d7fcffbcacf251fc1801eb66ba3d9e82fc94b287406c43b98ef008d3830a"
+    },
+    "nw": {
+      "sha256": "551add62a3f49fb0df8afdd06b0caef0554c8570242bdad5ebdffeac38f5b963"
+    },
+    "roof": {
+      "sha256": "2257134368c66e74bc0112e3c3e340c1916804a597420812f9e6b5db241dd247"
+    }
+  },
+  "license": "CC BY4.0 Gemeente Rotterdam",
+  "status": "Source/model correspondence evidence only; no art acceptance; see docs/adjoining-source.md for native defects"
+}
