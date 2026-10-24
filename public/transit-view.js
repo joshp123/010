@@ -36,6 +36,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
   const metroBodyGeometry = createMetroCarriageGeometry();
   const metroRoofGeometry = createMetroCarriageGeometry({ roof: true });
   const reportMarker = new THREE.OctahedronGeometry(.65);
+  const reportMarkerMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff', depthTest: false, depthWrite: false });
   const bodyMaterial = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.9, metalness: 0, flatShading: true });
   const roofMaterial = new THREE.MeshStandardMaterial({ color: '#e3e2ce', roughness: 0.95, metalness: 0 });
   const floorMaterial = new THREE.MeshStandardMaterial({ color: '#293333', roughness: 1, side: THREE.DoubleSide });
@@ -93,7 +94,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
   let span = 1700, viewportHeight = 900, camera = null;
   const maskViewDirection = new THREE.Vector3();
   let physicalData = null, sectionAnchor = null, sectionSegments = [], sectionDiagnostics = null, selectedReportId = null, mouthPolygons = [], openingPolygons = [];
-  let inspectionTarget = null;
+  let inspectionTarget = null, stationAssociations = [];
   let tunnelSegments = [], maskRebuilds = 0, maskMilliseconds = 0, maskMetresPerPixel = Infinity;
 
   function inspectionRecord() {
@@ -117,11 +118,12 @@ export function createTransitView({ project, localPosition, requestRender = () =
     if (!batch || batch.capacity < count) {
       if (batch) { group.remove(batch.body, batch.roof); batch.body.dispose(); batch.roof.dispose(); }
       const capacity = Math.max(16, count);
-      const body = new THREE.InstancedMesh(mode === 'metro-position' ? reportMarker : mode === 'metro' ? metroBodyGeometry : box, mode === 'metro' ? metroBodyMaterial : bodyMaterial, capacity);
+      const body = new THREE.InstancedMesh(mode === 'metro-position' ? reportMarker : mode === 'metro' ? metroBodyGeometry : box, mode === 'metro-position' ? reportMarkerMaterial : mode === 'metro' ? metroBodyMaterial : bodyMaterial, capacity);
       const roof = new THREE.InstancedMesh(mode === 'metro' ? metroRoofGeometry : box, mode === 'metro' ? metroRoofMaterial : roofMaterial, capacity);
       body.name = mode === 'metro-position' ? 'Reported metro position · track mismatch' : `Observed ${mode}`; roof.name = `${mode} roofs`;
       body.instanceMatrix.setUsage(THREE.DynamicDrawUsage); roof.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-      body.castShadow = true; body.receiveShadow = true;
+      body.castShadow = mode !== 'metro-position'; body.receiveShadow = true;
+      if (mode === 'metro-position') body.renderOrder = 100;
       group.add(body, roof);
       batch = { body, roof, capacity, records: [] };
       batches.set(mode, batch);
@@ -129,12 +131,15 @@ export function createTransitView({ project, localPosition, requestRender = () =
     return batch;
   }
 
-  function classify(position, routeHeading = null) {
+  function classify(position, routeHeading = null, report = null) {
+    const station = report && stationAssociations.find(station => station.routeId === report.routeId &&
+      Math.hypot((station.longitude-report.longitude)*111320*Math.cos(report.latitude*Math.PI/180), (station.latitude-report.latitude)*111320) < 1);
     let nearest = null;
     for (const segment of railSegments) {
+      if (station && segment.id !== station.physicalSegmentId) continue;
       const result = pointOnSegment(position, segment.start, segment.end);
-      if (routeHeading !== null && Math.abs(Math.cos(routeHeading-result.heading)) < .94) continue;
-      if (result.distance <= CLASSIFICATION_DISTANCE && (!nearest || result.distance < nearest.distance)) nearest = { ...result, id: segment.id, form: segment.form, relativeLevel: segment.relativeLevel, segment };
+      if (!station && routeHeading !== null && Math.abs(Math.cos(routeHeading-result.heading)) < .94) continue;
+      if ((station || result.distance <= CLASSIFICATION_DISTANCE) && (!nearest || result.distance < nearest.distance)) nearest = { ...result, id: segment.id, form: segment.form, relativeLevel: segment.relativeLevel, stationReference: station || null, segment };
     }
     return nearest;
   }
@@ -159,18 +164,18 @@ export function createTransitView({ project, localPosition, requestRender = () =
       for (const report of snapshot.vehicles) {
         const mode = VEHICLE_STYLES[report.mode] ? report.mode : 'unknown';
         let ground = place(report.latitude, report.longitude, 0);
-        const rail = mode === 'metro' ? classify(ground, routeAxis(report)) : null;
+        const rail = mode === 'metro' ? classify(ground, routeAxis(report), report) : null;
         const underground = rail?.form === 'tunnel';
         if (underground) ground = place(report.latitude, report.longitude, 0, TUNNEL_GROUND_CONTEXT);
         const routeShapeHeading = routeAxis(report);
         const routeAligned = rail && routeShapeHeading !== null && Math.abs(Math.cos(routeShapeHeading - rail.heading)) > .94;
-        const mapMatched = underground && (rail.distance <= 5.5 || routeAligned);
+        const mapMatched = underground && (rail.stationReference || rail.distance <= 5.5 || routeAligned);
         let representedGround = ground, representedPosition = null;
         if (mapMatched) {
           const longitude = THREE.MathUtils.lerp(rail.segment.startGeo[0], rail.segment.endGeo[0], rail.fraction);
           const latitude = THREE.MathUtils.lerp(rail.segment.startGeo[1], rail.segment.endGeo[1], rail.fraction);
           representedGround = place(latitude, longitude, 0, TUNNEL_GROUND_CONTEXT);
-          representedPosition = {latitude, longitude, approximate:true, offsetMetres:rail.distance, method:routeAligned?'route-axis-compatible physical track':'nearest physical track within 5.5m'};
+          representedPosition = {latitude, longitude, approximate:true, offsetMetres:rail.distance, method:rail.stationReference?`GTFS ${rail.stationReference.name} station reference associated with service-compatible BRT track`:routeAligned?'route-axis-compatible physical track':'nearest physical track within 5.5m'};
         }
         const routeHeading = mapMatched ? rail.heading : Number.isFinite(report.bearing) ? Math.PI - report.bearing * Math.PI / 180 : rail?.heading ?? routeAxis(report);
         const orientation = mapMatched ? 'source-track-axis' : Number.isFinite(report.bearing) ? 'reported-bearing' : rail ? 'source-track-axis' : routeHeading !== null ? 'source-route-axis' : 'camera-facing-symbol';
@@ -190,7 +195,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
       batch.records = reports;
       for (let index = 0; index < reports.length; index++) {
         const record = reports[index], report = record.report;
-        const scale = record.underground ? 1 : THREE.MathUtils.clamp(4 * span / viewportHeight / style.length, 1, 8);
+        const scale = mode === 'metro-position' ? 10 * (globalThis.devicePixelRatio || 1) * span / viewportHeight / style.width : record.underground ? 1 : THREE.MathUtils.clamp(4 * span / viewportHeight / style.length, 1, 8);
         const verticalOffset = record.underground && mode !== 'metro-position' ? -TUNNEL_DEPTH : 0;
         const base = record.underground ? record.representedGround.clone().add(new THREE.Vector3(0, verticalOffset, 0)) : place(report.latitude, report.longitude, verticalOffset);
         transform.position.copy(base); transform.position.y += style.height * scale / 2 + 0.4;
@@ -464,7 +469,11 @@ export function createTransitView({ project, localPosition, requestRender = () =
   }
 
   async function loadMetro(url = './data/transit/metro-physical.json.gz') {
-    const response = await fetch(url);
+    const [response, stationsResponse] = await Promise.all([fetch(url), fetch('./data/transit/metro-station-associations.json.gz')]);
+    if (!stationsResponse.ok) throw new Error(`Metro station references HTTP ${stationsResponse.status}`);
+    let stationBytes = new Uint8Array(await stationsResponse.arrayBuffer());
+    if (stationBytes[0] === 31 && stationBytes[1] === 139) stationBytes = new Uint8Array(await new Response(new Blob([stationBytes]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
+    stationAssociations = JSON.parse(new TextDecoder().decode(stationBytes)).stations;
     if (!response.ok) throw new Error(`Metro physical geometry HTTP ${response.status}`);
     let bytes = new Uint8Array(await response.arrayBuffer());
     if (bytes[0] === 31 && bytes[1] === 139) bytes = new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
@@ -474,7 +483,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
 
   function presentReport(record) {
     if (!record) return null;
-    return { ...record.report, presentation: { physicalForm: record.rail?.form || 'unclassified', sourceSegmentId: record.rail?.id || null, illustrativeDepthMetres: record.underground ? TUNNEL_DEPTH : null, orientation: record.orientation, representedPosition:record.representedPosition, dimensions: 'illustrative', sourceAxisDistanceMetres: record.rail?.distance ?? null, positionUncertainty: record.mode === 'metro' && !record.rail ? 'Source track is unclassified at this report; position marker, not a train at an inferred elevation' : record.uncertainTrackPosition ? 'Reported point is outside the illustrated track chamber; position marker, not track-snapped train' : null } };
+    return { ...record.report, presentation: { stationReference: record.rail?.stationReference || null, physicalForm: record.rail?.form || 'unclassified', sourceSegmentId: record.rail?.id || null, illustrativeDepthMetres: record.underground ? TUNNEL_DEPTH : null, orientation: record.orientation, representedPosition:record.representedPosition, dimensions: 'illustrative', sourceAxisDistanceMetres: record.rail?.distance ?? null, positionUncertainty: record.mode === 'metro' && !record.rail ? 'Source track is unclassified at this report; position marker, not a train at an inferred elevation' : record.uncertainTrackPosition ? 'Reported point is outside the illustrated track chamber; position marker, not track-snapped train' : null } };
   }
 
   function pick(raycaster) {
@@ -512,7 +521,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
       visibleUndergroundObservations: underground.length,
       visibleFreshMetroObservations: visible.filter(fresh).length,
       visibleFreshUndergroundObservations: freshCount,
-      metroFocusCandidates:focusCandidates.map(({report,uncertainTrackPosition,routeHeading})=>({preferredBearing:Number.isFinite(routeHeading)?(routeHeading*180/Math.PI+425)%360:undefined,inSection:report.id===selectedReportId,presentationState:uncertainTrackPosition?'marker':'train',id:report.id,latitude:report.latitude,longitude:report.longitude,label:report.label,observedAt:report.observedAt,freshness:report.freshness,sourceConnected:report.sourceConnected})),
+      metroFocusCandidates:focusCandidates.map(({report,representedPosition,uncertainTrackPosition,routeHeading})=>({preferredBearing:Number.isFinite(routeHeading)?(routeHeading*180/Math.PI+425)%360:undefined,inSection:report.id===selectedReportId,presentationState:uncertainTrackPosition?'marker':'train',id:report.id,latitude:representedPosition?.latitude??report.latitude,longitude:representedPosition?.longitude??report.longitude,label:report.label,observedAt:report.observedAt,freshness:report.freshness,sourceConnected:report.sourceConnected})),
       metroFocus: focus ? {id:focus.id,latitude:focus.latitude,longitude:focus.longitude,label:focus.label,observedAt:focus.observedAt,freshness:focus.freshness,sourceConnected:focus.sourceConnected} : null,
       inspection: inspectionTarget ? { id: inspected?.report.id || inspectionTarget.id, vehicleLabel: inspectionTarget.vehicleLabel, observedAt: inspected?.report.observedAt ?? null, ageSeconds: inspectionAgeSeconds, present: !!inspected } : null,
       cutawayShortMessage:!cutaway?null:(inspectionMessage || (underground.some(record=>record.uncertainTrackPosition)?'Report off mapped track':freshCount?'Fresh metro · depth illustrated':underground.length?'Older/unverified metro · not live':'No metro report in this section')) + (inspectionAgeSeconds === null ? '' : ` · ${inspectionAgeSeconds}s ago`),
@@ -530,7 +539,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     group,
     focusReport,
     releaseReport() { inspectionTarget = null; },
-    inspectionReport() { return inspectionRecord()?.report || null; },
+    inspectionReport() { return presentReport(inspectionRecord()); },
     update(nextSnapshot) { snapshot = nextSnapshot; projectRails(); rebuild(true); updateCutawayMask(true); rebuild(); },
     setView(view) { camera = view.camera || camera; span = view.span ?? span; viewportHeight = view.viewportHeight ?? viewportHeight; updateCutawayMask(); rebuild(); },
     setCutaway(enabled) { cutaway = typeof enabled === 'object' ? enabled.enabled : enabled; cutawayGroup.visible = cutaway; if (!cutaway) inspectionTarget = null; if (!cutaway) for (const material of [metroBodyMaterial, metroRoofMaterial]) { material.clippingPlanes = []; material.needsUpdate = true; } updateCutawayMask(); rebuild(); return cutawayMask; },
@@ -543,7 +552,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     dispose() {
       for (const batch of batches.values()) { batch.body.dispose(); batch.roof.dispose(); }
       for (const child of cutawayGroup.children) child.geometry.dispose();
-      cutawayMask?.texture.dispose(); box.dispose(); metroBodyGeometry.dispose(); metroRoofGeometry.dispose(); reportMarker.dispose(); bodyMaterial.dispose(); roofMaterial.dispose(); metroBodyMaterial.dispose(); metroRoofMaterial.dispose(); tunnelMaterial.dispose(); floorMaterial.dispose(); earthMaterial.dispose(); trackMaterials.forEach(material => material.dispose());
+      cutawayMask?.texture.dispose(); box.dispose(); metroBodyGeometry.dispose(); metroRoofGeometry.dispose(); reportMarker.dispose(); reportMarkerMaterial.dispose(); bodyMaterial.dispose(); roofMaterial.dispose(); metroBodyMaterial.dispose(); metroRoofMaterial.dispose(); tunnelMaterial.dispose(); floorMaterial.dispose(); earthMaterial.dispose(); trackMaterials.forEach(material => material.dispose());
       group.removeFromParent(); group.clear(); batches.clear();
     },
   };
