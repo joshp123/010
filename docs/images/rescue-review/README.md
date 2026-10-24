@@ -23,3 +23,11 @@ A native desktop reproduction at51.92514,4.51261,span220,bearing35 shows the bla
 ![Actual below-ground section still appears pasted over the city](metro-static-section.png)
 
 [Actual section diagnostics](metro-static-section-diagnostics.json)
+
+## Persistent junction queue after following-distance change
+
+The manager reviewed17 native frames spanning27.73seconds, then repeated runtime position samples at84.90simulation seconds. Several leading motor vehicles remain at the same positions approaching185274103→600909887; white cars overlap near the queue head. Exact source/vehicle audits accompany the enlarged native capture. One car projects over a surveyed traffic-island polygon while another is over carriageway; do not generalise orange colour to cycle lanes. This is a new bounded failure, separate from the corrected bridge reading.
+
+![Persistent queue and overlapping cars at the merge](blaak-stopped-queue-detail.png)
+
+[First vehicle sample](blaak-following-audit-a.json), [repeated sample](blaak-following-audit-b.json), [actual underlying source surfaces](blaak-queue-surface-audit.json).
