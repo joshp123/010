@@ -1,0 +1,28 @@
+{
+  "id": "adjoining-neighbourhood",
+  "boundsRD": [
+    90185,
+    435996,
+    90441,
+    436252
+  ],
+  "imageSize": [
+    2048,
+    2048
+  ],
+  "pixelMetres": 0.125,
+  "year": "2026",
+  "sourceDirectory": "source-data/public-space-neighbourhood",
+  "workDirectory": "work/public-space-neighbourhood",
+  "outputDirectory": "public/data/ground-artwork-neighbourhood-v2",
+  "imageName": "adjoining-neighbourhood-2026.jpg",
+  "nativeTile": "source-data/public-space-pilot/33577-6934.b3dm.gz",
+  "nativeMetadata": "source-data/public-space-pilot/33577-6934.b3dm.json",
+  "materialSwatches": "source-data/public-space-pilot/generation/material-swatches.png",
+  "materialOriginRD": [
+    90185,
+    436252
+  ],
+  "pavingOrientationRadians": 0.14970488,
+  "evidence": "Complete adjoining public space; exact native BGT surface footprints and PDOK2026 orthophoto. Ground interpretation remains review candidate."
+}

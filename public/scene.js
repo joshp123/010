@@ -199,7 +199,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   for (const material of [...['ground', 'streets', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain', 'yards'].map(kind => materials[kind]), cartographicMaterial, contextLandMaterial]) applyPublicSpaceMaterial(material);
   const publicSpaceStyle = createPublicSpaceStyle({ material: materials.ground });
   const groundArtworkEnabled = !['native', 'off'].includes(new URLSearchParams(location.search).get('ground'));
-  const groundArtwork = createGroundArtwork({ baseUrl: (!new URLSearchParams(location.search).get('appearance') || new URLSearchParams(location.search).get('appearance') === 'illustrated-neighbourhood') ? './data/ground-artwork-neighbourhood/' : './data/ground-artwork/', enabled: groundArtworkEnabled, requestRender, anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()) });
+  const groundArtwork = createGroundArtwork({ baseUrl: (!new URLSearchParams(location.search).get('appearance') || new URLSearchParams(location.search).get('appearance') === 'illustrated-neighbourhood') ? './data/ground-artwork-neighbourhood-v2/' : './data/ground-artwork/', enabled: groundArtworkEnabled, requestRender, anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()) });
   groundArtwork.apply(materials.ground);
   let groundArtworkPending = groundArtworkEnabled, groundArtworkFailed = false;
   groundArtwork.ready.then(() => { groundArtworkPending = false; groundArtworkFailed = Boolean(groundArtwork.diagnostics().error); requestRender(); });
@@ -340,8 +340,9 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (snapshot.sources?.ndov?.receivedAt !== previous.sources?.ndov?.receivedAt || snapshot.sources?.ns?.receivedAt !== previous.sources?.ns?.receivedAt) transitSurfaceCache.clear();
     transit.update(snapshot);
     const inspectedReport = transit.inspectionReport();
-    if (inspectedReport && (inspectedReport.latitude !== view.lat || inspectedReport.longitude !== view.lon)) {
-      setView({ lat: inspectedReport.latitude, lon: inspectedReport.longitude }, true, true);
+    const inspectedPosition = inspectedReport?.presentation?.representedPosition ?? inspectedReport;
+    if (inspectedPosition && (inspectedPosition.latitude !== view.lat || inspectedPosition.longitude !== view.lon)) {
+      setView({ lat: inspectedPosition.latitude, lon: inspectedPosition.longitude }, true, true);
     }
   }
   function metroSectionView() {

@@ -53,6 +53,7 @@ function showVehicle(report) {
   const details = byId('vehicle-observation'); details.replaceChildren();
   const observationDetails = [['Observed', observationTime(report.observedAt)], ['Source', report.source === 'ns' ? 'NS · NL Trains Live' : 'OVapi / NDOV'], ['Reported position', coordinates(report)]];
   if (represented) observationDetails.push(['Shown position · approximate', coordinates(represented)]);
+  if (presentation.stationReference) observationDetails.push(['Station reference', `${presentation.stationReference.name} · GTFS stop ${presentation.stationReference.stopId}`]);
   for (const [title, value] of observationDetails) {
     const term = document.createElement('dt'), description = document.createElement('dd'); term.textContent = title; description.textContent = value; details.append(term, description);
   }

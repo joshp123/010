@@ -1,0 +1,60 @@
+{
+  "sourceSha256": "f641d23d2c81772422ad4c814ff3df52ed0da8578c3e369a6b68150a57138923",
+  "regions": [
+    [
+      "west north crossing",
+      [
+        190,
+        796,
+        230,
+        827
+      ]
+    ],
+    [
+      "west east crossing",
+      [
+        500,
+        853,
+        545,
+        885
+      ]
+    ],
+    [
+      "west south crossing",
+      [
+        376,
+        1000,
+        476,
+        1040
+      ]
+    ],
+    [
+      "west shaded crossing",
+      [
+        160,
+        903,
+        198,
+        924
+      ]
+    ],
+    [
+      "east north crossing",
+      [
+        1730,
+        1034,
+        1765,
+        1074
+      ]
+    ],
+    [
+      "east shaded crossing",
+      [
+        1663,
+        1158,
+        1699,
+        1184
+      ]
+    ]
+  ],
+  "method": "Observed crossing bars retain source local-contrast support only; no gap filling. Existing reviewed source paint retained at exact RD coordinates."
+}
