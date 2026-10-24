@@ -106,7 +106,7 @@ export function configureMunicipalBuildingStreaming(tiles) {
   const calculateViewError = tiles.calculateTileViewError.bind(tiles);
   const presentedParents = new WeakSet();
   function hasResidentDescendant(tile) {
-    return tile.children.some(child => (child.internal.hasRenderableContent && child.internal.loadingState === LOADED) || hasResidentDescendant(child));
+    return tile.children?.some(child => child.internal && ((child.internal.hasRenderableContent && child.internal.loadingState === LOADED) || hasResidentDescendant(child))) || false;
   }
   tiles.loadAncestors = false;
   tiles.loadSiblings = false;
