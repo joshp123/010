@@ -1,0 +1,357 @@
+{
+  "authorship": "Written by AI on 2026-10-24 by model GPT-6",
+  "status": "Model drawing fields require actual source architecture review before acceptance",
+  "sourceSha256": "d898d44dc9d6440779d5c5b9784da9e9361a771b344e630ca523749c6c6ad596",
+  "views": [
+    {
+      "name": "view-0-0",
+      "camera": {
+        "centre": [
+          2.9501123428344727,
+          10.343714594841003,
+          -17.762229442596436
+        ],
+        "basis": [
+          [
+            1.0,
+            -0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "scale": 28.820400194819598,
+        "mid": [
+          0.0,
+          0.0
+        ],
+        "size": 1600,
+        "angle": 0,
+        "elevation": 0
+      },
+      "source": "view-0-0-source.png",
+      "paint": "view-0-0-paint.png",
+      "depth": "view-0-0-depth.npy"
+    },
+    {
+      "name": "view-90-0",
+      "camera": {
+        "centre": [
+          2.9501123428344727,
+          10.343714594841003,
+          -17.762229442596436
+        ],
+        "basis": [
+          [
+            6.123233995736766e-17,
+            -0.0,
+            1.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -1.0,
+            0.0,
+            6.123233995736766e-17
+          ]
+        ],
+        "scale": 28.500120198957074,
+        "mid": [
+          0.0,
+          0.0
+        ],
+        "size": 1600,
+        "angle": 90,
+        "elevation": 0
+      },
+      "source": "view-90-0-source.png",
+      "paint": "view-90-0-paint.png",
+      "depth": "view-90-0-depth.npy",
+      "drawingConfidence": 0.65,
+      "observation": "Side source photographs contain aerial roof projection onto vertical party walls. Prefer elevated model drawing where visible; side view is lower confidence."
+    },
+    {
+      "name": "view-180-0",
+      "camera": {
+        "centre": [
+          2.9501123428344727,
+          10.343714594841003,
+          -17.762229442596436
+        ],
+        "basis": [
+          [
+            -1.0,
+            0.0,
+            1.2246467991473532e-16
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            -1.2246467991473532e-16,
+            0.0,
+            -1.0
+          ]
+        ],
+        "scale": 28.820400194819598,
+        "mid": [
+          -1.7763568394002505e-15,
+          0.0
+        ],
+        "size": 1600,
+        "angle": 180,
+        "elevation": 0
+      },
+      "source": "view-180-0-source.png",
+      "paint": "view-180-0-paint.png",
+      "depth": "view-180-0-depth.npy"
+    },
+    {
+      "name": "view-270-0",
+      "camera": {
+        "centre": [
+          2.9501123428344727,
+          10.343714594841003,
+          -17.762229442596436
+        ],
+        "basis": [
+          [
+            -1.8369701987210297e-16,
+            0.0,
+            -1.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            1.0,
+            0.0,
+            -1.8369701987210297e-16
+          ]
+        ],
+        "scale": 28.500120198957074,
+        "mid": [
+          -3.552713678800501e-15,
+          0.0
+        ],
+        "size": 1600,
+        "angle": 270,
+        "elevation": 0
+      },
+      "source": "view-270-0-source.png",
+      "paint": "view-270-0-paint.png",
+      "depth": "view-270-0-depth.npy",
+      "drawingConfidence": 0.65,
+      "observation": "Side source photographs contain aerial roof projection onto vertical party walls. Prefer elevated model drawing where visible; side view is lower confidence."
+    },
+    {
+      "name": "view-0-90",
+      "camera": {
+        "centre": [
+          2.9501123428344727,
+          10.343714594841003,
+          -17.762229442596436
+        ],
+        "basis": [
+          [
+            1.0,
+            -0.0,
+            0.0
+          ],
+          [
+            0.0,
+            6.123233995736766e-17,
+            1.0
+          ],
+          [
+            -0.0,
+            -1.0,
+            6.123233995736766e-17
+          ]
+        ],
+        "scale": 28.500120198957074,
+        "mid": [
+          0.0,
+          0.0
+        ],
+        "size": 1600,
+        "angle": 0,
+        "elevation": 90
+      },
+      "source": "view-0-90-source.png",
+      "paint": "view-0-90-paint-v2.png",
+      "depth": "view-0-90-depth.npy"
+    },
+    {
+      "name": "view-120-28",
+      "camera": {
+        "centre": [
+          2.9501123428344727,
+          10.343714594841003,
+          -17.762229442596436
+        ],
+        "basis": [
+          [
+            -0.49999999999999983,
+            -0.4065742997269626,
+            0.7646550456261504
+          ],
+          [
+            0.0,
+            0.8829475928589268,
+            0.4694715627858908
+          ],
+          [
+            -0.8660254037844387,
+            0.23473578139294532,
+            -0.4414737964294633
+          ]
+        ],
+        "scale": 30.43409824849937,
+        "mid": [
+          -6.644487611487241,
+          0.27210802348373164
+        ],
+        "size": 1600,
+        "angle": 120,
+        "elevation": 28
+      },
+      "source": "view-120-28-source.png",
+      "paint": "view-120-28-paint.png",
+      "depth": "view-120-28-depth.npy"
+    },
+    {
+      "name": "view-300-28",
+      "camera": {
+        "centre": [
+          2.9501123428344727,
+          10.343714594841003,
+          -17.762229442596436
+        ],
+        "basis": [
+          [
+            0.5000000000000001,
+            0.4065742997269625,
+            -0.7646550456261504
+          ],
+          [
+            0.0,
+            0.8829475928589271,
+            0.4694715627858908
+          ],
+          [
+            0.8660254037844386,
+            -0.23473578139294546,
+            0.4414737964294636
+          ]
+        ],
+        "scale": 30.43409824849936,
+        "mid": [
+          6.6444876114872375,
+          -2.5264365690235504
+        ],
+        "size": 1600,
+        "angle": 300,
+        "elevation": 28
+      },
+      "source": "view-300-28-source.png",
+      "paint": "view-300-28-paint.png",
+      "depth": "view-300-28-depth.npy"
+    },
+    {
+      "name": "view-0-45",
+      "camera": {
+        "centre": [
+          2.9501123428344727,
+          10.343714594841003,
+          -17.762229442596436
+        ],
+        "basis": [
+          [
+            1.0,
+            -0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.7071067811865476,
+            0.7071067811865475
+          ],
+          [
+            -0.0,
+            -0.7071067811865475,
+            0.7071067811865476
+          ]
+        ],
+        "scale": 28.820400194819598,
+        "mid": [
+          0.0,
+          -0.9696583823490403
+        ],
+        "size": 1600,
+        "angle": 0,
+        "elevation": 45
+      },
+      "source": "view-0-45-source.png",
+      "paint": "view-0-45-paint.png",
+      "depth": "view-0-45-depth.npy"
+    },
+    {
+      "name": "view-180-45",
+      "camera": {
+        "centre": [
+          2.9501123428344727,
+          10.343714594841003,
+          -17.762229442596436
+        ],
+        "basis": [
+          [
+            -1.0,
+            -8.659560562354932e-17,
+            8.659560562354934e-17
+          ],
+          [
+            0.0,
+            0.7071067811865476,
+            0.7071067811865475
+          ],
+          [
+            -1.2246467991473532e-16,
+            0.7071067811865475,
+            -0.7071067811865476
+          ]
+        ],
+        "scale": 28.820400194819598,
+        "mid": [
+          -1.7763568394002505e-15,
+          0.09310601298953536
+        ],
+        "size": 1600,
+        "angle": 180,
+        "elevation": 45
+      },
+      "source": "view-180-45-source.png",
+      "paint": "view-180-45-paint.png",
+      "depth": "view-180-45-depth.npy"
+    }
+  ],
+  "handoffDirectory": "bound-model-drawn-block-v3",
+  "drawingPixelSize": 384,
+  "drawingScaleJudgement": "Model drawings only: approximately7pixels per metre across the54m block. Broad wall/recess composition survives; below-window photographic-like grain is not retained. Raw municipal evidence remains unchanged.",
+  "sourcePath": "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/raw/18_268620_55472.b3dm"
+}
