@@ -103,7 +103,7 @@
   "external_images": [
     {
       "uri": "painted-atlas-0.png",
-      "sha256": "3e9b2a474d61f1e834addf18a2dfb8df057b390616b27e6b72781f6c83a2ea16",
+      "sha256": "6b99ca4b9a226310b86af21bf79097e84d0553641218ee8a7d5358738fdbb2f7",
       "dimensions": [
         1024,
         1024
@@ -111,7 +111,7 @@
     },
     {
       "uri": "painted-atlas-1.png",
-      "sha256": "907dcb69737d44264cbfd1f4ce20261d3fe50a93b4e95d5402773a25a44f829f",
+      "sha256": "53ee186c4b924ee9e4bdd3386c36f4adcac815ea4e69d83ab616ace50f32ae00",
       "dimensions": [
         1024,
         1024
@@ -119,7 +119,7 @@
     },
     {
       "uri": "painted-atlas-2.png",
-      "sha256": "05e75d2c88a5a10fea50ab88f35474d4a7d258a0b6a48690f21a5eea06c977c1",
+      "sha256": "20d9ca06697ea16c37819662580de1cd70a242b4a2f907583f669af8c6fbc4c5",
       "dimensions": [
         1024,
         1024
@@ -127,7 +127,7 @@
     },
     {
       "uri": "painted-atlas-3.png",
-      "sha256": "6ada3b04ff9a3a8ce26ba412071d96e32a85fbd2ffdcb55438ba73e1ffe98244",
+      "sha256": "2613b15ad07eb6a1263513efe27e1553692b21b6c3800c6b506c2244656c2a60",
       "dimensions": [
         1024,
         1024
@@ -135,7 +135,7 @@
     },
     {
       "uri": "painted-atlas-4.png",
-      "sha256": "02ef3e6b23bb370379fdffc33892c6c25ac820d5bd9d82c0d1cb243d980ec4c8",
+      "sha256": "44f21888ea8ee4bd49b1d0df6b4766755d49a0a813b9a10c9f44fbbcb6b3cb6b",
       "dimensions": [
         1024,
         1024
@@ -143,7 +143,7 @@
     },
     {
       "uri": "painted-atlas-5.png",
-      "sha256": "bb61611491949b4b3bdd5a578d8f4aa6c54cbc606741512e23797c67051b9013",
+      "sha256": "99d1b0bf0a977fc94ae1201cead3fc5184eaa8c54e2e7fa309d92e3e70d2633d",
       "dimensions": [
         1024,
         1024
@@ -151,7 +151,7 @@
     },
     {
       "uri": "painted-atlas-6.png",
-      "sha256": "8d5d02ea2e4fd0bc8d0568abfdda43a59ccb1746c46bc40ae86a76a6db5de68a",
+      "sha256": "397381263e7b4a208351ca2a4fb1fb7e7c35a41cc629b059fb1f8caab4fa4026",
       "dimensions": [
         1024,
         1024
@@ -159,7 +159,7 @@
     },
     {
       "uri": "painted-atlas-7.png",
-      "sha256": "000ca7a36b7631508bf474504faa5ea7ce7d80f8015696fec382622440be6aeb",
+      "sha256": "a0bb4a9dbda81d3adfdbccd1627a823278bc4d17cca3cfc8bee9d79b66e1bbd9",
       "dimensions": [
         512,
         512
@@ -167,7 +167,7 @@
     },
     {
       "uri": "painted-atlas-8.png",
-      "sha256": "9c0053f3f8d917c23a55442d2e7acbc33a798d621e16279c130dcf2517468efb",
+      "sha256": "3ede6c62565bbf6da224ab162ca08c4052a91f7dcedc8ca6f7be9756f469cfec",
       "dimensions": [
         1024,
         1024
@@ -176,7 +176,7 @@
   ],
   "triangles": 1010,
   "source_decoded_sha256": "d898d44dc9d6440779d5c5b9784da9e9361a771b344e630ca523749c6c6ad596",
-  "source_file": "/Volumes/Josh Extreme Pro USB4 4TB/Projects/010-rescue-review/source-data/current-building-appearance/raw/18_268620_55472.b3dm.gz",
+  "source_file": "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/raw/18_268620_55472.b3dm",
   "source_attribution": "Gemeente Rotterdam, CC BY 4.0",
   "status": "Source-bound visual candidate; no acceptance claim"
 }
