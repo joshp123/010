@@ -1,0 +1,55 @@
+{
+  "bagId": "0599100000670808",
+  "sourceAttributes": {
+    "Address": {
+      "HouseNumber": "66-80",
+      "Country": "Nederland",
+      "PostalCode": "3025VK",
+      "Street": "Schans",
+      "City": "Rotterdam"
+    },
+    "BEGINGELDIGHEID": "2015-10-08",
+    "yearOfConstruction": "1983",
+    "creationDate": "2024-11-01",
+    "BUURT": "Bospolder",
+    "HOOGSTE_BOUWLAAG": "3",
+    "STATUS": "Pand in gebruik",
+    "LAAGSTE_BOUWLAAG": "0",
+    "measuredHeight": 14.28,
+    "AANTAL_BOUWLAGEN": "4",
+    "AANTAL_ADRESSEN": "8",
+    "WIJK": "Delfshaven",
+    "PANDSOORT": "Tussenpand"
+  },
+  "featureTable": {
+    "BATCH_LENGTH": 16,
+    "RTC_CENTER": [
+      3931147.617789631,
+      305780.87383139244,
+      4996494.452115663
+    ]
+  },
+  "sourceEvidence": [
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/tileset.json",
+      "retained": "source-data/current-building-evidence/raw/tileset.json.gz",
+      "sha256": "df401fdb7c4a6df3f07d3b5ead2198591bd5567433bc1ead32adfa82e303ba7a",
+      "decodedBytes": 21949
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/12/4197/866.json",
+      "retained": "source-data/current-building-evidence/raw/12_4197_866.json.gz",
+      "sha256": "41f8575de27c4abb309fd642af318383b00786b165fbd595e328f280f396c9d4",
+      "decodedBytes": 3497833
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268621/55475.b3dm",
+      "retained": "source-data/current-building-evidence/raw/18_268621_55475.b3dm.gz",
+      "sha256": "7b2b20dc9b402c1adcdd7c87858557d3979adc681d5819aa4b9db41a1711b1c1",
+      "decodedBytes": 7395200
+    }
+  ],
+  "license": "CC BY 4.0",
+  "licenseEvidence": "catalog-evidence.json",
+  "photographyCaptureDate": "Not established by model creationDate or file Last-Modified."
+}

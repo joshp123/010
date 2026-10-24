@@ -1,0 +1,38 @@
+{
+  "bagId": "0599100000671675",
+  "sourceUrl": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268620/55473.b3dm",
+  "sourceSha256": "c51f35cc165e106b2d77a00f8614fecd1e22d977f35a0406f2efb8acfacf4425",
+  "sourceAttributes": {
+    "Address": {
+      "HouseNumber": "22-22",
+      "Country": "Nederland",
+      "PostalCode": "3025AB",
+      "Street": "Schiedamseweg",
+      "City": "Rotterdam"
+    },
+    "BEGINGELDIGHEID": "2015-10-08",
+    "yearOfConstruction": "1910",
+    "creationDate": "2024-11-01",
+    "BUURT": "Bospolder",
+    "HOOGSTE_BOUWLAAG": "3",
+    "STATUS": "Pand in gebruik",
+    "LAAGSTE_BOUWLAAG": "0",
+    "measuredHeight": 15.25,
+    "AANTAL_BOUWLAGEN": "5",
+    "AANTAL_ADRESSEN": "3",
+    "WIJK": "Delfshaven",
+    "PANDSOORT": "Tussenpand"
+  },
+  "featureTable": {
+    "BATCH_LENGTH": 32,
+    "RTC_CENTER": [
+      3931031.386085533,
+      305724.43749486655,
+      4996588.717016839
+    ]
+  },
+  "license": "CC BY 4.0",
+  "attribution": "Gemeente Rotterdam \u2014 3D Rotterdam",
+  "licenseEvidence": "../current-building-evidence/catalog-evidence.json",
+  "photographyCaptureDate": "Unknown"
+}

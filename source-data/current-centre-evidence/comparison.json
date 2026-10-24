@@ -1,0 +1,212 @@
+{
+  "extractionVerification": {
+    "expandedTrianglesExact": 1394,
+    "allOriginalAttributesExact": true,
+    "sourceNodeTransformsExact": true,
+    "embeddedImageBytesExact": true
+  },
+  "bagId": "0599100000753300",
+  "currentSource": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268679/55479.b3dm",
+  "currentSourceSha256": "b37824db0cafe02787432038f9587fd82a4db37c19b9fc71d68be0f348b6d322",
+  "currentFeatureTable": {
+    "BATCH_LENGTH": 1,
+    "RTC_CENTER": [
+      3931173.8962895954,
+      308532.0997854865,
+      4996305.91373266
+    ]
+  },
+  "currentSourceAttributes": {
+    "Address": {
+      "HouseNumber": "9-243",
+      "Country": "Nederland",
+      "PostalCode": "3072MK",
+      "Street": "Van der Hoevenplein",
+      "City": "Rotterdam"
+    },
+    "BEGINGELDIGHEID": "2015-09-22",
+    "yearOfConstruction": "2010",
+    "creationDate": "2024-10-28",
+    "BUURT": "Kop van Zuid",
+    "gml:name": "Van der Hoevenplein 9-243",
+    "HOOGSTE_BOUWLAAG": "44",
+    "STATUS": "Pand in gebruik",
+    "LAAGSTE_BOUWLAAG": "-2",
+    "measuredHeight": 156.21,
+    "Address 2": {
+      "HouseNumber": "995",
+      "Country": "Nederland",
+      "PostalCode": "3072ME",
+      "Street": "Antoine Platekade",
+      "City": "Rotterdam"
+    },
+    "AANTAL_BOUWLAGEN": "47",
+    "Address 1": {
+      "HouseNumber": "980-998",
+      "Country": "Nederland",
+      "PostalCode": "3072MD",
+      "Street": "Otto Reuchlinweg",
+      "City": "Rotterdam"
+    },
+    "AANTAL_ADRESSEN": "240",
+    "WIJK": "Feijenoord",
+    "PANDSOORT": "Vrijstaand"
+  },
+  "current": {
+    "triangles": 1394,
+    "primitives": 23,
+    "texturedPrimitives": 23
+  },
+  "legacy": {
+    "triangles": 1226,
+    "primitives": 3,
+    "texturedPrimitives": 2
+  },
+  "legacySource": "source-data/building-appearance/raw/17_134339_27739.cmpt.gz",
+  "legacySourceSha256": "810897b5859cbd68bb2a2e7ab9660e76b7f7d32257b7a39ff018106252e0c21e",
+  "license": "Current municipal source CC BY4.0; legacy source attribution/terms retained separately",
+  "photographyDate": "Not established. creationDate is model attribute, not flight date.",
+  "sourceGeometryPolicy": "Original positions/normals/UVs and node transforms retained in isolated current GLB, original source B3DM retained. No artistic interpretation.",
+  "worldGeometryComparison": {
+    "legacy": {
+      "longitudeBounds": [
+        4.486821340617947,
+        4.488187557052715
+      ],
+      "latitudeBounds": [
+        51.904567358039195,
+        51.90530631363187
+      ],
+      "numericHeightBounds": [
+        3.548161868005991,
+        161.89848948456347
+      ]
+    },
+    "current": {
+      "longitudeBounds": [
+        4.4868064693855345,
+        4.488187557012227
+      ],
+      "latitudeBounds": [
+        51.90456735805081,
+        51.90531802411519
+      ],
+      "numericHeightBounds": [
+        3.3769398937001824,
+        159.5841135494411
+      ]
+    },
+    "currentVertexToLegacyVertexMetres": {
+      "median": 1.2306150060812016,
+      "max": 9.313717017678703,
+      "caution": "Vertex distance includes tessellation changes; not a surveyed surface discrepancy."
+    },
+    "expandedTrianglesEqualWithinMillimetre": false
+  },
+  "atlasDimensions": {
+    "legacy": [
+      [
+        2048,
+        2048
+      ],
+      [
+        2048,
+        1024
+      ]
+    ],
+    "current": [
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        256,
+        256
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ]
+    ]
+  }
+}

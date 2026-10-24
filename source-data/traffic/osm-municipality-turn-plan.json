@@ -1,0 +1,180 @@
+{
+  "license": "ODbL-1.0",
+  "attribution": "\u00a9 OpenStreetMap contributors",
+  "boundarySha256": "8ad975faec184b943517adc582316edee8251a9d7114481a0b9b29de00ffe404",
+  "tiles": [
+    {
+      "id": "35-864",
+      "bbox": [
+        51.84,
+        4.2,
+        51.9,
+        4.32
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.84,4.2,51.9,4.32);(._;>;);out body;"
+    },
+    {
+      "id": "36-864",
+      "bbox": [
+        51.84,
+        4.32,
+        51.9,
+        4.44
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.84,4.32,51.9,4.44);(._;>;);out body;"
+    },
+    {
+      "id": "37-864",
+      "bbox": [
+        51.84,
+        4.44,
+        51.9,
+        4.56
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.84,4.44,51.9,4.56);(._;>;);out body;"
+    },
+    {
+      "id": "38-864",
+      "bbox": [
+        51.84,
+        4.56,
+        51.9,
+        4.68
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.84,4.56,51.9,4.68);(._;>;);out body;"
+    },
+    {
+      "id": "32-865",
+      "bbox": [
+        51.9,
+        3.84,
+        51.96,
+        3.96
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,3.84,51.96,3.96);(._;>;);out body;"
+    },
+    {
+      "id": "33-865",
+      "bbox": [
+        51.9,
+        3.96,
+        51.96,
+        4.08
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,3.96,51.96,4.08);(._;>;);out body;"
+    },
+    {
+      "id": "34-865",
+      "bbox": [
+        51.9,
+        4.08,
+        51.96,
+        4.2
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.08,51.96,4.2);(._;>;);out body;"
+    },
+    {
+      "id": "35-865",
+      "bbox": [
+        51.9,
+        4.2,
+        51.96,
+        4.32
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.2,51.96,4.32);(._;>;);out body;"
+    },
+    {
+      "id": "36-865",
+      "bbox": [
+        51.9,
+        4.32,
+        51.96,
+        4.44
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.32,51.96,4.44);(._;>;);out body;"
+    },
+    {
+      "id": "37-865",
+      "bbox": [
+        51.9,
+        4.44,
+        51.96,
+        4.56
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.44,51.96,4.56);(._;>;);out body;"
+    },
+    {
+      "id": "38-865",
+      "bbox": [
+        51.9,
+        4.56,
+        51.96,
+        4.68
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.56,51.96,4.68);(._;>;);out body;"
+    },
+    {
+      "id": "32-866",
+      "bbox": [
+        51.96,
+        3.84,
+        52.02,
+        3.96
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,3.84,52.02,3.96);(._;>;);out body;"
+    },
+    {
+      "id": "33-866",
+      "bbox": [
+        51.96,
+        3.96,
+        52.02,
+        4.08
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,3.96,52.02,4.08);(._;>;);out body;"
+    },
+    {
+      "id": "34-866",
+      "bbox": [
+        51.96,
+        4.08,
+        52.02,
+        4.2
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.08,52.02,4.2);(._;>;);out body;"
+    },
+    {
+      "id": "36-866",
+      "bbox": [
+        51.96,
+        4.32,
+        52.02,
+        4.44
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.32,52.02,4.44);(._;>;);out body;"
+    },
+    {
+      "id": "37-866",
+      "bbox": [
+        51.96,
+        4.44,
+        52.02,
+        4.56
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.44,52.02,4.56);(._;>;);out body;"
+    },
+    {
+      "id": "38-866",
+      "bbox": [
+        51.96,
+        4.56,
+        52.02,
+        4.68
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.56,52.02,4.68);(._;>;);out body;"
+    }
+  ],
+  "completed": 0,
+  "required": 17,
+  "complete": false
+}
