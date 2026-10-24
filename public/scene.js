@@ -9,6 +9,7 @@ import { createSurfaceQuery } from './surface-query.js';
 import { createCompressedModelsPlugin } from './compressed-models.js';
 import { createObjectDetail } from './object-detail.js';
 import { createSimulatedTraffic } from './simulated-traffic.js';
+import { createTrafficCoordinator } from './traffic-coordinator.js';
 import { inspectTrafficSurfaces } from './traffic-surface-audit.js';
 import { createTransitView } from './transit-view.js';
 import { createMetroCityCut } from './metro-city-cut.js';
@@ -236,7 +237,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   const buildingBatches = createBuildingBatches();
   const buildingAppearance = createBuildingAppearanceReconciliation(buildingBatches);
   const municipalBuildingVisibility = createMunicipalBuildingVisibility();
-  const municipalSourceEnabled = new URLSearchParams(location.search).get('source') === 'municipal';
+  const municipalSourceEnabled = new URLSearchParams(location.search).get('source') !== 'prepared';
   const sourceBuildingPriority = createAppearancePriorityReconciliation({ normalize: normalizedBagId, identityField: 'bagId' });
   const paintedBuildingPriority = createAppearancePriorityReconciliation({ normalize: normalizedBagId, identityField: 'bagId' });
   const tankAppearance = createTankAppearanceReconciliation();
@@ -293,8 +294,9 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   const transit = createTransitView({ project: projectTransit, requestRender });
   scene.add(transit.group);
   const metroLocationCue = createMetroLocationCue();
-  const traffic = createSimulatedTraffic({ project: projectTransit, requestRender });
-  const cyclists = createSimulatedTraffic({ project: projectTransit, requestRender, bicycles: true, maximumVehicles: 160, vehiclesPerKilometre: 20, maximumSpan: 2600 });
+  const trafficCoordinator = createTrafficCoordinator();
+  const traffic = createSimulatedTraffic({ coordinator: trafficCoordinator, project: projectTransit, requestRender });
+  const cyclists = createSimulatedTraffic({ coordinator: trafficCoordinator, project: projectTransit, requestRender, bicycles: true, maximumVehicles: 160, vehiclesPerKilometre: 20, maximumSpan: 2600 });
   const simulatedLayers = [traffic, cyclists];
   const simulationMaterials = new Set();
   for (const layer of simulatedLayers) {
@@ -348,7 +350,9 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     requestRender();
     return true;
   }
-  const tileCaches = Object.fromEntries([['city', appearanceEdition.startsWith('illustrated-') ? 384 : 224], ['trees', 128], ['lights', 24]].map(([name, megabytes]) => {
+  // Current native source atlas pages need 1.45 GB in the reviewed 150 m view.
+  // Keep this quality comparison intact while source texture residency is refined.
+  const tileCaches = Object.fromEntries([['city', municipalSourceEnabled ? 1536 : appearanceEdition.startsWith('illustrated-') ? 384 : 224], ['trees', 128], ['lights', 24]].map(([name, megabytes]) => {
     const cache = new CityTileCache(requestRender);
     cache.maxBytesSize = megabytes * 1024 * 1024;
     cache.minBytesSize = name === 'trees' ? 24 * 1024 * 1024 : cache.maxBytesSize * 0.8;
@@ -1023,7 +1027,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     setView, getView: () => ({ ...view }), setLighting, captureCanvas,
     zoom: factor => setView({ span: view.span / factor }), reset: () => setView(DEFAULT_VIEW),
     render: () => { needsRender = true; frame(); }, getCanvas: () => canvas, resize,
-    getDiagnostics: () => ({ groundArtwork: groundArtwork.diagnostics(), publicSpace: publicSpaceStyle.diagnostics(), tankAppearance: { enabled: tankAppearanceEnabled, ...tankAppearance.diagnostics(), textures: appearanceTextureDiagnostics(visibleTankAppearanceModels()) }, vegetation: { mode: vegetationEnabled ? 'clustered' : 'native', ...vegetationStyle.diagnostics() }, shaderErrors: shaderErrors.slice(), buildingAppearance: { edition: appearanceEdition, sampling: appearanceSamplingPreset, ...buildingAppearance.diagnostics(), textures: appearanceTextureDiagnostics(visibleBuildingAppearanceModels()), roles: Object.fromEntries(['painted', 'current', 'municipal', 'legacy'].map(role => [role, visibleBuildingAppearanceModels(role).length])) }, fixtureSurfaceLighting: fixtureSurfaceLighting.diagnostics(), readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, cyclists: { ...cyclists.statistics(), state: cyclistsState }, transit: { ...transit.statistics(), metroState, cityCut: metroCityCut.diagnostics() }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize, pressureEvictions: cache.pressureEvictions }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count ?? mesh.geometry.getAttribute('position')?.count ?? 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
+    getDiagnostics: () => ({ groundArtwork: groundArtwork.diagnostics(), publicSpace: publicSpaceStyle.diagnostics(), tankAppearance: { enabled: tankAppearanceEnabled, ...tankAppearance.diagnostics(), textures: appearanceTextureDiagnostics(visibleTankAppearanceModels()) }, vegetation: { mode: vegetationEnabled ? 'clustered' : 'native', ...vegetationStyle.diagnostics() }, shaderErrors: shaderErrors.slice(), buildingAppearance: { municipal: municipalBuildingVisibility.diagnostics(), edition: appearanceEdition, sampling: appearanceSamplingPreset, ...buildingAppearance.diagnostics(), textures: appearanceTextureDiagnostics(visibleBuildingAppearanceModels()), roles: Object.fromEntries(['painted', 'current', 'municipal', 'legacy'].map(role => [role, visibleBuildingAppearanceModels(role).length])) }, fixtureSurfaceLighting: fixtureSurfaceLighting.diagnostics(), readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, cyclists: { ...cyclists.statistics(), state: cyclistsState }, transit: { ...transit.statistics(), metroState, cityCut: metroCityCut.diagnostics() }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize, pressureEvictions: cache.pressureEvictions }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count ?? mesh.geometry.getAttribute('position')?.count ?? 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
     dispose() {
       metroLocationCue.dispose();
       disposed = true; clearTimeout(deferredUpdateTimer); if (scheduledFrame) cancelAnimationFrame(scheduledFrame); observer.disconnect();
