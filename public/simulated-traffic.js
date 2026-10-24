@@ -151,6 +151,9 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     let attempts = 0;
     while (cars.length < desiredCount && attempts++ < desiredCount * 12) {
       const road = candidates[Math.floor(random() * candidates.length)], distance = random() * road.length;
+      // Let traffic enter crossings through yielding, rather than appear inside
+      // an occupied junction when a new view is seeded.
+      if ((road.start && distance < 8) || (road.end && road.length - distance < 8)) continue;
       locate(road, distance);
       if (!inside(position)) continue;
       const direction = road.direction === 3 ? random() > .5 ? 1 : -1 : road.direction === 1 ? 1 : -1;
