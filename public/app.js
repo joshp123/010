@@ -88,7 +88,6 @@ function updateView(view) {
   if (selectedDestination && Math.hypot((view.lon - selectedDestination.lon) * 69000, (view.lat - selectedDestination.lat) * 111000) > 700) {
     selectedDestination = null;
     locationLabel = 'Rotterdam';
-    document.querySelectorAll('.destination-row button').forEach(button => button.classList.remove('active'));
   }
   updateMinimap(view);
   clearTimeout(updateUrlTimer);
@@ -113,7 +112,6 @@ function navigateTo(destination) {
   selectedDestination = { ...view, name: destination.name };
   locationLabel = destination.name || 'Rotterdam';
   scene?.setView(view);
-  document.querySelectorAll('.destination-row button').forEach(button => button.classList.toggle('active', button.dataset.destination === destination.id));
   closeSearch();
 }
 
@@ -232,7 +230,7 @@ async function searchPlaces(query) {
   searchAbort?.abort();
   searchAbort = new AbortController();
   const local = destinations.filter(place => place.name.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
-  if (!query.trim()) { showSearchResults(destinations.slice(0, 8)); return; }
+  if (!query.trim()) { showSearchResults(destinations); return; }
   if (query.trim().length < 2) { showSearchResults(local, local.length ? null : 'Type a place or street name.'); return; }
   showSearchResults(local, local.length ? null : 'Looking for places…');
   try {
@@ -255,15 +253,6 @@ async function loadPlaces() {
     const response = await fetch('./data/destinations.json');
     if (!response.ok) throw new Error('Destinations are unavailable');
     destinations = await response.json();
-    const priorities = [/Erasmusbrug/i, /Delfshaven/i, /Hoek van Holland/i, /Maasvlakte/i, /Centraal/i];
-    const featured = priorities.map(pattern => destinations.find(item => pattern.test(item.name))).filter(Boolean);
-    for (const place of featured) {
-      const button = document.createElement('button');
-      button.dataset.destination = place.id;
-      button.textContent = place.name.replace('Rotterdam Centraal', 'Centraal');
-      button.addEventListener('click', () => navigateTo(place));
-      byId('destinations').append(button);
-    }
   } catch (error) { console.warn(error.message); }
 }
 
@@ -287,6 +276,15 @@ async function loadMinimap() {
     updateMinimap(currentView);
   } catch (error) { console.warn('Overview map could not be loaded.', error); }
 }
+
+function setViewPanel(open, restoreFocus = false) {
+  byId('view-panel').hidden = !open;
+  byId('view-toggle').setAttribute('aria-expanded', String(open));
+  if (open) closeSearch();
+  if (restoreFocus) byId('view-toggle').focus();
+}
+byId('view-toggle').addEventListener('click', () => setViewPanel(byId('view-panel').hidden));
+byId('view-close').addEventListener('click', () => setViewPanel(false, true));
 
 document.querySelectorAll('[data-light]').forEach(button => button.addEventListener('click', () => {
   lightingMode = button.dataset.light; applyLighting(); history.replaceState(null, '', encodeView());
@@ -321,7 +319,7 @@ byId('place-search').addEventListener('input', event => {
   clearTimeout(searchTimer);
   searchTimer = setTimeout(() => searchPlaces(query), 200);
 });
-byId('place-search').addEventListener('focus', event => searchPlaces(event.target.value));
+byId('place-search').addEventListener('focus', event => { setViewPanel(false); searchPlaces(event.target.value); });
 byId('search-clear').addEventListener('click', () => {
   byId('place-search').value = ''; byId('search-clear').hidden = true; byId('place-search').focus(); searchPlaces('');
 });
@@ -339,9 +337,11 @@ byId('place-search').addEventListener('keydown', event => {
 });
 document.addEventListener('pointerdown', event => {
   if (!event.target.closest('.search-wrap')) closeSearch();
+  if (!event.target.closest('#view-panel,#view-toggle')) setViewPanel(false);
   if (!event.target.closest('#weather-details,#weather-toggle')) { byId('weather-details').hidden = true; byId('weather-toggle').setAttribute('aria-expanded', 'false'); }
 });
 document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && !byId('view-panel').hidden) { setViewPanel(false, true); return; }
   if (document.querySelector('dialog[open]') || event.target.matches('input,textarea')) return;
   if (event.key === '/') { event.preventDefault(); byId('place-search').focus(); }
   if (!scene) return;
@@ -354,10 +354,13 @@ document.addEventListener('keydown', event => {
     scene.setView({ ...currentView, lon: currentView.lon + (event.key === 'ArrowRight' ? delta / 69000 : event.key === 'ArrowLeft' ? -delta / 69000 : 0), lat: currentView.lat + (event.key === 'ArrowUp' ? delta / 111000 : event.key === 'ArrowDown' ? -delta / 111000 : 0) });
   }
 });
-byId('about-open').addEventListener('click', () => byId('about-dialog').showModal());
+byId('about-open').addEventListener('click', () => { setViewPanel(false); byId('about-dialog').showModal(); });
+byId('about-dialog').addEventListener('close', () => byId('view-toggle').focus());
 byId('about-dialog').querySelector('[data-close]').addEventListener('click', () => byId('about-dialog').close());
 byId('about-dialog').addEventListener('click', event => { if (event.target === byId('about-dialog')) { const box = event.target.getBoundingClientRect(); if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) event.target.close(); } });
 byId('share-open').addEventListener('click', async () => {
+  setViewPanel(false);
+  closeSearch();
   if (!scene) return say('The map is still loading.');
   try {
     const { openShareDialog } = await import('./share.js');
