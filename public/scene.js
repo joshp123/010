@@ -169,7 +169,6 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   let gestureQuietUntil = 0, deferredUpdateTimer = null, viewUpdateDeferred = false;
   let overviewState = 'loading', contextState = 'loading';
   const loadMilestones = { firstBuildingsSubmittedMs: null, initialDetailSettledMs: null };
-  let initialGroundStarted = false;
   const frameTimes = [], inputRenderTimes = [];
   function recordTiming(samples, value) { samples.push(value); if (samples.length > 240) samples.shift(); }
   function timingSummary(samples) { const sorted = [...samples].sort((a, b) => a - b); return { samples: sorted.length, median: sorted[Math.floor(sorted.length / 2)] ?? null, p95: sorted[Math.floor(sorted.length * 0.95)] ?? null }; }
@@ -270,7 +269,6 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     let refused = 0;
     for (const tiles of tilesets) {
       if (!tiles.group.visible) continue;
-      if (tiles.kind === 'ground' && !initialGroundStarted) pending++;
       pending += tiles.stats.queued + tiles.stats.downloading + tiles.stats.parsing;
       refused += tiles.stats.refused;
       if (tiles.rootLoadingState !== LOADED) pending++;
@@ -508,20 +506,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
         tiles.lruCache.scheduleUnload();
       }
       tiles.group.visible = visible;
-      if (visible) {
-        if (tiles.kind === 'ground' && !initialGroundStarted) {
-          const buildings = tilesets.find(layer => layer.kind === 'buildings');
-          const buildingTraversalFinished = buildings.rootLoadingState === FAILED || (
-            buildings.rootLoadingState === LOADED && buildings.frameCount > 0 && !buildings.visibleTiles.size &&
-            !buildings.processNodeQueue.running &&
-            buildings.stats.queued + buildings.stats.downloading + buildings.stats.parsing === 0 &&
-            [...buildings.usedSet].every(tile => !tile.traversal.inFrustum || !tile.internal.hasContent || [LOADED, FAILED].includes(tile.internal.loadingState))
-          );
-          if (!capturePending && !capturingFullDetail && loadMilestones.firstBuildingsSubmittedMs === null && !buildingTraversalFinished) continue;
-          initialGroundStarted = true;
-        }
-        tiles.update();
-      }
+      if (visible) tiles.update();
     }
     if (tilesets.find(tiles => tiles.kind === 'ground').group.visible) {
       sourceFusion.setVisibleBridges(tilesets.filter(tiles => tiles.kind === 'bridges' && tiles.group.visible).flatMap(tiles => [...tiles.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean)));
@@ -570,10 +555,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
       groundLayer.group.visible = groundVisible; overview.visible = true; sea.visible = true; scene.background = background;
     }
     renderer.setRenderTarget(cityTarget); renderer.render(scene, camera); lastCityRender = { ...renderer.info.render }; renderer.setRenderTarget(null);
-    if (loadMilestones.firstBuildingsSubmittedMs === null && tilesets.find(tiles => tiles.kind === 'buildings').visibleTiles.size) {
-      loadMilestones.firstBuildingsSubmittedMs = performance.now();
-      if (!initialGroundStarted) requestRender();
-    }
+    if (loadMilestones.firstBuildingsSubmittedMs === null && tilesets.find(tiles => tiles.kind === 'buildings').visibleTiles.size) loadMilestones.firstBuildingsSubmittedMs = performance.now();
     if (loadMilestones.initialDetailSettledMs === null && viewReadiness().ready) loadMilestones.initialDetailSettledMs = performance.now();
     reportStatus();
     }
@@ -640,7 +622,6 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     if (disposed) throw new Error('The city view has closed.');
     if (!Number.isInteger(captureWidth) || !Number.isInteger(captureHeight) || captureWidth < 1 || captureHeight < 1 || Math.max(captureWidth, captureHeight) > renderer.capabilities.maxTextureSize) throw new Error('The requested image size is not supported by this device.');
     capturePending = true;
-    initialGroundStarted = true;
     const previousTreeCacheLimit = tileCaches.trees.maxBytesSize;
     const previousLightCacheLimit = tileCaches.lights.maxBytesSize;
     tileCaches.trees.maxBytesSize = Math.max(previousTreeCacheLimit, 64 * 1024 * 1024);
