@@ -2,10 +2,30 @@
 // x east, z south: the right-hand normal of (dx,dz) is (-dz,dx).
 export function rightHandOffset(dx, dz, direction, distance, length, twoWay) {
   const magnitude = Math.hypot(dx, dz) || 1;
-  // Meet at surveyed junctions, instead of jumping between differently offset edges.
-  const taper = Math.min(1, Math.max(0, distance) / 8, Math.max(0, length - distance) / 8);
-  const offset = twoWay ? 1.15 * direction * taper : 0;
+  const offset = twoWay ? 1.15 * direction : 0;
   return [-dz / magnitude * offset, dx / magnitude * offset];
+}
+
+// Blend the two surveyed edge offsets across a chosen turn. Both sides of the
+// junction use the same midpoint; opposing straight journeys keep their lanes.
+export function journeyLaneOffset(car, tangent) {
+  const current = rightHandOffset(tangent.x, tangent.z, car.direction, 0, 0, car.road.direction === 3);
+  const path = car.journey.path;
+  const travelled = car.direction === 1 ? car.distance : car.road.length - car.distance;
+  const remaining = car.road.length - travelled;
+  const previousWeight = car.journeyIndex > 0 ? .5 * Math.max(0, 1 - travelled / 5) : 0;
+  const nextWeight = car.next ? .5 * Math.max(0, 1 - remaining / 5) : 0;
+  const result = current.map(value => value * (1 - previousWeight - nextWeight));
+  for (const [step, weight, entering] of [[path[car.journeyIndex - 1], previousWeight, false], [car.next, nextWeight, true]]) {
+    if (!step || !weight) continue;
+    const points = step.road.points;
+    const atStart = entering === (step.direction === 1);
+    const a = atStart ? points[0] : points.at(-2);
+    const b = atStart ? points[1] : points.at(-1);
+    const offset = rightHandOffset(b.x - a.x, b.z - a.z, step.direction, 0, 0, step.road.direction === 3);
+    result[0] += offset[0] * weight; result[1] += offset[1] * weight;
+  }
+  return result;
 }
 
 export function turnWeight(incoming, outgoing) {
@@ -82,7 +102,7 @@ export function routeFollowingGap(car, occupants, range = followingDistance(car.
   const path=car.journey.path;
   for(let index=car.journeyIndex;index<path.length&&index<car.journeyIndex+16;index++) {
     const {road,direction}=path[index];
-    for(const other of occupants.get(road)||[]) {
+    for(const other of occupants.get(road.id)||[]) {
       if(other===car||other.vehicle===car||other.direction!==direction)continue;
       const gap=offset+(direction===1?other.distance:road.length-other.distance);
       if(gap>0&&gap<=range)nearest=Math.min(nearest,gap);
@@ -114,7 +134,7 @@ export function createJunctionArbitrator() {
         if(car.ending||!car.next||remaining>=10) { waiting.delete(car); continue; }
         // Every same-lane vehicle ahead counts, even if it is too far away for
         // normal braking. A follower cannot reserve on its leader's behalf.
-        const leader=(occupants.get(car.road)||[]).some(other=>other.vehicle!==car&&other!==car&&other.direction===car.direction&&
+        const leader=(occupants.get(car.road.id)||[]).some(other=>other.vehicle!==car&&other!==car&&other.direction===car.direction&&
           (other.distance-car.distance)*car.direction>0);
         if(leader) { waiting.delete(car); continue; }
         const junction=car.direction===1?car.road.end:car.road.start;

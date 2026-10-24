@@ -1,5 +1,6 @@
+import { createTrafficCoordinator } from './traffic-coordinator.js';
 import * as THREE from 'three';
-import { rightHandOffset, safeStep, routeFollowingGap, speedForRoadClass, createJunctionArbitrator, applyReviewedRoadGeometry, applySurfaceProfiles } from './traffic-motion.js';
+import { journeyLaneOffset, safeStep, routeFollowingGap, speedForRoadClass, applyReviewedRoadGeometry, applySurfaceProfiles } from './traffic-motion.js';
 import { createJourneyPlanner } from './traffic-journeys.js';
 import { createCarGeometries, createBicycleGeometries } from './traffic-models.js';
 
@@ -57,7 +58,7 @@ const PALETTE = ['#d1d0bf', '#697e7c', '#ac6f5c', '#dbd8cb', '#596765', '#b09b72
 
 // This is decorative simulation on source roads, independent of live transit.
 // Parent drives advance(seconds); this module never owns an animation timer.
-export function createSimulatedTraffic({ project, localPosition, requestRender = () => {}, maximumVehicles = 320, vehiclesPerKilometre = 6, maximumSpan = 6500, bicycles = false } = {}) {
+export function createSimulatedTraffic({ project, localPosition, requestRender = () => {}, maximumVehicles = 320, vehiclesPerKilometre = 6, maximumSpan = 6500, bicycles = false, coordinator = createTrafficCoordinator() } = {}) {
   const place = project || localPosition;
   const group = new THREE.Group(); group.name = bicycles ? 'Simulated cyclists' : 'Simulated road traffic'; group.userData.simulated = true;
   const models=bicycles?createBicycleGeometries():createCarGeometries();
@@ -83,7 +84,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
   let geometryStatus=bicycles?'original-bicycle-network':'not-loaded';
   let surfaceProfileStatus='not-loaded';
   let sourceNetwork = null, roads = [], planner = null, candidates = [], cars = [];
-  const junctionArbitrator=createJunctionArbitrator();
+  const unregisterTraffic = coordinator.register(() => paused || !group.visible ? [] : cars);
   let span = 1700, viewportHeight = 900, hasView = false, enabled = true, paused = false, lastTime = null, elapsed = 0, sequence = 1, nextVehicleId = 1;
   let desiredCount = 0, seeded = false, plannedJourneys = 0, completedJourneys = 0;
   const unroutableOrigins = new Set();
@@ -112,7 +113,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
   }
 
   function setRoads(network, preserveCars = false) {
-    junctionArbitrator.clear();
+    coordinator.clear();
     const previousCars = preserveCars ? cars : [];
     sourceNetwork = network; roads = []; cars = []; lastTime = null; unroutableOrigins.clear();
     for (const source of network.roads) {
@@ -179,7 +180,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     for (const car of cars) {
       locate(car.road, car.distance);
       if (!inside(position)) continue;
-      const [laneX, laneZ] = rightHandOffset(tangent.x, tangent.z, car.direction, car.distance, car.road.length, car.road.direction === 3);
+      const [laneX, laneZ] = journeyLaneOffset(car, tangent);
       position.x += laneX * (bicycles ? .35 : 1); position.z += laneZ * (bicycles ? .35 : 1);
       // Keep city vehicles in scale; zoom must not turn cars into buses.
       const endDistance = car.direction === 1 ? car.road.length - car.distance : car.distance;
@@ -290,12 +291,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
       const delta = safeStep(lastTime === null ? 0 : timeSeconds - lastTime); lastTime = timeSeconds;
       if (paused || !group.visible || !roads.length || !cars.length) return false;
       elapsed += delta;
-      const occupants=new Map();
-      for(const vehicle of cars) {
-        if(!occupants.has(vehicle.road))occupants.set(vehicle.road,[]);
-        occupants.get(vehicle.road).push({vehicle,direction:vehicle.direction,distance:vehicle.distance});
-      }
-      const junctionReservations=junctionArbitrator.update(cars,occupants,delta);
+      const { occupants, junctionReservations } = coordinator.frame(timeSeconds, delta);
       cars = cars.filter(car => {
         car.age += delta;
         let endDistance = car.direction === 1 ? car.road.length - car.distance : car.distance;
@@ -332,6 +328,6 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     setEnabled(value) { enabled = value; group.visible = enabled && span <= maximumSpan; lastTime = null; if (enabled) { selectRoads(); render(); } else requestRender(); },
     refreshProjection() { if (sourceNetwork) setRoads(sourceNetwork, true); },
     statistics, sampleVehicles,
-    dispose() {group.removeFromParent();group.clear();for(const mesh of meshes)mesh.dispose();for(const item of Object.values(models))item.dispose();geometry.dispose();material.dispose();roofMaterial.dispose();detailMaterial.dispose();darkMaterial.dispose();roads=[];cars=[];planner=null;unroutableOrigins.clear();},
+    dispose() {unregisterTraffic();group.removeFromParent();group.clear();for(const mesh of meshes)mesh.dispose();for(const item of Object.values(models))item.dispose();geometry.dispose();material.dispose();roofMaterial.dispose();detailMaterial.dispose();darkMaterial.dispose();roads=[];cars=[];planner=null;unroutableOrigins.clear();},
   };
 }
