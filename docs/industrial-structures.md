@@ -57,3 +57,14 @@ The municipal BGT ground already supplies dune relief and cycle paths. At 4.125�
 ## Delivery partitioning
 
 The runtime assets now pass through [exact spatial subdivision](prepared-mesh-subdivision.md). Dense meshes are partitioned into 250 m cells after reconstruction; triangle/attribute values and LOD semantics are preserved. The source-builder size figures above describe the retained pre-subdivision assets, not the current delivery totals.
+
+
+## Reconstruction replacement under evaluation
+
+The later whole-city review rejected the shipping port's pale, fragmented appearance. Preserving every occupied voxel is not a visual acceptance criterion. A component spanning roughly 300 m averaged away most source colour; local colour patches alone improved colour but retained the broken forms.
+
+The current bounded replacement experiment is retained under `work/source-quality/port-form-prototype/`, with raw source hashes, source/flight selection, dimension audits, rejected variants and reproducible scripts. It fits rail-aligned roof segments and straight measured crane members from a retained 0.5 m source sample. It is not yet a port-wide replacement. The test footprint is RD 60000–60400 / 441550–441950, with selected-flight coverage ending around 441880 northing; replacing the whole original 1 km crop with this fixture would delete valid surrounding geometry.
+
+The sparse first result discarded observed roofs because their hidden ground was DTM nodata. Classification was not the cause: the selected raw flight contained no class-6 points. A local same-terminal ground fit restored 611 roof solids, using surveyed ground at median distance 1.16 m and maximum 7.08 m. Hidden bases remain inferred, not directly surveyed. Roofs over surveyed water retain caps without invented solid bases. The repaired candidate covers 95.3% of its supported longitudinal roof length.
+
+Measured median stack dimensions are 2.38 m wide, 10 m long and 8.75 m high; widening them merely to avoid a thin appearance would misrepresent the source. The `tiered/` candidate corrects unsupported global roof-height snapping and adds quiet illustrative tier joints from repeated source roof levels, preserving 1,023 footprints and 826 fitted crane members. It is 50,652 triangles / 514,646 gzip bytes. Actual-map captures at two bearings show a substantial improvement over the scan fragments; the next acceptance step is another terminal and complete source-crop coverage. Night inspection separately exposed absent lamp-source coverage at western terminals. These are unresolved whole-port acceptance questions, not reasons to claim the local fixture is complete.
