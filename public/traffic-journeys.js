@@ -32,8 +32,20 @@ export function createJourneyPlanner(roads, { turnRestrictions = [] } = {}) {
     const from=edges.filter(edge=>edge.road.id===rule.from && edge.to===rule.via && edge.direction===rule.fromDirection);
     const to=edges.filter(edge=>edge.road.id===rule.to && edge.from===rule.via && edge.direction===rule.toDirection);
     if(from.length!==1 || to.length!==1 || !/^(no_|only_)/.test(rule.restriction)) {stats.unresolvedTurnRestrictions++;continue;}
+    // Resolve the actual movement, not merely two IDs. In particular an only_*
+    // rule must never remove every exit when its required movement is missing
+    // after projection/elevation or source-network changes.
+    const incoming=from[0],target=to[0];
+    if(incoming.road.id===target.road.id || Math.hypot(incoming.end.x-target.start.x,incoming.end.z-target.start.z)>.5 ||
+      Math.abs(incoming.end.y-target.start.y)>3 || !turnWeight(incoming.arrival,target.departure)) {stats.unresolvedTurnRestrictions++;continue;}
     if(!restrictionsByEdge.has(from[0].index))restrictionsByEdge.set(from[0].index,[]);
     restrictionsByEdge.get(from[0].index).push({only:rule.restriction.startsWith('only_'),to:to[0].index});stats.turnRestrictionRules++;
+  }
+  for(const [index,rules] of restrictionsByEdge) {
+    const required=new Set(rules.filter(rule=>rule.only).map(rule=>rule.to));
+    if(required.size>1 || rules.some(rule=>!rule.only&&required.has(rule.to))) {
+      restrictionsByEdge.delete(index);stats.turnRestrictionRules-=rules.length;stats.unresolvedTurnRestrictions+=rules.length;
+    }
   }
   const parent=edges.map((_,i)=>i), sizes=edges.map(()=>1);
   function root(i) { while(parent[i]!==i) { parent[i]=parent[parent[i]];i=parent[i]; } return i; }

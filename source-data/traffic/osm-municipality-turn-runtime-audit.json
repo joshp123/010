@@ -1,0 +1,901 @@
+{
+  "diagnostics": {
+    "directedEdges": 45500,
+    "connections": 71844,
+    "rejectedEndpointGaps": 0,
+    "rejectedHeightGaps": 0,
+    "rejectedReversals": 1776,
+    "terminalEdges": 3077,
+    "components": 182,
+    "largestComponentEdges": 39798,
+    "turnRestrictionRules": 60,
+    "unresolvedTurnRestrictions": 0,
+    "restrictedTransitions": 54
+  },
+  "relations": [
+    {
+      "id": 1251642,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601084248,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 1251663,
+      "active": true,
+      "exists": true,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 1251664,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601083991,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 1251665,
+      "active": true,
+      "exists": true,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 1309215,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601017322,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_right_turn"
+    },
+    {
+      "id": 1312594,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601214658,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 2376966,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601230716,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 3295651,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 600107415,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 4063857,
+      "active": true,
+      "exists": true,
+      "options": 3,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 185274158,
+          "direction": -1
+        },
+        {
+          "roadId": 185274165,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 4188413,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 124280005,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 4225827,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601079504,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 5250821,
+      "active": true,
+      "exists": true,
+      "options": 3,
+      "remainingOptions": 2,
+      "newlyProhibited": [
+        {
+          "roadId": 600731400,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_left_turn"
+    },
+    {
+      "id": 5486771,
+      "active": true,
+      "exists": true,
+      "options": 3,
+      "remainingOptions": 2,
+      "newlyProhibited": [
+        {
+          "roadId": 184267138,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_left_turn"
+    },
+    {
+      "id": 5486860,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601085472,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 6772594,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601244275,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_right_turn"
+    },
+    {
+      "id": 8761489,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 600361609,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_left_turn"
+    },
+    {
+      "id": 8761492,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 189267215,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 8839096,
+      "active": true,
+      "exists": true,
+      "options": 3,
+      "remainingOptions": 2,
+      "newlyProhibited": [
+        {
+          "roadId": 191264071,
+          "direction": -1
+        }
+      ],
+      "restriction": "no_left_turn"
+    },
+    {
+      "id": 9626131,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 600264899,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 10014720,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 600113061,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 10626156,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 600447607,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_left_turn"
+    },
+    {
+      "id": 11231184,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601046754,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 11605330,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 600732808,
+          "direction": -1
+        }
+      ],
+      "restriction": "no_left_turn"
+    },
+    {
+      "id": 11758547,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601078581,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_right_turn"
+    },
+    {
+      "id": 11783357,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 600995615,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_left_turn"
+    },
+    {
+      "id": 11866083,
+      "active": true,
+      "exists": true,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 11880453,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601084014,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_right_turn"
+    },
+    {
+      "id": 11988776,
+      "active": false,
+      "exists": false,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "no_u_turn"
+    },
+    {
+      "id": 12611381,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 179262025,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 12611382,
+      "active": true,
+      "exists": true,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 12611383,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 600107716,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 12611384,
+      "active": true,
+      "exists": true,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 13087257,
+      "active": false,
+      "exists": false,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "no_u_turn"
+    },
+    {
+      "id": 13187813,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 182264071,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_left_turn"
+    },
+    {
+      "id": 13284675,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601048405,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_right_turn"
+    },
+    {
+      "id": 13284676,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 116279027,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_right_turn"
+    },
+    {
+      "id": 13651594,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601226088,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_left_turn"
+    },
+    {
+      "id": 13774733,
+      "active": true,
+      "exists": true,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "only_right_turn"
+    },
+    {
+      "id": 14230460,
+      "active": true,
+      "exists": true,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "only_right_turn"
+    },
+    {
+      "id": 14230781,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 200287017,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 14654566,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601110268,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 14654567,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601085527,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 14966194,
+      "active": true,
+      "exists": true,
+      "options": 3,
+      "remainingOptions": 2,
+      "newlyProhibited": [
+        {
+          "roadId": 185274167,
+          "direction": -1
+        }
+      ],
+      "restriction": "no_left_turn"
+    },
+    {
+      "id": 14966195,
+      "active": true,
+      "exists": true,
+      "options": 3,
+      "remainingOptions": 2,
+      "newlyProhibited": [
+        {
+          "roadId": 601300569,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_left_turn"
+    },
+    {
+      "id": 14966196,
+      "active": true,
+      "exists": true,
+      "options": 3,
+      "remainingOptions": 2,
+      "newlyProhibited": [
+        {
+          "roadId": 601724275,
+          "direction": -1
+        }
+      ],
+      "restriction": "no_right_turn"
+    },
+    {
+      "id": 15328106,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 600104759,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 15599437,
+      "active": false,
+      "exists": false,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "no_right_turn"
+    },
+    {
+      "id": 15599443,
+      "active": true,
+      "exists": true,
+      "options": 3,
+      "remainingOptions": 2,
+      "newlyProhibited": [
+        {
+          "roadId": 600909993,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_right_turn"
+    },
+    {
+      "id": 15764415,
+      "active": false,
+      "exists": false,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "no_u_turn"
+    },
+    {
+      "id": 16778058,
+      "active": true,
+      "exists": true,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "only_right_turn"
+    },
+    {
+      "id": 17326480,
+      "active": false,
+      "exists": false,
+      "options": 2,
+      "remainingOptions": 2,
+      "newlyProhibited": [],
+      "restriction": "no_u_turn"
+    },
+    {
+      "id": 17428899,
+      "active": true,
+      "exists": true,
+      "options": 3,
+      "remainingOptions": 2,
+      "newlyProhibited": [
+        {
+          "roadId": 601077591,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_left_turn"
+    },
+    {
+      "id": 17428900,
+      "active": false,
+      "exists": false,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "no_left_turn"
+    },
+    {
+      "id": 17886893,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 183278130,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 18290512,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 155268033,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 18919618,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 151273015,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 18990384,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 186276143,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_right_turn"
+    },
+    {
+      "id": 19204457,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 600115287,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 19262426,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 601078022,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 19262553,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 600891424,
+          "direction": 1
+        }
+      ],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 19358541,
+      "active": true,
+      "exists": true,
+      "options": 3,
+      "remainingOptions": 2,
+      "newlyProhibited": [
+        {
+          "roadId": 601249161,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_left_turn"
+    },
+    {
+      "id": 19541239,
+      "active": false,
+      "exists": false,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "no_u_turn"
+    },
+    {
+      "id": 19907064,
+      "active": false,
+      "exists": false,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "no_u_turn"
+    },
+    {
+      "id": 20279833,
+      "active": false,
+      "exists": false,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "no_right_turn"
+    },
+    {
+      "id": 20673377,
+      "active": false,
+      "exists": false,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "no_u_turn"
+    },
+    {
+      "id": 20804238,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 600930068,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_right_turn"
+    },
+    {
+      "id": 20804239,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 600930113,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_right_turn"
+    },
+    {
+      "id": 21376084,
+      "active": true,
+      "exists": true,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 21376085,
+      "active": true,
+      "exists": true,
+      "options": 1,
+      "remainingOptions": 1,
+      "newlyProhibited": [],
+      "restriction": "only_straight_on"
+    },
+    {
+      "id": 21411051,
+      "active": true,
+      "exists": true,
+      "options": 2,
+      "remainingOptions": 1,
+      "newlyProhibited": [
+        {
+          "roadId": 600480779,
+          "direction": 1
+        }
+      ],
+      "restriction": "no_right_turn"
+    }
+  ]
+}

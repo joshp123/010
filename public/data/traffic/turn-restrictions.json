@@ -5,17 +5,80 @@
   "attribution": "\u00a9 OpenStreetMap contributors",
   "attributionUrl": "https://www.openstreetmap.org/copyright",
   "source": "https://github.com/joshp123/010/tree/main/source-data/traffic",
-  "rawSourceSha256": "e2635e4ec394de6b7e25a70a74c05ce9ef54ec8e1d67a987678a7da4ec11be58",
+  "rawSourceSha256": "a567dda5c30a6d84f783d11872645bfa0595b3e17c7f50cc361d4b0e48c71e4b",
   "nwbSourceSha256": "f9a8276b154d16eb2c7fd2b0a27f604ff660df3a7c1923a5ec5c22c1de6688ce",
-  "auditSha256": "7e2f26d1c1d37627ea23f1f6d8c356ecd50e3488dde30f9d1597772094fadd5f",
-  "coverage": "Ten manually selected geometrically unambiguous pilot matches, not exhaustive legal routing; conditional and via-way restrictions unsupported",
+  "auditSha256": "252785798048281e89f5e8f04a6f2992546db6537f04a24da5bd778b6f6dfc79",
+  "coverage": "60 explicitly reviewed source matches across municipality acquisition; not exhaustive legal routing; conditional and via-way restrictions unsupported",
   "rules": [
+    {
+      "osmRelation": 1251642,
+      "restriction": "only_straight_on",
+      "from": 601084245,
+      "via": 600412445,
+      "to": 601084253,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 1251663,
+      "restriction": "only_straight_on",
+      "from": 601083986,
+      "via": 600412332,
+      "to": 601083992,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 1251664,
+      "restriction": "only_straight_on",
+      "from": 601083992,
+      "via": 600412329,
+      "to": 601083976,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 1251665,
+      "restriction": "only_straight_on",
+      "from": 601083979,
+      "via": 184268226,
+      "to": 601083982,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 1309215,
+      "restriction": "no_right_turn",
+      "from": 183265092,
+      "via": 183265100,
+      "to": 601017322,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
     {
       "osmRelation": 1312594,
       "restriction": "only_straight_on",
       "from": 601214659,
       "via": 600476512,
       "to": 601214660,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 2376966,
+      "restriction": "only_straight_on",
+      "from": 181272058,
+      "via": 181272035,
+      "to": 601723658,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 3295651,
+      "restriction": "only_straight_on",
+      "from": 600107418,
+      "via": 178263098,
+      "to": 600480988,
       "fromDirection": 1,
       "toDirection": 1
     },
@@ -29,6 +92,114 @@
       "toDirection": 1
     },
     {
+      "osmRelation": 4188413,
+      "restriction": "only_straight_on",
+      "from": 600931270,
+      "via": 124280002,
+      "to": 600710138,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 4225827,
+      "restriction": "only_straight_on",
+      "from": 601079462,
+      "via": 600410251,
+      "to": 601079473,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 5250821,
+      "restriction": "no_left_turn",
+      "from": 189282014,
+      "via": 189282035,
+      "to": 600731400,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 5486771,
+      "restriction": "no_left_turn",
+      "from": 601110148,
+      "via": 184267120,
+      "to": 184267138,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 5486860,
+      "restriction": "only_straight_on",
+      "from": 601085559,
+      "via": 182264047,
+      "to": 601085556,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 6772594,
+      "restriction": "no_right_turn",
+      "from": 600910067,
+      "via": 196276103,
+      "to": 601244275,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 8761489,
+      "restriction": "no_left_turn",
+      "from": 189267201,
+      "via": 189267244,
+      "to": 600361609,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 8761492,
+      "restriction": "only_straight_on",
+      "from": 601074945,
+      "via": 189267240,
+      "to": 189267201,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 8839096,
+      "restriction": "no_left_turn",
+      "from": 601110388,
+      "via": 191264070,
+      "to": 191264071,
+      "fromDirection": 1,
+      "toDirection": -1
+    },
+    {
+      "osmRelation": 9626131,
+      "restriction": "only_straight_on",
+      "from": 600264959,
+      "via": 600074647,
+      "to": 600907982,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 10014720,
+      "restriction": "only_straight_on",
+      "from": 181263034,
+      "via": 181263102,
+      "to": 600725595,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 10626156,
+      "restriction": "no_left_turn",
+      "from": 600447614,
+      "via": 600121185,
+      "to": 600447607,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
       "osmRelation": 11231184,
       "restriction": "only_straight_on",
       "from": 186274186,
@@ -36,6 +207,15 @@
       "to": 600729096,
       "fromDirection": 1,
       "toDirection": 1
+    },
+    {
+      "osmRelation": 11605330,
+      "restriction": "no_left_turn",
+      "from": 191263027,
+      "via": 192262006,
+      "to": 600732808,
+      "fromDirection": 1,
+      "toDirection": -1
     },
     {
       "osmRelation": 11758547,
@@ -56,12 +236,138 @@
       "toDirection": 1
     },
     {
+      "osmRelation": 11866083,
+      "restriction": "only_straight_on",
+      "from": 184281018,
+      "via": 184281025,
+      "to": 601115503,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 11880453,
+      "restriction": "only_right_turn",
+      "from": 184268111,
+      "via": 184268115,
+      "to": 601084034,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 12611381,
+      "restriction": "only_straight_on",
+      "from": 600944639,
+      "via": 179262023,
+      "to": 179262007,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 12611382,
+      "restriction": "only_straight_on",
+      "from": 600104791,
+      "via": 179262018,
+      "to": 600106895,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 12611383,
+      "restriction": "only_straight_on",
+      "from": 600392652,
+      "via": 180263011,
+      "to": 600104792,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 12611384,
+      "restriction": "only_straight_on",
+      "from": 180262006,
+      "via": 180262014,
+      "to": 180262008,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 13187813,
+      "restriction": "no_left_turn",
+      "from": 182264057,
+      "via": 182264102,
+      "to": 182264071,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 13284675,
+      "restriction": "no_right_turn",
+      "from": 601536358,
+      "via": 600396420,
+      "to": 601048405,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 13284676,
+      "restriction": "no_right_turn",
+      "from": 600198613,
+      "via": 116279025,
+      "to": 116279027,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 13651594,
+      "restriction": "no_left_turn",
+      "from": 601226086,
+      "via": 600483134,
+      "to": 601226088,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
       "osmRelation": 13774733,
       "restriction": "only_right_turn",
       "from": 184273077,
       "via": 184273051,
       "to": 600909852,
       "fromDirection": -1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 14230460,
+      "restriction": "only_right_turn",
+      "from": 200287063,
+      "via": 200287040,
+      "to": 600736982,
+      "fromDirection": -1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 14230781,
+      "restriction": "only_straight_on",
+      "from": 600736968,
+      "via": 200287004,
+      "to": 200287032,
+      "fromDirection": -1,
+      "toDirection": -1
+    },
+    {
+      "osmRelation": 14654566,
+      "restriction": "only_straight_on",
+      "from": 180263017,
+      "via": 181263098,
+      "to": 181263034,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 14654567,
+      "restriction": "only_straight_on",
+      "from": 601084564,
+      "via": 600412556,
+      "to": 601084565,
+      "fromDirection": 1,
       "toDirection": 1
     },
     {
@@ -92,11 +398,155 @@
       "toDirection": -1
     },
     {
+      "osmRelation": 15328106,
+      "restriction": "only_straight_on",
+      "from": 173265005,
+      "via": 173265027,
+      "to": 173265006,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 15599443,
+      "restriction": "no_right_turn",
+      "from": 601074918,
+      "via": 189267243,
+      "to": 600909993,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 16778058,
+      "restriction": "only_right_turn",
+      "from": 600361199,
+      "via": 186267135,
+      "to": 601240797,
+      "fromDirection": -1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 17428899,
+      "restriction": "no_left_turn",
+      "from": 601249161,
+      "via": 600409346,
+      "to": 601077591,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 17886893,
+      "restriction": "only_straight_on",
+      "from": 183278146,
+      "via": 183278204,
+      "to": 600727066,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 18290512,
+      "restriction": "only_straight_on",
+      "from": 600108100,
+      "via": 155268017,
+      "to": 600108102,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 18919618,
+      "restriction": "only_straight_on",
+      "from": 151273019,
+      "via": 151273039,
+      "to": 601058239,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
       "osmRelation": 18990384,
       "restriction": "only_right_turn",
       "from": 601116660,
       "via": 186276180,
       "to": 601214699,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 19204457,
+      "restriction": "only_straight_on",
+      "from": 183265091,
+      "via": 183265063,
+      "to": 600726942,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 19262426,
+      "restriction": "only_straight_on",
+      "from": 601078032,
+      "via": 186267247,
+      "to": 600115046,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 19262553,
+      "restriction": "only_straight_on",
+      "from": 600891426,
+      "via": 187267143,
+      "to": 600111886,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 19358541,
+      "restriction": "no_left_turn",
+      "from": 601078660,
+      "via": 183271168,
+      "to": 601249161,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 20804238,
+      "restriction": "no_right_turn",
+      "from": 600930065,
+      "via": 122282057,
+      "to": 600930068,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 20804239,
+      "restriction": "no_right_turn",
+      "from": 600930112,
+      "via": 122282061,
+      "to": 600930113,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 21376084,
+      "restriction": "only_straight_on",
+      "from": 601057847,
+      "via": 600400416,
+      "to": 601057833,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 21376085,
+      "restriction": "only_straight_on",
+      "from": 601057833,
+      "via": 600400416,
+      "to": 601057844,
+      "fromDirection": -1,
+      "toDirection": 1
+    },
+    {
+      "osmRelation": 21411051,
+      "restriction": "no_right_turn",
+      "from": 600480782,
+      "via": 169265011,
+      "to": 600480779,
       "fromDirection": 1,
       "toDirection": 1
     }

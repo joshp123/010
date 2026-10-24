@@ -50,10 +50,14 @@ def match_restrictions(osm,features,diagnostics=None):
     results=[]
     for rel in [r for r in osm['elements'] if r['type']=='relation']:
         result={'osmRelation':rel['id'],'tags':rel.get('tags',{}),'status':'unmatched'};results.append(result)
-        tags=result['tags'];restriction=tags.get('restriction:motorcar',tags.get('restriction:motor_vehicle',tags.get('restriction')))
+        tags=result['tags']
+        mode_key=next((key for key in ['restriction:motorcar','restriction:motor_vehicle','restriction:vehicle','restriction'] if key in tags),None)
+        restriction=tags.get(mode_key) if mode_key else None
+        result['evaluatedMode']='motorcar';result['restrictionKey']=mode_key
+        result['exceptions']=[value.strip() for value in tags.get('except','').split(';') if value.strip()]
         if any('conditional' in key for key in tags) or any(k in tags for k in ['day_on','day_off','hour_on','hour_off']):result['reason']='conditional restriction requires temporal evaluation';continue
-        if set(tags.get('except','').split(';')) & {'motorcar','motor_vehicle','vehicle'}:result['reason']='motorcar exempt';continue
-        if not restriction or not restriction.startswith(('no_','only_')):result['reason']='unsupported motor restriction type';continue
+        if set(result['exceptions']) & {'motorcar','motor_vehicle','vehicle'}:result['reason']='motorcar exempt';continue
+        if restriction not in {'no_right_turn','no_left_turn','no_u_turn','no_straight_on','only_right_turn','only_left_turn','only_u_turn','only_straight_on','no_entry','no_exit'}:result['reason']='unsupported motor restriction type';continue
         roles={role:[m for m in rel.get('members',[]) if m['role']==role] for role in ['from','via','to']}
         if any(len(roles[role])!=1 for role in roles) or roles['via'][0]['type']!='node':result['reason']='multi-member or via-way restriction requires path state';continue
         via=roles['via'][0]['ref'];point=nodes.get(via)
@@ -110,8 +114,14 @@ def match_restrictions(osm,features,diagnostics=None):
         result.update({'status':'review-candidate','restriction':restriction,'nwbJunction':junction,'fromNWB':matched['from'],'toNWB':matched['to'],'junctionDistanceMetres':round(distance,3)})
     return results
 
+def validate_acquisition(acquisition,raw,allow_partial=False,output=None):
+    if acquisition.get('outputSha256')!=hashlib.sha256(raw).hexdigest():raise ValueError('Mismatched acquisition manifest')
+    if acquisition.get('complete') is not True:
+        if not (allow_partial and acquisition.get('scope')=='partial-tile-coverage' and output and output.name.endswith('.partial.json')):raise ValueError('Partial source requires --allow-partial and a separate .partial.json output')
+
+
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--source',type=Path);p.add_argument('--acquisition',type=Path);p.add_argument('--output',type=Path);p.add_argument('--download',action='store_true');p.add_argument('--input',type=Path);p.add_argument('--endpoint',default='https://overpass-api.de/api/interpreter');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--allow-partial',action='store_true',help='Audit an explicit partial acquisition, only into a .partial.json output');p.add_argument('--source',type=Path);p.add_argument('--acquisition',type=Path);p.add_argument('--output',type=Path);p.add_argument('--download',action='store_true');p.add_argument('--input',type=Path);p.add_argument('--endpoint',default='https://overpass-api.de/api/interpreter');a=p.parse_args()
     if a.source and (not a.output or not a.acquisition):p.error('Custom source requires --output and --acquisition to preserve reviewed central audit and provenance')
     source=a.source or SOURCE/'osm-centre-turn-restrictions.json.gz'
     if a.download and a.source:p.error('Custom retained sources are audited locally; use the municipality collector to acquire them')
@@ -128,8 +138,8 @@ def main():
     features=json.loads(gzip.decompress((SOURCE/'nwb-roads.geojson.gz').read_bytes()))['features']
     inventory={};results=match_restrictions(osm,features,inventory)
     acquisition=json.loads(a.acquisition.read_bytes()) if a.acquisition else None
-    if acquisition and (not acquisition.get('complete') or acquisition.get('outputSha256')!=hashlib.sha256(raw).hexdigest()):raise ValueError('Incomplete or mismatched acquisition manifest')
-    report={'auditedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'endpoint':a.endpoint if a.download else None,'query':None if a.source else QUERY,'acquisition':acquisition,'license':'OpenStreetMap ODbL-1.0; attribution OpenStreetMap contributors required before runtime use','schema':'https://wiki.openstreetmap.org/wiki/Relation:restriction','rawSha256':hashlib.sha256(raw).hexdigest(),'nwbSha256':hashlib.sha256((SOURCE/'nwb-roads.geojson.gz').read_bytes()).hexdigest(),'status':'review only, not activated; matching source geometry is not proof of legal completeness','inventory':inventory,'relations':results}
+    if acquisition:validate_acquisition(acquisition,raw,a.allow_partial,a.output)
+    report={'auditedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'endpoint':a.endpoint if a.download else None,'query':None if a.source else QUERY,'acquisition':acquisition,'coverageComplete':acquisition.get('complete') if acquisition else None,'license':'OpenStreetMap ODbL-1.0; attribution OpenStreetMap contributors required before runtime use','schema':'https://wiki.openstreetmap.org/wiki/Relation:restriction','rawSha256':hashlib.sha256(raw).hexdigest(),'nwbSha256':hashlib.sha256((SOURCE/'nwb-roads.geojson.gz').read_bytes()).hexdigest(),'status':'review only, not activated; matching source geometry is not proof of legal completeness','inventory':inventory,'relations':results}
     strict=[r for r in results if r['status']=='review-candidate' and r['junctionDistanceMetres']<=2 and all(m.get('osmName') and m.get('nameEvidence') in ('exact','short-source-continuation') and m['alignmentCosine']>=.985 for m in r['matches'].values())]
     report['strictCandidateRelations']=[r['osmRelation'] for r in strict]
     (a.output or SOURCE/'osm-turn-restriction-audit.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({'relations':len(results),'reviewCandidates':sum(r['status']=='review-candidate' for r in results)}))
