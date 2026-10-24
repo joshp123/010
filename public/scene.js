@@ -22,6 +22,7 @@ const LAYERS = [
   ['industrialStructures', './data/industrial-structures/tileset.json'],
   ['yards', './data/industrial-ground/tileset.json'],
   ['lamps', './data/lamps/tileset.json'],
+  ['lamps', './data/supplementary-lamps/tileset.json'],
   ['buildings', './data/building-index/tileset.json'],
   ['ground', '0025cb58-e0f5-4169-bb4c-5339a3bc2a7e'],
   ['bridges', '06595036-c78e-4081-ab25-e8f88b66bc19'],
@@ -141,11 +142,13 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   const materials = Object.fromEntries(LAYERS.map(([kind]) => [kind, createCityMaterial(['streets', 'bridgeSurfaces', 'greenTerrain'].includes(kind) ? 'ground' : kind, uniforms)]));
   const cartographicMaterial = createCityMaterial('ground', uniforms);
   cartographicMaterial.depthWrite = false;
+  const contextLandMaterial = createCityMaterial('ground', uniforms);
+  contextLandMaterial.depthWrite = false;
   materials.streets.depthWrite = materials.yards.depthWrite = false;
   const emptyCutawayTexture = new THREE.DataTexture(new Uint8Array([0]), 1, 1, THREE.RedFormat);
   emptyCutawayTexture.needsUpdate = true;
   const cutawayUniforms = { enabled: { value: 0 }, mask: { value: emptyCutawayTexture }, bounds: { value: new THREE.Vector4(0, 0, 1, 1) } };
-  for (const material of [...Object.values(materials), cartographicMaterial, lampGlowMaterial, lampPoolMaterial, lampShaftMaterial]) applyMetroCutaway(material, cutawayUniforms);
+  for (const material of [...Object.values(materials), cartographicMaterial, contextLandMaterial, lampGlowMaterial, lampPoolMaterial, lampShaftMaterial]) applyMetroCutaway(material, cutawayUniforms);
   Object.assign(materials.bridgeSurfaces, { polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
   const seaGeometry = new THREE.PlaneGeometry(180000, 180000, 96, 96);
   const seaVertices = seaGeometry.getAttribute('position');
@@ -426,7 +429,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
         const color = new THREE.Color(palette[kind] || palette.land), vertexColors = new Float32Array(positions.length);
         for (let index = 0; index < vertexColors.length; index += 3) color.toArray(vertexColors, index);
         geometry.setAttribute('color', new THREE.BufferAttribute(vertexColors, 3));
-        const mesh = new THREE.Mesh(geometry, cartographicMaterial); mesh.receiveShadow = true; mesh.renderOrder = cartographicDrawOrder[kind] ?? -28;
+        const mesh = new THREE.Mesh(geometry, kind === 'context' ? contextLandMaterial : cartographicMaterial); mesh.receiveShadow = true; mesh.renderOrder = cartographicDrawOrder[kind] ?? -28;
         overview.add(mesh);
       }
       positionsByKind.clear();
@@ -546,7 +549,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     if (detail.pending) requestRender();
     const treeLayer = tilesets.find(tiles => tiles.kind === 'trees');
     treeBatches.update(new Set(treeLayer.group.visible ? [...treeLayer.visibleTiles].map(tile => tile.engineData.scene) : []));
-    for (const tile of tilesets.find(tiles => tiles.kind === 'lamps').visibleTiles) tile.engineData.scene?.traverse(object => { if (object.isLineSegments) object.visible = view.span >= 700 && view.span < 3500; });
+    for (const layer of tilesets.filter(tiles => tiles.kind === 'lamps')) for (const tile of layer.visibleTiles) tile.engineData.scene?.traverse(object => { if (object.isLineSegments) object.visible = (object.userData.illustratedPole || view.span >= 700) && view.span < 3500; });
     if (reflectCity) {
       const background = scene.background; scene.background = new THREE.Color(0x000000);
       const groundLayer = tilesets.find(layer => layer.kind === 'ground');
@@ -597,6 +600,8 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     materials.ground.roughness = 0.94 - wetness * 0.35;
     materials.ground.color.setScalar(1 - wetness * 0.13);
     cartographicMaterial.color.copy(materials.ground.color); cartographicMaterial.roughness = materials.ground.roughness;
+    contextLandMaterial.color.copy(cartographicMaterial.color).multiplyScalar(1 - night * 0.55);
+    contextLandMaterial.roughness = cartographicMaterial.roughness;
     renderer.toneMappingExposure = night > 0.5 ? 1.35 : 1.12;
     updateShadowCamera();
     requestRender();

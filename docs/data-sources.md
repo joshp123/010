@@ -124,7 +124,7 @@ The same public Kadaster BRT TOP10NL API supplies `wegdeel_vlak`, `wegdeel_lijn`
 
 ## Prepared public transport linkage
 
-Written by AI on 2026-10-24 by model GPT-6.
+Written by AI on 2026-10-24 by model GPT-6.1 Sol.
 
 The free [OVapi national GTFS archive](https://gtfs.ovapi.nl/nl/gtfs-nl.zip), feed version 9644 (2026-10-23 through 2026-12-12), supplies 150 routes, 793 municipality-clipped shapes and 54,584 trip links. `public/data/transit/map.pb.gz` is a 234 kB compact protobuf, defined in `source-data/transit/map.proto`. The exact Kadaster GM0599 polygon includes Hoek van Holland and the port. Source vertices are retained without simplification; clipping introduces boundary intersections and coordinates are quantised to 1e-7 degrees (at most 7 mm processing displacement). Shapes contain plan geometry, not measured tunnel depth or live positions.
 
@@ -135,3 +135,9 @@ The archive’s retained `licenses.txt` assigns **ODbL 1.0 to shapes.txt**, with
 The metro presentation uses a separate 8 KB gzip physical-form subset of the retained BRT TOP10NL rail network, credited to **Kadaster / PDOK under CC BY 4.0**. It retains 215 in-use metro/sneltram features and source IDs; only 12 explicitly tagged “in tunnel” features produce cutaway corridors. Neither missing physical tags nor relative levels establish depth. The constant graphical depth is illustrative, and the aboveground Hoek route is not made underground. Rebuild and precise display limits: [transit presentation provenance](../source-data/transit/presentation.md). This subset remains separate from the ODbL GTFS shapes database; independent renderer code is MIT.
 
 Simulated general traffic follows actual **Rijkswaterstaat / PDOK NWB** road centre lines and junction IDs, under **CC0 1.0**. The municipality-clipped 1.19 MB gzip protobuf includes 27,218 motor-road pieces across city, Hoek and port; no straight shortcut connects disconnected roads. Kadaster / PDOK CC BY 4.0 boundary and BRT tunnel polygons supply clipping/exclusions. Cars and speeds are explicitly simulated, independently of observed transit; vertical road placement depends on rendered source surfaces. See [traffic source, licences, rebuild and limits](../source-data/traffic/README.md).
+
+## Supplementary BGT lighting
+
+Written by AI on 2026-10-24 by model GPT-6.1 Sol.
+
+The municipality-clipped BGT `paal` light-mast source fills positions absent from the native 3D lamp layer, including Maasvlakte. **Kadaster / PDOK / BGT source holders, CC0 1.0** supply the 2D positions; **Actueel Hoogtebestand Nederland (AHN), CC BY 4.0** supplies sampled terrain. Pole heights and all emitted light remain illustrative. Raw selected registry features, exact requests, original terrain caches, match tolerance and rebuild instructions are retained separately; see [supplementary lamps](supplementary-lamps.md) and the generated `public/data/supplementary-lamps/manifest.json`. This is source coverage, not an assertion that every real lamp is represented or switched on.
