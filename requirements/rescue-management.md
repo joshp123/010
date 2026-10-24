@@ -20,7 +20,11 @@ The municipal source pilot restores useful facade/roof evidence. Palette filteri
 
 Cloud implementation owns the source/renderer correction, art pilot and supporting transport work. The manager independently reviews local rendered desktop/phone output because the cloud browser cannot create Rotterdam's WebGL context.
 
-The source pilot currently renders its textured buildings but removes surrounding fallback buildings, leaving their shadows. This is a rejected integration regression. Restore a trustworthy source render before using it as an illustration input.
+The source pilot currently renders its textured buildings but removes surrounding fallback buildings, leaving their shadows. Browser diagnostics isolated cache starvation: the cache is full while fallback meshes are absent, rather than failing in their shader. Implementation is packing each building's own vertex data instead of repeatedly accounting for the whole source tile. The correction still needs actual rendered review. Restore a trustworthy source render before using it as an illustration input.
+
+The manager downloaded and inspected both landscape and portrait exports. Framing, attribution and downloads work. They expose the same unresolved architectural quality and an evenly spaced line of cyclists across the junction; successful export dimensions do not establish scene quality. Current phone controls leave most of the map visible; sharing opens a contained dialog. Motion and rider silhouettes remain under review.
+
+The independent worker has mapped generated materials to the original mesh and checked opposite viewpoints. An unrestricted atlas redraw adds unsupported roof detail. A source-aligned semantic interpretation experiment is underway; palette transfer alone remains insufficient. Preserve the original geometry and UV evidence, and reject unsupported detail even when the result looks cleaner.
 
 Then test adjacent source-rich neighbourhood views, ordinary residential streets and a port sample. Judge faithful structure, consistent adjoining artwork, separate night lighting and correct moving-actor occlusion. Establish accepted area, retries and generation time before scaling. Preserve sources and replaceable interpretation throughout. A polished landmark, build or feature count cannot close this rescue.
 
