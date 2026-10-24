@@ -487,11 +487,11 @@ export function createTransitView({ project, localPosition, requestRender = () =
       visibleFreshUndergroundObservations: freshCount,
       metroFocusCandidates:focusCandidates.map(({report,uncertainTrackPosition})=>({inSection:report.id===selectedReportId,presentationState:uncertainTrackPosition?'marker':'train',id:report.id,latitude:report.latitude,longitude:report.longitude,label:report.label,observedAt:report.observedAt,freshness:report.freshness,sourceConnected:report.sourceConnected})),
       metroFocus: focus ? {id:focus.id,latitude:focus.latitude,longitude:focus.longitude,label:focus.label,observedAt:focus.observedAt,freshness:focus.freshness,sourceConnected:focus.sourceConnected} : null,
-      cutawayShortMessage:!cutaway?null:underground.some(record=>record.uncertainTrackPosition)?'Report off mapped track':freshCount?'Fresh metro · approximate position':underground.length?'Older/unverified metro · not live':'No metro report in this section',
+      cutawayShortMessage:!cutaway?null:underground.some(record=>record.uncertainTrackPosition)?'Report off mapped track':freshCount?'Fresh metro · depth illustrated':underground.length?'Older/unverified metro · not live':'No metro report in this section',
       cutawayMessage: !cutaway ? null : underground.some(record=>record.uncertainTrackPosition)
         ? `${fresh(underground.find(record=>record.uncertainTrackPosition)) ? 'Fresh report' : 'Older/unverified report'} · ${Math.round(underground.find(record=>record.uncertainTrackPosition).rail.distance)} m from mapped track`
         : freshCount
-        ? `Fresh metro · approximate track position`
+        ? `Fresh metro · approximate track position · depth illustrated, not surveyed`
         : underground.length ? `${underground.length} ${underground.every(record=>record.report.freshness==='stale')?'older':'unverified'} metro ${underground.length===1?'report':'reports'} · not live`
         : 'No metro report in this section',
       section: sectionAnchor ? {radiusMetres:SECTION_RADIUS,selectedReportId,segmentCount:sectionSegments.length,illustrativeDepthMetres:TUNNEL_DEPTH,...sectionDiagnostics} : null,
