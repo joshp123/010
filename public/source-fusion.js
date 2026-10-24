@@ -80,7 +80,7 @@ function bridgeHeightAt(triangle, point) {
 export function createSourceFusion() {
   const groundModels = new Map(), bridgeModels = new Set(), groundRevisions = new WeakMap(), meshResults = new Map();
   let dirty = false, bridgeRevision = 0, bridgeGridRevision = -1, previousBridgeModels = [], diagnostics = {};
-  const grid = new Map(), bridgeMeshCache = new Map(), groundCandidates = new WeakMap();
+  const grid = new Map(), bridgeMeshCache = new Map(), groundCandidates = new WeakMap(), bridgeTransforms = new WeakMap();
   let bridgeTriangles = 0;
   function restore(mesh, original) {
     if (mesh.geometry !== original) { mesh.geometry.dispose(); mesh.geometry = original; }
@@ -90,6 +90,22 @@ export function createSourceFusion() {
     groundModels.delete(model); dirty = true;
   }
   function update() {
+    // A loaded tile can be fused before its georeferencing parent is attached.
+    // Parent/visibility changes do not necessarily change the visible bridge set.
+    let bridgeTransformChanged = false;
+    for (const model of bridgeModels) {
+      model.updateWorldMatrix(true, false);
+      const previous = bridgeTransforms.get(model);
+      if (previous && !previous.equals(model.matrixWorld)) bridgeTransformChanged = true;
+      if (!previous) bridgeTransforms.set(model, model.matrixWorld.clone());
+      else previous.copy(model.matrixWorld);
+    }
+    if (bridgeTransformChanged) { bridgeRevision++; dirty = true; }
+    for (const model of groundModels.keys()) {
+      model.updateWorldMatrix(true, false);
+      const previous = groundRevisions.get(model);
+      if (!previous || !previous.matrix.equals(model.matrixWorld)) dirty = true;
+    }
     if (!dirty) return false;
     dirty = false;
     const started = performance.now();
@@ -126,9 +142,10 @@ export function createSourceFusion() {
       for (const mesh of bridgeMeshCache.keys()) if (!activeBridgeMeshes.has(mesh)) bridgeMeshCache.delete(mesh);
     }
     for (const [model, originals] of groundModels) {
-      if (groundRevisions.get(model) === bridgeRevision) continue;
-      groundRevisions.set(model, bridgeRevision);
+      const previousRevision = groundRevisions.get(model);
+      if (previousRevision?.bridgeRevision === bridgeRevision && previousRevision.matrix.equals(model.matrixWorld)) continue;
       model.updateWorldMatrix(true, true);
+      groundRevisions.set(model, { bridgeRevision, matrix: model.matrixWorld.clone() });
       for (const [mesh, original] of originals) {
         if (!original.boundingBox) original.computeBoundingBox();
         const meshBounds = original.boundingBox.clone().applyMatrix4(mesh.matrixWorld);

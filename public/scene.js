@@ -368,7 +368,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     scene.add(tiles.group);
     tilesets.push(tiles);
   }
-  const layerPriority = { lamps: 6, streets: 6, yards: 5, ground: 5, greenTerrain: 5, industrialStructures: 3, bridges: 4, bridgeSurfaces: 3, buildings: 3, tanks: 2, lights: 1, trees: 0 };
+  const layerPriority = { buildings: 7, lamps: 6, streets: 6, yards: 5, ground: 5, greenTerrain: 5, industrialStructures: 3, bridges: 4, bridgeSurfaces: 3, tanks: 2, lights: 1, trees: 0 };
   const prioritizeCitySurfaces = (a, b) => {
     const firstLayer = a.internal?.renderer?.kind, secondLayer = b.internal?.renderer?.kind;
     if (firstLayer && secondLayer && firstLayer !== secondLayer) return layerPriority[firstLayer] - layerPriority[secondLayer];
