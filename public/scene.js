@@ -195,7 +195,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     model.traverse(mesh => { if (mesh.isMesh && mesh.castShadow) mesh.customDepthMaterial = cutawayDepthMaterial; });
   }
   // The tunnel section must not cut holes through unrelated overground bridges.
-  for (const material of [...Object.entries(materials).filter(([kind]) => !['bridges', 'bridgeSurfaces'].includes(kind)).map(([, material]) => material), cartographicMaterial, contextLandMaterial, lampGlowMaterial, lampPoolMaterial, lampShaftMaterial]) applyMetroCutaway(material, cutawayUniforms);
+  for (const material of [...Object.values(materials), cartographicMaterial, contextLandMaterial, lampGlowMaterial, lampPoolMaterial, lampShaftMaterial]) applyMetroCutaway(material, cutawayUniforms);
   for (const material of [...['ground', 'streets', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain', 'yards'].map(kind => materials[kind]), cartographicMaterial, contextLandMaterial]) applyPublicSpaceMaterial(material);
   const publicSpaceStyle = createPublicSpaceStyle({ material: materials.ground });
   const groundArtworkEnabled = !['native', 'off'].includes(new URLSearchParams(location.search).get('ground'));
