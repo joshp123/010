@@ -1,0 +1,20 @@
+{
+  "mfluxCommit": "a3b21fcaa88726b2267bd42bfc2e2d722f7d5a47",
+  "mfluxLicense": "MIT",
+  "modelRevision": "e7b7dc27f91deacad38e78976d1f2b499d76a294",
+  "modelLicense": "Apache-2.0",
+  "modelGated": false,
+  "sources": [
+    "https://github.com/mflux-community/mflux/blob/a3b21fcaa88726b2267bd42bfc2e2d722f7d5a47/src/mflux/models/flux2/README.md",
+    "https://github.com/mflux-community/mflux/blob/a3b21fcaa88726b2267bd42bfc2e2d722f7d5a47/pyproject.toml",
+    "https://huggingface.co/black-forest-labs/FLUX.2-klein-4B/tree/e7b7dc27f91deacad38e78976d1f2b499d76a294"
+  ],
+  "upstreamUvLockSha256": "fb06ccb38dae11ebc677d969833687c91f348685610e892d85dc3e21d128245d",
+  "files": {
+    "src__mflux__cli__parser__parsers.py": "1390b9b54e891c13289ca05b4fceda58974dc9b6f11dd5cd290b6f068cef7053",
+    "LICENSE": "4a232d09478519580a5c00d6eb9aa402ba4f672ac15fb80edd459ba863769064",
+    "README.md": "dcd83cca278c0be169d43282a7803e26365d9953a7ab0fd56d8127ad5314429e",
+    "src__mflux__models__flux2__cli__flux2_edit_generate.py": "33acce6b437e4e3450e2ca818788ee2625268618f1352744c2ed00346ff1151e",
+    "pyproject.toml": "3170336f2e57fd33eb5d3e54364c1139f43fd5a11453b596c4ae3039f7153244"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "status": "Source pilot only; no style image or generated result approved",
+  "bag": "0599100000671699",
+  "sourceBatchId": 16,
+  "sourceMetadata": "source-data/current-whole-row/metadata.json",
+  "license": "CC BY 4.0; Gemeente Rotterdam \u2014 3D Rotterdam",
+  "triangleIds": [
+    624,
+    625
+  ],
+  "sourceGeometrySha256": "ec6aa603b418ae12581270985063137558f6b4b02d04a783fad71cbbaa322508",
+  "sourceTrianglesSha256": "f71161f323c83b960f19b0f753805d74ca3d54fca8a7075f639fabcd11c3c617",
+  "sourcePanelSha256": "0332b52b9dd04cfe2cdaacc4f4722def520dd60d8beea6449a700356bc106bee",
+  "surfaceMapSha256": "cd69285b6f21045bec32732fc9a0d3cf6857ccad6fb345557dc2e5ea325ae4d8",
+  "maskSha256": "561e6765a3fbbca91aa325f9dc0dee079c4201198a5c2ad456d779cc681e738c",
+  "pixelsPerMeter": 75.63865734883875,
+  "pixelConvention": "integer pixel centres, top-left UV; exact affine rectification of original planar triangles",
+  "interpretation": "Observed street facade, two windows per upper storey, pale frames and horizontal bands, red-brown masonry. Excludes known invalid party-wall planes 0/1/3/4/11. Storefront lettering and lower facade excluded from edit mask. No inferred windows or new geometry. Source camera blur/photometric shadows remain evidence limitations.",
+  "outputContract": "512x1024 exact image alignment. Review opening edges and material boundaries against source before bake. Only edit-mask pixels may transfer through surface-map UVs; preserve all other atlas pixels and all geometry. Mask is an illustrative scope, not semantic certainty."
+}

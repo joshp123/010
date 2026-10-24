@@ -1,0 +1,43 @@
+{
+  "sourceIdentityBake": {
+    "status": "unreviewed bake for visual inspection; no runtime publication",
+    "candidateSha256": "0332b52b9dd04cfe2cdaacc4f4722def520dd60d8beea6449a700356bc106bee",
+    "sourceGeometrySha256": "ec6aa603b418ae12581270985063137558f6b4b02d04a783fad71cbbaa322508",
+    "maskSha256": "561e6765a3fbbca91aa325f9dc0dee079c4201198a5c2ad456d779cc681e738c",
+    "mappingSha256": "cd69285b6f21045bec32732fc9a0d3cf6857ccad6fb345557dc2e5ea325ae4d8",
+    "outputSha256": "ea375bd4dce00f340656334250022601f9ca4eb25117eb66979674131bd40d7f",
+    "geometryBufferPrefixUnchanged": true,
+    "sourceMeshUvNormalMaterialContractsUnchanged": true,
+    "atlasChanges": [
+      {
+        "imageIndex": 8,
+        "editableTexels": 18860,
+        "changedTexels": 0,
+        "protectedSharedTexels": 0
+      }
+    ],
+    "license": "Original source: Gemeente Rotterdam, CC BY 4.0",
+    "views": "Original left, candidate right; view-a and opposing view-d"
+  },
+  "maskFixtureBake": {
+    "status": "unreviewed bake for visual inspection; no runtime publication",
+    "candidateSha256": "be65d72329aa0ddd92913e0adb336e58407409fc10470485b0c5be5c437736f6",
+    "sourceGeometrySha256": "ec6aa603b418ae12581270985063137558f6b4b02d04a783fad71cbbaa322508",
+    "maskSha256": "561e6765a3fbbca91aa325f9dc0dee079c4201198a5c2ad456d779cc681e738c",
+    "mappingSha256": "cd69285b6f21045bec32732fc9a0d3cf6857ccad6fb345557dc2e5ea325ae4d8",
+    "outputSha256": "baf6e2905777108ab05897fee3a68b32bbfdba3a423a5a852b1267e0064eca32",
+    "geometryBufferPrefixUnchanged": true,
+    "sourceMeshUvNormalMaterialContractsUnchanged": true,
+    "atlasChanges": [
+      {
+        "imageIndex": 8,
+        "editableTexels": 18860,
+        "changedTexels": 18860,
+        "protectedSharedTexels": 0
+      }
+    ],
+    "license": "Original source: Gemeente Rotterdam, CC BY 4.0",
+    "views": "Original left, candidate right; view-a and opposing view-d"
+  },
+  "visualCheck": "Opposing view-d inspected: marker covers selected upper facade only; storefront and neighboring buildings retain original source. Solid-color fixture is a transport/mask test, not proposed artwork."
+}
