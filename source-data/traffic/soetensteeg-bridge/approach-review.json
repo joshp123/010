@@ -1,0 +1,108 @@
+{
+  "sourceHashes": {
+    "wegdeel.json": "175d5d362b9caa6898cd5f92fabf8f77b251909138e9463d1fe5e5e372d0e8b0",
+    "ahn6-bridge-subset.laz": "7d03c64fa3ef65e74264969b60aeebd2d8dc0680814aa78cefabb79b41af94ee"
+  },
+  "fits": [
+    {
+      "nativeFeatureId": "16299950",
+      "currentBGT": {
+        "bronhouder": "G0599",
+        "creation_date": "2014-10-21T22:00:00Z",
+        "eind_registratie": null,
+        "functie": "voetpad",
+        "functie_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#FunctieWeg",
+        "fysiek_voorkomen": "open verharding",
+        "fysiek_voorkomen_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#FysiekVoorkomenWeg",
+        "in_onderzoek": null,
+        "in_onderzoek_leeg": "geenWaarde",
+        "kruinlijn_leeg": "waardeOnbekend",
+        "lokaal_id": "G0599.170ade244344d2d73e050210a7e24429",
+        "lv_publicatiedatum": "2026-07-09T06:19:33Z",
+        "op_talud": "false",
+        "op_talud_leeg": null,
+        "plus_functie": null,
+        "plus_functie_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#VoidReasonValue",
+        "plus_functie_leeg": "waardeOnbekend",
+        "plus_fysiek_voorkomen": null,
+        "plus_fysiek_voorkomen_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#VoidReasonValue",
+        "plus_fysiek_voorkomen_leeg": "waardeOnbekend",
+        "plus_status": null,
+        "plus_status_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#VoidReasonValue",
+        "plus_status_leeg": "geenWaarde",
+        "relatieve_hoogteligging": 0,
+        "status": "bestaand",
+        "status_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#Status",
+        "status_leeg": null,
+        "termination_date": null,
+        "termination_date_leeg": "geenWaarde",
+        "tijdstip_registratie": "2026-07-09T05:07:24Z",
+        "version": "f380b99c-f0a3-8c42-5cec-7db5f00309a2"
+      },
+      "fitPoints": 35,
+      "rmseMetres": 0.027839540412835883,
+      "maximumNearestPointDistanceMetres": 1.4266582022556948,
+      "model": "Triangle endpoint heights: median nearest12 observed class2/26 surface samples within1.5m, range3.2\u20134.1m; local plane reported only as supporting bank evidence, NOT extrapolated across occluded approach",
+      "anchorRD": [
+        92814.00018918917,
+        437128.05264864874
+      ],
+      "coefficients": [
+        3.5936884534902505,
+        0.0853157950962546,
+        -0.021856240929254176
+      ]
+    },
+    {
+      "nativeFeatureId": "15486948",
+      "currentBGT": {
+        "bronhouder": "G0599",
+        "creation_date": "2021-10-06T22:00:00Z",
+        "eind_registratie": null,
+        "functie": "rijbaan lokale weg",
+        "functie_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#FunctieWeg",
+        "fysiek_voorkomen": "open verharding",
+        "fysiek_voorkomen_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#FysiekVoorkomenWeg",
+        "in_onderzoek": null,
+        "in_onderzoek_leeg": "geenWaarde",
+        "kruinlijn_leeg": "waardeOnbekend",
+        "lokaal_id": "G0599.88d78b25c8ed48d294fefe9ad75b81a0",
+        "lv_publicatiedatum": "2021-10-08T06:23:42Z",
+        "op_talud": null,
+        "op_talud_leeg": "waardeOnbekend",
+        "plus_functie": null,
+        "plus_functie_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#VoidReasonValue",
+        "plus_functie_leeg": "waardeOnbekend",
+        "plus_fysiek_voorkomen": null,
+        "plus_fysiek_voorkomen_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#VoidReasonValue",
+        "plus_fysiek_voorkomen_leeg": "waardeOnbekend",
+        "plus_status": null,
+        "plus_status_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#VoidReasonValue",
+        "plus_status_leeg": "geenWaarde",
+        "relatieve_hoogteligging": 0,
+        "status": "bestaand",
+        "status_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#Status",
+        "status_leeg": null,
+        "termination_date": null,
+        "termination_date_leeg": "geenWaarde",
+        "tijdstip_registratie": "2021-10-08T05:12:03Z",
+        "version": "781d6d61-f7b3-e5f9-1c05-f8125ef62938"
+      },
+      "fitPoints": 358,
+      "rmseMetres": 0.02927368573909926,
+      "maximumNearestPointDistanceMetres": 0.5050609466973027,
+      "model": "Triangle endpoint heights: median nearest12 observed class2/26 surface samples within1.5m, range3.2\u20134.1m; local plane reported only as supporting bank evidence, NOT extrapolated across occluded approach",
+      "anchorRD": [
+        92785.54763434897,
+        437127.5429058174
+      ],
+      "coefficients": [
+        3.5525702110991366,
+        0.028196059716436607,
+        0.004261833418984146
+      ]
+    }
+  ],
+  "triangles": 5,
+  "preservedPier": "16063621"
+}

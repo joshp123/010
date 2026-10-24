@@ -82,6 +82,8 @@ export function createSourceFusion() {
   let dirty = false, bridgeRevision = 0, bridgeGridRevision = -1, previousBridgeModels = [], diagnostics = {};
   const grid = new Map(), bridgeMeshCache = new Map(), groundCandidates = new WeakMap(), bridgeTransforms = new WeakMap();
   let bridgeTriangles = 0;
+  let groundCorrections = [];
+  const correctionsByFeature = new Map();
   function restore(mesh, original) {
     if (mesh.geometry !== original) { mesh.geometry.dispose(); mesh.geometry = original; }
   }
@@ -159,19 +161,23 @@ export function createSourceFusion() {
         groundCandidates.set(mesh, { matrix: mesh.matrixWorld.clone(), triangles: candidatesForMesh });
         restore(mesh, original);
         meshResults.delete(mesh);
-        if (!candidatesForMesh.size) continue;
+        if (!candidatesForMesh.size && !groundCorrections.length) continue;
         processedMeshes++;
         const positions = original.getAttribute('position'), sourceIndices = original.index;
         const indexCount = sourceIndices?.count ?? positions.count;
         const indexAt = offset => sourceIndices ? sourceIndices.getX(offset) : offset;
         const batchIds = original.getAttribute('_batchid'), attributesByBatch = new Map();
         const suppressedBatches = new Set(), changedTriangles = new Map();
+        let correctedTriangles = 0;
+        const inverseWorld = mesh.matrixWorld.clone().invert();
         const vertex = new THREE.Vector3();
         for (let offset = 0; offset < indexCount; offset += 3) {
           const firstVertex = indexAt(offset), batchId = batchIds?.getX(firstVertex) ?? 0;
           if (suppressedBatches.has(batchId)) continue;
           if (!attributesByBatch.has(batchId)) attributesByBatch.set(batchId, featureAttributes(mesh, firstVertex));
           const attributes = attributesByBatch.get(batchId);
+          const featureCorrections = correctionsByFeature.get(String(attributes.DGDT_ID)) || [];
+          if (!candidatesForMesh.size && !featureCorrections.length) continue;
           const structure = attributes.KLASSE_IMG === 'Overbruggingsdeel';
           const paving = /verharding/i.test(attributes.FYSIEKVK || '') || /wegdeel/i.test(attributes.KLASSE_IMG || '');
           if (!structure && !paving) continue;
@@ -180,9 +186,19 @@ export function createSourceFusion() {
             vertex.fromBufferAttribute(positions, index).applyMatrix4(mesh.matrixWorld);
             return { x: vertex.x, y: vertex.y, z: vertex.z, weights: [Number(corner === 0), Number(corner === 1), Number(corner === 2)] };
           });
+          // Match BOTH the retained feature ID and all three source vertices.
+          // Duplicate corrected corners later: shared quay-wall vertices stay intact.
+          const correction = featureCorrections.find(patch => points.every(point => patch.expectedWorldPositions.some(expected => Math.hypot(point.x-expected[0],point.y-expected[1],point.z-expected[2]) < 0.02)));
+          if (correction) {
+            for (const point of points) {
+              const corner = correction.expectedWorldPositions.findIndex(expected => Math.hypot(point.x-expected[0],point.y-expected[1],point.z-expected[2]) < 0.02);
+              point.y = correction.replacementWorldY[corner]; point.corrected = true;
+            }
+            correctedTriangles++;
+          }
           const bounds = boundsFor(points);
           const candidates = new Set(cellsFor(bounds).flatMap(cell => grid.get(cell) || []));
-          let polygons = [points], changed = false;
+          let polygons = [points], changed = Boolean(correction);
           for (const candidate of candidates) {
             if (!intersects(bounds, candidate.bounds)) continue;
             if (!structure && !points.some(point => Math.abs(point.y - bridgeHeightAt(candidate.points, point)) <= SURFACE_HEIGHT_TOLERANCE_METRES)) continue;
@@ -195,7 +211,7 @@ export function createSourceFusion() {
             if (!polygons.length || structure && changed) break;
           }
           if (structure && changed) suppressedBatches.add(batchId);
-          if (changed) changedTriangles.set(offset, { vertexIndices, polygons });
+          if (changed) changedTriangles.set(offset, { vertexIndices, polygons, corrected: Boolean(correction) });
         }
         if (!changedTriangles.size) continue;
         const attributeEntries = Object.entries(original.attributes);
@@ -210,12 +226,17 @@ export function createSourceFusion() {
           for (const polygon of changed.polygons) {
             for (let corner = 1; corner < polygon.length - 1; corner++) {
               for (const point of [polygon[0], polygon[corner], polygon[corner + 1]]) {
-                const originalCorner = point.weights.findIndex(weight => weight === 1);
+                const originalCorner = changed.corrected ? -1 : point.weights.findIndex(weight => weight === 1);
                 if (originalCorner !== -1) { outputIndices.push(changed.vertexIndices[originalCorner]); continue; }
                 outputIndices.push(positions.count + appendedVertexCount++);
                 for (const [name, attribute] of attributeEntries) {
                   for (let component = 0; component < attribute.itemSize; component++) {
-                    const value = point.weights.reduce((sum, weight, index) => sum + weight * attribute.getComponent(changed.vertexIndices[index], component), 0);
+                    let value = point.weights.reduce((sum, weight, index) => sum + weight * attribute.getComponent(changed.vertexIndices[index], component), 0);
+                    if (changed.corrected && name === 'position') value = new THREE.Vector3(point.x,point.y,point.z).applyMatrix4(inverseWorld).getComponent(component);
+                    if (changed.corrected && name === 'normal') {
+                      const localPoints = polygon.slice(0,3).map(p => new THREE.Vector3(p.x,p.y,p.z).applyMatrix4(inverseWorld));
+                      value = localPoints[1].sub(localPoints[0]).cross(localPoints[2].sub(localPoints[0])).normalize().getComponent(component);
+                    }
                     appendedAttributes[name].push(value);
                   }
                 }
@@ -239,19 +260,27 @@ export function createSourceFusion() {
         if (!original.boundingBox) original.computeBoundingBox();
         if (!original.boundingSphere) original.computeBoundingSphere();
         fused.boundingBox = original.boundingBox.clone(); fused.boundingSphere = original.boundingSphere.clone();
-        fused.userData = { ...original.userData, sourceFusion: { primary: 'native-bridges', secondary: 'BGT', operation: 'projected-triangle-difference', surfaceHeightToleranceMetres: SURFACE_HEIGHT_TOLERANCE_METRES } };
+        fused.userData = { ...original.userData, sourceFusion: { primary: correctedTriangles ? 'native bridges / measured AHN approach endpoints' : 'native-bridges', secondary: 'BGT', correctedApproachTriangles: correctedTriangles, operation: 'projected-triangle-difference / exact source triangle height correction', surfaceHeightToleranceMetres: SURFACE_HEIGHT_TOLERANCE_METRES } };
         mesh.geometry = fused;
         const sourceBytes = attributeEntries.reduce((sum, [, attribute]) => sum + attribute.array.byteLength, 0);
         const additionalBytes = fused.index.array.byteLength + (appendedVertexCount ? Object.values(fused.attributes).reduce((sum, attribute) => sum + attribute.array.byteLength, 0) : 0);
-        meshResults.set(mesh, { structures: suppressedBatches.size, triangles: changedTriangles.size, sourceBytes, additionalBytes, appendedVertexCount });
+        meshResults.set(mesh, { structures: suppressedBatches.size, triangles: changedTriangles.size, sourceBytes, additionalBytes, appendedVertexCount, correctedTriangles });
       }
     }
-    let retainedSourceBytes = 0, additionalGeometryBytes = 0, appendedVertices = 0;
-    for (const result of meshResults.values()) { removedStructures += result.structures; clippedTriangles += result.triangles; retainedSourceBytes += result.sourceBytes; additionalGeometryBytes += result.additionalBytes; appendedVertices += result.appendedVertexCount; }
-    diagnostics = { bridgeModels: bridgeModels.size, bridgeTriangles, groundModels: groundModels.size, removedStructureFeatures: removedStructures, clippedSourceTriangles: clippedTriangles, processedMeshes, reusedGroundMeshes, reusedBridgeMeshes, retainedSourceBytes, additionalGeometryBytes, appendedVertices, milliseconds: Math.round(performance.now() - started) };
+    let retainedSourceBytes = 0, additionalGeometryBytes = 0, appendedVertices = 0, correctedApproachTriangles = 0;
+    for (const result of meshResults.values()) { removedStructures += result.structures; clippedTriangles += result.triangles; retainedSourceBytes += result.sourceBytes; additionalGeometryBytes += result.additionalBytes; appendedVertices += result.appendedVertexCount; correctedApproachTriangles += result.correctedTriangles || 0; }
+    diagnostics = { correctedApproachTriangles, approachCorrectionRules: groundCorrections.length, bridgeModels: bridgeModels.size, bridgeTriangles, groundModels: groundModels.size, removedStructureFeatures: removedStructures, clippedSourceTriangles: clippedTriangles, processedMeshes, reusedGroundMeshes, reusedBridgeMeshes, retainedSourceBytes, additionalGeometryBytes, appendedVertices, milliseconds: Math.round(performance.now() - started) };
     return true;
   }
   return {
+    setGroundCorrections(data) {
+      if (data.version !== 1 || data.origin?.longitude !== 4.49 || data.origin?.latitude !== 51.915 || !Array.isArray(data.triangles) || data.triangles.some(p => !p.featureId || p.expectedWorldPositions?.length !== 3 || p.expectedWorldPositions.some(v => v.length !== 3 || v.some(n => !Number.isFinite(n))) || p.replacementWorldY?.length !== 3 || p.replacementWorldY.some(n => !Number.isFinite(n)))) throw new Error('Invalid ground triangle correction');
+      groundCorrections = data.triangles; correctionsByFeature.clear();
+      for (const patch of groundCorrections) { if (!correctionsByFeature.has(patch.featureId)) correctionsByFeature.set(patch.featureId, []); correctionsByFeature.get(patch.featureId).push(patch); }
+      bridgeRevision++; dirty = true;
+      // Empty bridge candidate sets can otherwise reuse a pre-correction mesh.
+      for (const originals of groundModels.values()) for (const mesh of originals.keys()) groundCandidates.delete(mesh);
+    },
     addGround(model) {
       const originals = new Map();
       model.traverse(mesh => { if (mesh.isMesh) { originals.set(mesh, mesh.geometry); groundCandidates.delete(mesh); } });

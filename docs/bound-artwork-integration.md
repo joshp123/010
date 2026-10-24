@@ -1,10 +1,35 @@
-# Bound artwork context candidate
+# Adjoining neighbourhood review candidate
+
+The neighbourhood collection now replaces its eight-building row with the complete
+32-building architectural handoff for municipal tile `18/268620/55473`. The Schans
+apartment remains alongside it. This is one replacement, not overlapping row and
+block layers. The earlier `illustrated-row` and `appearance=current` views remain
+available independently.
+
+From the downloaded `010-adjoining-32-building-runtime.zip`:
+
+```sh
+unzip 010-adjoining-32-building-runtime.zip -d work/bound-adjoining
+python3 scripts/prepare-bound-artwork.py work/bound-adjoining/assets --output public/data/illustrated-neighbourhood/adjoining --retained source-data/bound-artwork/adjoining-32 --collection public/data/illustrated-neighbourhood --replaces row/tileset.json
+```
+
+This command retains the apartment entry already prepared below. Replacement
+requires the new exact identity set to contain every removed row identity.
+The block preserves source positions, UVs, BAGs and the root transform, with RTC
+applied once. It keeps only source-observed glazing from the original row;
+newly illustrated buildings receive no invented emission. Original external
+atlases and annotations remain in the retained handoff.
+
+Review `?lat=51.90955&lon=4.44711&span=160&bearing=125&light=day&appearance=illustrated-neighbourhood&ground=illustrated`, then rotate to 305 and switch to night. The richer street rows/courts are a substantial adjoining-area candidate, not accepted art: hard pale edges, some photographic recesses, uncertain blank wall treatment and roof microdetails still need actual scene judgment. Northern adjoining tile `18/268620/55472` remains separate work.
+
+## Earlier assets and preparation
+
 
 The corrected row V5, Schans 66–80 apartment and OST_14427971 tank handoffs were
 inspected in their opposing source/painted previews before integration. Their
 remaining art limits are retained in each supplied README: rear unknown walls,
 minor source/model joins, roof detail and pale tank material need actual city
-review. The neighbourhood mode currently contains **only the row and apartment**.
+review. The earlier collection contained only the row and apartment.
 The earlier `illustrated-row` and current municipal source assets remain intact.
 
 Prepare from the three downloaded handoff ZIPs (each contains `assets/`):
@@ -55,3 +80,10 @@ These verify exact triangle attributes/identities/RTC, native bilinear texel
 correspondence, actual vendored GLTFLoader HTTP requests and PNG decoding,
 texture transforms and the day/night emission hook. They do not establish
 art quality, GPU sampling, placement appearance or city-context acceptance.
+
+The actual tile-cache estimator is overridden for appearance layers in app code.
+It counts geometry attributes and one upload per shared Texture.Source/sampler
+key; UV-transform clones do not allocate another image. The vendor object-based
+estimator previously evicted the city despite shared atlas storage. This changes
+admission accounting, not atlas resolution or the cache limit. Actual complete
+city and port rendering must be reviewed after the correction.

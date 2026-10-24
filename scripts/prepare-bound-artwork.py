@@ -113,15 +113,19 @@ def prepare(folder,out,retained):
  manifest={'status':'context review only','namespace':namespace,collection:list(identities.values()),'sourceGLBSha256':m.digest(raw),'sourceMunicipalSha256':meta['source_decoded_sha256'],'outputGLBSha256':m.digest(output),'triangles':triangle_count,'draws':len(plans),'originalUVsAndGeometryRetained':True,'rtcAppliedOnce':True,'atlasSize':[width,height],'decodedRgbaBytesIncludingMips':m.rgba_mip_bytes(width,height)+sum(m.rgba_mip_bytes(*crop['image'].size) for crop in emission_crops.values()),'sourceReferencedImages':[{ 'uri':uri,'sha256':m.digest(data)} for uri,data in referenced.items()],'emission':has_emission,'boundsLonLatHeight':[np.array([lon,lat,h]).min(1).tolist(),np.array([lon,lat,h]).max(1).tolist()]};write_json(out/'manifest.json',manifest);write_json(retained/'integration.json',manifest)
  (retained/meta['geometry_asset']).write_bytes(raw)
  for uri,data in referenced.items():target=retained/uri;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
- for name in ['README.md','georeference-and-identities.json','verification.json','texture-budget-estimate.json']:
+ for name in ['README.md','README.txt','georeference-and-identities.json','verification.json','texture-budget-estimate.json']:
   p=folder/name
   if p.exists():(retained/name).write_text(re.sub(r'libfile_[\w-]+','[private handoff reference omitted]',p.read_text()))
  print(json.dumps({k:manifest[k] for k in ['namespace','triangles','draws','atlasSize','decodedRgbaBytesIncludingMips','emission','boundsLonLatHeight']}));return tiles,manifest
 
-def append_collection(folder,out,tiles,manifest):
+def append_collection(folder,out,tiles,manifest,replaces=None):
  folder.mkdir(parents=True,exist_ok=True);path=folder/'manifest.json';entries=json.loads(path.read_text()).get('assets',[]) if path.exists() else [];uri=out.relative_to(folder).as_posix()+'/tileset.json';entries=[e for e in entries if e['uri']!=uri];entries.append({'uri':uri,'namespace':manifest['namespace'],'identities':manifest.get('bagIds',manifest.get('featureIds')),'sphere':tiles['root']['boundingVolume']['sphere']});assert len({e['namespace'] for e in entries})==1
+ if replaces:
+  previous=[e for e in entries if e['uri']==replaces]
+  if previous:assert set(previous[0]['identities']).issubset(set(manifest.get('bagIds',manifest.get('featureIds')))), 'Replacement must cover every former identity'
+  entries=[e for e in entries if e['uri']!=replaces]
  identities=[i for e in entries for i in e['identities']];assert len(set(identities))==len(identities),'Overlapping exact identities in collection';centres=np.array([e['sphere'][:3] for e in entries]);centre=centres.mean(0);radius=max(np.linalg.norm(c-centre)+e['sphere'][3] for c,e in zip(centres,entries));write_json(folder/'tileset.json',{'asset':{'version':'1.0','gltfUpAxis':'Y'},'geometricError':0,'root':{'boundingVolume':{'sphere':[*centre,radius]},'geometricError':0,'refine':'ADD','children':[{'boundingVolume':{'sphere':e['sphere']},'geometricError':0,'content':{'uri':e['uri']}} for e in entries]}});write_json(path,{'status':'context review only','assets':entries})
 
 if __name__=='__main__':
- ap=argparse.ArgumentParser();ap.add_argument('input',type=Path);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--retained',type=Path,required=True);ap.add_argument('--collection',type=Path);a=ap.parse_args();tiles,manifest=prepare(a.input,a.output,a.retained)
- if a.collection:append_collection(a.collection,a.output,tiles,manifest)
+ ap=argparse.ArgumentParser();ap.add_argument('input',type=Path);ap.add_argument('--output',type=Path,required=True);ap.add_argument('--retained',type=Path,required=True);ap.add_argument('--collection',type=Path);ap.add_argument('--replaces',help='Existing collection tileset URI covered by this replacement');a=ap.parse_args();tiles,manifest=prepare(a.input,a.output,a.retained)
+ if a.collection:append_collection(a.collection,a.output,tiles,manifest,a.replaces)

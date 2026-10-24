@@ -18,6 +18,7 @@ import { applyPublicSpaceMaterial, createPublicSpaceStyle } from './public-space
 import { applyMiniatureLighting } from './miniature-lighting.js';
 import { createGroundArtwork } from './ground-artwork.js';
 import { setAppearanceSampling } from './appearance-sampling.js';
+import { estimateAppearanceBytes } from './appearance-memory.js';
 import { createBuildingAppearanceReconciliation, createTankAppearanceReconciliation, createAppearancePriorityReconciliation, prepareAppearanceModel, appearanceTextureDiagnostics } from './building-appearance.js';
 import { TilesRenderer } from '3d-tiles-renderer';
 import { LRUCache, unifiedPriorityCallback, FAILED, LOADED } from './vendor/3d-tiles-renderer/build/index.core.js';
@@ -236,6 +237,15 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   const tankAppearanceEnabled = tankAppearanceEdition === 'illustrated' || (appearanceEdition === 'current' && tankAppearanceEdition === 'current');
   let capturingFullDetail = false;
   let transitSnapshot = { vehicles: [] }, transitSurfaceDirty = false;
+  fetch('./data/ground-corrections/soetensteeg.json').then(response => {
+    if (!response.ok) throw new Error(`Ground correction: HTTP ${response.status}`);
+    return response.json();
+  }).then(data => {
+    if (disposed) return;
+    sourceFusion.setGroundCorrections(data);
+    transitSurfaceDirty = true;
+    requestRender();
+  }).catch(error => console.warn('010: measured ground correction unavailable', error));
   const transitSurfaceCache = new Map();
   const surfaceQueries = new Map(['bridgeSurfaces', 'industrialTerrain', 'ground', 'greenTerrain'].map(kind => [kind, createSurfaceQuery()]));
   function projectTransit(latitude, longitude, offsetMetres = 0, context = null) {
@@ -313,10 +323,14 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (snapshot.sources?.ndov?.receivedAt !== previous.sources?.ndov?.receivedAt || snapshot.sources?.ns?.receivedAt !== previous.sources?.ns?.receivedAt) transitSurfaceCache.clear();
     transit.update(snapshot);
   }
+  function metroSectionView() {
+    return transit.getSectionView({ width, height, night: uniforms.night.value > 0.1 });
+  }
   function setMetroCutaway(enabled) {
     if (metroState !== 'ready') return false;
     transit.setCutaway({ enabled });
-    cutawayUniforms.enabled.value = enabled ? 1 : 0;
+    // The underground inspector has its own view; keep the real street intact.
+    cutawayUniforms.enabled.value = 0;
     renderer.shadowMap.needsUpdate = true;
     requestRender();
     return true;
@@ -427,6 +441,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     const tiles = new TilesRenderer(layerSource.startsWith('./') ? layerSource : `${DATA_BASE}${layerSource}/tileset.json`);
     tiles.registerPlugin(createCompressedModelsPlugin());
     tiles.kind = kind;
+    if (['appearanceBuildings', 'appearanceTanks'].includes(kind)) tiles.calculateBytesUsed = (_tile, model) => model ? estimateAppearanceBytes(model) : null;
     if (kind === 'appearanceTanks') tiles.appearanceRole = id.includes('illustrated-tank') ? 'illustrated' : 'native';
     if (['buildings', 'appearanceBuildings', 'appearanceTanks'].includes(kind)) tiles.registerPlugin({
       name: 'Reach the first available building geometry',
@@ -622,7 +637,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (tankAppearance.setVisibleModels(visibleTankAppearanceModels())) renderer.shadowMap.needsUpdate = true;
     if (tilesets.find(tiles => tiles.kind === 'ground').group.visible) {
       sourceFusion.setVisibleBridges(tilesets.filter(tiles => tiles.kind === 'bridges' && tiles.group.visible).flatMap(tiles => [...tiles.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean)));
-      if (sourceFusion.update()) { renderer.shadowMap.needsUpdate = true; groundArtwork.refresh(); }
+      if (sourceFusion.update()) { transitSurfaceDirty = true; renderer.shadowMap.needsUpdate = true; groundArtwork.refresh(); }
     }
     for (const [kind, query] of surfaceQueries) {
       const models = tilesets.filter(layer => layer.kind === kind && layer.group.visible)
@@ -674,7 +689,18 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     reportStatus();
     }
     weatherUniforms.time.value = now / 1000;
-    renderer.render(presentationScene, presentationCamera); lastPresentation = now;
+    renderer.render(presentationScene, presentationCamera);
+    const sectionView = metroSectionView();
+    if (sectionView.enabled) {
+      renderer.setScissorTest(true);
+      renderer.setScissor(0, 0, width, sectionView.viewportHeight);
+      renderer.setViewport(0, 0, width, sectionView.viewportHeight);
+      renderer.clearDepth();
+      renderer.render(sectionView.scene, sectionView.camera);
+      renderer.setScissorTest(false);
+      renderer.setViewport(0, 0, width, height);
+    }
+    lastPresentation = now;
     const submitted = performance.now();
     if (renderingCity) recordTiming(frameTimes, submitted - now);
     if (latestInputTime !== null) { recordTiming(inputRenderTimes, submitted - latestInputTime); latestInputTime = null; }
@@ -768,6 +794,17 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
         const context = output.getContext('2d');
         if (!context) throw new Error('The image canvas could not be created.');
         context.drawImage(canvas, 0, 0);
+        const section = metroSectionView();
+        if (section.enabled) {
+          // DOM labels are absent from canvas exports; retain interpretation and
+          // report freshness inside the exported underground view itself.
+          const caption = `${section.label} · ${transit.statistics().cutawayShortMessage || 'No metro report'}`;
+          const margin = Math.max(12, Math.round(captureWidth / 80));
+          let fontSize = Math.max(12, Math.round(captureWidth / 55));
+          do { context.font = `500 ${fontSize}px sans-serif`; if (context.measureText(caption).width <= captureWidth - margin * 2) break; fontSize--; } while (fontSize > 10);
+          context.fillStyle = 'rgba(20,30,32,.88)'; context.fillRect(0, captureHeight - fontSize - margin * 2, captureWidth, fontSize + margin * 2);
+          context.fillStyle = '#eee6d7'; context.textBaseline = 'bottom'; context.fillText(caption, margin, captureHeight - margin);
+        }
         return output;
       } finally {
         capturingFullDetail = false;
@@ -795,9 +832,23 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     ray.setFromCamera(new THREE.Vector2((clientX - bounds.left) / bounds.width * 2 - 1, 1 - (clientY - bounds.top) / bounds.height * 2), camera);
     return ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), new THREE.Vector3());
   }
+  function sectionPoint(clientX, clientY) {
+    const section = metroSectionView();
+    if (!section.enabled) return null;
+    const bounds = canvas.getBoundingClientRect();
+    const sectionHeight = section.viewportHeight * bounds.height / height;
+    const top = bounds.bottom - sectionHeight;
+    if (clientY < top || clientY > bounds.bottom || clientX < bounds.left || clientX > bounds.right) return null;
+    return new THREE.Vector2((clientX - bounds.left) / bounds.width * 2 - 1, 1 - (clientY - top) / sectionHeight * 2);
+  }
   function pointerDown(event) {
     if (![0, 2].includes(event.button) && event.pointerType !== 'touch') return;
     markGestureInput();
+    if (sectionPoint(event.clientX, event.clientY)) {
+      if (!pointers.size) pointerStart = { x: event.clientX, y: event.clientY, button: event.button, section: true };
+      canvas.setPointerCapture(event.pointerId);
+      return;
+    }
     pointerStart = pointers.size ? null : { x: event.clientX, y: event.clientY, button: event.button };
     canvas.setPointerCapture(event.pointerId);
     pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
@@ -822,13 +873,15 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (event.type === 'pointerup' && pointerStart && pointerStart.button === 0 && Math.hypot(event.clientX - pointerStart.x, event.clientY - pointerStart.y) < 6) {
       const bounds = canvas.getBoundingClientRect(), ray = new THREE.Raycaster();
       ray.setFromCamera(new THREE.Vector2((event.clientX - bounds.left) / bounds.width * 2 - 1, 1 - (event.clientY - bounds.top) / bounds.height * 2), camera);
-      const report = transit.pick(ray);
-      if (report) report.presentation.surfacePlacement = transitSurfaceCache.get(`${report.latitude}:${report.longitude}`)?.source || 'graphic surface height';
+      const point = pointerStart.section ? sectionPoint(event.clientX, event.clientY) : null;
+      const report = pointerStart.section ? (point ? transit.pickSection(point) : null) : transit.pick(ray);
+      if (report && !pointerStart.section) report.presentation.surfacePlacement = transitSurfaceCache.get(`${report.latitude}:${report.longitude}`)?.source || 'graphic surface height';
       onTransitSelect(report);
     }
     pointerStart = null;
     pointers.delete(event.pointerId); drag = null; pointers.clear(); canvas.style.cursor = 'grab'; markGestureInput(); }
   function wheel(event) {
+    if (sectionPoint(event.clientX, event.clientY)) { event.preventDefault(); return; }
     markGestureInput();
     latestInputTime = event.timeStamp;
     event.preventDefault();
@@ -838,7 +891,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (anchor && shifted) target.add(anchor.sub(shifted));
     setView(geographicPosition(target));
   }
-  function doubleClick(event) { const point = groundAt(event.clientX, event.clientY); if (point) setView({ ...geographicPosition(point), span: view.span / 1.8 }); }
+  function doubleClick(event) { if (sectionPoint(event.clientX, event.clientY)) return; const point = groundAt(event.clientX, event.clientY); if (point) setView({ ...geographicPosition(point), span: view.span / 1.8 }); }
   canvas.style.touchAction = 'none'; canvas.style.cursor = 'grab'; canvas.style.imageRendering = 'pixelated';
   canvas.addEventListener('pointerdown', pointerDown);
   canvas.addEventListener('pointermove', pointerMove);
@@ -876,7 +929,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     reviewAppearanceSampling,
     trafficReady: () => trafficReady, cyclistsReady: () => cyclistsReady,
     inspectTrafficSurfaces: (options = {}) => inspectTrafficSurfaces({ samples: [...traffic.sampleVehicles(options), ...cyclists.sampleVehicles(options)], tilesets, camera, width: canvas.clientWidth, height: canvas.clientHeight }),
-    updateTransit, getTransitReport: id => transit.getReport(id), setMetroCutaway, metroReady: () => metroReady, getTransitStatistics: () => ({ ...transit.statistics(), metroState }),
+    updateTransit, getTransitReport: id => transit.getReport(id), setMetroCutaway, metroReady: () => metroReady, getTransitStatistics: () => ({ ...transit.statistics(), metroState, sectionEnabled: metroSectionView().enabled }),
     setView, getView: () => ({ ...view }), setLighting, captureCanvas,
     zoom: factor => setView({ span: view.span / factor }), reset: () => setView(DEFAULT_VIEW),
     render: () => { needsRender = true; frame(); }, getCanvas: () => canvas, resize,

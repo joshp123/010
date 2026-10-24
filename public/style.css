@@ -16,3 +16,9 @@ body[data-theme="night"]{--ink:#eae4cc;--muted:#a3b3ab;--surface:rgba(24,40,34,.
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 
 .share-dialog .close-button{width:44px;height:44px}
+
+/* The underground section is separate from the intact street view. */
+body[data-metro-cutaway="true"]{--metro-section-height:min(28dvh,max(150px,23dvh))}
+.metro-section-label{position:absolute;bottom:calc(7px + var(--safe-bottom));left:12px;margin:0;z-index:3;font-size:10px;color:#eee6d7;pointer-events:none;text-shadow:0 1px 2px #15201f;background:rgba(20,30,32,.82);padding:3px 5px;border-radius:3px;max-width:calc(100% - 24px)}
+body[data-metro-cutaway="true"] .explore-dock,body[data-metro-cutaway="true"] .map-tools{bottom:calc(var(--metro-section-height) + 12px + var(--safe-bottom))}
+body[data-metro-cutaway="true"] .vehicle-card{bottom:calc(var(--metro-section-height) + 74px + var(--safe-bottom))}

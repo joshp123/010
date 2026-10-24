@@ -51,7 +51,7 @@ function showVehicle(report) {
     const term = document.createElement('dt'), description = document.createElement('dd'); term.textContent = title; description.textContent = value; details.append(term, description);
   }
   const positionDescription = represented ? `Approximate track position, ${represented.offsetMetres.toFixed(1)} m from the report. No movement is inferred between reports.` : 'Reported position.';
-  byId('vehicle-presentation').textContent = `${presentation.physicalForm === 'tunnel' ? 'Tunnel plan · depth illustrated at 12 m. ' : ''}${positionDescription} Height: ${presentation.surfacePlacement || 'graphic surface height'}. Size illustrated. ${presentation.orientation === 'reported-bearing' ? 'Reported bearing: ' + Math.round(report.bearing) + '°.' : presentation.orientation === 'source-track-axis' || presentation.orientation === 'source-route-axis' ? 'Aligned with source route; direction unreported.' : 'Heading unreported; camera-facing symbol.'}`;
+  byId('vehicle-presentation').textContent = `${presentation.physicalForm === 'tunnel' ? 'Underground section · 12 m depth is illustrated, not surveyed. ' : ''}${positionDescription} Height: ${presentation.surfacePlacement || 'graphic surface height'}. Size illustrated. ${presentation.orientation === 'reported-bearing' ? 'Reported bearing: ' + Math.round(report.bearing) + '°.' : presentation.orientation === 'source-track-axis' || presentation.orientation === 'source-route-axis' ? 'Aligned with source route; direction unreported.' : 'Heading unreported; camera-facing symbol.'}`;
 }
 function showTransit(snapshot) {
   latestTransitSnapshot = snapshot;
@@ -86,7 +86,8 @@ function showMetroViewStatus() {
   const message = statistics?.cutawayMessage;
   byId('metro-map-status').hidden = !message || !byId('view-panel').hidden;
   byId('metro-view-status').hidden = !message;
-  document.body.dataset.metroCutaway = message ? 'true' : 'false';
+  document.body.dataset.metroCutaway = statistics?.sectionEnabled ? 'true' : 'false';
+  byId('metro-section-label').hidden = !statistics?.sectionEnabled;
   byId('metro-view-status').textContent = message ? `Metro cutaway · ${message}` : '';
   // Keep the map edge short; the full source-status wording remains in View.
   const offTrack = message?.includes('from mapped track');

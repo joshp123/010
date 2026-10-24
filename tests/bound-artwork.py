@@ -16,7 +16,7 @@ def samples(folder,doc,texture,uv,guard=False):
   weight=(fraction[:,0] if dx else 1-fraction[:,0])*(fraction[:,1] if dy else 1-fraction[:,1]);color+=image[np.clip(lo[:,1]+dy,0,image.shape[0]-1),np.clip(lo[:,0]+dx,0,image.shape[1]-1)]*weight[:,None]
  if guard:color[np.any((mapped<0)|(mapped>1),axis=1)]=0
  return color
-for label,out in [('row-v5','illustrated-neighbourhood/row'),('apartment','illustrated-neighbourhood/apartment'),('tank','illustrated-tank')]:
+for label,out in [('adjoining-32','illustrated-neighbourhood/adjoining'),('row-v5','illustrated-neighbourhood/row'),('apartment','illustrated-neighbourhood/apartment'),('tank','illustrated-tank')]:
  folder=ROOT/'source-data/bound-artwork'/label;meta=json.loads((folder/'georeference-and-identities.json').read_text());src,sb=read(folder/meta['geometry_asset']);target=ROOT/'public/data'/out;doc,db=read(target/'model.glb');key='bagId' if meta['identity_namespace']=='BAG' else 'featureId';expected=collections.Counter();actual=collections.Counter();count=0
  assert doc['nodes'][0]['matrix']==src['nodes'][0]['matrix'];assert 'CESIUM_RTC' not in doc.get('extensions',{});assert json.loads((target/'tileset.json').read_text())['root']['children'][0]['transform'][12:15]==meta['rtc_ecef_m'];assert 'KHR_texture_transform' in doc['extensionsRequired']
  for mi,mesh in enumerate(src['meshes']):
@@ -37,6 +37,6 @@ for label,out in [('row-v5','illustrated-neighbourhood/row'),('apartment','illus
      try:np.testing.assert_allclose(samples(folder,src,a,uv),samples(target,doc,b,uv,channel=='emission'),atol=.001)
      except AssertionError:
       print('FAIL',label,ex,'material',p['material'],channel,'uv',uv,'source',a,'target',b);raise
-   if mat.get('emissiveTexture'):assert label=='row-v5' and mat['extras']['emissionCropGuard'] and mat['emissiveFactor']==[1,1,1]
+   if mat.get('emissiveTexture'):assert label in ('row-v5','adjoining-32') and mat['extras']['emissionCropGuard'] and mat['emissiveFactor']==[1,1,1]
  assert actual==expected and count==meta['triangles'];assert all('.writing.' not in im['uri'] and (target/im['uri']).exists() for im in doc['images'])
  print(label,': exact triangle attributes/UV/identity, RTC once, native colour+guarded emission samples pass; triangles',count)

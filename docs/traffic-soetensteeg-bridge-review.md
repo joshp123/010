@@ -36,3 +36,20 @@ npm run build
 The rebuild is offline and reads retained sources. In the cloud environment the extra laspy installation was under `/tmp/010-ahn-deps`, so the builder ran with `PYTHONPATH=/tmp/010-ahn-deps`.
 
 Checks passed: actual generated GLB has a road hit between 3.5 and 4 m at the reported probe; all four surface fits have residuals below 5 cm; the densified path remains within 2 cm of the rounded original source line and preserves its vertices; both traffic modes load the height profile while bicycle geometry remains isolated from the Blaak motor patch; actual Blaak queue regression and general traffic checks pass; production build passes. These establish source/geometry behavior, not native visual acceptance. The manager still needs to inspect the loaded deck, vehicle clearance and continuing journeys in the actual browser.
+
+## Follow-up: malformed approach triangles
+
+The manager's actual `docs/images/rescue-review/surveyed-bridge-close.png` capture confirmed pale approach fins below the accepted deck. Inspection of native source triangle coordinates isolates five broad triangles: two in footway DGDT16299950 (39.0567 m²) and three in road DGDT15486948 (21.5767 m²). Their horizontal footprints agree with current BGT footway G0599.170ade244344d2d73e050210a7e24429 and road G0599.88d78b25c8ed48d294fefe9ad75b81a0, but some source vertices descend to water Y −1.236 m. Other steep bank faces are narrow quay walls and are not corrected.
+
+`prepare-soetensteeg-approaches.py` retains those exact five source triangle triplets and changes only their heights. Each endpoint uses the median of up to 12 nearby AHN6 class-2/26 surface samples within 1.5 m and the independently observed local street-height range 3.2–4.1 m. Per-endpoint sample counts, distance and height range are recorded in `public/data/ground-corrections/soetensteeg.json`. The approach interiors are partially occluded in LiDAR: these are straight source-triangle interpolations between measured endpoints, not claims of a dense surveyed interior. A fitted bank plane would extrapolate the eastern approach down to 2.7 m across a ten-metre observation gap; that option was rejected. Supporting bank fits are recorded separately and are not used for endpoint extrapolation.
+
+`sourceFusion.setGroundCorrections(data)` matches both DGDT ID and all three original world coordinates within 2 cm after georeferencing. It appends independent corrected vertices, preserving all original vertices and adjacent quay-wall triangles. It changes neither horizontal positions nor routes. The registered water-level pier DGDT16063621 remains unchanged; blanket bridge-footprint suppression would wrongly remove it. The original native geometry remains available and is restored when corrections are removed.
+
+Additional rebuild/check commands:
+
+```sh
+python scripts/prepare-soetensteeg-approaches.py
+node tests/soetensteeg-approaches.test.mjs
+```
+
+The integration loads `data/ground-corrections/soetensteeg.json`, passes it to the setter and requests a render. Diagnostics expose `approachCorrectionRules` (5) and `correctedApproachTriangles` (5 when this native tile is loaded). The actual native capture must still be repeated to judge the corrected appearance; unit geometry checks are not visual acceptance.

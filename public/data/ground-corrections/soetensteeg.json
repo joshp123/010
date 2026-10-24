@@ -1,0 +1,347 @@
+{
+  "version": 1,
+  "origin": {
+    "longitude": 4.49,
+    "latitude": 51.915
+  },
+  "sourceTile": "33584/6932.b3dm",
+  "sourceSha256": "e110fb86cebffeeded77c075c4a8ccf18f84feb0f1eafd5f8b05419365255134",
+  "review": "Five malformed Soetensteeg approach triangles only; preserve native quay walls and registered pier16063621. Original horizontal coordinates and all traffic routes unchanged.",
+  "triangles": [
+    {
+      "featureId": "16299950",
+      "expectedWorldPositions": [
+        [
+          -462.0854088541981,
+          0.3966203157668896,
+          -461.1053723471505
+        ],
+        [
+          -463.2953381476603,
+          3.4962883227202255,
+          -464.47112811616114
+        ],
+        [
+          -473.61801764827294,
+          -1.2343304367391696,
+          -462.5751084765643
+        ]
+      ],
+      "replacementWorldY": [
+        3.506120296679857,
+        3.4237884065308837,
+        3.5886696142929244
+      ],
+      "currentBGT": "G0599.170ade244344d2d73e050210a7e24429",
+      "heightEvidence": [
+        {
+          "pointRD": [
+            92815.27014109574,
+            437126.5045255479
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 0.7501456921447334,
+          "medianNAP": 3.5395000000000003,
+          "heightRangeNAP": [
+            3.394,
+            3.8890000000000002
+          ]
+        },
+        {
+          "pointRD": [
+            92814.10214356362,
+            437129.88452324644
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 0.6715543564913141,
+          "medianNAP": 3.4575000000000005,
+          "heightRangeNAP": [
+            3.4,
+            3.602
+          ]
+        },
+        {
+          "pointRD": [
+            92803.75714220133,
+            437128.1165250442
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 0.7526882387952321,
+          "medianNAP": 3.623,
+          "heightRangeNAP": [
+            3.593,
+            3.66
+          ]
+        }
+      ]
+    },
+    {
+      "featureId": "16299950",
+      "expectedWorldPositions": [
+        [
+          -462.0854088541981,
+          0.3966203157668896,
+          -461.1053723471505
+        ],
+        [
+          -473.61801764827294,
+          -1.2343304367391696,
+          -462.5751084765643
+        ],
+        [
+          -473.59802107687017,
+          -1.2340713501492575,
+          -459.0108638342618
+        ]
+      ],
+      "replacementWorldY": [
+        3.506120296679857,
+        3.5886696142929244,
+        3.752928720931776
+      ],
+      "currentBGT": "G0599.170ade244344d2d73e050210a7e24429",
+      "heightEvidence": [
+        {
+          "pointRD": [
+            92815.27014109574,
+            437126.5045255479
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 0.7501456921447334,
+          "medianNAP": 3.5395000000000003,
+          "heightRangeNAP": [
+            3.394,
+            3.8890000000000002
+          ]
+        },
+        {
+          "pointRD": [
+            92803.75714220133,
+            437128.1165250442
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 0.7526882387952321,
+          "medianNAP": 3.623,
+          "heightRangeNAP": [
+            3.593,
+            3.66
+          ]
+        },
+        {
+          "pointRD": [
+            92803.73314285353,
+            437124.55252350366
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 1.4266582022556948,
+          "medianNAP": 3.787,
+          "heightRangeNAP": [
+            3.727,
+            3.822
+          ]
+        }
+      ]
+    },
+    {
+      "featureId": "15486948",
+      "expectedWorldPositions": [
+        [
+          -490.7337313399256,
+          -1.2357651985597147,
+          -464.54912197340605
+        ],
+        [
+          -493.9402282306359,
+          3.2840308515645713,
+          -463.9577983808829
+        ],
+        [
+          -492.9681684233453,
+          3.4644633178129505,
+          -459.02112649667134
+        ]
+      ],
+      "replacementWorldY": [
+        3.5132348408225234,
+        3.502530954123128,
+        3.4554633710019833
+      ],
+      "currentBGT": "G0599.88d78b25c8ed48d294fefe9ad75b81a0",
+      "heightEvidence": [
+        {
+          "pointRD": [
+            92786.66814640834,
+            437130.30152520153
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 0.48392890320941756,
+          "medianNAP": 3.549,
+          "heightRangeNAP": [
+            3.533,
+            3.633
+          ]
+        },
+        {
+          "pointRD": [
+            92783.45513681724,
+            437129.7495272302
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 0.48145471181892135,
+          "medianNAP": 3.5385,
+          "heightRangeNAP": [
+            3.457,
+            3.594
+          ]
+        },
+        {
+          "pointRD": [
+            92784.36614312745,
+            437124.80152614514
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 0.4691712557026775,
+          "medianNAP": 3.4909999999999997,
+          "heightRangeNAP": [
+            3.4210000000000003,
+            3.605
+          ]
+        }
+      ]
+    },
+    {
+      "featureId": "15486948",
+      "expectedWorldPositions": [
+        [
+          -489.7628027102286,
+          -1.2357037812501517,
+          -464.7281308653833
+        ],
+        [
+          -490.7337313399256,
+          -1.2357651985597147,
+          -464.54912197340605
+        ],
+        [
+          -488.7122063660526,
+          3.074733851523183,
+          -459.80273681652244
+        ]
+      ],
+      "replacementWorldY": [
+        3.59329626857181,
+        3.5132348408225234,
+        3.5812338842801656
+      ],
+      "currentBGT": "G0599.88d78b25c8ed48d294fefe9ad75b81a0",
+      "heightEvidence": [
+        {
+          "pointRD": [
+            92787.64115106838,
+            437130.4685253871
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 0.4478976052739199,
+          "medianNAP": 3.629,
+          "heightRangeNAP": [
+            3.551,
+            3.676
+          ]
+        },
+        {
+          "pointRD": [
+            92786.66814640834,
+            437130.30152520153
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 0.48392890320941756,
+          "medianNAP": 3.549,
+          "heightRangeNAP": [
+            3.533,
+            3.633
+          ]
+        },
+        {
+          "pointRD": [
+            92788.63113492218,
+            437125.53052597283
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 0.5050609466973027,
+          "medianNAP": 3.6165000000000003,
+          "heightRangeNAP": [
+            3.56,
+            3.68
+          ]
+        }
+      ]
+    },
+    {
+      "featureId": "15486948",
+      "expectedWorldPositions": [
+        [
+          -488.7122063660526,
+          3.074733851523183,
+          -459.80273681652244
+        ],
+        [
+          -490.7337313399256,
+          -1.2357651985597147,
+          -464.54912197340605
+        ],
+        [
+          -492.9681684233453,
+          3.4644633178129505,
+          -459.02112649667134
+        ]
+      ],
+      "replacementWorldY": [
+        3.5812338842801656,
+        3.5132348408225234,
+        3.4554633710019833
+      ],
+      "currentBGT": "G0599.88d78b25c8ed48d294fefe9ad75b81a0",
+      "heightEvidence": [
+        {
+          "pointRD": [
+            92788.63113492218,
+            437125.53052597283
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 0.5050609466973027,
+          "medianNAP": 3.6165000000000003,
+          "heightRangeNAP": [
+            3.56,
+            3.68
+          ]
+        },
+        {
+          "pointRD": [
+            92786.66814640834,
+            437130.30152520153
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 0.48392890320941756,
+          "medianNAP": 3.549,
+          "heightRangeNAP": [
+            3.533,
+            3.633
+          ]
+        },
+        {
+          "pointRD": [
+            92784.36614312745,
+            437124.80152614514
+          ],
+          "samples": 12,
+          "maximumSampleDistanceMetres": 0.4691712557026775,
+          "medianNAP": 3.4909999999999997,
+          "heightRangeNAP": [
+            3.4210000000000003,
+            3.605
+          ]
+        }
+      ]
+    }
+  ]
+}
