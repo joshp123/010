@@ -34,53 +34,36 @@ function crownProfile(source) {
 }
 
 export function createCrownGeometry(source) {
-  const profile = crownProfile(source);
-  const positions = [], colors = [], rings = 20, sectors = 48;
+  const profile = crownProfile(source), positions = [], colors = [], indices = [];
+  const rings = 24, sectors = 64;
   const dark = new THREE.Color('#29432b'), body = new THREE.Color('#436132'), light = new THREE.Color('#687f3c');
-  // One closed canopy: broad interlocking painted masses, rather than leaf
-  // particles or separate balls. Its outline follows the inventory prototype.
-  function point(ring, sector) {
+  // A connected, scalloped canopy with painted masses. All silhouette changes
+  // stay inside the retained inventory prototype, never its instance placement.
+  for (let ring = 0; ring <= rings; ring++) for (let sector = 0; sector <= sectors; sector++) {
     const y = ring / rings, angle = sector / sectors * Math.PI * 2;
-    const lobes = .90 + .065 * Math.sin(angle * 5 + y * 5) + .035 * Math.sin(angle * 9 - y * 8);
-    const radius = Math.min(.5, profile.radius(y)) * lobes;
-    const taper = Math.pow(Math.max(0, Math.sin(Math.PI * y)), .32);
-    return new THREE.Vector3(Math.cos(angle) * radius * taper, y, Math.sin(angle) * radius * taper);
-  }
-  function triangle(a, b, c) {
-    for (const point of [a, b, c]) {
-      const angle = Math.atan2(point.z, point.x);
-      const patches = Math.sin(angle * 3 + point.y * 6) * .5 + Math.sin(angle * 5 - point.y * 9) * .25;
-      const value = .37 + point.y * .20 + point.x * .22 - point.z * .18 + patches * .30;
-      const shade = dark.clone().lerp(body, THREE.MathUtils.smoothstep(value, .26, .32));
-      shade.lerp(light, THREE.MathUtils.smoothstep(value, .59, .65));
-      positions.push(point.x, point.y, point.z);
-      colors.push(shade.r, shade.g, shade.b);
-    }
+    const lobes = .80 + .14 * Math.cos(angle * 5 + Math.sin(y * 7)) + .06 * Math.cos(angle * 9 - y * 6);
+    const radius = Math.min(.5, profile.radius(y)) * lobes * Math.pow(Math.max(0, Math.sin(Math.PI * y)), .32);
+    const x = Math.cos(angle) * radius, z = Math.sin(angle) * radius;
+    const patches = Math.sin(x * 13 + y * 8) * Math.cos(z * 12 - y * 6);
+    const value = .38 + y * .16 + x * .25 - z * .2 + patches * .25;
+    const shade = dark.clone().lerp(body, THREE.MathUtils.smoothstep(value, .25, .31));
+    shade.lerp(light, THREE.MathUtils.smoothstep(value, .57, .64));
+    positions.push(x, y, z); colors.push(shade.r, shade.g, shade.b);
   }
   for (let ring = 0; ring < rings; ring++) for (let sector = 0; sector < sectors; sector++) {
-    const a = point(ring, sector), b = point(ring, sector + 1);
-    const c = point(ring + 1, sector), d = point(ring + 1, sector + 1);
-    triangle(a, c, b); triangle(b, c, d);
+    const a = ring * (sectors + 1) + sector, b = a + 1, c = a + sectors + 1, d = c + 1;
+    indices.push(a, c, b, b, c, d);
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+  geometry.setIndex(indices);
   geometry.computeBoundingBox();
   const ownBox = geometry.boundingBox.clone(), ownSize = ownBox.getSize(new THREE.Vector3()), p = geometry.getAttribute('position');
   for (let i = 0; i < p.count; i++) for (let axis = 0; axis < 3; axis++) {
     p.setComponent(i, axis, profile.box.min.getComponent(axis) + (p.getComponent(i, axis) - ownBox.min.getComponent(axis)) / ownSize.getComponent(axis) * profile.size.getComponent(axis));
   }
-  // Analytic canopy normals avoid a triangular low-poly surface. Colour marks
-  // carry the drawn masses while real 3D still catches light and casts shadows.
-  const normals = [];
-  for (let ring = 0; ring < rings; ring++) for (let sector = 0; sector < sectors; sector++) {
-    for (const [r, s] of [[ring, sector], [ring + 1, sector], [ring, sector + 1], [ring, sector + 1], [ring + 1, sector], [ring + 1, sector + 1]]) {
-      const angle = s / sectors * Math.PI * 2, y = r / rings;
-      const n = new THREE.Vector3(Math.cos(angle), (y - .45) * 2.2, Math.sin(angle)).normalize();
-      normals.push(n.x, n.y, n.z);
-    }
-  }
-  geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+  geometry.computeVertexNormals();
   geometry.computeBoundingBox(); geometry.computeBoundingSphere();
   geometry.userData = { ...source.userData, vegetationInterpretation: 'Joined drawn canopy masses and broad olive shading within the original inventory envelope; no inferred branches, species or new tree positions' };
   return geometry;
