@@ -12,5 +12,12 @@
     "-X",
     "+Y",
     "-Y"
-  ]
+  ],
+  "contourCandidate": {
+    "field": "model-drawn-contours.png",
+    "sha256": "f6f935fdde11695bdecf852fd4b1c7095322f9fdff3670b6b858f2ec7c6d0192",
+    "geometry": "Six-view silhouette intersection; source prototype height profile and exact original envelope fit; original instance matrices",
+    "prompt": "contour-prompt.txt",
+    "status": "Private comparison, no art or mobile performance acceptance"
+  }
 }
