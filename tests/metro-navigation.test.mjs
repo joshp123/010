@@ -1,0 +1,33 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
+
+// Exercise the actual UI decision functions without a WebGL/browser dependency.
+const app=await readFile(new URL('../public/app.js',import.meta.url),'utf8');
+const nodes=new Map();
+const byId=id=>{if(!nodes.has(id))nodes.set(id,{hidden:true,setAttribute(key,value){this[key]=value;}});return nodes.get(id)};
+let stats;
+const context=vm.createContext({byId,scene:{getTransitStatistics:()=>stats},document:{body:{dataset:{}}},observationTime:value=>String(value)});
+vm.runInContext(app.slice(app.indexOf('let focusedMetroId ='),app.indexOf('\nfunction say(')),context);
+const marker={id:'marker',latitude:51.92,longitude:4.48,freshness:'fresh',sourceConnected:true,inSection:true,presentationState:'marker'};
+const fresh={id:'next',latitude:51.91,longitude:4.49,freshness:'fresh',sourceConnected:true,inSection:false,presentationState:'train'};
+const old={id:'old',latitude:51.9,longitude:4.5,freshness:'stale',sourceConnected:true,inSection:false,presentationState:'train'};
+stats={metroState:'ready',cutawayMessage:'Fresh report · 19 m from mapped track',cutawayShortMessage:'Report off mapped track',visibleUndergroundObservations:1,visibleFreshUndergroundObservations:1,metroFocusCandidates:[marker,fresh,old]};
+vm.runInContext('showMetroViewStatus()',context);
+assert.equal(byId('metro-find').hidden,false,'visible report counts must not remove the navigation action');
+assert.equal(byId('metro-find').disabled,false);
+assert.equal(byId('metro-find-detail').disabled,false,'View has the same action');
+assert.equal(vm.runInContext('nextMetroReport(scene.getTransitStatistics()).id',context),'next','prefer another fresh report over an already shown marker');
+assert.equal(byId('metro-status-brief').textContent,'Report off mapped track','use presentation status rather than treating observation counts as visible trains');
+vm.runInContext("focusedMetroId = 'next';showMetroViewStatus()",context);
+assert.equal(vm.runInContext('nextMetroReport(scene.getTransitStatistics()).id',context),'old');
+assert.match(byId('metro-find')['aria-label'],/older metro report, not live/);
+assert.match(byId('metro-find-detail').textContent,/older metro report/);
+vm.runInContext("focusedMetroId = 'old'",context);
+assert.equal(vm.runInContext('nextMetroReport(scene.getTransitStatistics()).id',context),'marker','cycle through actual reports');
+stats={metroState:'ready',cutawayMessage:'No metro report in this section',metroFocusCandidates:[]};
+vm.runInContext('showMetroViewStatus()',context);
+assert.equal(byId('metro-find').hidden,false);
+assert.equal(byId('metro-find').disabled,true);
+assert.equal(byId('metro-find-detail').disabled,true);
+console.log('Metro UI navigation: occupied marker, next fresh/stale report, wraparound and empty feed pass');

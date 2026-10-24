@@ -3,8 +3,9 @@ import { readFile } from 'node:fs/promises';
 import { gunzipSync } from 'node:zlib';
 import { rightHandOffset, turnWeight, safeStep, speedForRoadClass } from '../public/traffic-motion.js';
 import * as THREE from '../public/vendor/three/build/three.module.js';
+const trafficModels = 'data:text/javascript;base64,' + Buffer.from((await readFile(new URL('../public/traffic-models.js',import.meta.url),'utf8')).replace("'three'",JSON.stringify(new URL('../public/vendor/three/build/three.module.js',import.meta.url).href))).toString('base64');
 const source = (await readFile(new URL('../public/simulated-traffic.js', import.meta.url), 'utf8'))
-  .replace("'three'", JSON.stringify(new URL('../public/vendor/three/build/three.module.js', import.meta.url).href))
+  .replace("'./traffic-models.js'",JSON.stringify(trafficModels)).replace("'three'", JSON.stringify(new URL('../public/vendor/three/build/three.module.js', import.meta.url).href))
   .replace("'./traffic-journeys.js'", JSON.stringify(new URL('../public/traffic-journeys.js', import.meta.url).href))
   .replace("'./traffic-motion.js'", JSON.stringify(new URL('../public/traffic-motion.js', import.meta.url).href));
 const { createSimulatedTraffic, decodeTrafficRoads } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);

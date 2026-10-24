@@ -34,7 +34,7 @@ assert.equal(stats.visibleMetroObservations,1);
 assert.equal(stats.visibleFreshUndergroundObservations,1);
 assert.equal(stats.underground,1);
 assert.equal(stats.metroFocus.id,'near');
-assert.equal(stats.section.radiusMetres,70);
+assert.equal(stats.section.radiusMetres,38);
 const section=view.group.children.find(child=>child.name==='BRT tunnel plan · depth illustrated');
 assert.ok(section.children.some(child=>child.name==='Cut earth face · depth illustrated'),'section must contain an actual full-depth earth face');
 const sectionPositions=section.children.flatMap(mesh=>Array.from(mesh.geometry.getAttribute('position').array));

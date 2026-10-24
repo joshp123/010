@@ -64,6 +64,17 @@ function showTransit(snapshot) {
   }
 }
 
+let focusedMetroId = null;
+function nextMetroReport(statistics) {
+  const candidates = (statistics?.metroFocusCandidates || (statistics?.metroFocus ? [statistics.metroFocus] : []))
+    .filter(report => Number.isFinite(report.latitude) && Number.isFinite(report.longitude));
+  if (!candidates.length) return null;
+  const previous = candidates.findIndex(report => report.id === focusedMetroId);
+  if (previous >= 0) return candidates[(previous + 1) % candidates.length];
+  return candidates.find(report => !report.inSection && report.freshness === 'fresh' && report.sourceConnected)
+    || candidates.find(report => !report.inSection) || candidates[0];
+}
+
 function showMetroViewStatus() {
   const statistics = scene?.getTransitStatistics();
   const message = statistics?.cutawayMessage;
@@ -74,19 +85,27 @@ function showMetroViewStatus() {
   // Keep the map edge short; the full source-status wording remains in View.
   const offTrack = message?.includes('from mapped track');
   const state = offTrack ? (message.startsWith('Fresh') ? 'fresh, off track' : 'unverified, off track')
-    : statistics?.visibleFreshUndergroundObservations ? `${statistics.visibleFreshUndergroundObservations} fresh`
+    : statistics?.visibleFreshUndergroundObservations ? `${statistics.visibleFreshUndergroundObservations} fresh report${statistics.visibleFreshUndergroundObservations === 1 ? '' : 's'}`
     : statistics?.visibleUndergroundObservations ? (message?.includes('older') ? 'older report' : 'unverified report')
     : 'no report here';
-  byId('metro-status-brief').textContent = `Metro · ${state}`;
+  byId('metro-status-brief').textContent = statistics?.cutawayShortMessage || `Metro · ${state}`;
   byId('metro-summary').setAttribute('aria-label', `${message || 'Metro cutaway'}. Open metro details.`);
   byId('metro-summary').title = message || '';
-  const target = statistics?.metroFocus;
+  const target = nextMetroReport(statistics);
   const targetFresh = target?.freshness === 'fresh' && target.sourceConnected;
-  const canFind = target && Number.isFinite(target.latitude) && Number.isFinite(target.longitude)
-    && (!statistics.visibleUndergroundObservations || targetFresh && !statistics.visibleFreshUndergroundObservations);
-  byId('metro-find').hidden = !message || !canFind;
-  byId('metro-find').setAttribute('aria-label', targetFresh ? 'Find reported metro' : 'Find older metro report, not live');
-  byId('metro-find').title = target ? `${target.label || 'Metro'} · observed ${observationTime(target.observedAt)}` : '';
+  const candidates = statistics?.metroFocusCandidates || [];
+  const next = candidates.length > 1 && (focusedMetroId !== null || candidates.some(report => report.inSection));
+  const action = next ? 'Next' : 'Find';
+  const label = target ? `${action} ${targetFresh ? 'reported metro' : 'older metro report, not live'}` : 'No metro reports available';
+  for (const id of ['metro-find', 'metro-find-detail']) {
+    const button = byId(id);
+    button.disabled = !target || statistics?.metroState !== 'ready';
+    button.setAttribute('aria-label', label);
+    button.title = target ? `${label} · ${target.label || 'Metro'} · observed ${observationTime(target.observedAt)}` : label;
+    button.textContent = id === 'metro-find' ? action : target ? `${action} ${targetFresh ? 'reported metro' : 'older metro report'} ↗` : 'No metro reports available';
+  }
+  byId('metro-find').hidden = !message;
+
 }
 
 function say(message) {
@@ -335,13 +354,18 @@ byId('metro-close').addEventListener('click', () => {
   scene?.setMetroCutaway(false);
   showMetroViewStatus();
 });
-byId('metro-find').addEventListener('click', () => {
-  const target = scene?.getTransitStatistics().metroFocus;
-  if (!target || !Number.isFinite(target.latitude) || !Number.isFinite(target.longitude)) return say('That metro report is no longer available.');
+function focusNextMetro() {
+  const target = nextMetroReport(scene?.getTransitStatistics());
+  if (!target) return say('No metro report is currently available.');
+  focusedMetroId = target.id;
+  byId('metro-cutaway').checked = true;
+  scene.setMetroCutaway(true);
   setViewPanel(false);
   navigateTo({ lat: target.latitude, lon: target.longitude, span: 220, name: `Metro ${target.label || ''}`.trim() });
   showMetroViewStatus();
-});
+}
+byId('metro-find').addEventListener('click', focusNextMetro);
+byId('metro-find-detail').addEventListener('click', focusNextMetro);
 byId('zoom-in').addEventListener('click', () => scene?.zoom(1.4));
 byId('zoom-out').addEventListener('click', () => scene?.zoom(.7));
 byId('rotate').addEventListener('click', () => scene?.setView({ ...currentView, bearing: currentView.bearing + 45 }));
@@ -444,6 +468,7 @@ try {
   scene.metroReady().then(() => {
     byId('metro-cutaway').disabled = false;
     byId('metro-source-status').textContent = 'Source tunnel plan · surface routes stay above ground';
+    showMetroViewStatus();
   }).catch(() => { byId('metro-source-status').textContent = 'Metro plan unavailable · live vehicles still work'; });
   window.addEventListener('pagehide', () => { liveTransit.stop(); });
   window.addEventListener('pageshow', event => { if (event.persisted) liveTransit.start(); });

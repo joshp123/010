@@ -72,7 +72,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
   let snapshot = { vehicles: [] }, records = [], railSegments = [], cutaway = false, cutawayMask = null;
   let span = 1700, viewportHeight = 900, camera = null;
   const maskViewDirection = new THREE.Vector3();
-  let physicalData = null, sectionAnchor = null, sectionSegments = [], sectionDiagnostics = null;
+  let physicalData = null, sectionAnchor = null, sectionSegments = [], sectionDiagnostics = null, selectedReportId = null;
   let tunnelSegments = [], maskRebuilds = 0, maskMilliseconds = 0, maskMetresPerPixel = Infinity;
 
   function batchFor(mode, count) {
@@ -92,11 +92,12 @@ export function createTransitView({ project, localPosition, requestRender = () =
     return batch;
   }
 
-  function classify(position) {
+  function classify(position, routeHeading = null) {
     let nearest = null;
     for (const segment of railSegments) {
       const result = pointOnSegment(position, segment.start, segment.end);
-      if (result.distance <= CLASSIFICATION_DISTANCE && (!nearest || result.distance < nearest.distance)) nearest = { ...result, id: segment.id, form: segment.form, relativeLevel: segment.relativeLevel };
+      if (routeHeading !== null && Math.abs(Math.cos(routeHeading-result.heading)) < .94) continue;
+      if (result.distance <= CLASSIFICATION_DISTANCE && (!nearest || result.distance < nearest.distance)) nearest = { ...result, id: segment.id, form: segment.form, relativeLevel: segment.relativeLevel, segment };
     }
     return nearest;
   }
@@ -121,18 +122,28 @@ export function createTransitView({ project, localPosition, requestRender = () =
       for (const report of snapshot.vehicles) {
         const mode = VEHICLE_STYLES[report.mode] ? report.mode : 'unknown';
         let ground = place(report.latitude, report.longitude, 0);
-        const rail = mode === 'metro' ? classify(ground) : null;
+        const rail = mode === 'metro' ? classify(ground, routeAxis(report)) : null;
         const underground = rail?.form === 'tunnel';
         if (underground) ground = place(report.latitude, report.longitude, 0, TUNNEL_GROUND_CONTEXT);
-        const routeHeading = Number.isFinite(report.bearing) ? Math.PI - report.bearing * Math.PI / 180 : rail?.heading ?? routeAxis(report);
-        const orientation = Number.isFinite(report.bearing) ? 'reported-bearing' : rail ? 'source-track-axis' : routeHeading !== null ? 'source-route-axis' : 'camera-facing-symbol';
-        const record = { report, ground, rail, underground, mode, routeHeading, orientation, uncertainTrackPosition: underground && rail.distance > CHAMBER_HALF_WIDTH - VEHICLE_STYLES.metro.width / 2 };
+        const routeShapeHeading = routeAxis(report);
+        const routeAligned = rail && routeShapeHeading !== null && Math.abs(Math.cos(routeShapeHeading - rail.heading)) > .94;
+        const mapMatched = underground && (rail.distance <= 5.5 || routeAligned);
+        let representedGround = ground, representedPosition = null;
+        if (mapMatched) {
+          const longitude = THREE.MathUtils.lerp(rail.segment.startGeo[0], rail.segment.endGeo[0], rail.fraction);
+          const latitude = THREE.MathUtils.lerp(rail.segment.startGeo[1], rail.segment.endGeo[1], rail.fraction);
+          representedGround = place(latitude, longitude, 0, TUNNEL_GROUND_CONTEXT);
+          representedPosition = {latitude, longitude, approximate:true, offsetMetres:rail.distance, method:routeAligned?'route-axis-compatible physical track':'nearest physical track within 5.5m'};
+        }
+        const routeHeading = mapMatched ? rail.heading : Number.isFinite(report.bearing) ? Math.PI - report.bearing * Math.PI / 180 : rail?.heading ?? routeAxis(report);
+        const orientation = mapMatched ? 'source-track-axis' : Number.isFinite(report.bearing) ? 'reported-bearing' : rail ? 'source-track-axis' : routeHeading !== null ? 'source-route-axis' : 'camera-facing-symbol';
+        const record = { report, ground, representedGround, representedPosition, rail, underground, mode, routeHeading, orientation, uncertainTrackPosition: underground && !mapMatched };
         records.push(record);
       }
     }
     const modes = new Map();
     for (const record of records) {
-      if (record.underground && (!cutaway || sectionAnchor && Math.hypot(record.ground.x-sectionAnchor.x,record.ground.z-sectionAnchor.z)>95)) continue;
+      if (record.underground && (!cutaway || selectedReportId !== record.report.id)) continue;
       const displayMode = record.uncertainTrackPosition ? 'metro-position' : record.mode;
       if (!modes.has(displayMode)) modes.set(displayMode, []);
       modes.get(displayMode).push(record);
@@ -144,7 +155,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
         const record = reports[index], report = record.report;
         const scale = record.underground ? 1 : THREE.MathUtils.clamp(4 * span / viewportHeight / style.length, 1, 8);
         const verticalOffset = record.underground && mode !== 'metro-position' ? -TUNNEL_DEPTH : 0;
-        const base = record.underground ? record.ground.clone().add(new THREE.Vector3(0, verticalOffset, 0)) : place(report.latitude, report.longitude, verticalOffset);
+        const base = record.underground ? record.representedGround.clone().add(new THREE.Vector3(0, verticalOffset, 0)) : place(report.latitude, report.longitude, verticalOffset);
         transform.position.copy(base); transform.position.y += style.height * scale / 2 + 0.4;
         // Compass bearings are clockwise from north; local +Z points south.
         transform.rotation.set(0, record.routeHeading ?? (camera ? Math.atan2(camera.position.x - base.x, camera.position.z - base.z) : 0), 0);
@@ -237,7 +248,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
       addQuad(...floor,surfaces[0]);
       // Retain the far earth face, remove only the near face to reveal depth.
       const edge=side.dot(viewDirection)>0 ? [0,3] : [1,2];
-      for (const [a,b] of [edge,...(segment.capStart?[[0,1]]:[]),...(segment.capEnd?[[3,2]]:[])]) {
+      for (const [a,b] of [edge]) {
         addQuad(corners[a],corners[b],lower[b],lower[a],surfaces[1]);
         addQuad(lower[a],lower[b],floor[b],floor[a],surfaces[2]);
       }
@@ -270,16 +281,19 @@ export function createTransitView({ project, localPosition, requestRender = () =
     if(!centre)return;
     const candidates=records.filter(record=>record.underground&&inViewport(record));
     candidates.sort((a,b)=>Number(fresh(b))-Number(fresh(a))||a.ground.distanceToSquared(centre)-b.ground.distanceToSquared(centre));
-    let anchor=candidates[0]?.ground.clone()||null;
+    const previousSelectedReportId=selectedReportId;
+    selectedReportId=candidates[0]?.report.id??null;
+    let selectedRail=candidates[0]?.rail?.segment||null;
+    let anchor=candidates[0]?.representedGround.clone()||null;
     if(!anchor){
       let best=Infinity;
-      for(const segment of tunnelSegments){const result=pointOnSegment(centre,segment.start,segment.end);if(result.distance<best){best=result.distance;anchor=segment.start.clone().lerp(segment.end,result.fraction);}}
+      for(const segment of tunnelSegments){const result=pointOnSegment(centre,segment.start,segment.end);if(result.distance<best){best=result.distance;selectedRail=segment;anchor=segment.start.clone().lerp(segment.end,result.fraction);}}
       if(best>span*.8)anchor=null;
     }
     const metresPerPixel=span/viewportHeight;
-    if(!force&&sectionAnchor&&anchor&&sectionAnchor.distanceToSquared(anchor)<100&&maskViewDirection.distanceToSquared(viewDirection)<.000001&&metresPerPixel>=maskMetresPerPixel*.8&&metresPerPixel<=maskMetresPerPixel*1.25)return;
+    if(!force&&previousSelectedReportId===selectedReportId&&sectionAnchor&&anchor&&sectionAnchor.distanceToSquared(anchor)<100&&maskViewDirection.distanceToSquared(viewDirection)<.000001&&metresPerPixel>=maskMetresPerPixel*.8&&metresPerPixel<=maskMetresPerPixel*1.25)return;
     sectionAnchor=anchor;
-    sectionSegments=anchor?tunnelSegments.flatMap(segment=>clipToSection(segment,anchor,70)||[]):[];
+    sectionSegments=anchor&&selectedRail?tunnelSegments.filter(segment=>segment.id===selectedRail.id).flatMap(segment=>clipToSection(segment,anchor,38)||[]):[];
     // An offset report is uncertainty, not evidence for a wider tunnel.
     const halfWidth=CHAMBER_HALF_WIDTH;
     drawSection(sectionSegments,halfWidth,viewDirection);
@@ -294,7 +308,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
       geometryBounds:geometryBounds.isEmpty()?null:{min:geometryBounds.min.toArray(),max:geometryBounds.max.toArray()},
       widthMetres:halfWidth*2,
       groundSamples:samples.map(sample=>({latitude:sample.latitude,longitude:sample.longitude,height:sample.point.y,surfaceSource:sample.surfaceSource,measured:sample.measured})),
-      report:candidates[0]?{id:candidates[0].report.id,latitude:candidates[0].report.latitude,longitude:candidates[0].report.longitude,groundHeight:candidates[0].ground.y,surfaceSource:candidates[0].ground.userData?.surfaceSource||'unspecified projection',measured:candidates[0].ground.userData?.measured??null,nearestSectionHeight:atReport,heightDifference:atReport===null?null:candidates[0].ground.y-atReport,sourceAxisDistanceMetres:candidates[0].rail.distance,renderedAs:candidates[0].uncertainTrackPosition?'position marker':'illustrated train',bodyBottomHeight:candidates[0].uncertainTrackPosition?null:candidates[0].ground.y-TUNNEL_DEPTH+.4,bodyTopHeight:candidates[0].uncertainTrackPosition?null:candidates[0].ground.y-TUNNEL_DEPTH+.4+VEHICLE_STYLES.metro.height}:null,
+      report:candidates[0]?{id:candidates[0].report.id,latitude:candidates[0].report.latitude,longitude:candidates[0].report.longitude,groundHeight:candidates[0].ground.y,surfaceSource:candidates[0].ground.userData?.surfaceSource||'unspecified projection',measured:candidates[0].ground.userData?.measured??null,nearestSectionHeight:atReport,heightDifference:atReport===null?null:candidates[0].ground.y-atReport,sourceAxisDistanceMetres:candidates[0].rail.distance,representedPosition:candidates[0].representedPosition,renderedAs:candidates[0].uncertainTrackPosition?'position marker':'illustrated train',bodyBottomHeight:candidates[0].uncertainTrackPosition?null:candidates[0].representedGround.y-TUNNEL_DEPTH+.4,bodyTopHeight:candidates[0].uncertainTrackPosition?null:candidates[0].representedGround.y-TUNNEL_DEPTH+.4+VEHICLE_STYLES.metro.height}:null,
     };
     const projection=cutawayMask.projection.set(viewDirection.x/Math.min(-.1,viewDirection.y),viewDirection.z/Math.min(-.1,viewDirection.y));
     const projectToOpening=point=>new THREE.Vector3(point.x-point.y*projection.x,0,point.z-point.y*projection.y);
@@ -353,13 +367,13 @@ export function createTransitView({ project, localPosition, requestRender = () =
     if (!hit) return null;
     const batch = [...batches.values()].find(batch => batch.body === hit.object || batch.roof === hit.object);
     const record = batch.records[hit.instanceId];
-    return { ...record.report, presentation: { physicalForm: record.rail?.form || 'unclassified', sourceSegmentId: record.rail?.id || null, illustrativeDepthMetres: record.underground ? TUNNEL_DEPTH : null, orientation: record.orientation, dimensions: 'illustrative', sourceAxisDistanceMetres: record.rail?.distance ?? null, positionUncertainty: record.uncertainTrackPosition ? 'Reported point is outside the illustrated track chamber; position marker, not track-snapped train' : null } };
+    return { ...record.report, presentation: { physicalForm: record.rail?.form || 'unclassified', sourceSegmentId: record.rail?.id || null, illustrativeDepthMetres: record.underground ? TUNNEL_DEPTH : null, orientation: record.orientation, representedPosition:record.representedPosition, dimensions: 'illustrative', sourceAxisDistanceMetres: record.rail?.distance ?? null, positionUncertainty: record.uncertainTrackPosition ? 'Reported point is outside the illustrated track chamber; position marker, not track-snapped train' : null } };
   }
 
   function metroVisibility() {
     const metros = records.filter(record => record.mode === 'metro');
     const visible = metros.filter(inViewport);
-    const underground = visible.filter(record => record.underground && (!cutaway || sectionAnchor && Math.hypot(record.ground.x-sectionAnchor.x,record.ground.z-sectionAnchor.z)<=70));
+    const underground = visible.filter(record => record.underground && (!cutaway || record.report.id===selectedReportId));
     const freshCount = underground.filter(fresh).length;
     const focusCandidates = metros.filter(record=>record.underground&&(fresh(record)||record.report.freshness==='stale'));
     focusCandidates.sort((a,b)=>Number(fresh(b))-Number(fresh(a))||(b.report.observedAt||0)-(a.report.observedAt||0));
@@ -370,14 +384,16 @@ export function createTransitView({ project, localPosition, requestRender = () =
       visibleUndergroundObservations: underground.length,
       visibleFreshMetroObservations: visible.filter(fresh).length,
       visibleFreshUndergroundObservations: freshCount,
+      metroFocusCandidates:focusCandidates.map(({report,uncertainTrackPosition})=>({inSection:report.id===selectedReportId,presentationState:uncertainTrackPosition?'marker':'train',id:report.id,latitude:report.latitude,longitude:report.longitude,label:report.label,observedAt:report.observedAt,freshness:report.freshness,sourceConnected:report.sourceConnected})),
       metroFocus: focus ? {id:focus.id,latitude:focus.latitude,longitude:focus.longitude,label:focus.label,observedAt:focus.observedAt,freshness:focus.freshness,sourceConnected:focus.sourceConnected} : null,
+      cutawayShortMessage:!cutaway?null:underground.some(record=>record.uncertainTrackPosition)?'Report off mapped track':freshCount?'Fresh metro · approximate position':underground.length?'Older/unverified metro · not live':'No metro report',
       cutawayMessage: !cutaway ? null : underground.some(record=>record.uncertainTrackPosition)
         ? `${fresh(underground.find(record=>record.uncertainTrackPosition)) ? 'Fresh report' : 'Older/unverified report'} · ${Math.round(underground.find(record=>record.uncertainTrackPosition).rail.distance)} m from mapped track`
         : freshCount
-        ? `${freshCount} fresh metro ${freshCount===1?'report':'reports'} · illustrated section`
+        ? `Fresh metro · approximate track position`
         : underground.length ? `${underground.length} ${underground.every(record=>record.report.freshness==='stale')?'older':'unverified'} metro ${underground.length===1?'report':'reports'} · not live`
         : 'No metro report in this section',
-      section: sectionAnchor ? {radiusMetres:70,segmentCount:sectionSegments.length,illustrativeDepthMetres:TUNNEL_DEPTH,...sectionDiagnostics} : null,
+      section: sectionAnchor ? {radiusMetres:38,selectedReportId,segmentCount:sectionSegments.length,illustrativeDepthMetres:TUNNEL_DEPTH,...sectionDiagnostics} : null,
     };
   }
 
