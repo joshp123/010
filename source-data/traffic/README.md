@@ -112,3 +112,24 @@ Source-coordinate overlays can be regenerated with `python scripts/render-turn-s
 ### Following across source junction links
 
 A follower now checks queued same-direction vehicles along its already planned next edges, not just its current NWB edge. Otherwise a lead car on the far side of a short connector disappears from following logic until the follower enters that road. A bounded lookahead (following distance, at most 16 edges) includes real short links without changing route geometry. Occupancy positions are snapshotted once per frame so vehicle update order cannot move a leader into the wrong indexed road. Opposite directions and other branches do not trigger following brakes. This improves queue spacing; it is still not a signal-aware collision model. `node tests/traffic-following.test.mjs` checks short connectors, reverse source direction, other branches and snapshot identity.
+
+### Resuming independent tiles after Overpass failures
+
+A failing tile need not block the remaining request budget:
+
+```sh
+python scripts/acquire-municipality-turns.py --download --continue-on-error --max-tiles 9
+```
+
+Every failed HTTP request consumes one budget slot. `--continue-on-error` makes one attempt per selected missing tile and moves on; there is no retry loop. Without it, the original stop-after-first-failure behavior remains. Failed-attempt metadata (tile, endpoint, query hash, time and error) is retained beside the successful raw responses.
+
+Select a single tile with repeatable `--tile`, or split a failed exact bbox into four children:
+
+```sh
+python scripts/acquire-municipality-turns.py --download --tile 36-865 --max-tiles 1
+python scripts/acquire-municipality-turns.py --subdivide 36-865 --tile 36-865 --download --continue-on-error --max-tiles 4
+```
+
+The second command persists the split in `osm-municipality-subdivisions.json`, so subsequent resumes keep the same child queries. Children are `36-865.0` through `.3`; a parent selector includes its active descendants. A child can be subdivided once more if explicitly requested; depth is bounded to two levels. The four child bboxes exactly cover their parent, including boundary edges. Parent raw responses are preserved but are not counted as completed children. Completion is calculated over **all active leaf tiles**, regardless of the download selector, so acquiring one selected tile cannot falsely mark the whole municipality complete. The global original count remains 17; splitting one tile changes the active required count to 20.
+
+`python tests/municipality-turn-acquisition.test.py` uses temporary files and mocked HTTP responses to verify 502 continuation, request budgets, selected resumption, persisted subdivisions, exact bbox coverage, source preservation and incomplete-state reporting. It makes no network requests.

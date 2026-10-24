@@ -1,4 +1,6 @@
-import importlib.util,json,unittest
+import contextlib,importlib.util,io,json,tempfile,unittest
+from unittest.mock import patch
+from urllib.error import HTTPError
 from pathlib import Path
 from shapely.geometry import box,shape
 from shapely.ops import unary_union
@@ -20,4 +22,39 @@ class CollectorTest(unittest.TestCase):
   self.assertEqual(excluded,1);self.assertEqual(len(result['elements']),4)
   with self.assertRaisesRegex(ValueError,'Conflicting source'):
    mod.merge_responses([response,{'elements':[dict(nodes[0],lat=.1)]}],box(0,-1,2,1))
+ def test_exact_subdivision_and_depth_bound(self):
+  parent=mod.tile_record('36-865',[51.9,4.32,51.96,4.44]);children=mod.subdivide_tile(parent)
+  coverage=unary_union([box(t['bbox'][1],t['bbox'][0],t['bbox'][3],t['bbox'][2]) for t in children])
+  self.assertTrue(coverage.equals(box(4.32,51.9,4.44,51.96)))
+  self.assertEqual(len(mod.expand_tiles([parent],{'36-865'})),4)
+  with self.assertRaisesRegex(ValueError,'two levels'):
+   mod.expand_tiles([parent],{'36-865','36-865.0','36-865.0.0'})
+ def test_failures_do_not_block_independent_tiles_when_requested(self):
+  with tempfile.TemporaryDirectory() as temporary:
+   root=Path(temporary);source=root/'traffic';source.mkdir();boundary=root/'boundary.json'
+   boundary.write_text(json.dumps({'type':'Polygon','coordinates':[[[0,0],[.24,0],[.24,.06],[0,.06],[0,0]]]}))
+   calls=[]
+   def request(req,timeout):
+    calls.append(req)
+    if len(calls)==1:raise HTTPError(req.full_url,502,'test failure',{},None)
+    return io.BytesIO(b'{"elements":[]}')
+   with patch.multiple(mod,ROOT=root,SOURCE=source,BOUNDARY=boundary),patch.object(mod.urllib.request,'urlopen',side_effect=request),contextlib.redirect_stdout(io.StringIO()):
+    mod.main(['--download','--continue-on-error','--max-tiles','2'])
+    plan=json.loads((source/'osm-municipality-turn-plan.json').read_bytes())
+    self.assertEqual(len(calls),2);self.assertEqual(plan['completed'],1);self.assertFalse(plan['complete'])
+    self.assertFalse((source/'osm-municipality-turn-restrictions.json.gz').exists())
+    self.assertTrue((source/'osm-municipality-tiles/0-0.errors.jsonl').exists())
+    # Selecting the failed tile does not request the successful independent tile.
+    mod.main(['--download','--tile','0-0','--max-tiles','1'])
+    self.assertEqual(len(calls),3);self.assertTrue(json.loads((source/'osm-municipality-turn-plan.json').read_bytes())['complete'])
+    original=(source/'osm-municipality-tiles/0-0.json.gz').read_bytes()
+    # Explicit splitting persists across invocations; parent archive survives,
+    # but it cannot count as all four child responses.
+    mod.main(['--subdivide','0-0'])
+    plan=json.loads((source/'osm-municipality-turn-plan.json').read_bytes())
+    self.assertEqual(plan['required'],5);self.assertEqual(plan['completed'],1);self.assertFalse(plan['complete'])
+    self.assertEqual(original,(source/'osm-municipality-tiles/0-0.json.gz').read_bytes())
+    mod.main(['--download','--tile','0-0.0','--max-tiles','1'])
+    plan=json.loads((source/'osm-municipality-turn-plan.json').read_bytes())
+    self.assertEqual(plan['required'],5);self.assertEqual(plan['completed'],2);self.assertEqual(len(calls),4)
 if __name__=='__main__':unittest.main()
