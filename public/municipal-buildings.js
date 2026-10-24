@@ -104,7 +104,7 @@ export function createMunicipalBuildingVisibility() {
 // before their ordinary streets have any source appearance at all.
 export function configureMunicipalBuildingStreaming(tiles, municipalCache) {
   if (municipalCache) {
-    municipalCache.maxBytesSize = 128 * 1024 * 1024;
+    municipalCache.maxBytesSize = 256 * 1024 * 1024;
     municipalCache.minBytesSize = municipalCache.maxBytesSize * 0.8;
     municipalCache.unloadPriorityCallback = tiles.lruCache.unloadPriorityCallback;
     tiles.lruCache = municipalCache;
