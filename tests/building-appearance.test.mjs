@@ -21,12 +21,24 @@ for (let n=0;n<2;n++) {
 }
 reconcile.addModel(model);batches.addModel(model);
 assert.equal(model.children.length,1,'original source batching still works');
+// 3d-tiles-renderer's TilesGroup skips child matrix traversal when the group
+// matrix has not changed. Reconciliation happens after tile activation, so new
+// draws must explicitly inherit the already-established parent world matrix.
+const stationaryTileGroup=new THREE.Group();
+stationaryTileGroup.position.set(400,23,-300);
+stationaryTileGroup.rotation.x=Math.PI/2;
+stationaryTileGroup.add(model);
+stationaryTileGroup.updateMatrixWorld(true);
+const expectedWorld=model.children[0].matrixWorld.clone();
+stationaryTileGroup.updateMatrixWorld=()=>{};
 const replacement=new THREE.Group(), painted=new THREE.Mesh(new THREE.BoxGeometry(),material);
 painted.userData.bagId='0599100000000001';replacement.add(painted);
 assert.equal(reconcile.setVisibleModels([replacement]),true);
+assert.deepEqual(model.children[0].matrixWorld.elements,expectedWorld.elements,'replacement batch retains activated tile world transform without a parent traversal');
 assert.equal(model.children[0].geometry.index.count,6,'only matched building triangles removed from combined model');
 assert.equal(reconcile.setVisibleModels([replacement]),false,'no rebuild while visibility unchanged');
 assert.equal(reconcile.setVisibleModels([]),true);
+assert.deepEqual(model.children[0].matrixWorld.elements,expectedWorld.elements,'restored batch retains the same world transform');
 assert.equal(model.children[0].geometry.index.count,12,'unloading replacement restores all source topology');
 for (const mesh of sourceMeshes) assert.deepEqual([...mesh.geometry.index.array],[0,1,2,3,4,5]);
 batches.dispose();

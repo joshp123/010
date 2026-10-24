@@ -15,9 +15,16 @@ export function createBuildingBatches() {
     if (batched) {
       for (const source of sources) source.mesh.removeFromParent();
       parent.add(merged);
+      // TilesGroup deliberately skips descendants while its own world matrix
+      // is unchanged. A replacement draw added after tile activation therefore
+      // cannot rely on the next scene traversal to inherit the tile transform.
+      merged.updateWorldMatrix(true, false, true);
     } else {
       merged.removeFromParent();
-      for (const source of sources) parent.add(source.mesh);
+      for (const source of sources) {
+        parent.add(source.mesh);
+        source.mesh.updateWorldMatrix(true, false, true);
+      }
     }
   }
 
