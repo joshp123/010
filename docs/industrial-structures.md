@@ -2,7 +2,7 @@
 
 Written by AI, gpt-6-astra, 2026-10-24.
 
-AHN6 laser returns add measured cranes, container stacks and other non-building port forms. The browser layer uses crisp, solid occupied volumes aligned to measured crane rails, with one muted source-derived colour per connected form. Open air beneath booms remains open. This is a dated, stylised reconstruction of observations, not a claim about current container or crane positions.
+AHN6 laser returns add measured cranes, roof/storage forms and other non-building port forms. Areas with repeated rectangular roof evidence use measured roof bands, inferred closed volumes and fitted straight crane members. The source does not establish every form as a container. Other industrial forms retain occupied-volume reconstruction. Muted source-derived colours and quiet illustrative tier joints make stacks legible; open air beneath measured booms remains open. This is a dated, stylised reconstruction of observations, not a claim about current container or crane positions.
 
 ## Source selection and exclusions
 
@@ -16,18 +16,48 @@ The geometry keeps AHN class 1 (other/unclassified), not a semantic “crane” 
 
 ## Reconstruction and runtime
 
-`fetch-industrial-structures.py` is the source acquisition and temporal selection stage. `build-industrial-structures.py` is the replaceable reconstruction and style stage. Use a Nix Python environment containing `laspy`, `lazrs`, `requests`, `numpy`, `scipy`, `scikit-image`, `pyproj`, `shapely` and `Pillow`:
+The replaceable stages separate temporal/source selection, geometry interpretation, muted colours and standard delivery assets. `fetch-industrial-structures.py` and `build-industrial-structures.py` produce the original single-flight occupied volumes. `terminal-reconstruction.json` records model-reviewed regions with repeated rectangular roofs; it is replaceable source interpretation, not landmark logic in the renderer.
+
+`fetch-industrial-terminal-sources.py` reacquires those same selected source bounds at 0.5 m COPC sampling. Its 34 unique official crops occupy 1.286 GB in ignored SSD cache and support 46 original source/region segments. Original flight/day, municipal masks and building/tree/water exclusions remain unchanged. `terminal-sources.json` records URLs, bounds, dates and hashes. No transient positions are imported from later aerial imagery.
+
+`build-industrial-terminals.py` fits repeated roof bands close to either orthogonal local BGT crane-rail axis. Horizontal point support supplies widths, longitudinal extents and local top heights. Global roof levels locate repeated tiers but do not override supported local roof heights. Straight source-supported members form open crane frames. The shared method has no region-specific art parameters.
+
+Hidden sides and bases are inferred. A missing DTM cell may use a robust local plane through nearby same-flight class-2 ground, within the same terminal mask and without crossing current unsimplified BGT water. Every inferred storage footprint is checked against current wet BGT water before either base path; an unsupported roof cap is omitted from the rendered derivative and retained in source evidence. Measured crane members may legitimately overhang water. Short longitudinal scan gaps may close; missing flight coverage is not filled. Repeated approximately 2.9–3 m source roof-level gaps set illustrative dark tier joints, **not surveyed individual container boundaries**. Each roof segment/member uses a robust source colour mapped to the existing muted palette.
+
+The complete replacement converts 17 original source segments in regions 0, 1, 7, 10, 27, 32, 35, 37 and 42. The other 29 reviewed segments retain their original geometry because returns or repeated row/elevation evidence are insufficient. Reviewed regions 6, 18, 19 and 28 are entirely unchanged. All unreviewed industrial branches remain unchanged. Full source bounds are processed; local visual fixtures never replace larger source coverage.
+
+The installed layer contains 523 GLBs, 61.37 MB raw / 36.24 MB gzip and 4,072,484 triangles across all retained LODs. Reconstructed branches contribute 1,001,204 triangles; 349 unchanged GLBs match preceding file hashes. The final rules omit 126 roofs without supported bases and 1,248 inferred storage footprints crossing current surveyed water. No unsupported caps are rendered; all 18,098 fitted measured members remain. These are whole-layer totals, not initial downloads. Standard 3D Tiles 1.1 bounds stream 250 m cells. Reconstructed branches have one detail level; retained branches keep their original coarse/fine replacement hierarchy. Exact partitioning preserves every generated triangle, attribute and transform, while avoiding large source-square downloads.
+
+GLBs use an ENU-to-ECEF root transform, Y-up contents, `KHR_mesh_quantization` unsigned 16-bit positions and linear `COLOR_0`. Runtime uses vertex colours and flat shading. Mesh extras identify `sourceLayer: industrial-structures`, `surfaceKind: measured-industrial`, observation date and observed/inferred/illustrative distinctions. These are not building batches and must not receive windows. All 523 assets were parsed by the existing vendor GLTFLoader, with finite indexed attributes and colour data; every runtime URI exists and root bounds enclose all child boxes.
+
+Reproduce from the project root using its existing devenv dependencies, without temporary wrappers or extra installs. The original source stage supplies the retained masks, exclusions, original crops and DTM caches. Run the terrain preparation below before the terminal build if the current BGT response cache is absent:
 
 ```sh
-python scripts/fetch-industrial-structures.py
-python scripts/build-industrial-structures.py --sample source-data/industrial-structures/selection.json
+devenv shell -- python scripts/fetch-industrial-terminal-sources.py
+OPENBLAS_NUM_THREADS=1 devenv shell -- python scripts/build-industrial-terminals.py \
+  --base public/data/industrial-structures \
+  --tileset public/data/industrial-structures/tileset.json \
+  --output work/industrial-terminals-next
 ```
 
-The builder creates 1 m occupied cells in a grid aligned to the area's measured crane rails, closes gaps with a 3 × 3 × 3 neighbourhood, fills enclosed cavities, and removes connected fragments below 6 m³. The coarser LOD uses 1.5 m cells. It only emits exposed faces, merges coplanar rectangles, and shares indexed vertices. This deliberately regularises small gaps and scan noise; it does not infer exact engineering members or turn a crane into a filled heightfield.
+Use a fresh output directory and inspect it before replacing public assets. `--only` accepts original source indices for bounded reproductions. The dense acquisition took 184 seconds; the final complete two-worker reconstruction/partitioning took 362 seconds on the development machine; these are offline preparation times, not browser performance claims. Raw and detailed per-roof fit evidence remain under `work/data-cache/industrial-terminals/`.
 
-Each connected form receives its average source RGB, reduced saturation and lifted shadows, mapped to eleven muted colours. The source returns remain unchanged. `public/data/industrial-structures/tileset.json` is standard 3D Tiles 1.1 with a root ENU-to-ECEF transform and Y-up GLB contents. GLBs use `KHR_mesh_quantization` unsigned 16-bit positions and linear `COLOR_0`. Omitted normals allow shared vertices; GLTFLoader supplies flat shading. Runtime must preserve vertex colours and flat shading. Mesh extras identify `sourceLayer: industrial-structures` and `surfaceKind: measured-industrial`; these are not building batches and must not receive windows.
+## Reconcile dated shorelines
 
-The 400 m comparison at 51.95609° N, 4.00802° E is retained in `sample.json`. Its 1 m GLB has 139,162 triangles and occupies 2.83 MB; the 1.5 m LOD has 65,144 triangles and occupies 0.94 MB. Broader source sampling uses COPC resolution 1 m, inspected against the denser 0.5 m source crop: principal silhouettes and open crane frames remain, while the smallest members are rougher. The broader build contains 118 rendered source segments and 236 GLBs: 96.22 MB / 5,371,230 triangles at 1 m, and 43.30 MB / 2,560,122 triangles at 1.5 m. Five selected segments contain no industrial returns after exclusions. The largest dense GLB is 9.79 MB. These are totals across the layer, not an initial download. Runtime assets stream spatially and by LOD; raw point clouds never ship to the browser. Further performance work should subdivide the densest source squares before reducing source fidelity.
+Some native municipal water geometry dates from 2017–19. It still covers land reclaimed by the December 2025 AHN flight and the current BGT survey; valid newer objects consequently appeared to float over water. `build-industrial-terrain.py` prepares a separate standard 3D Tiles layer for current BGT industrial land intersecting the 2019 BGT water snapshot, minus current BGT water, within the existing industrial observation masks and original source bounds. The source polygons determine the shoreline and holes; no hand-drawn repair is used. The current snapshot is 23 October 2026. Dry ditches are not classified as wet water.
+
+The 2 m triangulation samples retained AHN6 DTM where valid. Occluded cells may use the same bounded local ground fit as the roof bases: same flight/day and terminal mask, at least eight observed ground cells within 30 m, no current-water crossing, residual90 at most 0.25 m and slope at most 0.04. Unsupported triangles remain absent. A fitted height is an inference from surveyed nearby ground, not a direct observation of that cell. Per-mesh evidence counts distinguish DTM samples from local fits; the manifest retains source hashes and detailed fit-cache hashes. The terrain supplies the surface-height query as well as visible ground.
+
+Reproduce the complete retained-source coverage with:
+
+```sh
+OPENBLAS_NUM_THREADS=1 devenv shell -- python scripts/build-industrial-terrain.py \
+  --output work/industrial-terrain-next
+```
+
+The complete scan covers all 123 retained industrial source segments. Only sources 25 and 61 meet this dated-shoreline rule: two GLBs total 13,928 bytes and 1,075 triangles. They render 1,854.17 m² of the 3,043.12 m² eligible footprint. The remaining 1,188.96 m² lacks acceptable height support and remains absent. Vertex evidence comprises 133 direct DTM samples, 523 bounded fits and 365 unsupported positions. Source 61 is entirely inferred ground; source 25 is mostly direct DTM. These are conservative source-coverage limits, not missing acquisition silently filled with a flat plane.
+
+`source-data/industrial-terrain.json` records the exact selected source indices, source snapshots and acquisition inventory. Raw BGT pages, original terrain samples and detailed fits remain in ignored SSD cache. This reconciles supported dated industrial shoreline disagreements; it does not replace the whole city's terrain or claim current industrial objects.
 
 ## Height convention
 
@@ -37,18 +67,11 @@ This layer follows that verified existing whole-model convention: transform RD h
 
 ## Visual evidence and known limits
 
-At the retained 400 m fixture, catalogue edition **AHN6 2026** contains observations from **December 2025**. Source 1135 observes 16 December 18:10:55–18:11:18 UTC; 11351 is about 102 minutes later; 1134 is 19 December. Merging them visibly superimposes different crane poses. The single-flight rule addresses this before geometry styling.
+AHN6 catalogue edition 2026 here observes **13, 16 and 19 December 2025**. The single-flight/day rule avoids visibly superimposing different crane poses. A later PDOK aerial image informed interpretation only; it cannot validate December container placements.
 
-Ignored `work/source-quality/height/` retains the actual comparisons:
+Actual-map inspection accepted the reconstruction direction at two separate terminals and across the complete original source-6 footprint. Retained captures include `work/visual-qa/port-reconstruction-tiered-120.jpg`, `port-full-crop6-day.jpg` and `port-second-terminal-day.jpg`. The production stage extends the same method across supported regions. Actual whole-port inspection retains a known limitation: exposed crane members and some unchanged industrial branches remain skeletal at district scale. Source-square joins and incomplete lower connections are not repaired with invented engineering. The source-date shoreline fix was checked in the actual map at the smaller terminal (`terminal-reclaimed-ground-day.jpg`); source 25 was separately checked after the full scan (`second-shore-final-day.jpg`).
 
-- `port-flight-strip-comparison.png`: different measured crane poses in overlapping passes.
-- `port-aligned-solid-1m.png` and `port-aligned-solid-1.5m.png`: accepted solid-form direction.
-- `port-aligned-solid-source1m-1m.png`: economical source-sampling comparison.
-- `port-matching-aerial-2026.jpg`: independent PDOK reference of the same crop, never a map texture. Its later date cannot validate December container positions.
-
-Earlier all-pass voxels, Gaussian surfaces and per-face palettes are retained as rejected comparisons. Their failure was duplicate poses, fragmented or softened forms and mottled surfaces. `inspect-industrial-structures.py` reproduces the earlier single-flight local-surface comparison in `work/` only.
-
-LiDAR sees exposed surfaces. Occluded thin members and parts outside the selected flight are missing; closing small gaps is a style/reconstruction choice. Class 1 can include other static or transient port objects, so this layer is described as measured industrial forms rather than an authoritative crane inventory. Native buildings, tank geometry and semantic ground remain separate.
+LiDAR sees exposed surfaces. Roofs and fitted members are measurement-supported; hidden walls/base planes and gap closing are interpretations. Thin occluded members, source gaps and some non-container industrial forms remain incomplete. Independent fits in adjacent source squares may expose joins; exact delivery partitioning alone does not establish cross-source reconstruction continuity. This is a dated miniature interpretation, not a current crane/container inventory. Native buildings, tanks, semantic ground and lighting remain separate sources.
 
 ## Coast finding
 
@@ -56,15 +79,4 @@ The municipal BGT ground already supplies dune relief and cycle paths. At 4.125�
 
 ## Delivery partitioning
 
-The runtime assets now pass through [exact spatial subdivision](prepared-mesh-subdivision.md). Dense meshes are partitioned into 250 m cells after reconstruction; triangle/attribute values and LOD semantics are preserved. The source-builder size figures above describe the retained pre-subdivision assets, not the current delivery totals.
-
-
-## Reconstruction replacement under evaluation
-
-The later whole-city review rejected the shipping port's pale, fragmented appearance. Preserving every occupied voxel is not a visual acceptance criterion. A component spanning roughly 300 m averaged away most source colour; local colour patches alone improved colour but retained the broken forms.
-
-The current bounded replacement experiment is retained under `work/source-quality/port-form-prototype/`, with raw source hashes, source/flight selection, dimension audits, rejected variants and reproducible scripts. It fits rail-aligned roof segments and straight measured crane members from a retained 0.5 m source sample. It is not yet a port-wide replacement. The test footprint is RD 60000–60400 / 441550–441950, with selected-flight coverage ending around 441880 northing; replacing the whole original 1 km crop with this fixture would delete valid surrounding geometry.
-
-The sparse first result discarded observed roofs because their hidden ground was DTM nodata. Classification was not the cause: the selected raw flight contained no class-6 points. A local same-terminal ground fit restored 611 roof solids, using surveyed ground at median distance 1.16 m and maximum 7.08 m. Hidden bases remain inferred, not directly surveyed. Roofs over surveyed water retain caps without invented solid bases. The repaired candidate covers 95.3% of its supported longitudinal roof length.
-
-Measured median stack dimensions are 2.38 m wide, 10 m long and 8.75 m high; widening them merely to avoid a thin appearance would misrepresent the source. The `tiered/` candidate corrects unsupported global roof-height snapping and adds quiet illustrative tier joints from repeated source roof levels, preserving 1,023 footprints and 826 fitted crane members. It is 50,652 triangles / 514,646 gzip bytes. Actual-map captures at two bearings show a substantial improvement over the scan fragments; the next acceptance step is another terminal and complete source-crop coverage. Night inspection separately exposed absent lamp-source coverage at western terminals. These are unresolved whole-port acceptance questions, not reasons to claim the local fixture is complete.
+The runtime assets now pass through [exact spatial subdivision](prepared-mesh-subdivision.md). Dense meshes are partitioned into 250 m cells after reconstruction; triangle/attribute values and LOD semantics are preserved. Current delivery totals above include this partitioning.

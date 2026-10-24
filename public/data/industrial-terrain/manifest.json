@@ -1,0 +1,536 @@
+{
+  "writtenBy": "AI, gpt-6-astra, 2026-10-24",
+  "generation": {
+    "command": "OPENBLAS_NUM_THREADS=1 devenv shell -- python scripts/build-industrial-terrain.py --output <fresh-output-directory>",
+    "selectedSourceIndices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122
+    ],
+    "currentSnapshot": "2026-10-23T00:00:00Z",
+    "historicalSnapshot": "2019-01-01T00:00:00Z"
+  },
+  "rule": "Current retained BGT industrial land intersecting historical2019BGT water, minus current BGT water, inside existing industrial source masks/bounds. No hand-drawn shoreline.",
+  "heights": "AHN6 2026 DTM observations; occluded cells may use bounded same-flight terminal ground planes. Unsupported triangles omitted. NAP follows existing whole-model numerical height convention.",
+  "sourceLandSha256": "720ff7d1845793607091310dbdf53ede7fe144abd61158e840a13dc295ac98fd",
+  "historicalWater": [
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&datetime=2019-01-01T00%3A00%3A00Z&limit=1000&f=json",
+      "sha256": "5169fb75f6287cb27247644704f916b5f59c007d076e7834c90f6550c1666043",
+      "bytes": 7816314
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=Atn8%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "e58112403afcb4dd06299965b3a661ff59167b235a5602acb01a8ffe34e8d972",
+      "bytes": 12813739
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=BKfs%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "be0f842c8d80ac11bcc0dc8c7e5fe50accde52f94f8507d66afb53abc68b2e60",
+      "bytes": 10051038
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=BjG7%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "b03e7f10a5cceb44280c5d458b25c8674a929987ace097c30f7c028e821aa502",
+      "bytes": 11736861
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=BtLG%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "43ff1c8dfd9c5c1bf817cee107a668cc7cc46d6a0f07f123844951383c71273d",
+      "bytes": 9163378
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=BvR0%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "e1becac3f29a718edc9140215cd66315dcde3049c819b1a5461d562ece2d2e19",
+      "bytes": 11142419
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=B7yD%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "17424623e890494d292d9acd2ecc68fc1d7752e476d53c25c85a35b9c02b36ed",
+      "bytes": 11586457
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=CG4F%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "19beb7e6e27de737061df810efcbf1eefdd1e9bb0a674290f9da458d84ac0339",
+      "bytes": 6830262
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=CUd4%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "248e2418e7d0fed8165275afc26b1f8209b0148d8512fd92a07348292a5628be",
+      "bytes": 7073465
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=DFUw%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "3d9b09909ceeb80e9a91881761c0b75eafa28f5f9885bdab2f55dd2bbc33ba06",
+      "bytes": 6983724
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=Da6U%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "787df799f89c4617fd9b048be33be18009210187fbb29bb668c27829b3bc70e3",
+      "bytes": 10182041
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=D5YY%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "0f71d4a0e5fa4a6f155a405826dfd94c650e30e3014a08f23347a5a123efab2f",
+      "bytes": 15450863
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=F0fl%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "300dd6fdcd14a67385bd660e55f588d568fd99ddb681e1bd5d8d78626e59774a",
+      "bytes": 6083277
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=GGTd%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "4d8bb6ac45a1cfffb2262692cfbd100971da47b840b2f72e5e6dcb34a73a5d91",
+      "bytes": 2746994
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=GMt6%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "cf93a8f114e889bbabc2abd28c553d482e3e0d194fa42ac89c6fed4ab3e74fec",
+      "bytes": 6605817
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=GZbd%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "65fe78277a123bcaff793c3561fa56f9cd36a8378d8b213b3c0e9f32bcd18e6f",
+      "bytes": 3201561
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=GcMW%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "ada73bef3497d1db412d3e2304a445e1f4c6c8b9b07e5d9cd4087bdab53f6d53",
+      "bytes": 12558288
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=G58N%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "60be0d703457fa25b456c6638848ecb9c4be19c15ce6ab5888d350a7109a2ff2",
+      "bytes": 12928765
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=HK5C%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "6142417b3c07302e2e6282ff39c8e0bd37c1244943a51db9268ae9693cdb0d95",
+      "bytes": 15821552
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=Hwu9%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "0f042512c18c84fdc61900fb22115ca7bcd2cd6896360e86cbee32c2d0251ee5",
+      "bytes": 14436742
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=IiZQ%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "bd46cdd88348157cdef58417f876365bfcf365eb0d7d61b8be774b031dd1a743",
+      "bytes": 6034097
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=ME7S%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "d23f1b3617a3b5a5eaca2c2edcef210b3d36a53775148c3db9a1575515679574",
+      "bytes": 7558432
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=M0MJ%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "8c22da5d32d77419473a11125c82b257313a1d4665ebdb38e2b8eefec0353ec2",
+      "bytes": 11786838
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=N1UN%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "63f72256a01928ad9635467c2f12f571c12f821cf42a7a12efe953d604e732c3",
+      "bytes": 8245507
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=PsCd%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "de0beb0f393918a1dce3e22c6b7cdf07f8e94692c80cf6ae1ab1a0094513356a",
+      "bytes": 10472677
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=RU-S%7CXMicKw&datetime=2019-01-01T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "423894a435e05789cef85f74be5cfc81f669d9eef6f96ff1391ef7e1e619cd95",
+      "bytes": 1749818
+    }
+  ],
+  "currentWater": [
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&datetime=2026-10-23T00%3A00%3A00Z&limit=1000&f=json",
+      "sha256": "9fef2c2ae00ba07d8401f28d7abc68cfddf04e411e9a99775ccda65b558c8aa9",
+      "bytes": 9022675
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=A1Ol%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "17942126355d1341eb464a2794a3a5011895fe57a86aa893062b4aa2739f4888",
+      "bytes": 8128755
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=BUMX%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "98788dee80b8aa61be93b71cfd5a638ecf44a51bc4c8fd83524d7c05e8b6edc7",
+      "bytes": 8297442
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=BvEq%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "81dedb346193aedb6c67be2db3db320e8a4c334ad19317b5e615f3e073bd84dc",
+      "bytes": 7787947
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=B7y7%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "7f4ad98bd28d7398fcb9b06fe8a5b41588680c11398dbf8d9ecea6289af86e52",
+      "bytes": 8489010
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=CI2i%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "2db0aad0dc5368a63ca8323452932c262e01e203caa63c28efd1886e377272a2",
+      "bytes": 6099226
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=CtEB%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "21ce13cfeb4ff41a004176e0885306c8acf62c71ca9c5de3282ce230a9407bde",
+      "bytes": 6075847
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=D4r1%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "7079bb4c55f5a27b22e23bdafa1fbd4493aa4a8f8992242680b8afe57b5d22c5",
+      "bytes": 11319386
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=Fz5M%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "7e3deb4bf6e02f002d655b0bb2fae154f1caf9026b04286d3179f0e9df8adc67",
+      "bytes": 3200574
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=GMmu%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "8ca38ac55e00e6864059031f9c297670ba7021f559a290dbc394e4ad66a05985",
+      "bytes": 3881356
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=Gae0%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "07f14e895dff3481a9fb2c95bddde1035574ef1bde5233bf4061f6096be6ed5d",
+      "bytes": 6321811
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=G8TA%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "33259bf17550dbf29d10f51ac9da8ce5943c1ce452189c4c11f345de42d0cff1",
+      "bytes": 9947515
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=H_5G%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "c19cd2c863b70dc0bef2ba9cc63b6bd4a16a21b37a77cdc7644fd1c131f252a7",
+      "bytes": 12690120
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=IZvl%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "672281a961fd5c90f3c32668af1b93e2fbdb0cb99c6a4312cdc83a5b9bc1f1b5",
+      "bytes": 7573523
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=IubU%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "d2dc44498980d3dcb1850dbebc7840dd900fc8117d478dbac9bd020b13c1990a",
+      "bytes": 7700332
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=JuCB%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "1c892762436c3748ac3628f04d1653000ee69a933230a64205cbe3710d2e541d",
+      "bytes": 8928932
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=KmTf%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "59a864bfc5df8f26084a0b453d1bf2c4f863fd06fa373aa296dc956d0e31dc64",
+      "bytes": 9092837
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=LPKg%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "f8957f74a2f32f3780b10d23334fda65d3373fc48c27919a2a0682995c1f0955",
+      "bytes": 8635991
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=Ly04%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "d916e979722c17fbdf18b8a2e2c60fe215a62a7f2c2b8bea24f81ddd1d51b606",
+      "bytes": 6907215
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=ME4W%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "5b2cc0bb51006ebb889380203ba480a41fb7bf46bc912b794275a086ec0f18e5",
+      "bytes": 7102084
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=MkgM%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "f7edfa7e378b76e7fc8e50abc917620da43a3fb1dbb6abe8f2603ddb333b31c2",
+      "bytes": 14714684
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=NZYy%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "bcd4b9ad287a34402a8643a57284605f4d939da6302bc944d70c650657c29d7e",
+      "bytes": 10990915
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=OiKg%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "821aeba4b71bc16dbd7869f17302645f7bc2a0fbd45faacff71a8442692d04c1",
+      "bytes": 10455597
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=PIVZ%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "11dfa4edf66abfc10a71296c76f02f2526242099349781a980e7e9c22f62c1e7",
+      "bytes": 11083641
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=P1Wd%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "c1446e0dd0c59424a641c5b4be3464f42fa8a56271a5d6f9bc0c48bf66a89c68",
+      "bytes": 11026696
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=Qj3i%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "92e9bdfcc281c0c8ec0920f04dcfb6265b6720ba0b67adb596c87a0e632d8173",
+      "bytes": 15063486
+    },
+    {
+      "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/waterdeel/items?bbox=3.9777215492564664%2C51.87151753344868%2C4.575436830075227%2C51.98229757370658&cursor=Ramz%7CnQqmKw&datetime=2026-10-23T00%3A00%3A00Z&f=json&limit=1000",
+      "sha256": "19beb95d5aa9cec492d9381692ddb7175d54c67a5da47fb64bf33c161e583232",
+      "bytes": 9324318
+    }
+  ],
+  "spacingMetres": 2,
+  "sources": [
+    {
+      "sourceIndex": 25,
+      "region": 9,
+      "source": {
+        "name": "AHN6_2026_C_63000_439000",
+        "source": "https://fsn1.your-objectstorage.com/hwh-ahn/AHN6/01_LAZ/AHN6_2026_C_63000_439000.COPC.LAZ",
+        "sourceIndexRecord": {
+          "file": "https://fsn1.your-objectstorage.com/hwh-ahn/AHN6/01_LAZ/AHN6_2026_C_63000_439000.COPC.LAZ",
+          "size": 89027431,
+          "mtime": "2026-10-14T10:15:59.912Z",
+          "sha256": null
+        },
+        "boundsRD_NAP": [
+          [
+            63000.0,
+            439006.570212,
+            -10
+          ],
+          [
+            63781.749436,
+            440000.0,
+            300
+          ]
+        ],
+        "queryResolutionMetres": 1,
+        "rawPointCloudCache": "work/data-cache/industrial-structures/AHN6_2026_C_63000_439000-1m.laz",
+        "rawGroundCache": "work/data-cache/industrial-structures/AHN6_2026_M_63000_439000.TIF",
+        "groundSource": "https://fsn1.your-objectstorage.com/hwh-ahn/AHN6/02a_DTM_50cm/AHN6_2026_M_63000_439000.TIF",
+        "exclusionCache": "work/data-cache/industrial-structures/AHN6_2026_C_63000_439000-exclusions.json",
+        "sourceCropSha256": "e5801496a1e9188fa5fb7b44c02e838f69472c17e75dcc53d7f07b26b8f4cd63",
+        "sourceCropBytes": 11352470,
+        "region": 9,
+        "pointSourceId": 11381,
+        "gpsDay": 5207,
+        "surveyTimeUTC": [
+          "2025-12-16T19:09:05.382310+00:00",
+          "2025-12-16T19:09:27.772030+00:00"
+        ],
+        "selectionMask": "source-data/industrial-structures/region-9.geojson",
+        "groundClearanceMetres": 0.8,
+        "unknownGroundMinimumNAP": 2,
+        "license": "CC BY 4.0",
+        "attribution": "Actueel Hoogtebestand Nederland / Het Waterschapshuis \u2014 AHN6",
+        "sourceEdition": "AHN6 2026"
+      },
+      "eligibleLandAreaSquareMetres": 245.30370313026822,
+      "renderedLandAreaSquareMetres": 245.30370313030895,
+      "vertices": {
+        "directDtmVertices": 133,
+        "localGroundFits": 3,
+        "unsupportedVertices": 0
+      },
+      "unsupportedTrianglesOmitted": 0,
+      "triangles": 197,
+      "inferredGroundEvidence": {
+        "cache": "work/data-cache/industrial-terrain/25-ground-fits.json",
+        "sha256": "b7306a142603bb10dc51c7ff32b419bca6cb9281f2a94ba7b908f6a113c9153a",
+        "maximumSupportDistanceMetres": 5.7528813824497025,
+        "maximumResidual90Metres": 0.054289993971701644,
+        "maximumSlope": 0.015498525381371503
+      },
+      "bytes": 3400
+    },
+    {
+      "sourceIndex": 61,
+      "region": 27,
+      "source": {
+        "name": "AHN6_2026_C_84000_434000",
+        "source": "https://fsn1.your-objectstorage.com/hwh-ahn/AHN6/01_LAZ/AHN6_2026_C_84000_434000.COPC.LAZ",
+        "sourceIndexRecord": {
+          "file": "https://fsn1.your-objectstorage.com/hwh-ahn/AHN6/01_LAZ/AHN6_2026_C_84000_434000.COPC.LAZ",
+          "size": 136134930,
+          "mtime": "2026-10-14T10:34:09.848Z",
+          "sha256": null
+        },
+        "boundsRD_NAP": [
+          [
+            84835.079842,
+            434337.31809167465,
+            -10
+          ],
+          [
+            85000.0,
+            434550.155249,
+            300
+          ]
+        ],
+        "queryResolutionMetres": 0.5,
+        "rawPointCloudCache": "work/data-cache/industrial-terminals/AHN6_2026_C_84000_434000-0.5m.laz",
+        "rawGroundCache": "work/data-cache/industrial-structures/AHN6_2026_M_84000_434000.TIF",
+        "groundSource": "https://fsn1.your-objectstorage.com/hwh-ahn/AHN6/02a_DTM_50cm/AHN6_2026_M_84000_434000.TIF",
+        "exclusionCache": "work/data-cache/industrial-structures/AHN6_2026_C_84000_434000-exclusions.json",
+        "sourceCropSha256": "55a709cdeca1d62496f3f88387b1054863d046958d90d178827e0567e348cfe9",
+        "sourceCropBytes": 1985699,
+        "region": 27,
+        "pointSourceId": 11441,
+        "gpsDay": 5210,
+        "surveyTimeUTC": [
+          "2025-12-19T17:26:07.849149+00:00",
+          "2025-12-19T17:26:31.184906+00:00"
+        ],
+        "selectionMask": "source-data/industrial-structures/region-27.geojson",
+        "groundClearanceMetres": 0.8,
+        "unknownGroundMinimumNAP": 2,
+        "license": "CC BY 4.0",
+        "attribution": "Actueel Hoogtebestand Nederland / Het Waterschapshuis \u2014 AHN6",
+        "sourceEdition": "AHN6 2026",
+        "originalSourceIndex": 61
+      },
+      "eligibleLandAreaSquareMetres": 2797.820302565812,
+      "renderedLandAreaSquareMetres": 1608.8648055126487,
+      "vertices": {
+        "directDtmVertices": 0,
+        "localGroundFits": 520,
+        "unsupportedVertices": 365
+      },
+      "unsupportedTrianglesOmitted": 703,
+      "triangles": 878,
+      "inferredGroundEvidence": {
+        "cache": "work/data-cache/industrial-terrain/61-ground-fits.json",
+        "sha256": "7579f0018ff7217da30d804f38efeae6ed540a697fc513fc7853fe0306e5cef2",
+        "maximumSupportDistanceMetres": 29.99922015653008,
+        "maximumResidual90Metres": 0.05849345008809879,
+        "maximumSlope": 0.03942924684686373
+      },
+      "bytes": 10528
+    }
+  ],
+  "elapsedSeconds": 82.59221808299844
+}

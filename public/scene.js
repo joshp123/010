@@ -21,6 +21,7 @@ const LAYERS = [
   ['greenTerrain', './data/green-terrain/tileset.json'],
   ['industrialStructures', './data/industrial-structures/tileset.json'],
   ['yards', './data/industrial-ground/tileset.json'],
+  ['industrialTerrain', './data/industrial-terrain/tileset.json'],
   ['lamps', './data/lamps/tileset.json'],
   ['lamps', './data/supplementary-lamps/tileset.json'],
   ['buildings', './data/building-index/tileset.json'],
@@ -139,7 +140,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   const lampPixelsPerMetre = { value: 1 };
   const lampPoolMaterial = createLampPoolMaterial(uniforms.night, lampPixelsPerMetre);
   const lampShaftMaterial = new THREE.LineBasicMaterial({ color: '#53666a', transparent: true, opacity: 0.55 });
-  const materials = Object.fromEntries(LAYERS.map(([kind]) => [kind, createCityMaterial(['streets', 'bridgeSurfaces', 'greenTerrain'].includes(kind) ? 'ground' : kind, uniforms)]));
+  const materials = Object.fromEntries(LAYERS.map(([kind]) => [kind, createCityMaterial(['streets', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind) ? 'ground' : kind, uniforms)]));
   const cartographicMaterial = createCityMaterial('ground', uniforms);
   cartographicMaterial.depthWrite = false;
   const contextLandMaterial = createCityMaterial('ground', uniforms);
@@ -184,7 +185,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   let capturingFullDetail = false;
   let transitSnapshot = { vehicles: [] }, transitSurfaceDirty = false;
   const transitSurfaceCache = new Map();
-  const surfaceQueries = new Map(['bridgeSurfaces', 'ground', 'greenTerrain'].map(kind => [kind, createSurfaceQuery()]));
+  const surfaceQueries = new Map(['bridgeSurfaces', 'industrialTerrain', 'ground', 'greenTerrain'].map(kind => [kind, createSurfaceQuery()]));
   function projectTransit(latitude, longitude, offsetMetres = 0, context = null) {
     // The road simulation prepares the municipality once. Only nearby source
     // surfaces are loaded, so avoid a second city-wide cache of its 192k points.
@@ -201,11 +202,11 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
       const point = localPosition(latitude, longitude);
       let measured = null;
       // Reviewed deck surfaces exclude towers/cables; BGT supplies measured ground.
-      for (const kind of ['bridgeSurfaces', 'ground', 'greenTerrain']) {
+      for (const kind of ['bridgeSurfaces', 'industrialTerrain', 'ground', 'greenTerrain']) {
         const layer = tilesets.find(layer => layer.kind === kind);
         if (!layer?.group.visible) continue;
         const height = surfaceQueries.get(kind).heightAt(point.x, point.z, point.y - 80, point.y + 150);
-        if (height !== null) { measured = { height, source: kind === 'bridgeSurfaces' ? 'surveyed bridge deck' : 'surveyed ground' }; break; }
+        if (height !== null) { measured = { height, source: kind === 'bridgeSurfaces' ? 'surveyed bridge deck' : kind === 'industrialTerrain' ? 'survey-based reclaimed ground' : 'surveyed ground' }; break; }
       }
       surface = { point, ...(measured || { height: point.y, source: 'graphic surface height' }) };
       transitSurfaceCache.set(key, surface);
@@ -312,14 +313,14 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
         if (!color) {
           let attributes = {};
           if (table && batchIds) { try { attributes = table.getDataFromId(batchId)?.attributes || {}; } catch {} }
-          color = ['streets', 'bridgeSurfaces', 'greenTerrain'].includes(kind) ? streetColor(mesh.userData.surfaceKind) : kind === 'yards' ? yardColor(mesh.userData.surfaceKind) : featureColor(kind, attributes, `${batchId}:${Math.round(position.getX(index))}:${Math.round(position.getZ(index))}`);
+          color = ['streets', 'bridgeSurfaces', 'greenTerrain'].includes(kind) ? streetColor(mesh.userData.surfaceKind) : ['yards', 'industrialTerrain'].includes(kind) ? yardColor(mesh.userData.surfaceKind) : featureColor(kind, attributes, `${batchId}:${Math.round(position.getX(index))}:${Math.round(position.getZ(index))}`);
           cachedColors.set(batchId, color);
         }
         color.toArray(colors, index * 3);
       }
       mesh.geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
       mesh.material = materials[kind];
-      mesh.castShadow = !['ground', 'greenTerrain', 'streets', 'yards', 'bridgeSurfaces'].includes(kind);
+      mesh.castShadow = !['ground', 'greenTerrain', 'industrialTerrain', 'streets', 'yards', 'bridgeSurfaces'].includes(kind);
       mesh.receiveShadow = true;
       if (kind === 'streets') mesh.renderOrder = -10;
       if (kind === 'yards') mesh.renderOrder = -11;
@@ -356,8 +357,8 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     const originalCache = tiles.lruCache;
     tiles.lruCache = tileCaches[kind] || tileCaches.city;
     tiles.lruCache.unloadPriorityCallback = originalCache.unloadPriorityCallback;
-    tiles.addEventListener('load-model', event => { colorModel(event.scene, kind); if (['ground', 'bridgeSurfaces', 'greenTerrain'].includes(kind)) transitSurfaceDirty = true; if (kind === 'ground') sourceFusion.addGround(event.scene); loadedTiles++; loadedByLayer[kind] = (loadedByLayer[kind] || 0) + 1; renderer.shadowMap.needsUpdate = true; requestRender(); });
-    if (['ground', 'bridgeSurfaces', 'greenTerrain'].includes(kind)) tiles.addEventListener('dispose-model', () => { transitSurfaceDirty = true; });
+    tiles.addEventListener('load-model', event => { colorModel(event.scene, kind); if (['ground', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) transitSurfaceDirty = true; if (kind === 'ground') sourceFusion.addGround(event.scene); loadedTiles++; loadedByLayer[kind] = (loadedByLayer[kind] || 0) + 1; renderer.shadowMap.needsUpdate = true; requestRender(); });
+    if (['ground', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) tiles.addEventListener('dispose-model', () => { transitSurfaceDirty = true; });
     if (kind === 'buildings') tiles.addEventListener('dispose-model', event => buildingBatches.removeModel(event.scene));
     if (kind === 'ground') tiles.addEventListener('dispose-model', event => sourceFusion.removeGround(event.scene));
     if (kind === 'trees' || kind === 'lights') tiles.addEventListener('dispose-model', event => { if (kind === 'trees') treeBatches.removeModel(event.scene); objectDetail.removeModel(event.scene); });
@@ -371,7 +372,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     scene.add(tiles.group);
     tilesets.push(tiles);
   }
-  const layerPriority = { buildings: 7, lamps: 6, streets: 6, yards: 5, ground: 5, greenTerrain: 5, industrialStructures: 3, bridges: 4, bridgeSurfaces: 3, tanks: 2, lights: 1, trees: 0 };
+  const layerPriority = { buildings: 7, lamps: 6, streets: 6, yards: 5, industrialTerrain: 5, ground: 5, greenTerrain: 5, industrialStructures: 3, bridges: 4, bridgeSurfaces: 3, tanks: 2, lights: 1, trees: 0 };
   const prioritizeCitySurfaces = (a, b) => {
     const firstLayer = a.internal?.renderer?.kind, secondLayer = b.internal?.renderer?.kind;
     if (firstLayer && secondLayer && firstLayer !== secondLayer) return layerPriority[firstLayer] - layerPriority[secondLayer];
@@ -503,7 +504,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     viewUpdateDeferred = deferViewUpdates;
     if (!deferViewUpdates) {
     for (const tiles of tilesets) {
-      const visible = tiles.kind === 'streets' ? true : tiles.kind === 'lamps' ? uniforms.night.value > 0.1 : tiles.kind === 'ground' ? view.span < 1400 : tiles.kind === 'greenTerrain' ? view.span >= 1400 && view.span < 12000 : tiles.kind === 'industrialStructures' ? view.span < 18000 : tiles.kind === 'trees' ? view.span < 3500 && (loadedByLayer.buildings || 0) >= 6 : tiles.kind === 'lights' ? view.span < 700 && uniforms.night.value > 0.1 : ['bridges', 'bridgeSurfaces'].includes(tiles.kind) ? view.span < 12000 : tiles.kind === 'tanks' ? view.span < 18000 : true;
+      const visible = tiles.kind === 'streets' ? true : tiles.kind === 'lamps' ? uniforms.night.value > 0.1 : tiles.kind === 'ground' ? view.span < 1400 : tiles.kind === 'greenTerrain' ? view.span >= 1400 && view.span < 12000 : ['industrialStructures', 'industrialTerrain'].includes(tiles.kind) ? view.span < 18000 : tiles.kind === 'trees' ? view.span < 3500 && (loadedByLayer.buildings || 0) >= 6 : tiles.kind === 'lights' ? view.span < 700 && uniforms.night.value > 0.1 : ['bridges', 'bridgeSurfaces'].includes(tiles.kind) ? view.span < 12000 : tiles.kind === 'tanks' ? view.span < 18000 : true;
       if (!visible && tiles.group.visible) {
         for (const tile of tiles.usedSet) tiles.lruCache.markUnused(tile);
         tiles.lruCache.scheduleUnload();
@@ -600,7 +601,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     materials.ground.roughness = 0.94 - wetness * 0.35;
     materials.ground.color.setScalar(1 - wetness * 0.13);
     cartographicMaterial.color.copy(materials.ground.color); cartographicMaterial.roughness = materials.ground.roughness;
-    contextLandMaterial.color.copy(cartographicMaterial.color).multiplyScalar(1 - night * 0.55);
+    contextLandMaterial.color.copy(cartographicMaterial.color).multiplyScalar(0.72 - night * 0.27);
     contextLandMaterial.roughness = cartographicMaterial.roughness;
     renderer.toneMappingExposure = night > 0.5 ? 1.35 : 1.12;
     updateShadowCamera();
