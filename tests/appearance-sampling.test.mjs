@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {registerHooks} from 'node:module';
+registerHooks({resolve(s,c,next){return next(s==='three'?new URL('../public/vendor/three/build/three.module.js',import.meta.url).href:s,c);}});
+const THREE=await import('../public/vendor/three/build/three.module.js');const {setAppearanceSampling}=await import('../public/appearance-sampling.js');
+const image={width:2048,height:2048},texture=new THREE.Texture(image),material=new THREE.MeshStandardMaterial({map:texture}),model=new THREE.Group();model.add(new THREE.Mesh(new THREE.BoxGeometry(),material),new THREE.Mesh(new THREE.BoxGeometry(),material));
+const renderer={capabilities:{getMaxAnisotropy:()=>16}},originalMipmaps=texture.generateMipmaps;
+let result=setAppearanceSampling([model],{renderer,preset:'baseline'});assert.equal(result.textures,1);assert.equal(texture.magFilter,THREE.NearestFilter);assert.equal(texture.anisotropy,1);
+result=setAppearanceSampling([model],{renderer,preset:'linear'});assert.equal(texture.magFilter,THREE.LinearFilter);assert.equal(texture.anisotropy,1);
+result=setAppearanceSampling([model],{renderer,preset:'anisotropic'});assert.equal(texture.magFilter,THREE.LinearFilter);assert.equal(texture.anisotropy,8);assert.equal(texture.minFilter,THREE.LinearMipmapLinearFilter);assert.equal(texture.generateMipmaps,originalMipmaps);assert.equal(texture.image,image);assert.equal(material.map,texture);
+assert.equal(setAppearanceSampling([model],{renderer,preset:'anisotropic'}).changed,0);
+setAppearanceSampling([model],{renderer:{capabilities:{getMaxAnisotropy:()=>4}},preset:'anisotropic'});assert.equal(texture.anisotropy,4);
+setAppearanceSampling([model],{renderer:{capabilities:{getMaxAnisotropy:()=>0}},preset:'anisotropic'});assert.equal(texture.anisotropy,1);
+setAppearanceSampling([model],{renderer,preset:'baseline'});assert.equal(texture.magFilter,THREE.NearestFilter);assert.equal(texture.anisotropy,1);assert.throws(()=>setAppearanceSampling([model],{preset:'invented'}));console.log('Sampler controls preserve maps/mipmaps, clamp capabilities, deduplicate and restore baseline');

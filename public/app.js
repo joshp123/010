@@ -130,6 +130,12 @@ function encodeView(base = location.href) {
   result.searchParams.set('span', Math.round(view.span));
   result.searchParams.set('bearing', Math.round(view.bearing));
   result.searchParams.set('light', lightingMode);
+  // These modes are read once when the scene starts. Keep the active rendition
+  // in copied links and history without propagating unrelated URL parameters.
+  for (const [key, allowed] of Object.entries({ appearance: ['current', 'illustrated-row', 'off'], vegetation: ['native'], tanks: ['current'] })) {
+    const value = url.searchParams.get(key);
+    if (allowed.includes(value)) result.searchParams.set(key, value);
+  }
   return result.href;
 }
 
@@ -440,7 +446,7 @@ byId('share-open').addEventListener('click', async () => {
   if (!scene) return say('The map is still loading.');
   try {
     const { openShareDialog } = await import('./share.js');
-    openShareDialog({ scene, domain: PUBLIC_DOMAIN, locationLabel, lightingMode, link: encodeView(`https://${PUBLIC_DOMAIN}/`) });
+    await openShareDialog({ scene, domain: PUBLIC_DOMAIN, locationLabel, lightingMode, link: encodeView(`https://${PUBLIC_DOMAIN}/`) });
   } catch (error) { console.error(error); say('Could not prepare a screenshot. Please try again.'); }
 });
 
@@ -478,7 +484,7 @@ try {
   }).catch(() => { byId('metro-source-status').textContent = 'Metro plan unavailable · live vehicles still work'; });
   window.addEventListener('pagehide', () => { liveTransit.stop(); });
   window.addEventListener('pageshow', event => { if (event.persisted) liveTransit.start(); });
-  window.__010 = { getView: () => scene.getView(), getDiagnostics: () => scene.getDiagnostics?.(), getTransit: () => latestTransitSnapshot, inspectTrafficSurfaces: options => scene.inspectTrafficSurfaces(options) };
+  window.__010 = { reviewAppearanceSampling: preset => scene.reviewAppearanceSampling(preset), getView: () => scene.getView(), getDiagnostics: () => scene.getDiagnostics?.(), getTransit: () => latestTransitSnapshot, inspectTrafficSurfaces: options => scene.inspectTrafficSurfaces(options) };
 } catch (error) {
   console.error('Rotterdam could not be drawn.', error);
   showSceneStatus({ state: 'error', message: 'The map could not start. Reload to try again.' });

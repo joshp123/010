@@ -101,7 +101,7 @@ export async function openShareDialog(context) {
       notify('Image and caption copied. Paste them into your post.');
     } catch {
       notify('This browser cannot copy an image here. Download the PNG, then copy the caption below.');
-      captionField.focus(); captionField.select();
+      captionField.value = caption; captionField.focus(); captionField.select();
     }
   });
   const nativeShare = button('button', 'Share…', async () => {
@@ -143,13 +143,21 @@ export async function openShareDialog(context) {
       previewWrap.classList.remove('loading');
       copyImage.disabled = false; download.disabled = false; nativeShare.disabled = false;
       const file = new File([blob], `010-${format}.png`, { type: 'image/png' });
-      nativeShare.hidden = !(navigator.share && navigator.canShare?.({ files: [file] }));
+      // Native sharing support is optional; a failed capability check must not
+      // discard an otherwise usable rendered PNG.
+      try { nativeShare.hidden = !(navigator.share && navigator.canShare?.({ files: [file] })); }
+      catch { nativeShare.hidden = true; }
       notify(`${FORMATS[format].width} × ${FORMATS[format].height} PNG · no map controls.`);
     } catch (error) {
       if (serial !== generation || dismissed) return;
       console.error(error);
       previewWrap.hidden = true;
-      notify('The high-resolution image could not be prepared. You can still copy the view link.');
+      const reason = error.message === 'City detail is still loading. Please try exporting again shortly.'
+        ? 'City detail is still loading. Choose a shape to try again shortly.'
+        : error.message === 'The requested image size is not supported by this device.'
+          ? 'This device cannot render that image size. Try Square.'
+          : 'The image could not be prepared. Choose a shape to try again.';
+      notify(`${reason} You can still copy the view link.`);
     }
   }
 
@@ -160,7 +168,7 @@ export async function openShareDialog(context) {
   }
   dialog.append(heading, title, intro, formatControls, previewWrap, actions, captionField, status);
   document.body.append(dialog); dialog.showModal();
-  dialog.addEventListener('close', () => { dismissed = true; if (previewUrl) URL.revokeObjectURL(previewUrl); dialog.remove(); });
+  dialog.addEventListener('close', () => { dismissed = true; if (previewUrl) URL.revokeObjectURL(previewUrl); dialog.remove(); document.getElementById('share-open')?.focus(); });
   dialog.addEventListener('click', event => {
     if (event.target !== dialog) return;
     const box = dialog.getBoundingClientRect();

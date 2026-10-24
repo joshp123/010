@@ -1,0 +1,94 @@
+{
+  "geometrySha256": "cedbeda8b8451f43a974c7a36415f9797daf59586a377ce66bb24b9c48d13271",
+  "assumptions": "Exact orthographic scene direction, span100, source 2048 atlases. Area-weighted projected facade triangles, both orientations because material is DoubleSide. No self/environment occlusion or canvas capture; DPR1/2 are explicit scenarios, not measured devices. Orthographic derivatives independent of target translation and viewport width.",
+  "cases": [
+    {
+      "bearing": 35,
+      "cssHeight": 844,
+      "assumedDpr": 1,
+      "bufferHeight": 844,
+      "triangles": 354,
+      "areaWeightedMedianTexelsPerPixelMajor": 9.098940792157494,
+      "areaWeightedMedianTexelsPerPixelMinor": 4.591321042180006,
+      "areaWeightedMedianAnisotropy": 1.924542074268682,
+      "areaWeightedP90Anisotropy": 2.1183209903483418
+    },
+    {
+      "bearing": 35,
+      "cssHeight": 844,
+      "assumedDpr": 2,
+      "bufferHeight": 1688,
+      "triangles": 354,
+      "areaWeightedMedianTexelsPerPixelMajor": 4.549470396078747,
+      "areaWeightedMedianTexelsPerPixelMinor": 2.295660521090003,
+      "areaWeightedMedianAnisotropy": 1.924542074268682,
+      "areaWeightedP90Anisotropy": 2.1183209903483418
+    },
+    {
+      "bearing": 35,
+      "cssHeight": 720,
+      "assumedDpr": 1,
+      "bufferHeight": 720,
+      "triangles": 354,
+      "areaWeightedMedianTexelsPerPixelMajor": 10.665980595251282,
+      "areaWeightedMedianTexelsPerPixelMinor": 5.3820485549998915,
+      "areaWeightedMedianAnisotropy": 1.9245420742686832,
+      "areaWeightedP90Anisotropy": 2.1183209903483413
+    },
+    {
+      "bearing": 35,
+      "cssHeight": 720,
+      "assumedDpr": 2,
+      "bufferHeight": 1440,
+      "triangles": 354,
+      "areaWeightedMedianTexelsPerPixelMajor": 5.332990297625641,
+      "areaWeightedMedianTexelsPerPixelMinor": 2.6910242774999458,
+      "areaWeightedMedianAnisotropy": 1.9245420742686832,
+      "areaWeightedP90Anisotropy": 2.1183209903483413
+    },
+    {
+      "bearing": 125,
+      "cssHeight": 844,
+      "assumedDpr": 1,
+      "bufferHeight": 844,
+      "triangles": 354,
+      "areaWeightedMedianTexelsPerPixelMajor": 7.863935986324953,
+      "areaWeightedMedianTexelsPerPixelMinor": 4.514577680515067,
+      "areaWeightedMedianAnisotropy": 1.7988310910032974,
+      "areaWeightedP90Anisotropy": 2.1973041218345792
+    },
+    {
+      "bearing": 125,
+      "cssHeight": 844,
+      "assumedDpr": 2,
+      "bufferHeight": 1688,
+      "triangles": 354,
+      "areaWeightedMedianTexelsPerPixelMajor": 3.9319679931624765,
+      "areaWeightedMedianTexelsPerPixelMinor": 2.2572888402575333,
+      "areaWeightedMedianAnisotropy": 1.7988310910032974,
+      "areaWeightedP90Anisotropy": 2.1973041218345792
+    },
+    {
+      "bearing": 125,
+      "cssHeight": 720,
+      "assumedDpr": 1,
+      "bufferHeight": 720,
+      "triangles": 354,
+      "areaWeightedMedianTexelsPerPixelMajor": 9.218280517303143,
+      "areaWeightedMedianTexelsPerPixelMinor": 5.292088281048217,
+      "areaWeightedMedianAnisotropy": 1.79883109100329,
+      "areaWeightedP90Anisotropy": 2.19730412183458
+    },
+    {
+      "bearing": 125,
+      "cssHeight": 720,
+      "assumedDpr": 2,
+      "bufferHeight": 1440,
+      "triangles": 354,
+      "areaWeightedMedianTexelsPerPixelMajor": 4.609140258651571,
+      "areaWeightedMedianTexelsPerPixelMinor": 2.6460441405241086,
+      "areaWeightedMedianAnisotropy": 1.79883109100329,
+      "areaWeightedP90Anisotropy": 2.19730412183458
+    }
+  ]
+}

@@ -110,7 +110,7 @@ export function createBuildingAppearanceReconciliation(batches, { tanks = false 
 
 // The offline atlas is the replaceable interpretation. Keep its measured UVs,
 // roof/facade distinctions and colours; no generic window grid or random paint.
-export function prepareAppearanceModel(model, { applyLighting, applyCutaway }) {
+export function prepareAppearanceModel(model, { applyLighting, applyCutaway, night }) {
   const seen = new Set();
   model.traverse(mesh => {
     if (!mesh.isMesh) return;
@@ -136,6 +136,14 @@ export function prepareAppearanceModel(model, { applyLighting, applyCutaway }) {
       const compile = material.onBeforeCompile;
       material.onBeforeCompile = function(shader, renderer) {
         compile.call(this, shader, renderer);
+        // Only gate the glTF source emission. Fixture lighting appends its
+        // contribution after emissivemap_fragment, so it is not gated twice.
+        if (night && material.emissive) {
+          shader.uniforms.appearanceSourceNight = night;
+          shader.fragmentShader = 'uniform float appearanceSourceNight;\n' + shader.fragmentShader;
+          shader.fragmentShader = shader.fragmentShader.replace('#include <emissivemap_fragment>',
+            'totalEmissiveRadiance *= clamp(appearanceSourceNight, 0.0, 1.0);\n#include <emissivemap_fragment>');
+        }
         shader.vertexShader = 'varying vec3 cityWorldPosition;\n' + shader.vertexShader;
         shader.fragmentShader = 'varying vec3 cityWorldPosition;\n' + shader.fragmentShader;
         shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
@@ -145,7 +153,7 @@ export function prepareAppearanceModel(model, { applyLighting, applyCutaway }) {
           #endif
           cityWorldPosition = (modelMatrix * appearanceVertex).xyz;`);
       };
-      material.customProgramCacheKey = () => '010-source-appearance-world-v1';
+      material.customProgramCacheKey = () => `010-source-appearance-world-v2-source-night-${Boolean(night && material.emissive)}`;
       applyLighting(material); applyCutaway(material);
       material.needsUpdate = true;
     }

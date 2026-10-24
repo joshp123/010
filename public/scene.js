@@ -16,6 +16,7 @@ import { createTreeBatches } from './tree-batches.js';
 import { createVegetationStyle } from './vegetation-style.js';
 import { applyPublicSpaceMaterial, createPublicSpaceStyle } from './public-space-style.js';
 import { applyMiniatureLighting } from './miniature-lighting.js';
+import { setAppearanceSampling } from './appearance-sampling.js';
 import { createBuildingAppearanceReconciliation, createTankAppearanceReconciliation, prepareAppearanceModel, appearanceTextureDiagnostics } from './building-appearance.js';
 import { TilesRenderer } from '3d-tiles-renderer';
 import { LRUCache, unifiedPriorityCallback, FAILED, LOADED } from './vendor/3d-tiles-renderer/build/index.core.js';
@@ -218,6 +219,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   const buildingBatches = createBuildingBatches();
   const buildingAppearance = createBuildingAppearanceReconciliation(buildingBatches);
   const tankAppearance = createTankAppearanceReconciliation();
+  let appearanceSamplingPreset = 'baseline';
   const appearanceOption = new URLSearchParams(location.search).get('appearance');
   const appearanceEnabled = appearanceOption !== 'off';
   const appearanceEdition = ['current', 'illustrated-row'].includes(appearanceOption) ? appearanceOption : 'legacy';
@@ -358,9 +360,11 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   function colorModel(model, kind) {
     if (kind === 'appearanceBuildings' || kind === 'appearanceTanks') {
       prepareAppearanceModel(model, {
+        night: uniforms.night,
         applyLighting: material => fixtureSurfaceLighting.apply(material),
         applyCutaway: material => applyMetroCutaway(material, cutawayUniforms),
       });
+      setAppearanceSampling([model], { renderer, preset: appearanceSamplingPreset });
       bindCutawayShadows(model);
       return;
     }
@@ -846,7 +850,18 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     }, null, false);
     return counts;
   }
+  function reviewAppearanceSampling(preset) {
+    const models = [];
+    for (const layer of tilesets.filter(layer => ['appearanceBuildings', 'appearanceTanks'].includes(layer.kind))) {
+      layer.traverse(tile => { if (tile.engineData?.scene) models.push(tile.engineData.scene); }, null, false);
+    }
+    const result = setAppearanceSampling(models, { renderer, preset });
+    appearanceSamplingPreset = preset;
+    requestRender();
+    return { ...result, view: { ...view }, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cssSize: [canvas.clientWidth, canvas.clientHeight] };
+  }
   return {
+    reviewAppearanceSampling,
     trafficReady: () => trafficReady, cyclistsReady: () => cyclistsReady,
     inspectTrafficSurfaces: (options = {}) => inspectTrafficSurfaces({ samples: [...traffic.sampleVehicles(options), ...cyclists.sampleVehicles(options)], tilesets, camera, width: canvas.clientWidth, height: canvas.clientHeight }),
     updateTransit, getTransitReport: id => transit.getReport(id), setMetroCutaway, metroReady: () => metroReady, getTransitStatistics: () => ({ ...transit.statistics(), metroState }),
