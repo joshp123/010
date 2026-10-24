@@ -59,3 +59,41 @@ const metroBatch=view.group.children.find(child=>child.name==='Observed metro');
 assert.equal(metroBatch.count,1,'underground metro is not drawn through accidental ground holes when cutaway is off');
 view.dispose();
 console.log('Transit classification, viewport counts, report integrity and cutaway visibility tests passed.');
+
+// Regression: long source endpoints sit on a bridge/fallback height while the
+// local section is on ordinary ground. Interpolating source endpoint y used to
+// put the whole section above the city and its separately projected train.
+let localHeight=2;
+const elevatedEndpointView=createTransitView({project:(lat,lon,offset=0,context)=>{
+  const x=lon*1000,z=lat*1000;
+  const ground=context?.preferGround?(Math.abs(x)>80?120:localHeight):60;
+  const point=new THREE.Vector3(x,ground+offset,z);
+  point.userData={surfaceSource:context?.preferGround?'surveyed ground':'surveyed bridge deck',measured:true};
+  return point;
+}});
+elevatedEndpointView.setMetroData({source:'synthetic height regression, never live',segments:[{id:'long-tunnel',form:'tunnel',coordinates:[[-.25,0],[.25,0]]}]});
+camera.position.set(0,102,100);camera.lookAt(0,2,0);camera.updateMatrixWorld();
+elevatedEndpointView.setView({camera,span:160,viewportHeight:844});
+elevatedEndpointView.update({vehicles:[metro]});elevatedEndpointView.setCutaway(true);
+let sectionHeights=elevatedEndpointView.statistics().section;
+assert.deepEqual(sectionHeights.surfaceHeightRange,[2,2]);
+assert.deepEqual(sectionHeights.floorHeightRange,[-10,-10]);
+assert.equal(sectionHeights.report.groundHeight,2,'tunnel report must also bypass bridge deck');
+assert.equal(sectionHeights.report.heightDifference,0);
+assert.equal(sectionHeights.report.bodyBottomHeight,-9.6);
+assert.equal(sectionHeights.geometryBounds.max[1],2,'no section vertex may inherit distant120m endpoint height');
+assert.ok(sectionHeights.groundSamples.every(sample=>sample.measured&&sample.surfaceSource==='surveyed ground'));
+assert.ok(sectionHeights.groundSamples.length>10,'sample the local section every8m, not just remote endpoints');
+localHeight=5;elevatedEndpointView.update({vehicles:[metro]});
+sectionHeights=elevatedEndpointView.statistics().section;
+assert.deepEqual(sectionHeights.surfaceHeightRange,[5,5]);
+assert.equal(sectionHeights.report.heightDifference,0,'surface refresh moves section and report together');
+const offsetReport={...metro,latitude:.014};
+elevatedEndpointView.update({vehicles:[offsetReport]});
+const offsetStats=elevatedEndpointView.statistics();
+assert.equal(offsetStats.section.widthMetres,14,'uncertain reporting must not widen whole section');
+assert.match(offsetStats.cutawayMessage,/14 m from mapped track/);
+assert.equal(elevatedEndpointView.group.children.find(child=>child.name==='Reported metro position · track mismatch').count,1);
+assert.equal(elevatedEndpointView.group.children.find(child=>child.name==='Observed metro').count,0,'offset report is not a guessed train on tracks');
+elevatedEndpointView.dispose();
+console.log('Local surface resampling, bridge exclusion, elevation diagnostics and offset-report tests passed.');

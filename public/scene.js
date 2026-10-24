@@ -217,13 +217,15 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
         return point;
       }
     }
-    const key = `${latitude}:${longitude}`;
+    const groundOnly = context?.preferGround === true;
+    const key = `${groundOnly ? 'ground' : 'surface'}:${latitude}:${longitude}`;
     let surface = transitSurfaceCache.get(key);
     if (!surface) {
       const point = localPosition(latitude, longitude);
       let measured = null;
       // Reviewed deck surfaces exclude towers/cables; BGT supplies measured ground.
-      for (const kind of ['bridgeSurfaces', 'industrialTerrain', 'ground', 'greenTerrain']) {
+      const surfaceKinds = groundOnly ? ['ground', 'industrialTerrain', 'greenTerrain'] : ['bridgeSurfaces', 'industrialTerrain', 'ground', 'greenTerrain'];
+      for (const kind of surfaceKinds) {
         const layer = tilesets.find(layer => layer.kind === kind);
         if (!layer?.group.visible) continue;
         const height = surfaceQueries.get(kind).heightAt(point.x, point.z, point.y - 80, point.y + 150);
@@ -232,7 +234,9 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       surface = { point, ...(measured || { height: point.y, source: 'graphic surface height' }) };
       transitSurfaceCache.set(key, surface);
     }
-    return new THREE.Vector3(surface.point.x, surface.height + offsetMetres, surface.point.z);
+    const projected = new THREE.Vector3(surface.point.x, surface.height + offsetMetres, surface.point.z);
+    projected.userData = { surfaceSource: surface.source, measured: surface.source !== 'graphic surface height' };
+    return projected;
   }
   const transit = createTransitView({ project: projectTransit, requestRender });
   scene.add(transit.group);

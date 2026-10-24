@@ -6,11 +6,13 @@ const VEHICLE_STYLES = {
   metro: { color: '#d1d7cc', width: 3, height: 3.5, length: 48 },
   train: { color: '#d1af58', width: 3.2, height: 3.8, length: 72 },
   ferry: { color: '#698a9a', width: 5, height: 3.5, length: 20 },
+  'metro-position': { color: '#d19a45', width: 2.2, height: 2.2, length: 2.2 },
   unknown: { color: '#b3b6ac', width: 3, height: 3, length: 9 },
 };
 const TUNNEL_DEPTH = 12;
 const CLASSIFICATION_DISTANCE = 18;
 const CHAMBER_HALF_WIDTH = 7;
+const TUNNEL_GROUND_CONTEXT = { source: 'metro-section', preferGround: true };
 
 function pointOnSegment(point, start, end) {
   const dx = end.x - start.x, dz = end.z - start.z;
@@ -29,6 +31,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
   cutawayGroup.visible = false;
   group.add(cutawayGroup);
   const box = new THREE.BoxGeometry(1, 1, 1);
+  const reportMarker = new THREE.OctahedronGeometry(.65);
   const bodyMaterial = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.9, metalness: 0, flatShading: true });
   const roofMaterial = new THREE.MeshStandardMaterial({ color: '#e3e2ce', roughness: 0.95, metalness: 0 });
   const floorMaterial = new THREE.MeshStandardMaterial({ color: '#293333', roughness: 1, side: THREE.DoubleSide });
@@ -69,7 +72,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
   let snapshot = { vehicles: [] }, records = [], railSegments = [], cutaway = false, cutawayMask = null;
   let span = 1700, viewportHeight = 900, camera = null;
   const maskViewDirection = new THREE.Vector3();
-  let physicalData = null, sectionAnchor = null, sectionSegments = [];
+  let physicalData = null, sectionAnchor = null, sectionSegments = [], sectionDiagnostics = null;
   let tunnelSegments = [], maskRebuilds = 0, maskMilliseconds = 0, maskMetresPerPixel = Infinity;
 
   function batchFor(mode, count) {
@@ -77,9 +80,9 @@ export function createTransitView({ project, localPosition, requestRender = () =
     if (!batch || batch.capacity < count) {
       if (batch) { group.remove(batch.body, batch.roof); batch.body.dispose(); batch.roof.dispose(); }
       const capacity = Math.max(16, count);
-      const body = new THREE.InstancedMesh(box, mode === 'metro' ? metroBodyMaterial : bodyMaterial, capacity);
+      const body = new THREE.InstancedMesh(mode === 'metro-position' ? reportMarker : box, mode === 'metro' ? metroBodyMaterial : bodyMaterial, capacity);
       const roof = new THREE.InstancedMesh(box, mode === 'metro' ? metroRoofMaterial : roofMaterial, capacity);
-      body.name = `Observed ${mode}`; roof.name = `${mode} roofs`;
+      body.name = mode === 'metro-position' ? 'Reported metro position · track mismatch' : `Observed ${mode}`; roof.name = `${mode} roofs`;
       body.instanceMatrix.setUsage(THREE.DynamicDrawUsage); roof.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
       body.castShadow = true; body.receiveShadow = true;
       group.add(body, roof);
@@ -117,20 +120,22 @@ export function createTransitView({ project, localPosition, requestRender = () =
       records = [];
       for (const report of snapshot.vehicles) {
         const mode = VEHICLE_STYLES[report.mode] ? report.mode : 'unknown';
-        const ground = place(report.latitude, report.longitude, 0);
+        let ground = place(report.latitude, report.longitude, 0);
         const rail = mode === 'metro' ? classify(ground) : null;
         const underground = rail?.form === 'tunnel';
+        if (underground) ground = place(report.latitude, report.longitude, 0, TUNNEL_GROUND_CONTEXT);
         const routeHeading = Number.isFinite(report.bearing) ? Math.PI - report.bearing * Math.PI / 180 : rail?.heading ?? routeAxis(report);
         const orientation = Number.isFinite(report.bearing) ? 'reported-bearing' : rail ? 'source-track-axis' : routeHeading !== null ? 'source-route-axis' : 'camera-facing-symbol';
-        const record = { report, ground, rail, underground, mode, routeHeading, orientation };
+        const record = { report, ground, rail, underground, mode, routeHeading, orientation, uncertainTrackPosition: underground && rail.distance > CHAMBER_HALF_WIDTH - VEHICLE_STYLES.metro.width / 2 };
         records.push(record);
       }
     }
     const modes = new Map();
     for (const record of records) {
       if (record.underground && (!cutaway || sectionAnchor && Math.hypot(record.ground.x-sectionAnchor.x,record.ground.z-sectionAnchor.z)>95)) continue;
-      if (!modes.has(record.mode)) modes.set(record.mode, []);
-      modes.get(record.mode).push(record);
+      const displayMode = record.uncertainTrackPosition ? 'metro-position' : record.mode;
+      if (!modes.has(displayMode)) modes.set(displayMode, []);
+      modes.get(displayMode).push(record);
     }
     for (const [mode, reports] of modes) {
       const batch = batchFor(mode, reports.length), style = VEHICLE_STYLES[mode];
@@ -138,8 +143,8 @@ export function createTransitView({ project, localPosition, requestRender = () =
       for (let index = 0; index < reports.length; index++) {
         const record = reports[index], report = record.report;
         const scale = record.underground ? 1 : THREE.MathUtils.clamp(4 * span / viewportHeight / style.length, 1, 8);
-        const verticalOffset = record.underground ? -TUNNEL_DEPTH : 0;
-        const base = place(report.latitude, report.longitude, verticalOffset);
+        const verticalOffset = record.underground && mode !== 'metro-position' ? -TUNNEL_DEPTH : 0;
+        const base = record.underground ? record.ground.clone().add(new THREE.Vector3(0, verticalOffset, 0)) : place(report.latitude, report.longitude, verticalOffset);
         transform.position.copy(base); transform.position.y += style.height * scale / 2 + 0.4;
         // Compass bearings are clockwise from north; local +Z points south.
         transform.rotation.set(0, record.routeHeading ?? (camera ? Math.atan2(camera.position.x - base.x, camera.position.z - base.z) : 0), 0);
@@ -153,7 +158,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
         transform.updateMatrix(); batch.roof.setMatrixAt(index, transform.matrix);
         batch.roof.setColorAt(index, new THREE.Color(report.freshness === 'fresh' && report.sourceConnected ? '#ffffff' : '#929b99'));
       }
-      batch.body.count = batch.roof.count = reports.length;
+      batch.body.count = reports.length; batch.roof.count = mode === 'metro-position' ? 0 : reports.length;
       batch.body.instanceMatrix.needsUpdate = batch.roof.instanceMatrix.needsUpdate = true;
       if (batch.body.instanceColor) batch.body.instanceColor.needsUpdate = true;
       if (batch.roof.instanceColor) batch.roof.instanceColor.needsUpdate = true;
@@ -168,7 +173,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     railSegments = [];
     for (const segment of physicalData?.segments || []) {
       const points = segment.coordinates.map(([longitude, latitude]) => place(latitude, longitude, 0));
-      for (let index = 1; index < points.length; index++) railSegments.push({ ...segment, coordinates: undefined, start: points[index - 1], end: points[index] });
+      for (let index = 1; index < points.length; index++) railSegments.push({ ...segment, coordinates: undefined, start: points[index - 1], end: points[index], startGeo: segment.coordinates[index - 1], endGeo: segment.coordinates[index] });
     }
     tunnelSegments = railSegments.filter(segment => segment.form === 'tunnel');
   }
@@ -203,7 +208,19 @@ export function createTransitView({ project, localPosition, requestRender = () =
     const from = Math.max(0, (-b - Math.sqrt(discriminant)) / (2 * a));
     const to = Math.min(1, (-b + Math.sqrt(discriminant)) / (2 * a));
     if (to <= from) return null;
-    return { ...segment, start: segment.start.clone().lerp(segment.end, from), end: segment.start.clone().lerp(segment.end, to), capStart: from > .001, capEnd: to < .999 };
+    const distance = Math.sqrt(a) * (to - from);
+    const steps = Math.max(1, Math.ceil(distance / 8));
+    const samples = [];
+    for (let index = 0; index <= steps; index++) {
+      const fraction = from + (to - from) * index / steps;
+      const longitude = THREE.MathUtils.lerp(segment.startGeo[0], segment.endGeo[0], fraction);
+      const latitude = THREE.MathUtils.lerp(segment.startGeo[1], segment.endGeo[1], fraction);
+      // Source endpoint heights are not a ground profile. Re-query only the
+      // actual local cut points, retaining their latitude/longitude evidence.
+      const point = place(latitude, longitude, 0, TUNNEL_GROUND_CONTEXT);
+      samples.push({ point, longitude, latitude, surfaceSource: point.userData?.surfaceSource || 'unspecified projection', measured: point.userData?.measured ?? null });
+    }
+    return samples.slice(1).map((sample,index)=>({ ...segment, start:samples[index].point, end:sample.point, startSample:samples[index], endSample:sample, capStart: index===0&&from>.001, capEnd:index===samples.length-2&&to<.999 }));
   }
 
   function drawSection(segments, halfWidth, viewDirection) {
@@ -262,11 +279,23 @@ export function createTransitView({ project, localPosition, requestRender = () =
     const metresPerPixel=span/viewportHeight;
     if(!force&&sectionAnchor&&anchor&&sectionAnchor.distanceToSquared(anchor)<100&&maskViewDirection.distanceToSquared(viewDirection)<.000001&&metresPerPixel>=maskMetresPerPixel*.8&&metresPerPixel<=maskMetresPerPixel*1.25)return;
     sectionAnchor=anchor;
-    sectionSegments=anchor?tunnelSegments.map(segment=>clipToSection(segment,anchor,70)).filter(Boolean):[];
-    // Keep the unmodified reported point inside the illustration even when the
-    // upstream point is offset from the retained corridor. Never snap it.
-    const halfWidth=Math.max(CHAMBER_HALF_WIDTH,(candidates[0]?.rail?.distance||0)+3);
+    sectionSegments=anchor?tunnelSegments.flatMap(segment=>clipToSection(segment,anchor,70)||[]):[];
+    // An offset report is uncertainty, not evidence for a wider tunnel.
+    const halfWidth=CHAMBER_HALF_WIDTH;
     drawSection(sectionSegments,halfWidth,viewDirection);
+    const samples=sectionSegments.flatMap(segment=>[segment.startSample,segment.endSample]);
+    const heights=samples.map(sample=>sample.point.y);
+    const nearestAtReport=candidates[0]&&sectionSegments.map(segment=>({segment,...pointOnSegment(candidates[0].ground,segment.start,segment.end)})).sort((a,b)=>a.distance-b.distance)[0];
+    const atReport=nearestAtReport?THREE.MathUtils.lerp(nearestAtReport.segment.start.y,nearestAtReport.segment.end.y,nearestAtReport.fraction):null;
+    const geometryBounds=new THREE.Box3().setFromObject(cutawayGroup);
+    sectionDiagnostics={
+      surfaceHeightRange:heights.length?[Math.min(...heights),Math.max(...heights)]:null,
+      floorHeightRange:heights.length?[Math.min(...heights)-TUNNEL_DEPTH,Math.max(...heights)-TUNNEL_DEPTH]:null,
+      geometryBounds:geometryBounds.isEmpty()?null:{min:geometryBounds.min.toArray(),max:geometryBounds.max.toArray()},
+      widthMetres:halfWidth*2,
+      groundSamples:samples.map(sample=>({latitude:sample.latitude,longitude:sample.longitude,height:sample.point.y,surfaceSource:sample.surfaceSource,measured:sample.measured})),
+      report:candidates[0]?{id:candidates[0].report.id,latitude:candidates[0].report.latitude,longitude:candidates[0].report.longitude,groundHeight:candidates[0].ground.y,surfaceSource:candidates[0].ground.userData?.surfaceSource||'unspecified projection',measured:candidates[0].ground.userData?.measured??null,nearestSectionHeight:atReport,heightDifference:atReport===null?null:candidates[0].ground.y-atReport,sourceAxisDistanceMetres:candidates[0].rail.distance,renderedAs:candidates[0].uncertainTrackPosition?'position marker':'illustrated train',bodyBottomHeight:candidates[0].uncertainTrackPosition?null:candidates[0].ground.y-TUNNEL_DEPTH+.4,bodyTopHeight:candidates[0].uncertainTrackPosition?null:candidates[0].ground.y-TUNNEL_DEPTH+.4+VEHICLE_STYLES.metro.height}:null,
+    };
     const projection=cutawayMask.projection.set(viewDirection.x/Math.min(-.1,viewDirection.y),viewDirection.z/Math.min(-.1,viewDirection.y));
     const projectToOpening=point=>new THREE.Vector3(point.x-point.y*projection.x,0,point.z-point.y*projection.y);
     const bounds=new THREE.Box3();
@@ -324,7 +353,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     if (!hit) return null;
     const batch = [...batches.values()].find(batch => batch.body === hit.object || batch.roof === hit.object);
     const record = batch.records[hit.instanceId];
-    return { ...record.report, presentation: { physicalForm: record.rail?.form || 'unclassified', sourceSegmentId: record.rail?.id || null, illustrativeDepthMetres: record.underground ? TUNNEL_DEPTH : null, orientation: record.orientation, dimensions: 'illustrative' } };
+    return { ...record.report, presentation: { physicalForm: record.rail?.form || 'unclassified', sourceSegmentId: record.rail?.id || null, illustrativeDepthMetres: record.underground ? TUNNEL_DEPTH : null, orientation: record.orientation, dimensions: 'illustrative', sourceAxisDistanceMetres: record.rail?.distance ?? null, positionUncertainty: record.uncertainTrackPosition ? 'Reported point is outside the illustrated track chamber; position marker, not track-snapped train' : null } };
   }
 
   function metroVisibility() {
@@ -342,11 +371,13 @@ export function createTransitView({ project, localPosition, requestRender = () =
       visibleFreshMetroObservations: visible.filter(fresh).length,
       visibleFreshUndergroundObservations: freshCount,
       metroFocus: focus ? {id:focus.id,latitude:focus.latitude,longitude:focus.longitude,label:focus.label,observedAt:focus.observedAt,freshness:focus.freshness,sourceConnected:focus.sourceConnected} : null,
-      cutawayMessage: !cutaway ? null : freshCount
+      cutawayMessage: !cutaway ? null : underground.some(record=>record.uncertainTrackPosition)
+        ? `${fresh(underground.find(record=>record.uncertainTrackPosition)) ? 'Fresh report' : 'Older/unverified report'} · ${Math.round(underground.find(record=>record.uncertainTrackPosition).rail.distance)} m from mapped track`
+        : freshCount
         ? `${freshCount} fresh metro ${freshCount===1?'report':'reports'} · illustrated section`
         : underground.length ? `${underground.length} ${underground.every(record=>record.report.freshness==='stale')?'older':'unverified'} metro ${underground.length===1?'report':'reports'} · not live`
         : 'No metro report in this section',
-      section: sectionAnchor ? {radiusMetres:70,segmentCount:sectionSegments.length,illustrativeDepthMetres:TUNNEL_DEPTH} : null,
+      section: sectionAnchor ? {radiusMetres:70,segmentCount:sectionSegments.length,illustrativeDepthMetres:TUNNEL_DEPTH,...sectionDiagnostics} : null,
     };
   }
 
@@ -361,7 +392,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     dispose() {
       for (const batch of batches.values()) { batch.body.dispose(); batch.roof.dispose(); }
       for (const child of cutawayGroup.children) child.geometry.dispose();
-      cutawayMask?.texture.dispose(); box.dispose(); bodyMaterial.dispose(); roofMaterial.dispose(); metroBodyMaterial.dispose(); metroRoofMaterial.dispose(); tunnelMaterial.dispose(); floorMaterial.dispose(); earthMaterial.dispose(); trackMaterials.forEach(material => material.dispose());
+      cutawayMask?.texture.dispose(); box.dispose(); reportMarker.dispose(); bodyMaterial.dispose(); roofMaterial.dispose(); metroBodyMaterial.dispose(); metroRoofMaterial.dispose(); tunnelMaterial.dispose(); floorMaterial.dispose(); earthMaterial.dispose(); trackMaterials.forEach(material => material.dispose());
       group.removeFromParent(); group.clear(); batches.clear();
     },
   };

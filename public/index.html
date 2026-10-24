@@ -60,6 +60,7 @@
     <div id="transit-details" hidden>
     <p id="transit-health" role="status">Waiting for reported positions.</p>
     <label class="cutaway-control"><input type="checkbox" id="metro-cutaway" disabled><span>Metro cutaway <small>depth illustrated</small></span></label>
+    <p id="metro-view-status" role="status" hidden></p>
     <small id="metro-source-status">Loading the tunnel plan…</small>
     <small id="traffic-status">Simulated cars and cyclists · loading mapped routes…</small>
     </div>
@@ -80,8 +81,9 @@
   </aside>
 
   <aside id="metro-map-status" class="metro-map-status panel" aria-label="Metro cutaway status" hidden>
-    <p id="metro-view-status" role="status"></p>
-    <button id="metro-find" hidden>Find reported metro <span aria-hidden="true">↗</span></button>
+    <button id="metro-summary" aria-describedby="metro-view-status"><span id="metro-status-brief"></span></button>
+    <button id="metro-find" hidden>Find</button>
+    <button id="metro-close" aria-label="Close metro cutaway" title="Close metro cutaway">×</button>
   </aside>
 
   <div class="scene-notice" id="scene-notice" role="status"><span class="loading-dot"></span><span id="scene-status">Building a little Rotterdam…</span></div>

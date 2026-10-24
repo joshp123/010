@@ -67,15 +67,25 @@ function showTransit(snapshot) {
 function showMetroViewStatus() {
   const statistics = scene?.getTransitStatistics();
   const message = statistics?.cutawayMessage;
-  byId('metro-map-status').hidden = !message;
+  byId('metro-map-status').hidden = !message || !byId('view-panel').hidden;
+  byId('metro-view-status').hidden = !message;
   document.body.dataset.metroCutaway = message ? 'true' : 'false';
   byId('metro-view-status').textContent = message ? `Metro cutaway · ${message}` : '';
+  // Keep the map edge short; the full source-status wording remains in View.
+  const offTrack = message?.includes('from mapped track');
+  const state = offTrack ? (message.startsWith('Fresh') ? 'fresh, off track' : 'unverified, off track')
+    : statistics?.visibleFreshUndergroundObservations ? `${statistics.visibleFreshUndergroundObservations} fresh`
+    : statistics?.visibleUndergroundObservations ? (message?.includes('older') ? 'older report' : 'unverified report')
+    : 'no report here';
+  byId('metro-status-brief').textContent = `Metro · ${state}`;
+  byId('metro-summary').setAttribute('aria-label', `${message || 'Metro cutaway'}. Open metro details.`);
+  byId('metro-summary').title = message || '';
   const target = statistics?.metroFocus;
   const targetFresh = target?.freshness === 'fresh' && target.sourceConnected;
   const canFind = target && Number.isFinite(target.latitude) && Number.isFinite(target.longitude)
     && (!statistics.visibleUndergroundObservations || targetFresh && !statistics.visibleFreshUndergroundObservations);
   byId('metro-find').hidden = !message || !canFind;
-  byId('metro-find').textContent = targetFresh ? 'Find reported metro ↗' : 'Find older metro report ↗';
+  byId('metro-find').setAttribute('aria-label', targetFresh ? 'Find reported metro' : 'Find older metro report, not live');
   byId('metro-find').title = target ? `${target.label || 'Metro'} · observed ${observationTime(target.observedAt)}` : '';
 }
 
@@ -299,6 +309,7 @@ function setViewPanel(open, restoreFocus = false) {
   byId('view-toggle').setAttribute('aria-expanded', String(open));
   if (open) closeSearch();
   if (restoreFocus) byId('view-toggle').focus();
+  showMetroViewStatus();
 }
 byId('view-toggle').addEventListener('click', () => setViewPanel(byId('view-panel').hidden));
 byId('view-close').addEventListener('click', () => setViewPanel(false, true));
@@ -313,6 +324,17 @@ byId('transit-toggle').addEventListener('click', () => {
 });
 byId('vehicle-close').addEventListener('click', () => showVehicle(null));
 byId('metro-cutaway').addEventListener('change', event => { scene?.setMetroCutaway(event.target.checked); showMetroViewStatus(); });
+byId('metro-summary').addEventListener('click', () => {
+  setViewPanel(true);
+  byId('transit-details').hidden = false;
+  byId('transit-toggle').setAttribute('aria-expanded', 'true');
+  byId('metro-cutaway').focus();
+});
+byId('metro-close').addEventListener('click', () => {
+  byId('metro-cutaway').checked = false;
+  scene?.setMetroCutaway(false);
+  showMetroViewStatus();
+});
 byId('metro-find').addEventListener('click', () => {
   const target = scene?.getTransitStatistics().metroFocus;
   if (!target || !Number.isFinite(target.latitude) || !Number.isFinite(target.longitude)) return say('That metro report is no longer available.');
