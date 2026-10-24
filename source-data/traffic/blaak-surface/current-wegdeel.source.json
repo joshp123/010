@@ -1,0 +1,7 @@
+{
+  "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/wegdeel/items?bbox=4.4836%2C51.9189%2C4.4845%2C51.9195&datetime=2026-10-24T00%3A00%3A00Z&limit=1000&f=json",
+  "sha256": "d6a53be817ec565ac978d8229e580ff775c9086b191ed4c4a44d7981b11befb2",
+  "acquiredAt": "2026-10-24T09:16:26.567810+00:00",
+  "license": "CC0-1.0",
+  "attribution": "Kadaster / PDOK BGT"
+}

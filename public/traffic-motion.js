@@ -27,6 +27,34 @@ export function speedForRoadClass(roadClass) {
   return roadClass === 'ERF' ? 3.5 : 7;
 }
 
+// Frozen, source-reviewed motor corridor interpretation. Validate the complete
+// group before changing anything: a lone shifted edge would disconnect a node.
+export function applyReviewedRoadGeometry(network,data) {
+  if(data.version!==1||data.mode!=='motorcar'||!Array.isArray(data.patches))throw new Error('Unsupported road geometry review');
+  const replacements=new Map();
+  for(const patch of data.patches) {
+    const matches=network.roads.filter(road=>road.id===patch.roadId);
+    if(matches.length!==1||replacements.has(patch.roadId))throw new Error('Ambiguous road geometry match');
+    const road=matches[0];
+    // One 1e-7-degree unit tolerates the existing source/protobuf rounding.
+    if(road.start!==patch.start||road.end!==patch.end||road.coordinates.length!==patch.expectedCoordinates.length||
+      road.coordinates.some((point,i)=>point.some((v,j)=>Math.abs(v-patch.expectedCoordinates[i][j])>1.01e-7)))throw new Error('Road geometry source changed');
+    if(!Array.isArray(patch.coordinates)||patch.coordinates.length<2||patch.coordinates.some(p=>p.length!==2||p.some(v=>!Number.isFinite(v))))throw new Error('Invalid reviewed coordinates');
+    replacements.set(road.id,{...road,originalCoordinates:road.coordinates,coordinates:patch.coordinates,geometryEvidence:data.sourceSurface});
+  }
+  let endpoint=null;
+  for(const road of network.roads.filter(road=>road.start===data.sharedJunction||road.end===data.sharedJunction)) {
+    const replacement=replacements.get(road.id);
+    if(!replacement)throw new Error('Incomplete shared junction correction');
+    const point=road.start===data.sharedJunction?replacement.coordinates[0]:replacement.coordinates.at(-1);
+    if(endpoint&&point.some((v,i)=>Math.abs(v-endpoint[i])>1e-10))throw new Error('Inconsistent reviewed junction');
+    endpoint=point;
+  }
+  if(!endpoint)throw new Error('Missing reviewed junction');
+  network.roads=network.roads.map(road=>replacements.get(road.id)||road);
+  return replacements.size;
+}
+
 // Distance to a same-direction leader along this vehicle's already chosen trip,
 // including short source junction links. Seeing only the current road lets a
 // queued vehicle disappear from following logic just as the follower enters it.

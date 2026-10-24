@@ -1,0 +1,132 @@
+{
+  "currentSource": {
+    "bronhouder": "G0599",
+    "creation_date": "2015-03-25T23:00:00Z",
+    "eind_registratie": null,
+    "functie": "rijbaan lokale weg",
+    "functie_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#FunctieWeg",
+    "fysiek_voorkomen": "open verharding",
+    "fysiek_voorkomen_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#FysiekVoorkomenWeg",
+    "in_onderzoek": null,
+    "in_onderzoek_leeg": "geenWaarde",
+    "kruinlijn_leeg": "waardeOnbekend",
+    "lokaal_id": "G0599.170ade244cdb72d73e050210a7e24429",
+    "lv_publicatiedatum": "2026-07-09T06:19:33Z",
+    "op_talud": null,
+    "op_talud_leeg": "waardeOnbekend",
+    "plus_functie": null,
+    "plus_functie_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#VoidReasonValue",
+    "plus_functie_leeg": "waardeOnbekend",
+    "plus_fysiek_voorkomen": null,
+    "plus_fysiek_voorkomen_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#VoidReasonValue",
+    "plus_fysiek_voorkomen_leeg": "waardeOnbekend",
+    "plus_status": null,
+    "plus_status_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#VoidReasonValue",
+    "plus_status_leeg": "geenWaarde",
+    "relatieve_hoogteligging": 0,
+    "status": "bestaand",
+    "status_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#Status",
+    "status_leeg": null,
+    "termination_date": null,
+    "termination_date_leeg": "geenWaarde",
+    "tijdstip_registratie": "2026-07-09T05:07:24Z",
+    "version": "eeba3820-fb6c-f0d5-aacf-0e08816a18c7"
+  },
+  "currentVsNativeHausdorffMetresInReviewBox": 0.2716329948479519,
+  "samplesChecked": 340,
+  "maximumFootprintOutsideAreaSquareMetres": 0.0,
+  "worst": [
+    {
+      "roadId": 185274103,
+      "direction": 1,
+      "distance": 0.0,
+      "outsideArea": 0.0
+    },
+    {
+      "roadId": 185274103,
+      "direction": 1,
+      "distance": 0.25,
+      "outsideArea": 0.0
+    },
+    {
+      "roadId": 185274103,
+      "direction": 1,
+      "distance": 0.5,
+      "outsideArea": 0.0
+    },
+    {
+      "roadId": 185274103,
+      "direction": 1,
+      "distance": 0.75,
+      "outsideArea": 0.0
+    },
+    {
+      "roadId": 185274103,
+      "direction": 1,
+      "distance": 1.0,
+      "outsideArea": 0.0
+    },
+    {
+      "roadId": 185274103,
+      "direction": 1,
+      "distance": 1.25,
+      "outsideArea": 0.0
+    },
+    {
+      "roadId": 185274103,
+      "direction": 1,
+      "distance": 1.5,
+      "outsideArea": 0.0
+    },
+    {
+      "roadId": 185274103,
+      "direction": 1,
+      "distance": 1.75,
+      "outsideArea": 0.0
+    }
+  ],
+  "turnClearance": [
+    {
+      "from": 185274103,
+      "fromDirection": 1,
+      "to": 185274085,
+      "toDirection": 1,
+      "maximumFootprintOutsideAreaSquareMetres": 0
+    },
+    {
+      "from": 185274103,
+      "fromDirection": 1,
+      "to": 600909887,
+      "toDirection": -1,
+      "maximumFootprintOutsideAreaSquareMetres": 0
+    },
+    {
+      "from": 185274085,
+      "fromDirection": -1,
+      "to": 185274103,
+      "toDirection": -1,
+      "maximumFootprintOutsideAreaSquareMetres": 0
+    },
+    {
+      "from": 185274085,
+      "fromDirection": -1,
+      "to": 600909887,
+      "toDirection": -1,
+      "maximumFootprintOutsideAreaSquareMetres": 0
+    },
+    {
+      "from": 600909887,
+      "fromDirection": 1,
+      "to": 185274103,
+      "toDirection": -1,
+      "maximumFootprintOutsideAreaSquareMetres": 0
+    },
+    {
+      "from": 600909887,
+      "fromDirection": 1,
+      "to": 185274085,
+      "toDirection": 1,
+      "maximumFootprintOutsideAreaSquareMetres": 0
+    }
+  ]
+}

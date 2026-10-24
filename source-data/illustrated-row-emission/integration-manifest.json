@@ -1,0 +1,274 @@
+{
+  "archiveSha256": "05cc4c4b907e3e5c6f9a60417506b9a7ba222dad6fa2cc6abf74b790d76f23f0",
+  "baseGLBSha256": "cedbeda8b8451f43a974c7a36415f9797daf59586a377ce66bb24b9c48d13271",
+  "outputGLBSha256": "d8e1042525f12fbdb58b00a7b58ddb1d465c41a3547aea208dd1f874eca35009",
+  "geometryBinarySha256": "eaf0892e92c6d4c4b7aa0b208ca6812096c5139c407ba12957c1cd1f39f2fb5a",
+  "sourceMunicipalSha256": "c51f35cc165e106b2d77a00f8614fecd1e22d977f35a0406f2efb8acfacf4425",
+  "sourceBindings": [
+    {
+      "material": 0,
+      "baseColorImage": 0,
+      "emissionImage": 10,
+      "sha256": "3f56f95418a89b3c0ce300e5adfea6b4c8305086a1ced3e4051709b45c1ae925",
+      "outsideGlazingPixels": 0,
+      "crop": [
+        138,
+        1205,
+        183,
+        1230
+      ],
+      "dimensions": [
+        45,
+        25
+      ],
+      "decodedBytesIncludingMips": 6000,
+      "textureTransform": {
+        "offset": [
+          -3.066666666666667,
+          -48.2
+        ],
+        "scale": [
+          45.51111111111111,
+          81.92
+        ]
+      }
+    },
+    {
+      "material": 1,
+      "baseColorImage": 1,
+      "emissionImage": 11,
+      "sha256": "e311e6ecf593c744d89e2d34751cdba0b6d16f46aedef24ce3e3ee669a8ebd79",
+      "outsideGlazingPixels": 0,
+      "crop": [
+        759,
+        203,
+        1336,
+        1942
+      ],
+      "dimensions": [
+        577,
+        1739
+      ],
+      "decodedBytesIncludingMips": 5351483,
+      "textureTransform": {
+        "offset": [
+          -1.315424610051993,
+          -0.11673375503162738
+        ],
+        "scale": [
+          3.5493934142114383,
+          1.1776883266244969
+        ]
+      }
+    },
+    {
+      "material": 2,
+      "baseColorImage": 2,
+      "emissionImage": 12,
+      "sha256": "653cec82e0fcb3a6dbc96882a90ede1f82487542904e244df4bfc5ec04736645",
+      "outsideGlazingPixels": 0,
+      "crop": [
+        1097,
+        450,
+        1400,
+        1783
+      ],
+      "dimensions": [
+        303,
+        1333
+      ],
+      "decodedBytesIncludingMips": 2154128,
+      "textureTransform": {
+        "offset": [
+          -3.6204620462046204,
+          -0.33758439609902474
+        ],
+        "scale": [
+          6.759075907590759,
+          1.536384096024006
+        ]
+      }
+    },
+    {
+      "material": 3,
+      "baseColorImage": 3,
+      "emissionImage": 13,
+      "sha256": "a1c836dbb6933892782b5fdab5470d8bf4bab525e28dbe6f15fbe934ef1483d9",
+      "outsideGlazingPixels": 0,
+      "crop": [
+        680,
+        706,
+        712,
+        764
+      ],
+      "dimensions": [
+        32,
+        58
+      ],
+      "decodedBytesIncludingMips": 9899,
+      "textureTransform": {
+        "offset": [
+          -21.25,
+          -12.172413793103448
+        ],
+        "scale": [
+          64.0,
+          35.310344827586206
+        ]
+      }
+    },
+    {
+      "material": 4,
+      "baseColorImage": 4,
+      "emissionImage": 14,
+      "sha256": "d59cf90b6319b5ba3e1a34db251f2ec16cea9548a32cb8c5b6edf65d1d04c84f",
+      "outsideGlazingPixels": 0,
+      "crop": [
+        409,
+        201,
+        1104,
+        2044
+      ],
+      "dimensions": [
+        695,
+        1843
+      ],
+      "decodedBytesIncludingMips": 6831387,
+      "textureTransform": {
+        "offset": [
+          -0.5884892086330935,
+          -0.1090613130765057
+        ],
+        "scale": [
+          2.9467625899280576,
+          1.111231687466088
+        ]
+      }
+    },
+    {
+      "material": 5,
+      "baseColorImage": 5,
+      "emissionImage": 15,
+      "sha256": "584cb73f85ef95b214b34f186c1c421a8542c128b70108085ccaa24e271c2ad0",
+      "outsideGlazingPixels": 0,
+      "crop": [
+        118,
+        500,
+        1616,
+        1026
+      ],
+      "dimensions": [
+        1498,
+        526
+      ],
+      "decodedBytesIncludingMips": 4202389,
+      "textureTransform": {
+        "offset": [
+          -0.0787716955941255,
+          -0.9505703422053232
+        ],
+        "scale": [
+          1.3671562082777036,
+          3.893536121673004
+        ]
+      }
+    },
+    {
+      "material": 6,
+      "baseColorImage": 6,
+      "emissionImage": 16,
+      "sha256": "55e9f143bcdd476cff5eafc5507ee41f2374f9862fc6e87f2faf15f9a39eb14a",
+      "outsideGlazingPixels": 0,
+      "crop": [
+        162,
+        185,
+        1579,
+        1923
+      ],
+      "dimensions": [
+        1417,
+        1738
+      ],
+      "decodedBytesIncludingMips": 13134645,
+      "textureTransform": {
+        "offset": [
+          -0.11432604093154553,
+          -0.10644418872266974
+        ],
+        "scale": [
+          1.4453069865913903,
+          1.1783659378596087
+        ]
+      }
+    },
+    {
+      "material": 7,
+      "baseColorImage": 7,
+      "empty": true,
+      "outsideGlazingPixels": 0
+    },
+    {
+      "material": 8,
+      "baseColorImage": 8,
+      "emissionImage": 17,
+      "sha256": "594a6fd1559a39f86271e5df3f369fca146fb20c7d3d0bd2446df61337c7d4e9",
+      "outsideGlazingPixels": 0,
+      "crop": [
+        1050,
+        777,
+        1677,
+        977
+      ],
+      "dimensions": [
+        627,
+        200
+      ],
+      "decodedBytesIncludingMips": 668800,
+      "textureTransform": {
+        "offset": [
+          -1.674641148325359,
+          -3.885
+        ],
+        "scale": [
+          3.266347687400319,
+          10.24
+        ]
+      }
+    },
+    {
+      "material": 10,
+      "baseColorImage": 9,
+      "emissionImage": 18,
+      "sha256": "061a3f6859d72c314be9559841779de1b2609dcf81b28eb8f1bc96ade2bfe212",
+      "outsideGlazingPixels": 0,
+      "crop": [
+        291,
+        2010,
+        326,
+        2029
+      ],
+      "dimensions": [
+        35,
+        19
+      ],
+      "decodedBytesIncludingMips": 3547,
+      "textureTransform": {
+        "offset": [
+          -8.314285714285715,
+          -105.78947368421052
+        ],
+        "scale": [
+          58.51428571428571,
+          107.78947368421052
+        ]
+      }
+    }
+  ],
+  "dayControl": "emissiveFactor1 multiplied by shared night uniform0; no scene gate means always emissive",
+  "colorSpaces": {
+    "emission": "sRGB via standard glTF emissiveTexture",
+    "maskAndPhase": "linear data retained as metadata, not loaded as RGB material maps"
+  },
+  "status": "Partial source-observed glazing; illustrative occupancy; runtime visual review required",
+  "sourceArchive": "010-source-glazing-emission.zip"
+}

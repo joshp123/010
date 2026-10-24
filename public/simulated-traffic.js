@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { rightHandOffset, safeStep, routeFollowingGap, speedForRoadClass, createJunctionArbitrator } from './traffic-motion.js';
+import { rightHandOffset, safeStep, routeFollowingGap, speedForRoadClass, createJunctionArbitrator, applyReviewedRoadGeometry } from './traffic-motion.js';
 import { createJourneyPlanner } from './traffic-journeys.js';
 import { createCarGeometries, createBicycleGeometries } from './traffic-models.js';
 
@@ -80,6 +80,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
   const transform = new THREE.Object3D(), color = new THREE.Color(), position = new THREE.Vector3(), tangent = new THREE.Vector3();
   const frustum = new THREE.Frustum(), cameraMatrix = new THREE.Matrix4();
   let restrictionStatus=bicycles?'not-applicable':'not-loaded';
+  let geometryStatus=bicycles?'original-bicycle-network':'not-loaded';
   let sourceNetwork = null, roads = [], planner = null, candidates = [], cars = [];
   const junctionArbitrator=createJunctionArbitrator();
   let span = 1700, viewportHeight = 900, hasView = false, enabled = true, paused = false, lastTime = null, elapsed = 0, sequence = 1, nextVehicleId = 1;
@@ -225,6 +226,11 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
         if(data.version!==1 || data.mode!=='motorcar' || !Array.isArray(data.rules))throw new Error('Unsupported turn restriction format');
         network.turnRestrictions=data.rules;restrictionStatus=`loaded:${data.rules.length}`;
       } catch(error) {restrictionStatus=`unavailable:${error.message}`;}
+      try {
+        const response=await fetch('./data/traffic/road-geometry.json');
+        if(!response.ok)throw new Error(`HTTP ${response.status}`);
+        geometryStatus=`reviewed:${applyReviewedRoadGeometry(network,await response.json())}`;
+      } catch(error) {geometryStatus=`original:${error.message}`;}
     }
     setRoads(network);
     return statistics();
@@ -251,6 +257,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
       samples.push({vehicleId:car.vehicleId,instanceIndex:index,mode:bicycles?'bicycle':'motorcar',roadId:car.road.id,roadClass:car.road.roadClass,direction:car.direction,
         distanceMetres:car.distance,roadLengthMetres:car.road.length,headingRadians:car.heading,speedMetresPerSecond:car.speed,
         sourcePosition:{longitude:a[0]+(b[0]-a[0])*fraction,latitude:a[1]+(b[1]-a[1])*fraction},
+        geometryEvidence:car.road.geometryEvidence||'original NWB',
         sourceCentreline:centre.toArray(),localBasePosition:base.toArray(),worldBasePosition:base.clone().applyMatrix4(group.matrixWorld).toArray(),
         laneOffset:[base.x-centre.x,base.z-centre.z],screenNDC:hasView?base.clone().applyMatrix4(group.matrixWorld).applyMatrix4(cameraMatrix).toArray():null,
         modelScale:Math.hypot(matrix.elements[0],matrix.elements[1],matrix.elements[2]),
@@ -260,7 +267,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     return samples;
   }
 
-  function statistics() { return { simulated: true, sourceRoads: roads.length, visibleRoads: candidates.length, cars: bicycles ? 0 : body.count, cyclists: bicycles ? body.count : 0, vehicles: body.count, maximumVehicles, drawCalls: body.count && group.visible ? (bicycles ? 5 : 3) : 0, paused, enabled, simulationSeconds: elapsed, plannedJourneys, completedJourneys, restrictionStatus, unroutableOrigins: unroutableOrigins.size, network: planner?.diagnostics() || null }; }
+  function statistics() { return { simulated: true, sourceRoads: roads.length, visibleRoads: candidates.length, cars: bicycles ? 0 : body.count, cyclists: bicycles ? body.count : 0, vehicles: body.count, maximumVehicles, drawCalls: body.count && group.visible ? (bicycles ? 5 : 3) : 0, paused, enabled, simulationSeconds: elapsed, plannedJourneys, completedJourneys, restrictionStatus, geometryStatus, unroutableOrigins: unroutableOrigins.size, network: planner?.diagnostics() || null }; }
 
   return {
     group, load, setRoads,

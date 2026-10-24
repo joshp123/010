@@ -1,0 +1,230 @@
+{
+  "compatible_asset": "010-current-row-runtime-candidate.zip [private handoff identifier omitted]; same current source geometry/UVs/material-image indices",
+  "source": "3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268620/55473.b3dm",
+  "source_decoded_sha256": "c51f35cc165e106b2d77a00f8614fecd1e22d977f35a0406f2efb8acfacf4425",
+  "bindings": [
+    {
+      "material_index": 0,
+      "base_color_image_index": 0,
+      "glazing_mask": "masks/glazing-mask-00.png",
+      "phase_and_id_map": "masks/glazing-phase-00.png",
+      "emissive_texture": "masks/emission-00.png",
+      "uv_set": 0,
+      "day_emissive_factor": [
+        0,
+        0,
+        0
+      ],
+      "night_example_emissive_factor": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "material_index": 1,
+      "base_color_image_index": 1,
+      "glazing_mask": "masks/glazing-mask-01.png",
+      "phase_and_id_map": "masks/glazing-phase-01.png",
+      "emissive_texture": "masks/emission-01.png",
+      "uv_set": 0,
+      "day_emissive_factor": [
+        0,
+        0,
+        0
+      ],
+      "night_example_emissive_factor": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "material_index": 2,
+      "base_color_image_index": 2,
+      "glazing_mask": "masks/glazing-mask-02.png",
+      "phase_and_id_map": "masks/glazing-phase-02.png",
+      "emissive_texture": "masks/emission-02.png",
+      "uv_set": 0,
+      "day_emissive_factor": [
+        0,
+        0,
+        0
+      ],
+      "night_example_emissive_factor": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "material_index": 3,
+      "base_color_image_index": 3,
+      "glazing_mask": "masks/glazing-mask-03.png",
+      "phase_and_id_map": "masks/glazing-phase-03.png",
+      "emissive_texture": "masks/emission-03.png",
+      "uv_set": 0,
+      "day_emissive_factor": [
+        0,
+        0,
+        0
+      ],
+      "night_example_emissive_factor": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "material_index": 4,
+      "base_color_image_index": 4,
+      "glazing_mask": "masks/glazing-mask-04.png",
+      "phase_and_id_map": "masks/glazing-phase-04.png",
+      "emissive_texture": "masks/emission-04.png",
+      "uv_set": 0,
+      "day_emissive_factor": [
+        0,
+        0,
+        0
+      ],
+      "night_example_emissive_factor": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "material_index": 5,
+      "base_color_image_index": 5,
+      "glazing_mask": "masks/glazing-mask-05.png",
+      "phase_and_id_map": "masks/glazing-phase-05.png",
+      "emissive_texture": "masks/emission-05.png",
+      "uv_set": 0,
+      "day_emissive_factor": [
+        0,
+        0,
+        0
+      ],
+      "night_example_emissive_factor": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "material_index": 6,
+      "base_color_image_index": 6,
+      "glazing_mask": "masks/glazing-mask-06.png",
+      "phase_and_id_map": "masks/glazing-phase-06.png",
+      "emissive_texture": "masks/emission-06.png",
+      "uv_set": 0,
+      "day_emissive_factor": [
+        0,
+        0,
+        0
+      ],
+      "night_example_emissive_factor": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "material_index": 7,
+      "base_color_image_index": 7,
+      "glazing_mask": "masks/glazing-mask-07.png",
+      "phase_and_id_map": "masks/glazing-phase-07.png",
+      "emissive_texture": "masks/emission-07.png",
+      "uv_set": 0,
+      "day_emissive_factor": [
+        0,
+        0,
+        0
+      ],
+      "night_example_emissive_factor": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "material_index": 8,
+      "base_color_image_index": 8,
+      "glazing_mask": "masks/glazing-mask-08.png",
+      "phase_and_id_map": "masks/glazing-phase-08.png",
+      "emissive_texture": "masks/emission-08.png",
+      "uv_set": 0,
+      "day_emissive_factor": [
+        0,
+        0,
+        0
+      ],
+      "night_example_emissive_factor": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "material_index": 10,
+      "base_color_image_index": 9,
+      "glazing_mask": "masks/glazing-mask-09.png",
+      "phase_and_id_map": "masks/glazing-phase-09.png",
+      "emissive_texture": "masks/emission-09.png",
+      "uv_set": 0,
+      "day_emissive_factor": [
+        0,
+        0,
+        0
+      ],
+      "night_example_emissive_factor": [
+        1,
+        1,
+        1
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "image": 0,
+      "emission_pixels_outside_glazing": 0
+    },
+    {
+      "image": 1,
+      "emission_pixels_outside_glazing": 0
+    },
+    {
+      "image": 2,
+      "emission_pixels_outside_glazing": 0
+    },
+    {
+      "image": 3,
+      "emission_pixels_outside_glazing": 0
+    },
+    {
+      "image": 4,
+      "emission_pixels_outside_glazing": 0
+    },
+    {
+      "image": 5,
+      "emission_pixels_outside_glazing": 0
+    },
+    {
+      "image": 6,
+      "emission_pixels_outside_glazing": 0
+    },
+    {
+      "image": 7,
+      "emission_pixels_outside_glazing": 0
+    },
+    {
+      "image": 8,
+      "emission_pixels_outside_glazing": 0
+    },
+    {
+      "image": 9,
+      "emission_pixels_outside_glazing": 0
+    }
+  ],
+  "note": "Do not derive lights from base-color luminance or generic window grids. Bind emissive maps on UV0; emission factor zero by day. Phase maps use R=valid glazing, G=stable illustrative occupancy phase, B=region ID. Gate any dynamic phase shader by R. Use clamp wrapping consistent with original base textures. Mask/phase maps are data, not sRGB color; emissive RGB maps are color."
+}

@@ -136,6 +136,15 @@ export function prepareAppearanceModel(model, { applyLighting, applyCutaway, nig
       const compile = material.onBeforeCompile;
       material.onBeforeCompile = function(shader, renderer) {
         compile.call(this, shader, renderer);
+        // Cropped emission has black borders; clamp wrapping alone could
+        // repeat its mip-edge texels outside the observed source rectangle.
+        if (material.userData.emissionCropGuard && material.emissiveMap) {
+          shader.fragmentShader = shader.fragmentShader.replace('#include <emissivemap_fragment>',
+            `#ifdef USE_EMISSIVEMAP
+             if (any(lessThan(vEmissiveMapUv, vec2(0.0))) || any(greaterThan(vEmissiveMapUv, vec2(1.0)))) totalEmissiveRadiance = vec3(0.0);
+             #endif
+             #include <emissivemap_fragment>`);
+        }
         // Only gate the glTF source emission. Fixture lighting appends its
         // contribution after emissivemap_fragment, so it is not gated twice.
         if (night && material.emissive) {
@@ -153,7 +162,7 @@ export function prepareAppearanceModel(model, { applyLighting, applyCutaway, nig
           #endif
           cityWorldPosition = (modelMatrix * appearanceVertex).xyz;`);
       };
-      material.customProgramCacheKey = () => `010-source-appearance-world-v2-source-night-${Boolean(night && material.emissive)}`;
+      material.customProgramCacheKey = () => `010-source-appearance-world-v2-source-night-${Boolean(night && material.emissive)}-crop-${Boolean(material.userData.emissionCropGuard && material.emissiveMap)}`;
       applyLighting(material); applyCutaway(material);
       material.needsUpdate = true;
     }

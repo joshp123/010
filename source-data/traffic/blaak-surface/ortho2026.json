@@ -1,0 +1,33 @@
+{
+  "url": "https://service.pdok.nl/hwh/luchtfotorgb/wms/v1_0?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=2026_orthoHR&STYLES=&CRS=EPSG%3A28992&BBOX=92842.66596963216%2C437106.98524872493%2C92890.66596963216%2C437154.98524872493&WIDTH=600&HEIGHT=600&FORMAT=image%2Fjpeg",
+  "sha256": "235aaee8dbd651cf9d977a931089976c85d505e244d4bc206fec902d9611a6ac",
+  "acquiredAt": "2026-10-24T09:15:10.173496+00:00",
+  "boundsRD": [
+    92842.66596963216,
+    437106.98524872493,
+    92890.66596963216,
+    437154.98524872493
+  ],
+  "imageSize": [
+    600,
+    600
+  ],
+  "pixelMetres": 0.08,
+  "license": "CC BY 4.0",
+  "attribution": "Samenwerkingsverband Beeldmateriaal / PDOK \u2014 Luchtfoto2026 OrthoHR",
+  "responseHeaders": {
+    "accept-ranges": "bytes",
+    "access-control-allow-headers": "Content-Type",
+    "access-control-allow-method": "GET, POST, OPTIONS",
+    "access-control-allow-origin": "*",
+    "content-length": "24121",
+    "content-type": "image/jpeg",
+    "date": "Sat, 24 Oct 2026 09:15:09 GMT",
+    "referrer-policy": "origin",
+    "x-content-type-options": "nosniff",
+    "x-envoy-upstream-service-time": "541",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "server": "envoy",
+    "connection": "close"
+  }
+}

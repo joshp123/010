@@ -1,0 +1,7 @@
+{
+  "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/ondersteunendwegdeel/items?bbox=4.4836%2C51.9189%2C4.4845%2C51.9195&datetime=2026-10-24T00%3A00%3A00Z&limit=1000&f=json",
+  "sha256": "c92c1b62e3186436bcbc15427fce60d9c44c5a5cab6848657025b108242c9945",
+  "acquiredAt": "2026-10-24T09:16:32.444753+00:00",
+  "license": "CC0-1.0",
+  "attribution": "Kadaster / PDOK BGT"
+}

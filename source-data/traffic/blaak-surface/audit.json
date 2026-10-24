@@ -1,0 +1,218 @@
+{
+  "wkdAccess": {
+    "WVK_ID": "185274103",
+    "BEGINDAT": "15-09-2024",
+    "VTGNGR_H": "J",
+    "VTGNGR_T": "J",
+    "FIETS_H": "J",
+    "FIETS_T": "J",
+    "SNRFTS_H": "J",
+    "SNRFTS_T": "J",
+    "BRMFTS_H": "J",
+    "BRMFTS_T": "J",
+    "MTRFTS_H": "J",
+    "MTRFTS_T": "J",
+    "AUTO_H": "J",
+    "AUTO_T": "J",
+    "AANHNGR_H": "J",
+    "AANHNGR_T": "J",
+    "VRCHTT_H": "J",
+    "VRCHTT_T": "J",
+    "AUTOBS_H": "J",
+    "AUTOBS_T": "J",
+    "LNDBW_H": "J",
+    "LNDBW_T": "J"
+  },
+  "sourceSha256": "e110fb86cebffeeded77c075c4a8ccf18f84feb0f1eafd5f8b05419365255134",
+  "sourceRoad": {
+    "type": "Feature",
+    "id": "5e71caac-f76c-5547-b829-c204e0566048",
+    "properties": {
+      "wvk_id": 185274103,
+      "jte_id_beg": 185274093,
+      "jte_id_end": 185274094,
+      "rijrichtng": "B",
+      "bst_code": "RB",
+      "stt_naam": "Keizerstraat",
+      "rel_hoogte": null,
+      "bronjaar": 1993,
+      "wvk_begdat": "2024-06-01T00:00:00Z"
+    },
+    "geometry": {
+      "type": "MultiLineString",
+      "coordinates": [
+        [
+          [
+            4.483945298960029,
+            51.91930633910575
+          ],
+          [
+            4.484020138106173,
+            51.919199049406714
+          ],
+          [
+            4.4840947962946345,
+            51.919100747003085
+          ]
+        ]
+      ]
+    }
+  },
+  "samples": [
+    {
+      "vehicleId": 2,
+      "mode": "motorcar",
+      "roadId": 185274103,
+      "lanePosition": [
+        -410.13159179687506,
+        -462.13650512695307
+      ],
+      "centrelinePosition": [
+        -409.23107564896685,
+        -462.55955387976513
+      ],
+      "sourcePosition": {
+        "longitude": 4.4840520174558955,
+        "latitude": 51.91915709884987
+      },
+      "laneSurfaces": [
+        {
+          "id": "16524553",
+          "function": "verkeerseiland",
+          "boundaryDistanceMetres": 0.327
+        }
+      ],
+      "centrelineSurfaces": [
+        {
+          "id": "14702898",
+          "function": "rijbaan lokale weg",
+          "boundaryDistanceMetres": 0.114
+        }
+      ]
+    },
+    {
+      "vehicleId": 17,
+      "mode": "motorcar",
+      "roadId": 185274103,
+      "lanePosition": [
+        -407.07733154296886,
+        -457.4946594238281
+      ],
+      "centrelinePosition": [
+        -406.89240847413896,
+        -457.581538628143
+      ],
+      "sourcePosition": {
+        "longitude": 4.484086014792129,
+        "latitude": 51.919112360722
+      },
+      "laneSurfaces": [
+        {
+          "id": "14702898",
+          "function": "rijbaan lokale weg",
+          "boundaryDistanceMetres": 0.422
+        }
+      ],
+      "centrelineSurfaces": [
+        {
+          "id": "14702898",
+          "function": "rijbaan lokale weg",
+          "boundaryDistanceMetres": 0.625
+        }
+      ]
+    },
+    {
+      "vehicleId": 19,
+      "mode": "motorcar",
+      "roadId": 185274103,
+      "lanePosition": [
+        -414.6820068359376,
+        -472.1822204589844
+      ],
+      "centrelinePosition": [
+        -413.7373475365945,
+        -472.5897003586803
+      ],
+      "sourcePosition": {
+        "longitude": 4.483986508851404,
+        "latitude": 51.91924724132526
+      },
+      "laneSurfaces": [
+        {
+          "id": "14198208",
+          "function": "fietspad",
+          "boundaryDistanceMetres": 0.288
+        }
+      ],
+      "centrelineSurfaces": [
+        {
+          "id": "14198208",
+          "function": "fietspad",
+          "boundaryDistanceMetres": 0.68
+        }
+      ]
+    },
+    {
+      "vehicleId": 23,
+      "mode": "motorcar",
+      "roadId": 185274103,
+      "lanePosition": [
+        -412.6082458496095,
+        -467.06909179687494
+      ],
+      "centrelinePosition": [
+        -411.55888095414116,
+        -467.53952379254576
+      ],
+      "sourcePosition": {
+        "longitude": 4.4840181779805555,
+        "latitude": 51.919201854551936
+      },
+      "laneSurfaces": [
+        {
+          "id": "14198208",
+          "function": "fietspad",
+          "boundaryDistanceMetres": 0.654
+        }
+      ],
+      "centrelineSurfaces": [
+        {
+          "id": "16524553",
+          "function": "verkeerseiland",
+          "boundaryDistanceMetres": 0.362
+        }
+      ]
+    },
+    {
+      "vehicleId": 78,
+      "mode": "bicycle",
+      "roadId": 185274103,
+      "lanePosition": [
+        -407.7003173828126,
+        -458.9462890625
+      ],
+      "centrelinePosition": [
+        -407.56371314227147,
+        -459.010457164486
+      ],
+      "sourcePosition": {
+        "longitude": 4.484076255998418,
+        "latitude": 51.919125202615206
+      },
+      "laneSurfaces": [
+        {
+          "id": "14702898",
+          "function": "rijbaan lokale weg",
+          "boundaryDistanceMetres": 0.322
+        }
+      ],
+      "centrelineSurfaces": [
+        {
+          "id": "14702898",
+          "function": "rijbaan lokale weg",
+          "boundaryDistanceMetres": 0.473
+        }
+      ]
+    }
+  ]
+}

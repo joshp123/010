@@ -17,6 +17,6 @@ for name,url in records:
  if b[:2]==b'\x1f\x8b':b=gzip.decompress(b)
  p.write_bytes(gzip.compress(b,mtime=0) if name.endswith('.gz') else b)
  record={'url':url,'acquiredAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'decodedSha256':hashlib.sha256(b).hexdigest(),'license':'CC BY 4.0','attribution':'Gemeente Rotterdam — 3D Rotterdam' if name.endswith('.gz') else 'Samenwerkingsverband Beeldmateriaal / PDOK — Luchtfoto '+year+' OrthoHR'}
- if name.endswith('.jpg'):record.update(boundsRD=bounds,imageSize=[size,size],pixelMetres=.08,layer='2025_orthoHR',pixelCoordinates='top-left image edge=(minX,maxY); pixel centres at minX+(x+.5)*.08,maxY-(y+.5)*.08',licenseEvidence='../roof-ortho/license-publication.json')
+ if name.endswith('.jpg'):record.update(boundsRD=bounds,imageSize=[size,size],pixelMetres=.08,layer=year+'_orthoHR',pixelCoordinates='top-left image edge=(minX,maxY); pixel centres at minX+(x+.5)*.08,maxY-(y+.5)*.08',licenseEvidence='../roof-ortho/license-publication.json')
  else:record['licenseEvidence']='../current-building-evidence/catalog-evidence.json'
  meta.write_text(json.dumps(record,indent=2)+'\n');print(name,len(b),flush=True)

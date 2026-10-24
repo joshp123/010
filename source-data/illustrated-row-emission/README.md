@@ -1,0 +1,11 @@
+# Source-observed glazing / emission channel — eight-building block
+
+67 independently source-observed glazing regions across four elevations. This is a partial evidence inventory, NOT a claim that every real window has been identified. Occluded/unobserved regions receive zero emission. Source annotations and per-region BAG provenance are included. 28 street-window proposals were source-fitted; other visible regions were independently proposed from actual municipal images, then source-fitted. The manual diagnostic review is not claimed as a proven citywide automatic extractor.
+
+Compatible with the already delivered f94ac075 eight-building geometry/materials: original UV0 and material/image indices unchanged. Read mask-bindings.json. Existing current source RTC and BAG identity mapping remain authoritative. No geometry replacement is needed to try these masks.
+
+Standard material setup: attach masks/emission-NN.png as emissiveTexture for corresponding base-color image NN. Day emissiveFactor=[0,0,0]. Night example=[1,1,1], adjusted with actual renderer lighting/exposure. RGB emission already contains a stable illustrative occupancy example, never observed/live occupancy. Optional glazing-phase maps permit controlled changing occupancy without a generic facade grid. R gates valid glazing, G is phase, B is region ID. Mask/phase images are linear data; emission RGB is color.
+
+The preview is an isolated source-geometry CPU rendering with neutral night ambient and separate emission, not proof of actual runtime lighting or full-scene acceptance. Richer art direction is being developed separately; don't mistake this channel deliverable for art acceptance. There is no daytime emissive glow. A numeric check finds zero emitting texels outside the supplied glazing mask. Individual source-frame alignment still needs actual phone/oblique runtime review.
+
+Public municipal source: CC BY 4.0 Gemeente Rotterdam. Dataset https://hub.clearly.app/datasets/65ef2475fe2ac522c6ac7b63/information . Current tile https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268620/55473.b3dm . Raw geometry, UVs, source imagery and older candidates preserved. Nothing deployed.
