@@ -79,6 +79,17 @@ function solarDirection(date, lat, lon) {
 
 export async function createScene({ canvas, municipalityData, onViewChange = () => {}, onStatus = () => {}, onTransitSelect = () => {} }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+  const shaderErrors = [];
+  renderer.debug.onShaderError = (gl, program, vertexShader, fragmentShader) => {
+    const diagnostic = {
+      program: (gl.getProgramInfoLog(program) || '').slice(0, 8192),
+      vertex: (gl.getShaderInfoLog(vertexShader) || '').slice(0, 8192),
+      fragment: (gl.getShaderInfoLog(fragmentShader) || '').slice(0, 8192),
+    };
+    shaderErrors.push(diagnostic);
+    if (shaderErrors.length > 8) shaderErrors.shift();
+    console.error('010: shader compilation failed', diagnostic);
+  };
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -223,14 +234,30 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   const transit = createTransitView({ project: projectTransit, requestRender });
   scene.add(transit.group);
   const traffic = createSimulatedTraffic({ project: projectTransit, requestRender });
-  scene.add(traffic.group);
-  traffic.group.traverse(object => { if (object.isMesh) { object.castShadow = false; applyMetroCutaway(object.material, cutawayUniforms); } });
-  let trafficState = 'loading', lastTrafficFrame = 0, trafficProjectionDirty = false, lastTrafficProjection = 0;
+  const cyclists = createSimulatedTraffic({ project: projectTransit, requestRender, bicycles: true, maximumVehicles: 160, vehiclesPerKilometre: 20, maximumSpan: 2600 });
+  const simulatedLayers = [traffic, cyclists];
+  const simulationMaterials = new Set();
+  for (const layer of simulatedLayers) {
+    scene.add(layer.group);
+    layer.group.traverse(object => {
+      if (!object.isMesh) return;
+      object.castShadow = false;
+      for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+        // Bicycle frames and wheels share a material; wrap its shader only once.
+        if (!simulationMaterials.has(material)) {
+          simulationMaterials.add(material); applyMetroCutaway(material, cutawayUniforms);
+        }
+      }
+    });
+  }
+  let trafficState = 'loading', cyclistsState = 'loading', lastTrafficFrame = 0, trafficProjectionDirty = false, lastTrafficProjection = 0;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  function pauseTraffic() { traffic.setPaused(document.hidden || reducedMotion.matches); }
+  function pauseTraffic() { for (const layer of simulatedLayers) layer.setPaused(document.hidden || reducedMotion.matches); }
   document.addEventListener('visibilitychange', pauseTraffic); reducedMotion.addEventListener('change', pauseTraffic); pauseTraffic();
   const trafficReady = traffic.load().then(() => { trafficState = 'ready'; requestRender(); }).catch(error => { trafficState = 'error'; console.warn('010: simulated road traffic unavailable', error); throw error; });
   trafficReady.catch(() => {});
+  const cyclistsReady = cyclists.load().then(() => { cyclistsState = 'ready'; requestRender(); }).catch(error => { cyclistsState = 'error'; console.warn('010: simulated cyclists unavailable', error); throw error; });
+  cyclistsReady.catch(() => {});
   let metroState = 'loading';
   const metroReady = transit.loadMetro().then(() => {
     metroState = 'ready';
@@ -485,7 +512,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     updateShadowCamera();
     fixtureSurfaceLighting.setView(camera);
     transit.setView({ camera, span: view.span, viewportHeight: height * renderer.getPixelRatio() });
-    traffic.setView({ camera, span: view.span, viewportHeight: height * renderer.getPixelRatio() });
+    for (const layer of simulatedLayers) layer.setView({ camera, span: view.span, viewportHeight: height * renderer.getPixelRatio() });
     const drawingSize = renderer.getDrawingBufferSize(new THREE.Vector2());
     for (const tiles of tilesets) tiles.setResolution(camera, drawingSize.x, drawingSize.y);
     requestRender();
@@ -501,13 +528,15 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   function frame() {
     scheduledFrame = null;
     const precipitation = weatherUniforms.rain.value > 0 || weatherUniforms.snow.value > 0;
-    const trafficStats = traffic.statistics();
-    const animateTraffic = !capturingFullDetail && !capturePending && !trafficStats.paused && traffic.group.visible && trafficStats.cars > 0;
+    const animateTraffic = !capturingFullDetail && !capturePending && simulatedLayers.some(layer => {
+      const stats = layer.statistics();
+      return !stats.paused && layer.group.visible && stats.vehicles > 0;
+    });
     if (disposed || !needsRender && !precipitation && !animateTraffic) return;
     const now = performance.now();
     if (animateTraffic && now - lastTrafficFrame >= 1000 / 30) {
       lastTrafficFrame = now;
-      traffic.advance(now / 1000);
+      for (const layer of simulatedLayers) layer.advance(now / 1000);
     }
     if (!needsRender && !precipitation) { scheduledFrame = requestAnimationFrame(frame); return; }
     const renderingCity = needsRender;
@@ -546,7 +575,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     }
     if (trafficProjectionDirty && viewReadiness().ready && now - lastTrafficProjection > 1500) {
       trafficProjectionDirty = false; lastTrafficProjection = now;
-      traffic.refreshProjection();
+      for (const layer of simulatedLayers) layer.refreshProjection();
     } else if (trafficProjectionDirty && viewReadiness().ready) {
       scheduleDeferredUpdate(Math.max(1, 1501 - (now - lastTrafficProjection)));
     }
@@ -775,17 +804,17 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     return counts;
   }
   return {
-    trafficReady: () => trafficReady,
+    trafficReady: () => trafficReady, cyclistsReady: () => cyclistsReady,
     updateTransit, setMetroCutaway, metroReady: () => metroReady, getTransitStatistics: () => ({ ...transit.statistics(), metroState }),
     setView, getView: () => ({ ...view }), setLighting, captureCanvas,
     zoom: factor => setView({ span: view.span / factor }), reset: () => setView(DEFAULT_VIEW),
     render: () => { needsRender = true; frame(); }, getCanvas: () => canvas, resize,
-    getDiagnostics: () => ({ fixtureSurfaceLighting: fixtureSurfaceLighting.diagnostics(), readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, transit: { ...transit.statistics(), metroState }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count || mesh.geometry.getAttribute('position')?.count || 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
+    getDiagnostics: () => ({ shaderErrors: shaderErrors.slice(), buildingAppearance: buildingAppearance.diagnostics(), fixtureSurfaceLighting: fixtureSurfaceLighting.diagnostics(), readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, cyclists: { ...cyclists.statistics(), state: cyclistsState }, transit: { ...transit.statistics(), metroState }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count || mesh.geometry.getAttribute('position')?.count || 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
     dispose() {
       disposed = true; clearTimeout(deferredUpdateTimer); if (scheduledFrame) cancelAnimationFrame(scheduledFrame); observer.disconnect();
       for (const [event, handler] of [['pointerdown', pointerDown], ['pointermove', pointerMove], ['pointerup', pointerUp], ['pointercancel', pointerUp], ['wheel', wheel], ['dblclick', doubleClick], ['contextmenu', contextMenu]]) canvas.removeEventListener(event, handler);
       document.removeEventListener('visibilitychange', pauseTraffic); reducedMotion.removeEventListener('change', pauseTraffic);
-      buildingBatches.dispose(); traffic.dispose(); transit.dispose(); emptyCutawayTexture.dispose();
+      buildingBatches.dispose(); for (const layer of simulatedLayers) layer.dispose(); transit.dispose(); emptyCutawayTexture.dispose();
       for (const query of surfaceQueries.values()) query.dispose();
       sourceFusion.dispose(); treeBatches.dispose(); objectDetail.dispose(); fixtureSurfaceLighting.dispose();
       for (const tiles of tilesets) tiles.dispose();

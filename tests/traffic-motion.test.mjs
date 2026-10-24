@@ -44,3 +44,20 @@ for(let i=0;i<200;i++) actual.advance(i/30);
 for (const mesh of actual.group.children) assert.ok(mesh.instanceMatrix.array.every(Number.isFinite));
 console.log(`Traffic motion checks passed; ${network.roads.length} retained roads; ${actual.statistics().cars} vehicles after 200 updates.`);
 actual.dispose();
+
+const cyclists = createSimulatedTraffic({ bicycles:true,project:(lat,lon)=>new THREE.Vector3(lon,0,lat),maximumVehicles:8,vehiclesPerKilometre:20 });
+cyclists.setRoads({version:1,roads:[{id:1,start:1,end:2,direction:3,roadClass:'FP',coordinates:[[0,0],[1000,0]]}]});
+for(let i=0;i<100;i++) cyclists.advance(i/30);
+assert.equal(cyclists.statistics().cars,0,'riders must not be counted as cars');
+assert.equal(cyclists.statistics().cyclists,8);
+assert.equal(cyclists.group.children.find(m=>m.name==='Bicycle wheels').count,16);
+for(const mesh of cyclists.group.children) assert.ok(mesh.instanceMatrix.array.every(Number.isFinite));
+cyclists.dispose();
+
+const cycleNetwork = decodeTrafficRoads(gunzipSync(await readFile(new URL('../public/data/traffic/cycleways.pb.gz',import.meta.url))));
+assert.ok(cycleNetwork.roads.length > 8000);
+assert.ok(cycleNetwork.roads.every(road=>road.roadClass==='FP'), 'cycle simulation must not fall back to motor roads');
+for(const [name,lon,lat] of [['centre',4.48,51.92],['Hoek',4.13,51.98],['Maasvlakte',4.01,51.96]]) {
+  assert.ok(cycleNetwork.roads.some(road=>road.coordinates.some(point=>Math.abs(point[0]-lon)<.025 && Math.abs(point[1]-lat)<.025)), `${name}: retained FP coverage`);
+}
+console.log(`Cycling graph checks passed: ${cycleNetwork.roads.length} dedicated FP pieces across centre, Hoek and Maasvlakte.`);

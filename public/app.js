@@ -395,7 +395,14 @@ try {
   applyLighting();
   liveTransit = createLiveTransit({ onUpdate: showTransit });
   liveTransit.start();
-  scene.trafficReady().then(() => { byId('traffic-status').textContent = 'Cars are simulated on mapped roads · not live traffic'; }).catch(() => { byId('traffic-status').textContent = 'Simulated cars unavailable'; });
+  Promise.allSettled([scene.trafficReady(), scene.cyclistsReady()]).then(([cars, cyclists]) => {
+    const carsReady = cars.status === 'fulfilled', cyclistsReady = cyclists.status === 'fulfilled';
+    byId('traffic-status').textContent = carsReady && cyclistsReady
+      ? 'Cars and cyclists are simulated · not live traffic'
+      : carsReady ? 'Cars are simulated · cyclists unavailable · not live traffic'
+      : cyclistsReady ? 'Cyclists are simulated · cars unavailable · not live traffic'
+      : 'Simulated cars and cyclists unavailable';
+  });
   scene.metroReady().then(() => {
     byId('metro-cutaway').disabled = false;
     byId('metro-source-status').textContent = 'Source tunnel plan · surface routes stay above ground';

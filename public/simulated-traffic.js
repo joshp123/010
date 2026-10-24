@@ -55,22 +55,33 @@ const PALETTE = ['#d1d0bf', '#697e7c', '#ac6f5c', '#dbd8cb', '#596765', '#b09b72
 
 // This is decorative simulation on source roads, independent of live transit.
 // Parent drives advance(seconds); this module never owns an animation timer.
-export function createSimulatedTraffic({ project, localPosition, requestRender = () => {}, maximumVehicles = 320, vehiclesPerKilometre = 6, maximumSpan = 6500 } = {}) {
+export function createSimulatedTraffic({ project, localPosition, requestRender = () => {}, maximumVehicles = 320, vehiclesPerKilometre = 6, maximumSpan = 6500, bicycles = false } = {}) {
   const place = project || localPosition;
-  const group = new THREE.Group(); group.name = 'Simulated road traffic'; group.userData.simulated = true;
+  const group = new THREE.Group(); group.name = bicycles ? 'Simulated cyclists' : 'Simulated road traffic'; group.userData.simulated = true;
   const geometry = new THREE.BoxGeometry(1, 1, 1);
   const material = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: .92, metalness: 0 });
   const roofMaterial = new THREE.MeshStandardMaterial({ color: '#52635f', roughness: .85, metalness: 0 });
   const body = new THREE.InstancedMesh(geometry, material, maximumVehicles), roof = new THREE.InstancedMesh(geometry, roofMaterial, maximumVehicles);
-  body.name = 'Simulated cars'; roof.name = 'Simulated car roofs'; body.count = roof.count = 0;
+  body.name = bicycles ? 'Simulated riders' : 'Simulated cars'; roof.name = bicycles ? 'Rider heads' : 'Simulated car roofs'; body.count = roof.count = 0;
   body.instanceMatrix.setUsage(THREE.DynamicDrawUsage); roof.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
   body.castShadow = true; body.receiveShadow = true; group.add(body, roof);
+  const wheelGeometry = bicycles ? new THREE.TorusGeometry(.3, .055, 3, 8).rotateY(Math.PI / 2) : null;
+  const bicycleMaterial = bicycles ? new THREE.MeshStandardMaterial({color:'#343e3d',roughness:1}) : null;
+  const wheels = bicycles ? new THREE.InstancedMesh(wheelGeometry, bicycleMaterial, maximumVehicles * 2) : null;
+  const frames = bicycles ? new THREE.InstancedMesh(geometry, bicycleMaterial, maximumVehicles * 3) : null;
+  if (bicycles) {
+    wheels.count = frames.count = 0;
+    wheels.instanceMatrix.setUsage(THREE.DynamicDrawUsage); frames.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    wheels.name = 'Bicycle wheels'; frames.name = 'Bicycle frames'; group.add(wheels, frames);
+    roofMaterial.color.set('#e2bf9a');
+  }
+  const cruiseSpeed = roadClass => bicycles ? 4.2 : speedForRoadClass(roadClass);
   const transform = new THREE.Object3D(), color = new THREE.Color(), position = new THREE.Vector3(), tangent = new THREE.Vector3();
   const frustum = new THREE.Frustum(), cameraMatrix = new THREE.Matrix4();
   let sourceNetwork = null, roads = [], outgoing = new Map(), candidates = [], cars = [];
   let span = 1700, viewportHeight = 900, hasView = false, enabled = true, paused = false, lastTime = null, elapsed = 0, sequence = 1;
   let desiredCount = 0, seeded = false;
-  const nextPosition = new THREE.Vector3();
+  const nextPosition = new THREE.Vector3(), cornerTangent = new THREE.Vector3();
 
   function random() { sequence = (Math.imul(sequence, 1664525) + 1013904223) >>> 0; return sequence / 4294967296; }
   function inside(point) { return !hasView || frustum.containsPoint(point); }
@@ -79,7 +90,19 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     while (index < road.distances.length - 1 && road.distances[index] < distance) index++;
     const start = road.points[index - 1], end = road.points[index];
     position.copy(start).lerp(end, (distance - road.distances[index - 1]) / (road.distances[index] - road.distances[index - 1] || 1));
-    tangent.subVectors(end, start);
+    tangent.subVectors(end, start).normalize();
+    // Rotate the lane normal through a surveyed bend instead of switching its
+    // offset abruptly at a polyline vertex. The centreline position is unchanged.
+    const fromStart = distance - road.distances[index - 1], toEnd = road.distances[index] - distance;
+    const cornerRadius = Math.min(3, (road.distances[index] - road.distances[index - 1]) / 2);
+    if (index > 1 && fromStart < cornerRadius) {
+      cornerTangent.subVectors(start, road.points[index - 2]).normalize();
+      tangent.lerp(cornerTangent, .5 * (1 - Math.max(0, fromStart) / cornerRadius)).normalize();
+    }
+    if (index < road.points.length - 1 && toEnd < cornerRadius) {
+      cornerTangent.subVectors(road.points[index + 1], end).normalize();
+      tangent.lerp(cornerTangent, .5 * (1 - Math.max(0, toEnd) / cornerRadius)).normalize();
+    }
   }
 
   function setRoads(network, preserveCars = false) {
@@ -105,7 +128,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
         return [{ ...car, road, distance: car.distance / car.road.length * road.length, next: car.next ? { ...car.next, road: roads[car.next.road.sourceIndex] } : car.next }];
       });
     } else seeded = false;
-    selectRoads(); render();
+    selectRoads(!preserveCars); render();
   }
 
   function nextRoad(car) {
@@ -126,11 +149,11 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     return options.find(next => (choice -= next.weight) <= 0) || null;
   }
 
-  function selectRoads() {
+  function selectRoads(allowInterior = true) {
     candidates = roads.filter(road => !hasView || frustum.intersectsBox(road.bounds));
     desiredCount = Math.min(maximumVehicles, Math.round(candidates.reduce((length, road) => length + road.length, 0) * vehiclesPerKilometre / 1000));
     cars = cars.filter(car => { locate(car.road, car.distance); return inside(position); }).slice(0, desiredCount);
-    populate(true); seeded = true;
+    populate(allowInterior); seeded = true;
   }
 
   function populate(allowInterior = false) {
@@ -148,7 +171,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
         if (!hasView || inside(nextPosition)) continue;
       }
       if (cars.some(car => car.road === road && Math.abs(car.distance - distance) < 14)) continue;
-      cars.push({ road, distance, direction, speed: 0, cruise: speedForRoadClass(road.roadClass) * (.85 + random() * .3),
+      cars.push({ road, distance, direction, speed: 0, cruise: cruiseSpeed(road.roadClass) * (.85 + random() * .3),
         heading: Math.atan2(tangent.x * direction, tangent.z * direction), age: allowInterior ? 1 : 0,
         color: PALETTE[Math.floor(random() * PALETTE.length)] });
     }
@@ -160,24 +183,54 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
       locate(car.road, car.distance);
       if (!inside(position)) continue;
       const [laneX, laneZ] = rightHandOffset(tangent.x, tangent.z, car.direction, car.distance, car.road.length, car.road.direction === 3);
-      position.x += laneX; position.z += laneZ;
+      position.x += laneX * (bicycles ? .35 : 1); position.z += laneZ * (bicycles ? .35 : 1);
       // Keep city vehicles in scale; zoom must not turn cars into buses.
       const endDistance = car.direction === 1 ? car.road.length - car.distance : car.distance;
       const fade = Math.min(1, car.age * 2, car.next === null && car.ending ? endDistance / 8 : 1);
       const scale = Math.max(0, fade);
-      transform.position.copy(position); transform.position.y += .7 * scale;
       transform.rotation.set(0, car.heading, 0);
-      transform.scale.set(1.75 * scale, 1.4 * scale, 4.2 * scale); transform.updateMatrix(); body.setMatrixAt(count, transform.matrix);
-      body.setColorAt(count, color.set(car.color));
-      transform.position.y += .72 * scale; transform.scale.set(1.45 * scale, .35 * scale, 2.25 * scale); transform.updateMatrix(); roof.setMatrixAt(count, transform.matrix);
+      if (bicycles) {
+        transform.position.copy(position); transform.position.y += .55 * scale;
+        transform.scale.set(.14 * scale, .14 * scale, 1.05 * scale); transform.updateMatrix(); frames.setMatrixAt(count * 3, transform.matrix);
+        for (let leg = 0; leg < 2; leg++) {
+          transform.position.copy(position); transform.position.y += .57 * scale;
+          const lateral = (leg ? .15 : -.15) * scale;
+          transform.position.x += Math.cos(car.heading) * lateral;
+          transform.position.z -= Math.sin(car.heading) * lateral;
+          transform.rotation.set(Math.sin(car.distance * 1.8 + leg * Math.PI) * .35, car.heading, 0, 'YXZ');
+          transform.scale.set(.12 * scale, .46 * scale, .13 * scale); transform.updateMatrix(); frames.setMatrixAt(count * 3 + leg + 1, transform.matrix);
+        }
+        transform.rotation.set(0, car.heading, 0);
+        for (let wheel = 0; wheel < 2; wheel++) {
+          transform.position.copy(position); transform.position.y += .3 * scale;
+          const longitudinal = (wheel ? .55 : -.55) * scale;
+          transform.position.x += Math.sin(car.heading) * longitudinal;
+          transform.position.z += Math.cos(car.heading) * longitudinal;
+          transform.scale.setScalar(scale); transform.updateMatrix(); wheels.setMatrixAt(count * 2 + wheel, transform.matrix);
+        }
+        transform.position.copy(position); transform.position.y += 1.05 * scale;
+        transform.scale.set(.42 * scale, .62 * scale, .35 * scale); transform.updateMatrix(); body.setMatrixAt(count, transform.matrix);
+        body.setColorAt(count, color.set(car.color));
+        transform.position.y += .43 * scale; transform.scale.set(.28 * scale, .28 * scale, .28 * scale); transform.updateMatrix(); roof.setMatrixAt(count, transform.matrix);
+      } else {
+        transform.position.copy(position); transform.position.y += .7 * scale;
+        transform.scale.set(1.75 * scale, 1.4 * scale, 4.2 * scale); transform.updateMatrix(); body.setMatrixAt(count, transform.matrix);
+        body.setColorAt(count, color.set(car.color));
+        transform.position.y += .72 * scale; transform.scale.set(1.45 * scale, .35 * scale, 2.25 * scale); transform.updateMatrix(); roof.setMatrixAt(count, transform.matrix);
+      }
       count++;
     }
     body.count = roof.count = count; body.instanceMatrix.needsUpdate = roof.instanceMatrix.needsUpdate = true;
+    if (bicycles) {
+      wheels.count = count * 2; frames.count = count * 3;
+      wheels.instanceMatrix.needsUpdate = frames.instanceMatrix.needsUpdate = true;
+      wheels.computeBoundingSphere(); frames.computeBoundingSphere();
+    }
     if (body.instanceColor) body.instanceColor.needsUpdate = true;
     body.computeBoundingSphere(); roof.computeBoundingSphere(); group.updateMatrixWorld(true); requestRender();
   }
 
-  async function load(url = './data/traffic/roads.pb.gz') {
+  async function load(url = bicycles ? './data/traffic/cycleways.pb.gz' : './data/traffic/roads.pb.gz') {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Traffic roads HTTP ${response.status}`);
     let bytes = new Uint8Array(await response.arrayBuffer());
@@ -186,7 +239,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     return statistics();
   }
 
-  function statistics() { return { simulated: true, sourceRoads: roads.length, visibleRoads: candidates.length, cars: body.count, maximumVehicles, drawCalls: body.count && group.visible ? 2 : 0, paused, enabled, simulationSeconds: elapsed }; }
+  function statistics() { return { simulated: true, sourceRoads: roads.length, visibleRoads: candidates.length, cars: bicycles ? 0 : body.count, cyclists: bicycles ? body.count : 0, vehicles: body.count, maximumVehicles, drawCalls: body.count && group.visible ? (bicycles ? 4 : 2) : 0, paused, enabled, simulationSeconds: elapsed }; }
 
   return {
     group, load, setRoads,
@@ -232,7 +285,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
           if (!next) return false;
           car.road = next.road; car.direction = next.direction; car.distance = car.direction === 1 ? 0 : car.road.length;
           car.next = undefined; car.ending = false;
-          car.cruise = speedForRoadClass(car.road.roadClass);
+          car.cruise = cruiseSpeed(car.road.roadClass);
         }
         locate(car.road, car.distance);
         const desiredHeading = Math.atan2(tangent.x * car.direction, tangent.z * car.direction);
@@ -246,6 +299,6 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     setEnabled(value) { enabled = value; group.visible = enabled && span <= maximumSpan; lastTime = null; if (enabled) { selectRoads(); render(); } else requestRender(); },
     refreshProjection() { if (sourceNetwork) setRoads(sourceNetwork, true); },
     statistics,
-    dispose() { group.removeFromParent(); group.clear(); body.dispose(); roof.dispose(); geometry.dispose(); material.dispose(); roofMaterial.dispose(); roads = []; cars = []; outgoing.clear(); },
+    dispose() { group.removeFromParent(); group.clear(); body.dispose(); roof.dispose(); geometry.dispose(); wheels?.dispose(); frames?.dispose(); wheelGeometry?.dispose(); bicycleMaterial?.dispose(); material.dispose(); roofMaterial.dispose(); roads = []; cars = []; outgoing.clear(); },
   };
 }

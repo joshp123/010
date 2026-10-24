@@ -4,6 +4,10 @@ Written by AI on 2026-10-24 by model GPT-6, from Josh's correction.
 
 The current published map is rejected on visual quality. Existing screenshots, successful builds and past agent reviews do not establish acceptance. Read this with [the original steering](steering.md) and [the product contract](README.md).
 
+Josh's further steering: **“the work and approach must be deep and holistic btw not tiny patches”.** Evaluate and improve the full source-to-image approach and the whole experience. Small candidates may validate an approach before scaling; isolated fixes or a handful of polished buildings do not satisfy the rescue.
+
+Josh also asked: **“compare with how the prior art versions did it btw?”** Compare the actual production methods in [NYC's writeup](https://cannoneyed.com/projects/isometric-nyc) and [London's writeup](https://tiny.london/how/), not just their screenshots. Both use geographically aligned textured renders as input to offline model-generated illustration, then serve image pyramids. NYC uses fine-tuning and neighbour-aware infill; London uses fine-tuning and overlapping shared-latent sampling. Assess whether this architecture is the right foundation here, including source fidelity, consistent adjoining areas, free-resource feasibility, and geographic alignment of transport, night and metro presentation. Do not assume inherited live-3D materials can achieve the same result.
+
 ## Corrections
 
 - Buildings have strange colours and far too little detail. The result must resemble a miniature pixel-art Rotterdam, with recognisable architecture and coherent materials throughout the municipality. A coarse 3D map with generic windows does not meet the references.
@@ -14,17 +18,6 @@ The current published map is rejected on visual quality. Existing screenshots, s
 - These are examples of failures, not an exhaustive issue list. Independently inspect the whole experience against the user's original words and live references.
 
 ## Working method
-
-Josh's further correction, verbatim:
-
-> the work and approach must be deep and holistic btw not tiny patches
-
-The rescue must address the complete source-to-image path: architectural evidence,
-its interpretation into coherent miniature art, geographic reconciliation,
-municipality-wide consistency, scale, living transport, day/night and mobile.
-UI and traffic repairs support this; they are not the central rescue. Bounded
-pilots test an approach before scaling, not an excuse to stop at a few buildings.
-Generic texture quantisation alone does not establish reference-quality art.
 
 Use a manager with separate implementation threads and a scheduled progress check. Write down every steer and reconcile it against the overall goal before dispatching work, following [Eric Provencher's pattern](https://x.com/pvncher/status/2113794328690647521).
 
