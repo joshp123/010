@@ -36,18 +36,18 @@ function crownProfile(source) {
 export function createCrownGeometry(source) {
   const profile = crownProfile(source), positions = [], colors = [], indices = [];
   const rings = 24, sectors = 64;
-  const dark = new THREE.Color('#29432b'), body = new THREE.Color('#436132'), light = new THREE.Color('#687f3c');
+  const dark = new THREE.Color('#324b30'), body = new THREE.Color('#486338'), light = new THREE.Color('#607943');
   // A connected, scalloped canopy with painted masses. All silhouette changes
   // stay inside the retained inventory prototype, never its instance placement.
   for (let ring = 0; ring <= rings; ring++) for (let sector = 0; sector <= sectors; sector++) {
     const y = ring / rings, angle = sector / sectors * Math.PI * 2;
-    const lobes = .80 + .14 * Math.cos(angle * 5 + Math.sin(y * 7)) + .06 * Math.cos(angle * 9 - y * 6);
+    const lobes = .88 + .08 * Math.cos(angle * 5 + y * 2) + .04 * Math.cos(angle * 9 - y * 3);
     const radius = Math.min(.5, profile.radius(y)) * lobes * Math.pow(Math.max(0, Math.sin(Math.PI * y)), .32);
     const x = Math.cos(angle) * radius, z = Math.sin(angle) * radius;
-    const patches = Math.sin(x * 13 + y * 8) * Math.cos(z * 12 - y * 6);
-    const value = .38 + y * .16 + x * .25 - z * .2 + patches * .25;
-    const shade = dark.clone().lerp(body, THREE.MathUtils.smoothstep(value, .25, .31));
-    shade.lerp(light, THREE.MathUtils.smoothstep(value, .57, .64));
+    const upperMass = 1 - ((x + .16) / .50) ** 2 - ((y - .73) / .31) ** 2 - ((z + .10) / .52) ** 2;
+    const sideMass = .8 - ((x - .20) / .32) ** 2 - ((y - .57) / .27) ** 2 - ((z + .21) / .43) ** 2;
+    const shade = dark.clone().lerp(body, THREE.MathUtils.smoothstep(y - z * .22, .22, .28));
+    shade.lerp(light, THREE.MathUtils.smoothstep(Math.max(upperMass, sideMass), .30, .38));
     positions.push(x, y, z); colors.push(shade.r, shade.g, shade.b);
   }
   for (let ring = 0; ring < rings; ring++) for (let sector = 0; sector < sectors; sector++) {
@@ -103,10 +103,10 @@ export function createVegetationStyle() {
             sourceMaterial.onBeforeCompile(shader);
             shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
               float canopyFacing = abs(dot(normalize(vNormal), normalize(vViewPosition)));
-              diffuseColor.rgb *= mix(0.62, 1.0, smoothstep(0.04, 0.15, canopyFacing));
+              diffuseColor.rgb = mix(vec3(0.025, 0.042, 0.025), diffuseColor.rgb, smoothstep(0.04, 0.30, canopyFacing));
             `);
             shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
-              outgoingLight = mix(outgoingLight, diffuseColor.rgb, 0.80 * (1.0 - cityNight));
+              outgoingLight = mix(outgoingLight, diffuseColor.rgb, 0.90 * (1.0 - cityNight));
               #include <opaque_fragment>
             `);
           };
