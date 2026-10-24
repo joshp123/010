@@ -4,6 +4,8 @@ Written by AI on 2026-10-24 by model GPT-6 Astra.
 
 These captures come from the running map in the Codex in-app browser. The requirements and original steering remain the quality target; these images make the current interpretation inspectable by the next person or model.
 
+Public release verification on 2026-10-24 used `https://010.jjpcodes.com`: centre/night, coast/day, the whole municipality, Kralingen search and phone-sized pan/zoom. Both transit providers returned reports through the hosted Worker; current observations were mostly late-night buses, so this does not prove every mode's coverage. Landscape export produced a 3840 × 2016 PNG; clipboard contained the PNG, exact public view link and `@jjpcodes`. Public captures and the downloaded image are retained in `work/visual-qa/published-*` on the SSD.
+
 | View | Reproduce with URL parameters | What the capture establishes |
 | --- | --- | --- |
 | [Entire municipality](images/whole-municipality.jpg) | `lat=51.925&lon=4.265&span=30000&bearing=0&light=day` | City, harbour chain, Maasvlakte and Hoek share one continuous geographic model; surrounding municipalities remain quiet context. |

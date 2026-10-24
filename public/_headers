@@ -1,0 +1,8 @@
+# Preserve the generated cache policy for content-hashed framework assets.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Keep GLB bytes unchanged; the Workers runtime applies transport compression.
+/data/*.glb
+  Content-Type: model/gltf-binary
+  Content-Encoding: gzip
