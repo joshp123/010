@@ -1,0 +1,33 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import * as THREE from '../public/vendor/three/build/three.module.js';
+const source=(await readFile(new URL('../public/building-appearance.js',import.meta.url),'utf8')).replace("'three'",JSON.stringify(new URL('../public/vendor/three/build/three.module.js',import.meta.url).href));
+const batchesSource=(await readFile(new URL('../public/building-batches.js',import.meta.url),'utf8')).replace("'three'",JSON.stringify(new URL('../public/vendor/three/build/three.module.js',import.meta.url).href));
+const {createBuildingBatches}=await import(`data:text/javascript;base64,${Buffer.from(batchesSource).toString('base64')}`);
+const {normalizedBagId,createBuildingAppearanceReconciliation}=await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
+assert.equal(normalizedBagId('BAG_0599100000000001'),'0599100000000001');
+assert.equal(normalizedBagId('ID_0599100000000001'),'0599100000000001');
+assert.equal(normalizedBagId('unknown'),null);
+const batches=createBuildingBatches(), reconcile=createBuildingAppearanceReconciliation(batches);
+const model=new THREE.Group(), material=new THREE.MeshBasicMaterial();
+model.batchTable={getDataFromId:id=>({attributes:{GEBOUWNUMMER:`BAG_059910000000000${id+1}`}})};
+const sourceMeshes=[];
+for (let n=0;n<2;n++) {
+ const geometry=new THREE.BufferGeometry();
+ geometry.setAttribute('position',new THREE.Float32BufferAttribute([0,0,0,1,0,0,0,1,0,2,0,0,3,0,0,2,1,0],3));
+ geometry.setAttribute('_batchid',new THREE.Float32BufferAttribute([0,0,0,1,1,1],1));
+ geometry.setIndex([0,1,2,3,4,5]);
+ const mesh=new THREE.Mesh(geometry,material);model.add(mesh);sourceMeshes.push(mesh);
+}
+reconcile.addModel(model);batches.addModel(model);
+assert.equal(model.children.length,1,'original source batching still works');
+const replacement=new THREE.Group(), painted=new THREE.Mesh(new THREE.BoxGeometry(),material);
+painted.userData.bagId='0599100000000001';replacement.add(painted);
+assert.equal(reconcile.setVisibleModels([replacement]),true);
+assert.equal(model.children[0].geometry.index.count,6,'only matched building triangles removed from combined model');
+assert.equal(reconcile.setVisibleModels([replacement]),false,'no rebuild while visibility unchanged');
+assert.equal(reconcile.setVisibleModels([]),true);
+assert.equal(model.children[0].geometry.index.count,12,'unloading replacement restores all source topology');
+for (const mesh of sourceMeshes) assert.deepEqual([...mesh.geometry.index.array],[0,1,2,3,4,5]);
+batches.dispose();
+console.log('Building identity reconciliation and batched unload/restore pass');

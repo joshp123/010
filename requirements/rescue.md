@@ -15,6 +15,17 @@ The current published map is rejected on visual quality. Existing screenshots, s
 
 ## Working method
 
+Josh's further correction, verbatim:
+
+> the work and approach must be deep and holistic btw not tiny patches
+
+The rescue must address the complete source-to-image path: architectural evidence,
+its interpretation into coherent miniature art, geographic reconciliation,
+municipality-wide consistency, scale, living transport, day/night and mobile.
+UI and traffic repairs support this; they are not the central rescue. Bounded
+pilots test an approach before scaling, not an excuse to stop at a few buildings.
+Generic texture quantisation alone does not establish reference-quality art.
+
 Use a manager with separate implementation threads and a scheduled progress check. Write down every steer and reconcile it against the overall goal before dispatching work, following [Eric Provencher's pattern](https://x.com/pvncher/status/2113794328690647521).
 
 The manager owns product judgement and reviews the actual map. Implementation workers own concrete, reviewable changes. Keep raw source data and replaceable visual interpretation. Choose substantive quality improvements; do not settle for repeated shader adjustments, performance optimisation or isolated landmark detail while the whole-city art direction remains wrong.
