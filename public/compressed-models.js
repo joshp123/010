@@ -1,4 +1,4 @@
-export const compressedModelDirectories = new Set(['industrial-structures', 'industrial-terrain', 'lamps', 'supplementary-lamps', 'streets', 'bridge-surfaces']);
+export const compressedModelDirectories = new Set(['industrial-structures', 'industrial-terrain', 'green-terrain', 'industrial-ground', 'lamps', 'supplementary-lamps', 'streets', 'bridge-surfaces']);
 
 async function fetchPreparedModel(url, options) {
   const compressedURL = new URL(url);
