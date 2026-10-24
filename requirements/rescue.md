@@ -16,6 +16,8 @@ Josh also corrected the manager: **“why did you stop your turn btw. you need t
 
 Further direct steering: **“not sure what happened with car and bicyclist routes but we should be making use of eg vector maps of all the routes to ensure that they are locgicsl routes for cars and bikes (usually separate in rotterdam)”**. Use appropriate source-backed connected networks for cars and bikes, including valid directions, junction transitions and crossings. Separate cycleways alone do not establish complete bicycle journeys; real road lines alone do not establish legal car turns. Review actual movement through representative streets, bridges and junctions.
 
+New sharing requirement, verbatim: **“https://x.com/raunofreiberg/status/2112875577388712123?s=46 random new requirement: we should add an appropriate og:video tag for our site too as we go.”** Include an appropriate public video preview of the actual map, with correct media metadata and a static poster fallback. Verify the delivered media and crawler-visible tags; adding a tag alone does not establish a working preview.
+
 Josh explicitly renewed **better** and **raise-the-ambition**: keep thinking holistically about the whole body of work. Deeper source interpretation and a coherent successful city experience are the mission; isolated patches and defensible intermediate artifacts do not close it.
 
 - Buildings have strange colours and far too little detail. The result must resemble a miniature pixel-art Rotterdam, with recognisable architecture and coherent materials throughout the municipality. A coarse 3D map with generic windows does not meet the references.
