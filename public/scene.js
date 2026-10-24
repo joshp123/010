@@ -948,14 +948,16 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
         context.drawImage(canvas, 0, 0);
         const section = metroSectionView();
         if (section.enabled) {
-          // DOM labels are absent from canvas exports; retain interpretation and
-          // report freshness inside the exported underground view itself.
-          const caption = `${section.label} · ${transit.statistics().cutawayShortMessage || 'No metro report'}`;
-          const margin = Math.max(12, Math.round(captureWidth / 80));
-          let fontSize = Math.max(12, Math.round(captureWidth / 55));
-          do { context.font = `500 ${fontSize}px sans-serif`; if (context.measureText(caption).width <= captureWidth - margin * 2) break; fontSize--; } while (fontSize > 10);
-          context.fillStyle = 'rgba(20,30,32,.88)'; context.fillRect(0, captureHeight - fontSize - margin * 2, captureWidth, fontSize + margin * 2);
-          context.fillStyle = '#eee6d7'; context.textBaseline = 'bottom'; context.fillText(caption, margin, captureHeight - margin);
+          const age = Math.max(0, Math.round(Date.now() / 1000 - section.report.observedAt));
+          const caption = `Metro ${section.report.label} · report ${age}s ago · depth illustrated`;
+          const margin = Math.max(12, Math.round(captureWidth / 100));
+          const fontSize = Math.max(12, Math.round(captureWidth / 145));
+          context.font = `500 ${fontSize}px sans-serif`;
+          const captionWidth = context.measureText(caption).width;
+          context.fillStyle = 'rgba(24,35,35,.86)';
+          context.fillRect(margin, captureHeight - fontSize - margin * 1.7, captionWidth + margin, fontSize + margin * .7);
+          context.fillStyle = '#eee6d7'; context.textBaseline = 'bottom';
+          context.fillText(caption, margin * 1.5, captureHeight - margin * 1.2);
         }
         return output;
       } finally {

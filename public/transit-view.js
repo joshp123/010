@@ -4,7 +4,7 @@ import { createMetroCarriageGeometry } from './metro-drawing.js';
 const VEHICLE_STYLES = {
   bus: { color: '#c49558', width: 2.7, height: 3.1, length: 12 },
   tram: { color: '#b56a59', width: 2.6, height: 3.3, length: 28 },
-  metro: { color: '#d1d7cc', width: 3, height: 3.5, length: 42.7 },
+  metro: { color: '#ffffff', width: 3, height: 3.5, length: 42.7 },
   train: { color: '#d1af58', width: 3.2, height: 3.8, length: 72 },
   ferry: { color: '#698a9a', width: 5, height: 3.5, length: 20 },
   'metro-position': { color: '#d19a45', width: 2.2, height: 2.2, length: 2.2 },
@@ -40,43 +40,21 @@ export function createTransitView({ project, localPosition, requestRender = () =
   const bodyMaterial = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.9, metalness: 0, flatShading: true });
   const roofMaterial = new THREE.MeshStandardMaterial({ color: '#e3e2ce', roughness: 0.95, metalness: 0 });
   const floorMaterial = new THREE.MeshStandardMaterial({ color: '#293333', roughness: 1, side: THREE.DoubleSide });
-  const earthMaterial = new THREE.MeshStandardMaterial({ color: '#858b86', vertexColors:true, roughness: 1, side: THREE.DoubleSide });
-  const tunnelMaterial = new THREE.MeshStandardMaterial({ color: '#b2b9b2', roughness: 1, side: THREE.DoubleSide });
+  const earthMaterial = new THREE.MeshStandardMaterial({ color: '#66756e', vertexColors:true, roughness: 1, side: THREE.DoubleSide });
+  const tunnelMaterial = new THREE.MeshStandardMaterial({ color: '#8d9b91', roughness: 1, side: THREE.DoubleSide });
   const metroBodyMaterial = bodyMaterial.clone(), metroRoofMaterial = roofMaterial.clone();
   for (const material of [metroBodyMaterial, metroRoofMaterial]) {
-    const isBody = material === metroBodyMaterial;
+    material.vertexColors = true;
+    material.side = THREE.DoubleSide;
+    material.color.set('#ffffff');
+    material.roughness = .78;
     material.onBeforeCompile = shader => {
-      shader.vertexShader = 'varying vec3 transitLocal;\n' + shader.vertexShader;
-      shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n transitLocal = position;');
-      shader.fragmentShader = 'varying vec3 transitLocal;\n' + shader.fragmentShader;
-      shader.fragmentShader = shader.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
-        // Three illustrated articulated sections; no rolling-stock identity claim.
-        float carriage = fract((transitLocal.z + 0.5) * 3.0);
-
-        ${isBody ? `
-        float side = step(0.38, abs(transitLocal.x));
-        float windowBand = step(-0.015, transitLocal.y) * step(transitLocal.y, 0.32);
-        float panePhase = fract(carriage * 7.0);
-        float pane = step(0.09, panePhase) * step(panePhase, 0.91);
-        float cab = step(0.467, abs(transitLocal.z));
-        float glazing = windowBand * max(side * pane, cab);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.035, 0.075, 0.08), glazing);
-        float door = side * step(0.39, carriage) * step(carriage, 0.60) * step(-0.41, transitLocal.y) * step(transitLocal.y, 0.34);
-        float doorPanel = door * (1.0 - windowBand);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.53, 0.58, 0.57), doorPanel * .65);
-        float seam = door * step(0.49, carriage) * step(carriage,0.505);
-        diffuseColor.rgb = mix(diffuseColor.rgb,vec3(0.12,0.17,0.17),seam);
-        float skirt = 1.0 - step(-0.36, transitLocal.y);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.21,0.25,0.25),skirt);
-        float livery = side * step(-.34, transitLocal.y) * step(transitLocal.y,.31) * step(.65,carriage) * step(carriage,.72);
-        diffuseColor.rgb = mix(diffuseColor.rgb,vec3(.03,.47,.49),livery);
-        float redStripe = side * step(-.29,transitLocal.y) * step(transitLocal.y,-.20) * step(.72+transitLocal.y*.16,carriage) * step(carriage,.80+transitLocal.y*.16);
-        diffuseColor.rgb = mix(diffuseColor.rgb,vec3(.68,.09,.07),redStripe);
-        totalEmissiveRadiance += vec3(0.10, 0.12, 0.10) * glazing;
-        ` : ''}
-      `);
+      shader.vertexShader = 'attribute float metroGlazing; varying float trainWindow;\n' + shader.vertexShader;
+      shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntrainWindow = metroGlazing;');
+      shader.fragmentShader = 'varying float trainWindow;\n' + shader.fragmentShader;
+      shader.fragmentShader = shader.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += vec3(.10,.115,.085) * trainWindow;');
     };
-    material.customProgramCacheKey = () => `010-metro-articulation-${isBody ? 'body' : 'roof'}-v3`;
+    material.customProgramCacheKey = () => '010-source-drawn-sg3-glazing-v1';
   }
   const trackMaterials = [
     new THREE.MeshStandardMaterial({ color: '#414a46', roughness: 1, side: THREE.DoubleSide }),
@@ -122,7 +100,8 @@ export function createTransitView({ project, localPosition, requestRender = () =
       const roof = new THREE.InstancedMesh(mode === 'metro' ? metroRoofGeometry : box, mode === 'metro' ? metroRoofMaterial : roofMaterial, capacity);
       body.name = mode === 'metro-position' ? 'Reported metro position · track mismatch' : `Observed ${mode}`; roof.name = `${mode} roofs`;
       body.instanceMatrix.setUsage(THREE.DynamicDrawUsage); roof.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-      body.castShadow = mode !== 'metro-position'; body.receiveShadow = true;
+      body.castShadow = mode !== 'metro-position'; body.receiveShadow = mode !== 'metro';
+      roof.receiveShadow = mode !== 'metro';
       if (mode === 'metro-position') body.renderOrder = 100;
       group.add(body, roof);
       batch = { body, roof, capacity, records: [] };
@@ -209,7 +188,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
         transform.position.y += style.height * scale * 0.48;
         transform.scale.set(style.width * scale * 0.8, style.height * scale * 0.16, style.length * scale * (mode === 'metro' ? 1 : .76));
         transform.updateMatrix(); batch.roof.setMatrixAt(index, transform.matrix);
-        batch.roof.setColorAt(index, new THREE.Color(report.freshness === 'fresh' && report.sourceConnected ? '#aeb5b1' : '#929b99'));
+        batch.roof.setColorAt(index, new THREE.Color(report.freshness === 'fresh' && report.sourceConnected ? (mode === 'metro' ? '#ffffff' : '#aeb5b1') : '#929b99'));
       }
       batch.body.count = reports.length; batch.roof.count = mode === 'metro-position' ? 0 : reports.length;
       batch.body.instanceMatrix.needsUpdate = batch.roof.instanceMatrix.needsUpdate = true;
