@@ -501,7 +501,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     const inspectionMessage = !inspectionTarget ? null : !inspected
       ? 'Selected metro absent from latest feed'
       : !inspected.underground
-      ? `${fresh(inspected) ? 'Fresh' : 'Older/unverified'} selected metro · above ground`
+      ? `${fresh(inspected) ? 'Fresh' : 'Older/unverified'} selected metro · outside mapped tunnel`
       : null;
     const inspectionAgeSeconds = inspected ? Math.max(0, Math.round(Date.now() / 1000 - inspected.report.observedAt)) : null;
     return {
