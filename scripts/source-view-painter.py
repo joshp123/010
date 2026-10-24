@@ -73,7 +73,9 @@ def bake(source,out):
    score=facing*view.get('drawingConfidence',1)
    tex=images[t['image']];h,w=tex.shape[:2]
    for x0,y0,x1,y1,weights,inside in m.raster_triangle(t['uv']*[w,h],w,h):
-    q,xy=project(weights@t['positions'],c);px=np.rint(xy).astype(int);valid=inside&(px[:,:,0]>=0)&(px[:,:,0]<size)&(px[:,:,1]>=0)&(px[:,:,1]<size);px[:,:,0]=px[:,:,0].clip(0,size-1);px[:,:,1]=px[:,:,1].clip(0,size-1);valid&=abs(q[:,:,2]-depth[px[:,:,1],px[:,:,0]])<.12;valid&=score>scores[t['image']][y0:y1+1,x0:x1+1];tex[y0:y1+1,x0:x1+1][valid]=paint[px[:,:,1][valid],px[:,:,0][valid]];scores[t['image']][y0:y1+1,x0:x1+1][valid]=score
+    q,xy=project(weights@t['positions'],c);px=np.floor(xy).astype(int);valid=inside&(px[:,:,0]>=0)&(px[:,:,0]<size)&(px[:,:,1]>=0)&(px[:,:,1]<size);px[:,:,0]=px[:,:,0].clip(0,size-1);px[:,:,1]=px[:,:,1].clip(0,size-1)
+    view_normal=source.normals[index]@np.array(c['basis']);sample_delta=(px+.5-xy)/c['scale'];sample_plane_depth=q[:,:,2]-(view_normal[0]*sample_delta[:,:,0]-view_normal[1]*sample_delta[:,:,1])/view_normal[2]
+    valid&=abs(sample_plane_depth-depth[px[:,:,1],px[:,:,0]])<.12;valid&=score>scores[t['image']][y0:y1+1,x0:x1+1];tex[y0:y1+1,x0:x1+1][valid]=paint[px[:,:,1][valid],px[:,:,0][valid]];scores[t['image']][y0:y1+1,x0:x1+1][valid]=score
  if not isinstance(source,SourceCollection):source.export(images,out/'model-drawn-block.glb')
  source.export_handoff(images,{t['identity'] for t in source.triangles},out/plan.get('handoffDirectory','bound-model-drawn-block'));np.savez_compressed(out/'painted-atlases.npz',**{f'image_{i}':a for i,a in enumerate(images)})
  m.save_json(out/'baked.json',{'sourceSha256':m.digest(source.raw),'paintedViews':[v['paint'] for v in plan['views'] if (out/v['paint']).exists()],'identities':sorted({t['identity'] for t in source.triangles}),'status':'Whole model drawing field candidate; source aperture and opposing view inspection required, no fidelity acceptance inferred from geometry'})

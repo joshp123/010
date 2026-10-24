@@ -357,5 +357,5 @@
     }
   ],
   "drawingPixelsPerMetre": 6,
-  "handoffDirectory": "bound-shared-neighbourhood"
+  "handoffDirectory": "bound-shared-neighbourhood-pixel-centres"
 }
