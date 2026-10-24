@@ -181,7 +181,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     const modes = new Map();
     for (const record of records) {
       if (record.underground && (!cutaway || record.report.id !== selectedReportId)) continue;
-      const displayMode = record.uncertainTrackPosition ? 'metro-position' : record.mode;
+      const displayMode = record.uncertainTrackPosition || (record.mode === 'metro' && !record.rail) ? 'metro-position' : record.mode;
       if (!modes.has(displayMode)) modes.set(displayMode, []);
       modes.get(displayMode).push(record);
     }
@@ -474,7 +474,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
 
   function presentReport(record) {
     if (!record) return null;
-    return { ...record.report, presentation: { physicalForm: record.rail?.form || 'unclassified', sourceSegmentId: record.rail?.id || null, illustrativeDepthMetres: record.underground ? TUNNEL_DEPTH : null, orientation: record.orientation, representedPosition:record.representedPosition, dimensions: 'illustrative', sourceAxisDistanceMetres: record.rail?.distance ?? null, positionUncertainty: record.uncertainTrackPosition ? 'Reported point is outside the illustrated track chamber; position marker, not track-snapped train' : null } };
+    return { ...record.report, presentation: { physicalForm: record.rail?.form || 'unclassified', sourceSegmentId: record.rail?.id || null, illustrativeDepthMetres: record.underground ? TUNNEL_DEPTH : null, orientation: record.orientation, representedPosition:record.representedPosition, dimensions: 'illustrative', sourceAxisDistanceMetres: record.rail?.distance ?? null, positionUncertainty: record.mode === 'metro' && !record.rail ? 'Source track is unclassified at this report; position marker, not a train at an inferred elevation' : record.uncertainTrackPosition ? 'Reported point is outside the illustrated track chamber; position marker, not track-snapped train' : null } };
   }
 
   function pick(raycaster) {
@@ -500,6 +500,8 @@ export function createTransitView({ project, localPosition, requestRender = () =
     const inspected = inspectionRecord();
     const inspectionMessage = !inspectionTarget ? null : !inspected
       ? 'Selected metro absent from latest feed'
+      : !inspected.rail
+      ? 'Position report · track unclassified'
       : !inspected.underground
       ? `${fresh(inspected) ? 'Fresh' : 'Older/unverified'} selected metro · outside mapped tunnel`
       : null;
