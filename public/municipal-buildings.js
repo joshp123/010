@@ -110,14 +110,17 @@ export function configureMunicipalBuildingStreaming(tiles, municipalCache) {
     tiles.lruCache = municipalCache;
   }
   const calculateViewError = tiles.calculateTileViewError.bind(tiles);
+  const presentedParents = new WeakSet();
   tiles.loadAncestors = false;
   tiles.loadSiblings = false;
   tiles.calculateTileViewError = (tile, result) => {
     calculateViewError(tile, result);
-    // An unloaded renderable parent is the next useful source view. Once it is
-    // resident, its original screen-space error selects finer source children.
-    // The renderer keeps the visible parent until those children are ready.
-    if (tile.internal.hasRenderableContent && tile.internal.loadingState >= UNLOADED && tile.internal.loadingState < LOADED) {
+    if (!tile.internal.hasRenderableContent) return;
+    if (tile.internal.loadingState < LOADED) presentedParents.delete(tile);
+    if (tile.traversal.wasSetVisible) presentedParents.add(tile);
+    // Loading is not presentation. Make a ready parent visible for a frame
+    // before refining; the renderer can then retain it until children arrive.
+    if (tile.internal.loadingState >= UNLOADED && !presentedParents.has(tile)) {
       result.error = Math.min(result.error, tiles.errorTarget);
     }
   };
