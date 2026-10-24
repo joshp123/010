@@ -11,7 +11,7 @@ const VEHICLE_STYLES = {
 };
 const TUNNEL_DEPTH = 12;
 const CLASSIFICATION_DISTANCE = 18;
-const CHAMBER_HALF_WIDTH = 7;
+const CHAMBER_HALF_WIDTH = 3;
 const TUNNEL_GROUND_CONTEXT = { source: 'metro-section', preferGround: true };
 
 function pointOnSegment(point, start, end) {
@@ -35,8 +35,8 @@ export function createTransitView({ project, localPosition, requestRender = () =
   const bodyMaterial = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.9, metalness: 0, flatShading: true });
   const roofMaterial = new THREE.MeshStandardMaterial({ color: '#e3e2ce', roughness: 0.95, metalness: 0 });
   const floorMaterial = new THREE.MeshStandardMaterial({ color: '#293333', roughness: 1, side: THREE.DoubleSide });
-  const earthMaterial = new THREE.MeshStandardMaterial({ color: '#796a58', roughness: 1, side: THREE.DoubleSide });
-  const tunnelMaterial = new THREE.MeshStandardMaterial({ color: '#78817c', roughness: 1, side: THREE.DoubleSide });
+  const earthMaterial = new THREE.MeshStandardMaterial({ color: '#514b3e', roughness: 1, side: THREE.DoubleSide });
+  const tunnelMaterial = new THREE.MeshStandardMaterial({ color: '#555d57', roughness: 1, side: THREE.DoubleSide });
   const metroBodyMaterial = bodyMaterial.clone(), metroRoofMaterial = roofMaterial.clone();
   for (const material of [metroBodyMaterial, metroRoofMaterial]) {
     const isBody = material === metroBodyMaterial;
@@ -248,7 +248,8 @@ export function createTransitView({ project, localPosition, requestRender = () =
       addQuad(...floor,surfaces[0]);
       // Retain the far earth face, remove only the near face to reveal depth.
       const edge=side.dot(viewDirection)>0 ? [0,3] : [1,2];
-      for (const [a,b] of [edge]) {
+      const farEnd = direction.dot(viewDirection) < 0 ? (segment.capStart ? [[0,1]] : []) : (segment.capEnd ? [[3,2]] : []);
+      for (const [a,b] of [edge, ...farEnd]) {
         addQuad(corners[a],corners[b],lower[b],lower[a],surfaces[1]);
         addQuad(lower[a],lower[b],floor[b],floor[a],surfaces[2]);
       }
@@ -268,7 +269,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     for(let i=0;i<surfaces.length;i++){
       if(!surfaces[i].length)continue;
       const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(surfaces[i],3));geometry.computeVertexNormals();
-      const mesh=new THREE.Mesh(geometry,materialList[i]);mesh.name=names[i];mesh.receiveShadow=false;cutawayGroup.add(mesh);
+      const mesh=new THREE.Mesh(geometry,materialList[i]);mesh.name=names[i];mesh.receiveShadow=true;cutawayGroup.add(mesh);
     }
   }
 
@@ -313,34 +314,38 @@ export function createTransitView({ project, localPosition, requestRender = () =
     const projection=cutawayMask.projection.set(viewDirection.x/Math.min(-.1,viewDirection.y),viewDirection.z/Math.min(-.1,viewDirection.y));
     const projectToOpening=point=>new THREE.Vector3(point.x-point.y*projection.x,0,point.z-point.y*projection.y);
     const bounds=new THREE.Box3();
-    const projected=[];
-    for(const segment of sectionSegments){
-      // Union of surface and floor projections gives a real depth section,
-      // rather than a displaced floating rail strip with no earth face.
-      const surfaceStart=projectToOpening(segment.start),surfaceEnd=projectToOpening(segment.end);
-      const floorStart=projectToOpening(segment.start.clone().add(new THREE.Vector3(0,-TUNNEL_DEPTH,0))),floorEnd=projectToOpening(segment.end.clone().add(new THREE.Vector3(0,-TUNNEL_DEPTH,0)));
-      projected.push({surfaceStart,surfaceEnd,floorStart,floorEnd});
-      for(const point of [surfaceStart,surfaceEnd,floorStart,floorEnd])bounds.expandByPoint(point);
+    // The aperture is exactly the projected physical section, never a dilated
+    // centreline. Every removed city ray must have a floor/earth face behind it.
+    const triangles=[];
+    for (const mesh of cutawayGroup.children.slice(0,3)) {
+      const position=mesh.geometry.getAttribute('position');
+      for(let index=0;index<position.count;index+=3){
+        const triangle=[];
+        for(let vertex=0;vertex<3;vertex++){
+          const point=projectToOpening(new THREE.Vector3().fromBufferAttribute(position,index+vertex));
+          triangle.push(point); bounds.expandByPoint(point);
+        }
+        triangles.push(triangle);
+      }
     }
     if(bounds.isEmpty()){bounds.min.set(-1,0,-1);bounds.max.set(1,0,1);}
-    bounds.expandByScalar(halfWidth+2);
+    bounds.expandByScalar(1);
     const sx=bounds.max.x-bounds.min.x,sz=bounds.max.z-bounds.min.z;
-    const width=Math.min(1024,Math.max(64,Math.ceil(sx/metresPerPixel))),height=Math.min(1024,Math.max(64,Math.ceil(sz/metresPerPixel)));
-    const cellX=sx/width,cellZ=sz/height,edgeWidth=Math.hypot(cellX,cellZ);
-    const pixels=new Uint8Array(width*height), radius=halfWidth+.5;
-    for(const segment of projected){
-      const steps=Math.max(1,Math.ceil(segment.surfaceStart.distanceTo(segment.floorStart)/2));
-      for(let step=0;step<=steps;step++){
-        const start=segment.surfaceStart.clone().lerp(segment.floorStart,step/steps),end=segment.surfaceEnd.clone().lerp(segment.floorEnd,step/steps);
-        const padding=radius+edgeWidth;
-        const left=Math.max(0,Math.floor((Math.min(start.x,end.x)-padding-bounds.min.x)/cellX)),right=Math.min(width-1,Math.ceil((Math.max(start.x,end.x)+padding-bounds.min.x)/cellX));
-        const top=Math.max(0,Math.floor((Math.min(start.z,end.z)-padding-bounds.min.z)/cellZ)),bottom=Math.min(height-1,Math.ceil((Math.max(start.z,end.z)+padding-bounds.min.z)/cellZ));
-        for(let y=top;y<=bottom;y++)for(let x=left;x<=right;x++){
-          const point={x:bounds.min.x+(x+.5)*cellX,z:bounds.min.z+(y+.5)*cellZ};
-          const distance=pointOnSegment(point,start,end).distance;
-          const coverage=Math.round(255*THREE.MathUtils.clamp(.5+(radius-distance)/edgeWidth,0,1));
-          pixels[y*width+x]=Math.max(pixels[y*width+x],coverage);
-        }
+    // A tighter geometric aperture needs enough precision to avoid jagged soil
+    // edges at close phone scales. Coverage is still capped at1024 per axis.
+    const resolution=Math.min(metresPerPixel,.15);
+    const width=Math.min(1024,Math.max(64,Math.ceil(sx/resolution))),height=Math.min(1024,Math.max(64,Math.ceil(sz/resolution)));
+    const cellX=sx/width,cellZ=sz/height;
+    const pixels=new Uint8Array(width*height);
+    const edge=(a,b,x,z)=>(x-a.x)*(b.z-a.z)-(z-a.z)*(b.x-a.x);
+    for(const [a,b,c] of triangles){
+      const left=Math.max(0,Math.floor((Math.min(a.x,b.x,c.x)-bounds.min.x)/cellX)),right=Math.min(width-1,Math.ceil((Math.max(a.x,b.x,c.x)-bounds.min.x)/cellX));
+      const top=Math.max(0,Math.floor((Math.min(a.z,b.z,c.z)-bounds.min.z)/cellZ)),bottom=Math.min(height-1,Math.ceil((Math.max(a.z,b.z,c.z)-bounds.min.z)/cellZ));
+      if(Math.abs(edge(a,b,c.x,c.z))<1e-8)continue;
+      for(let y=top;y<=bottom;y++)for(let x=left;x<=right;x++){
+        const px=bounds.min.x+(x+.5)*cellX,pz=bounds.min.z+(y+.5)*cellZ;
+        const e0=edge(a,b,px,pz),e1=edge(b,c,px,pz),e2=edge(c,a,px,pz);
+        if((e0>=0&&e1>=0&&e2>=0)||(e0<=0&&e1<=0&&e2<=0))pixels[y*width+x]=255;
       }
     }
     cutawayMask.texture.image={data:pixels,width,height};cutawayMask.texture.needsUpdate=true;
