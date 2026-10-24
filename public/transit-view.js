@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { createMetroCarriageGeometry } from './metro-drawing.js';
 
 const VEHICLE_STYLES = {
   bus: { color: '#c49558', width: 2.7, height: 3.1, length: 12 },
@@ -9,10 +10,10 @@ const VEHICLE_STYLES = {
   'metro-position': { color: '#d19a45', width: 2.2, height: 2.2, length: 2.2 },
   unknown: { color: '#b3b6ac', width: 3, height: 3, length: 9 },
 };
-const TUNNEL_DEPTH = 12;
+const TUNNEL_DEPTH = 8; // Schematic viewing depth, never a surveyed tunnel elevation.
 const CLASSIFICATION_DISTANCE = 18;
 const CHAMBER_HALF_WIDTH = 3;
-const SECTION_RADIUS = 14; // A viewing window; most of the train remains beneath the city.
+const SECTION_RADIUS = 32; // Reveal an articulated train with source-track context at both ends.
 const TUNNEL_GROUND_CONTEXT = { source: 'metro-section', preferGround: true };
 
 function pointOnSegment(point, start, end) {
@@ -32,16 +33,14 @@ export function createTransitView({ project, localPosition, requestRender = () =
   cutawayGroup.visible = false;
   group.add(cutawayGroup);
   const box = new THREE.BoxGeometry(1, 1, 1);
-  const metroBodyGeometry = box.clone();
-  const bodyVertices = metroBodyGeometry.getAttribute('position');
-  for (let i=0;i<bodyVertices.count;i++) if (Math.abs(bodyVertices.getZ(i))>.49) bodyVertices.setZ(i,bodyVertices.getZ(i)-Math.sign(bodyVertices.getZ(i))*.035*(bodyVertices.getY(i)+.5));
-  metroBodyGeometry.computeVertexNormals();
+  const metroBodyGeometry = createMetroCarriageGeometry();
+  const metroRoofGeometry = createMetroCarriageGeometry({ roof: true });
   const reportMarker = new THREE.OctahedronGeometry(.65);
   const bodyMaterial = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.9, metalness: 0, flatShading: true });
   const roofMaterial = new THREE.MeshStandardMaterial({ color: '#e3e2ce', roughness: 0.95, metalness: 0 });
   const floorMaterial = new THREE.MeshStandardMaterial({ color: '#293333', roughness: 1, side: THREE.DoubleSide });
-  const earthMaterial = new THREE.MeshStandardMaterial({ color: '#a68c70', vertexColors:true, roughness: 1, side: THREE.DoubleSide });
-  const tunnelMaterial = new THREE.MeshStandardMaterial({ color: '#89928b', roughness: 1, side: THREE.DoubleSide });
+  const earthMaterial = new THREE.MeshStandardMaterial({ color: '#858b86', vertexColors:true, roughness: 1, side: THREE.DoubleSide });
+  const tunnelMaterial = new THREE.MeshStandardMaterial({ color: '#b2b9b2', roughness: 1, side: THREE.DoubleSide });
   const metroBodyMaterial = bodyMaterial.clone(), metroRoofMaterial = roofMaterial.clone();
   for (const material of [metroBodyMaterial, metroRoofMaterial]) {
     const isBody = material === metroBodyMaterial;
@@ -52,26 +51,31 @@ export function createTransitView({ project, localPosition, requestRender = () =
       shader.fragmentShader = shader.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
         // Three illustrated articulated sections; no rolling-stock identity claim.
         float carriage = fract((transitLocal.z + 0.5) * 3.0);
-        if (carriage < 0.013 || carriage > 0.987) discard;
+
         ${isBody ? `
-        float side = step(0.49, abs(transitLocal.x));
-        float window = step(-0.02, transitLocal.y) * step(transitLocal.y, 0.31);
-        float pane = step(0.12, fract(carriage * 6.0)) * step(fract(carriage * 6.0), 0.86);
-        float glazing = window * mix(step(0.45, abs(transitLocal.z)), pane, side);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.025, 0.065, 0.075), glazing * 0.92);
-        float door = side * step(0.40, carriage) * step(carriage, 0.56);
-        float doorFrame = door * (step(0.43, carriage) * step(carriage, 0.53));
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.12, 0.16, 0.17), door * 0.72);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.45, 0.48, 0.47), doorFrame * 0.65);
-        float badge = side * step(-0.30, transitLocal.y) * step(transitLocal.y, -0.12) * step(0.68, carriage) * step(carriage, 0.80);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.02, 0.43, 0.49), badge);
-        float slash = badge * step(0.76 + transitLocal.y * 0.09, carriage);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.74, 0.08, 0.06), slash);
-        totalEmissiveRadiance += vec3(0.18, 0.14, 0.07) * glazing;
+        float side = step(0.38, abs(transitLocal.x));
+        float windowBand = step(-0.015, transitLocal.y) * step(transitLocal.y, 0.32);
+        float panePhase = fract(carriage * 7.0);
+        float pane = step(0.09, panePhase) * step(panePhase, 0.91);
+        float cab = step(0.467, abs(transitLocal.z));
+        float glazing = windowBand * max(side * pane, cab);
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.035, 0.075, 0.08), glazing);
+        float door = side * step(0.39, carriage) * step(carriage, 0.60) * step(-0.41, transitLocal.y) * step(transitLocal.y, 0.34);
+        float doorPanel = door * (1.0 - windowBand);
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.53, 0.58, 0.57), doorPanel * .65);
+        float seam = door * step(0.49, carriage) * step(carriage,0.505);
+        diffuseColor.rgb = mix(diffuseColor.rgb,vec3(0.12,0.17,0.17),seam);
+        float skirt = 1.0 - step(-0.36, transitLocal.y);
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.21,0.25,0.25),skirt);
+        float livery = side * step(-.34, transitLocal.y) * step(transitLocal.y,.31) * step(.65,carriage) * step(carriage,.72);
+        diffuseColor.rgb = mix(diffuseColor.rgb,vec3(.03,.47,.49),livery);
+        float redStripe = side * step(-.29,transitLocal.y) * step(transitLocal.y,-.20) * step(.72+transitLocal.y*.16,carriage) * step(carriage,.80+transitLocal.y*.16);
+        diffuseColor.rgb = mix(diffuseColor.rgb,vec3(.68,.09,.07),redStripe);
+        totalEmissiveRadiance += vec3(0.10, 0.12, 0.10) * glazing;
         ` : ''}
       `);
     };
-    material.customProgramCacheKey = () => `010-metro-articulation-${isBody ? 'body' : 'roof'}-v2`;
+    material.customProgramCacheKey = () => `010-metro-articulation-${isBody ? 'body' : 'roof'}-v3`;
   }
   const trackMaterials = [
     new THREE.MeshStandardMaterial({ color: '#414a46', roughness: 1, side: THREE.DoubleSide }),
@@ -97,7 +101,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
       if (batch) { group.remove(batch.body, batch.roof); batch.body.dispose(); batch.roof.dispose(); }
       const capacity = Math.max(16, count);
       const body = new THREE.InstancedMesh(mode === 'metro-position' ? reportMarker : mode === 'metro' ? metroBodyGeometry : box, mode === 'metro' ? metroBodyMaterial : bodyMaterial, capacity);
-      const roof = new THREE.InstancedMesh(box, mode === 'metro' ? metroRoofMaterial : roofMaterial, capacity);
+      const roof = new THREE.InstancedMesh(mode === 'metro' ? metroRoofGeometry : box, mode === 'metro' ? metroRoofMaterial : roofMaterial, capacity);
       body.name = mode === 'metro-position' ? 'Reported metro position · track mismatch' : `Observed ${mode}`; roof.name = `${mode} roofs`;
       body.instanceMatrix.setUsage(THREE.DynamicDrawUsage); roof.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
       body.castShadow = true; body.receiveShadow = true;
@@ -181,9 +185,9 @@ export function createTransitView({ project, localPosition, requestRender = () =
         if (report.freshness !== 'fresh' || !report.sourceConnected) color.set('#737d80');
         batch.body.setColorAt(index, color);
         transform.position.y += style.height * scale * 0.48;
-        transform.scale.set(style.width * scale * 0.8, style.height * scale * 0.16, style.length * scale * (mode === 'metro' ? .97 : .76));
+        transform.scale.set(style.width * scale * 0.8, style.height * scale * 0.16, style.length * scale * (mode === 'metro' ? 1 : .76));
         transform.updateMatrix(); batch.roof.setMatrixAt(index, transform.matrix);
-        batch.roof.setColorAt(index, new THREE.Color(report.freshness === 'fresh' && report.sourceConnected ? '#ffffff' : '#929b99'));
+        batch.roof.setColorAt(index, new THREE.Color(report.freshness === 'fresh' && report.sourceConnected ? '#aeb5b1' : '#929b99'));
       }
       batch.body.count = reports.length; batch.roof.count = mode === 'metro-position' ? 0 : reports.length;
       batch.body.instanceMatrix.needsUpdate = batch.roof.instanceMatrix.needsUpdate = true;
@@ -274,16 +278,14 @@ export function createTransitView({ project, localPosition, requestRender = () =
       // freestanding soil slab. Camera-near banks reveal the train at depth.
       const reachFor=normal=>{
         const towardCamera=Math.max(0,-normal.dot(viewDirection));
-        return towardCamera>0?(TUNNEL_DEPTH-3)*towardCamera/Math.max(.1,-viewDirection.y)+2:5;
+        return towardCamera>0?(TUNNEL_DEPTH+1)*towardCamera/Math.max(.1,-viewDirection.y)+1.2:.65;
       };
       const mouthPoint=index=>{
         const normal=(index<2?startSide:endSide).clone().multiplyScalar(index===0||index===3?1:-1);
         const centre=index<2?start:end;
-        // The surface mouth closes around a compact viewing window. Rounded
-        // shoulders avoid four long straight edges reading as a placed slab.
-        const longitudinal=centre.distanceTo(sectionAnchor)/SECTION_RADIUS;
-        const shoulder=Math.sqrt(Math.max(.16,1-longitudinal*longitudinal));
-        const result=corners[index].clone().addScaledVector(normal,reachFor(normal)*shoulder);
+        // A continuous section follows the actual source track. Quiet straight
+        // cut faces read as an opening in this city rather than a rounded capsule.
+        const result=corners[index].clone().addScaledVector(normal,reachFor(normal));
         const endNormal=(index===0||index===1)&&segment.capStart?direction.clone().negate():(index===2||index===3)&&segment.capEnd?direction:null;
         if(endNormal)result.addScaledVector(endNormal,3);
         const sample=index<2?segment.startSample:segment.endSample;
@@ -306,7 +308,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
         const rimA = topA.clone().addScaledVector(outward,rimWidth).add(new THREE.Vector3(0,.02,0));
         const rimB = topB.clone().addScaledVector(outward,rimWidth).add(new THREE.Vector3(0,.02,0));
         addQuad(topA,topB,rimB,rimA,surfaces[6]);
-        const liningHeight=2;
+        const liningHeight=1;
         const bottomA=floor[a].clone().add(new THREE.Vector3(0,liningHeight,0)),bottomB=floor[b].clone().add(new THREE.Vector3(0,liningHeight,0));
         addQuad(topA,topB,bottomB,bottomA,surfaces[1]);
         addQuad(bottomA,bottomB,floor[b],floor[a],surfaces[2]);
@@ -327,7 +329,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
       strip(trackStart,trackEnd,1.8,.02,surfaces[3]);
       const length=start.distanceTo(end);
       for(let distance=.6;distance<length;distance+=1.2){const centre=trackStart.clone().lerp(trackEnd,distance/length);strip(centre.clone().addScaledVector(direction,-.14),centre.clone().addScaledVector(direction,.14),1.3,.08,surfaces[4]);}
-      for(const offset of [-.75,.75])strip(trackStart.clone().addScaledVector(side,offset),trackEnd.clone().addScaledVector(side,offset),.075,.2,surfaces[5]);
+      for(const offset of [-.7175,.7175])strip(trackStart.clone().addScaledVector(side,offset),trackEnd.clone().addScaledVector(side,offset),.075,.2,surfaces[5]);
     }
     const materialList=[floorMaterial,earthMaterial,tunnelMaterial,...trackMaterials,tunnelMaterial];
     const names=['Section floor','Cut earth face · depth illustrated','Concrete chamber','Illustrated track bed','Illustrated sleepers','Illustrated rails','Cut surface edge'];
@@ -510,7 +512,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     dispose() {
       for (const batch of batches.values()) { batch.body.dispose(); batch.roof.dispose(); }
       for (const child of cutawayGroup.children) child.geometry.dispose();
-      cutawayMask?.texture.dispose(); box.dispose(); metroBodyGeometry.dispose(); reportMarker.dispose(); bodyMaterial.dispose(); roofMaterial.dispose(); metroBodyMaterial.dispose(); metroRoofMaterial.dispose(); tunnelMaterial.dispose(); floorMaterial.dispose(); earthMaterial.dispose(); trackMaterials.forEach(material => material.dispose());
+      cutawayMask?.texture.dispose(); box.dispose(); metroBodyGeometry.dispose(); metroRoofGeometry.dispose(); reportMarker.dispose(); bodyMaterial.dispose(); roofMaterial.dispose(); metroBodyMaterial.dispose(); metroRoofMaterial.dispose(); tunnelMaterial.dispose(); floorMaterial.dispose(); earthMaterial.dispose(); trackMaterials.forEach(material => material.dispose());
       group.removeFromParent(); group.clear(); batches.clear();
     },
   };
