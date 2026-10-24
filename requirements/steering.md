@@ -73,3 +73,9 @@ The attachment is not stored here because it includes private browser chrome. Th
 > overall idea for fidelity: ensure the highest fidelity within reason by sensibly combining as many datasets as necessary to ensrue appropritaley high quatliy data. pareto efficiency type idea
 
 > well remember to think holistically across the entire city not just individual details
+
+## Outcome over verification activity
+
+> btw ensure we do not degrade into proof port and ensure that the worker thread keeps on actually advancing the goal in line with steering and the better/ambition skills
+
+Recorded by AI on 2026-10-24 by model GPT-6. Workers must keep advancing the whole product. Verification supports decisions; archives, counts and repeated local fixes are not the deliverable.
