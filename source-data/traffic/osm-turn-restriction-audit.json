@@ -1,0 +1,586 @@
+{
+  "acquiredAt": "2026-10-24T07:58:07.302037+00:00",
+  "endpoint": "https://overpass-api.de/api/interpreter",
+  "query": "[out:json][timeout:45];rel[type=restriction](51.900,4.465,51.930,4.505);(._;>;);out body;",
+  "license": "OpenStreetMap ODbL-1.0; attribution OpenStreetMap contributors required before runtime use",
+  "schema": "https://wiki.openstreetmap.org/wiki/Relation:restriction",
+  "rawSha256": "e2635e4ec394de6b7e25a70a74c05ce9ef54ec8e1d67a987678a7da4ec11be58",
+  "nwbSha256": "12c83252f8e94a98d0086d2a8a04307d18a24c5f6b87e6ae9adaf3a741dbb710",
+  "status": "review only, not activated; matching source geometry is not proof of legal completeness",
+  "relations": [
+    {
+      "osmRelation": 376766,
+      "tags": {
+        "name": "Vasteland: geen u-bocht toegestaan",
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "multi-member or via-way restriction requires path state"
+    },
+    {
+      "osmRelation": 1312594,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 2329782,
+      "tags": {
+        "restriction": "only_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 2329783,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 2376098,
+      "tags": {
+        "except": "bicycle",
+        "restriction": "only_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 2378091,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 2591984,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 2772521,
+      "tags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 4063857,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 6426685,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 6981125,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 7377866,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 7671697,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 8108528,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 9613131,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 9797262,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 9797263,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 9797264,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 9802311,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 9802312,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 9802313,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 9802314,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 9802315,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 9802316,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 9802317,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10152588,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10164942,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10164943,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10164945,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10164946,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10477620,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10477621,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10579275,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10579276,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10668056,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10668057,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10668388,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10786629,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10902776,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10902777,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 10902779,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 11231184,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 11510291,
+      "tags": {
+        "restriction": "no_left_turn",
+        "traffic_sign": "NL:F07",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 11758547,
+      "tags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 11783357,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 11876154,
+      "tags": {
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 12535522,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 12829048,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 13160894,
+      "tags": {
+        "restriction": "only_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "multi-member or via-way restriction requires path state"
+    },
+    {
+      "osmRelation": 13160895,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "multi-member or via-way restriction requires path state"
+    },
+    {
+      "osmRelation": 13309876,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 13422382,
+      "tags": {
+        "restriction": "only_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 13774733,
+      "tags": {
+        "restriction": "only_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 14966194,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 14966195,
+      "tags": {
+        "restriction": "no_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 14966196,
+      "tags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 14985911,
+      "tags": {
+        "implicit": "yes",
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 14985912,
+      "tags": {
+        "implicit": "yes",
+        "restriction": "only_straight_on",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 16707377,
+      "tags": {
+        "restriction": "no_u_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 17428898,
+      "tags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 18990384,
+      "tags": {
+        "except": "moped;psv;emergency",
+        "restriction": "only_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    },
+    {
+      "osmRelation": 21011676,
+      "tags": {
+        "restriction:bus": "only_left_turn",
+        "restriction:hgv": "only_left_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "unsupported motor restriction type"
+    },
+    {
+      "osmRelation": 21622541,
+      "tags": {
+        "restriction": "only_right_turn",
+        "type": "restriction"
+      },
+      "status": "unmatched",
+      "reason": "missing or ambiguous NWB junction within 8m"
+    }
+  ]
+}
