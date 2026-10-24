@@ -15,6 +15,13 @@ export function createMunicipalBuildingVisibility() {
   function apply(record) {
     const visibleIds = new Set();
     for (const entry of record.meshes) {
+      if (!entry.bagIds.some(id => replaced.has(id))) {
+        for (const id of entry.bagIds) visibleIds.add(id);
+        entry.mesh.geometry.setIndex(entry.original.index || new THREE.BufferAttribute(entry.indices, 1));
+        entry.mesh.geometry.clearGroups();
+        for (const group of entry.original.groups) entry.mesh.geometry.addGroup(group.start, group.count, group.materialIndex);
+        continue;
+      }
       const keep = [], groups = entry.original.groups;
       entry.mesh.geometry.clearGroups();
       let groupStart = 0, groupMaterial = null;
@@ -62,7 +69,7 @@ export function createMunicipalBuildingVisibility() {
           }
           identities.push(lookup.get(batch));
         }
-        meshes.push({ mesh, original: geometry, indices, identities });
+        meshes.push({ mesh, original: geometry, indices, identities, bagIds: [...new Set(identities.filter(Boolean))] });
       });
       const record = { meshes, visibleIds: new Set() }; models.set(model, record); apply(record);
     },
@@ -85,7 +92,7 @@ export function createMunicipalBuildingVisibility() {
       return ids;
     },
     diagnostics() {
-      return { loadedModels: models.size, sourceBuildings: new Set([...models.values()].flatMap(record => record.meshes.flatMap(entry => entry.identities.filter(Boolean)))).size, replacedBuildings: replaced.size };
+      return { loadedModels: models.size, sourceBuildings: new Set([...models.values()].flatMap(record => record.meshes.flatMap(entry => entry.bagIds))).size, replacedBuildings: replaced.size };
     },
   };
 }
