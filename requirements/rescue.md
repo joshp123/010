@@ -40,3 +40,9 @@ Make it look good first, then make it fast. The free-resource constraint, public
 Compare the actual map with [Tiny London](https://tiny.london/) and [Isometric NYC](https://isometric.nyc/), plus independent real-city evidence. Inspect ordinary streets as carefully as landmarks, across close, neighbourhood and city scales, day and night. Inspect car and cyclist motion over time. Test finding, navigating and sharing a place on desktop and phone. Export resolution, geometry counts and a passing build support the work but cannot substitute for these checks.
 
 Continue until the map meets this brief. Report material limits honestly instead of turning them into acceptance.
+
+### Adjoining-area implementation checkpoint
+
+Manager's actual combined-candidate review found source-ground markings attached to streets and less solid foliage, but the dominant composition still consists of generic window grids, large flat roof planes and a subdued GIS palette. These supporting changes are not acceptance.
+
+The next architectural proof must cover adjoining real buildings and their surroundings through retained tiled acquisition and reusable source/model bindings, using finer municipal observations. Preserve source geometry, UVs, BAG identities and material evidence; model interpretation must remain replaceable without bespoke per-building runtime code. Carry the same source-ground process onto the next tile, including source-supported road and rail markings. A richer isolated frontage, a successful build or a count of covered features does not demonstrate municipality coverage. Ordinary adjoining blocks, modern buildings, port and Hoek remain in scope, with consistent opposing views, close zoom and day/night appearance.
