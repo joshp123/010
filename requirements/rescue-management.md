@@ -38,9 +38,13 @@ Fourteen source-backed port tanks restore useful markings and context, but the p
 
 Portrait/landscape export, download and image+caption clipboard paths work. Their scene content remains unaccepted. Final accepted-scene MP4/poster, public og:video metadata and hosted media are open. Keep delivery simple; do not build a proof workflow around a missing clip.
 
-## Execution blocker
+## Local continuation and cloud diagnosis
 
-The cloud implementation conversation currently fails to load with “Too many requests.” Its executor reports active but its transcript has not advanced beyond the packaging handoff; activity is unverified. Art’s native conversation also reports a connection interruption. Working files and last delivered assets remain retained. Steering is submitted, but submission is not evidence that either worker has acted on it. Back off requests, recover the existing conversations and obtain the combined candidate before duplicating work.
+Josh directed continuation locally. Runtime worker owns the SSD010-rescue-review checkout for integrated source appearance, cache residency, metro and vegetation; art worker owns010-source-bound-painter for source-bound interpretation of an untouched adjoining block. Both are actively implementing from the last delivered cloud revision. Actual Library artwork was recovered locally; pinned municipal source bytes can be reacquired directly. Cloud history access is no longer a product-work dependency. Manager continues actual browser assessment and heartbeat.
+
+Authenticated ChatGPT conversation history requests return HTTP429 without an exposed underlying reason. The first logged failure predates the monitoring loop. Current Codex normal usage remains allowed with21% weekly allowance; separate ChatGPT allowance is not established. A distinct cloud-placement compatibility error also exists. Do not mistake either for proof that model capacity is exhausted, and do not spend further product time on unchanged polling.
+
+Mac mini SSH fails because its Tailscale node key expired. Its separate Codex remote-control connection responds to archived-thread reads, but no010 checkout or current worker execution is proven there. Existing productive local workers remain in place; no credential or network changes were made.
 
 ## Next assessment
 
