@@ -1,6 +1,10 @@
 Written by AI on 2026-10-24 by model GPT-6.
 
-Complete north18 building drawing candidate, not art/fidelity acceptance.
+Complete north18 building drawing candidate, not art/fidelity acceptance. Current replacement: bound-model-drawn-block-pixel. Earlier rejected architectural drawing remains in views-v3.json and its original paint fields; its handoff is preserved separately.
+
+The common-scale replacement uses five newly model-composed pixel fields: two steep opposing views, two court/end-wall views and the top roof. The model was explicitly asked to draw at320px whole-block scale, with broad wall/roof masses and selective dark/recess/highlight clusters. The court edits use the earlier interpreted court field plus exact source evidence, chosen new whole-block drawing and Tiny London ordinary Brixton style reference. Full prompts are common-pixel-{drawing,roof,court}-prompt.txt. Five successful built-in generations produced this replacement. Remaining earlier cardinal fields are low-confidence fallbacks for surfaces not observed by those five views; they are not proof of newly painted unobserved sides.
+
+Internal source recovery lives at source-data/source-bound-painter/raw/18_268620_55472.b3dm. The adjacent README pins its public URL and compressed/decoded hashes. Use this path for the commands below on the internal clone. Code and fields are committed in this durable internal repository; generated depth/atlas/GLB outputs can be rebuilt.
 
 The source is the retained municipal leaf18_268620_55472.b3dm.gz in the adjoining rescue-review checkout. DecodedSHA256: d898d44dc9d6440779d5c5b9784da9e9361a771b344e630ca523749c6c6ad596. No source bytes or geometry were edited.
 

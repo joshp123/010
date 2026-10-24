@@ -39,7 +39,9 @@
       },
       "source": "view-0-0-source.png",
       "paint": "view-0-0-paint.png",
-      "depth": "view-0-0-depth.npy"
+      "depth": "view-0-0-depth.npy",
+      "drawingConfidence": 0.05,
+      "observation": "Earlier drawing is retained only as evidence-bound fallback for areas not visible in five common-scale views."
     },
     {
       "name": "view-90-0",
@@ -78,8 +80,8 @@
       "source": "view-90-0-source.png",
       "paint": "view-90-0-paint.png",
       "depth": "view-90-0-depth.npy",
-      "drawingConfidence": 0.65,
-      "observation": "Side source photographs contain aerial roof projection onto vertical party walls. Prefer elevated model drawing where visible; side view is lower confidence."
+      "drawingConfidence": 0.05,
+      "observation": "Earlier drawing is retained only as evidence-bound fallback for areas not visible in five common-scale views."
     },
     {
       "name": "view-180-0",
@@ -117,7 +119,9 @@
       },
       "source": "view-180-0-source.png",
       "paint": "view-180-0-paint.png",
-      "depth": "view-180-0-depth.npy"
+      "depth": "view-180-0-depth.npy",
+      "drawingConfidence": 0.05,
+      "observation": "Earlier drawing is retained only as evidence-bound fallback for areas not visible in five common-scale views."
     },
     {
       "name": "view-270-0",
@@ -156,8 +160,8 @@
       "source": "view-270-0-source.png",
       "paint": "view-270-0-paint.png",
       "depth": "view-270-0-depth.npy",
-      "drawingConfidence": 0.65,
-      "observation": "Side source photographs contain aerial roof projection onto vertical party walls. Prefer elevated model drawing where visible; side view is lower confidence."
+      "drawingConfidence": 0.05,
+      "observation": "Earlier drawing is retained only as evidence-bound fallback for areas not visible in five common-scale views."
     },
     {
       "name": "view-0-90",
@@ -194,8 +198,9 @@
         "elevation": 90
       },
       "source": "view-0-90-source.png",
-      "paint": "view-0-90-paint-v2.png",
-      "depth": "view-0-90-depth.npy"
+      "paint": "view-0-90-pixel.png",
+      "depth": "view-0-90-depth.npy",
+      "drawingConfidence": 1
     },
     {
       "name": "view-120-28",
@@ -232,8 +237,9 @@
         "elevation": 28
       },
       "source": "view-120-28-source.png",
-      "paint": "view-120-28-paint.png",
-      "depth": "view-120-28-depth.npy"
+      "paint": "view-120-28-pixel.png",
+      "depth": "view-120-28-depth.npy",
+      "drawingConfidence": 1
     },
     {
       "name": "view-300-28",
@@ -270,8 +276,9 @@
         "elevation": 28
       },
       "source": "view-300-28-source.png",
-      "paint": "view-300-28-paint.png",
-      "depth": "view-300-28-depth.npy"
+      "paint": "view-300-28-pixel.png",
+      "depth": "view-300-28-depth.npy",
+      "drawingConfidence": 1
     },
     {
       "name": "view-0-45",
@@ -308,8 +315,9 @@
         "elevation": 45
       },
       "source": "view-0-45-source.png",
-      "paint": "view-0-45-paint.png",
-      "depth": "view-0-45-depth.npy"
+      "paint": "view-0-45-pixel.png",
+      "depth": "view-0-45-depth.npy",
+      "drawingConfidence": 1
     },
     {
       "name": "view-180-45",
@@ -346,12 +354,13 @@
         "elevation": 45
       },
       "source": "view-180-45-source.png",
-      "paint": "view-180-45-paint.png",
-      "depth": "view-180-45-depth.npy"
+      "paint": "view-180-45-pixel.png",
+      "depth": "view-180-45-depth.npy",
+      "drawingConfidence": 1
     }
   ],
-  "handoffDirectory": "bound-model-drawn-block-v3",
-  "drawingPixelSize": 384,
-  "drawingScaleJudgement": "Model drawings only: approximately7pixels per metre across the54m block. Broad wall/recess composition survives; below-window photographic-like grain is not retained. Raw municipal evidence remains unchanged.",
+  "handoffDirectory": "bound-model-drawn-block-pixel",
+  "drawingPixelSize": 320,
+  "drawingScaleJudgement": "Model explicitly composed as native320px whole-block drawing: broad wall/roof masses, grouped dark recesses and sparse highlight clusters. Native source geometry/evidence unchanged. Actual opposing city judgement required.",
   "sourcePath": "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/raw/18_268620_55472.b3dm"
 }
