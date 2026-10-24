@@ -1,0 +1,349 @@
+{
+  "nativeTexels": true,
+  "source": "/Users/josh/code/010-rescue-metro/public/data/illustrated-neighbourhood/shared-centres-night-18_268619_55472",
+  "sourceGLBSha256": "a3bb06374ad49ed26c6b1548be5c43e54f245707814d32af2feec0cf006399d7",
+  "buildings": [
+    {
+      "bagId": "0599100000671740",
+      "sourceSha256": "a3bb06374ad49ed26c6b1548be5c43e54f245707814d32af2feec0cf006399d7",
+      "output": "bag0599100000671740.glb",
+      "atlasSize": [
+        1030,
+        427
+      ],
+      "decodedRgbaBytesIncludingMips": 2342952,
+      "layout": "packed-islands",
+      "islands": 12,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671726",
+      "sourceSha256": "a3bb06374ad49ed26c6b1548be5c43e54f245707814d32af2feec0cf006399d7",
+      "output": "bag0599100000671726.glb",
+      "atlasSize": [
+        441,
+        1151
+      ],
+      "decodedRgbaBytesIncludingMips": 2704124,
+      "layout": "packed-islands",
+      "islands": 30,
+      "emissionCrops": [
+        {
+          "material": 6,
+          "sourceTexture": 6,
+          "sourceSize": [
+            401,
+            597
+          ],
+          "sourceCrop": [
+            66,
+            349,
+            164,
+            431
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000671729",
+      "sourceSha256": "a3bb06374ad49ed26c6b1548be5c43e54f245707814d32af2feec0cf006399d7",
+      "output": "bag0599100000671729.glb",
+      "atlasSize": [
+        558,
+        837
+      ],
+      "decodedRgbaBytesIncludingMips": 2488960,
+      "layout": "packed-islands",
+      "islands": 28,
+      "emissionCrops": [
+        {
+          "material": 2,
+          "sourceTexture": 4,
+          "sourceSize": [
+            621,
+            371
+          ],
+          "sourceCrop": [
+            0,
+            0,
+            621,
+            371
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000671750",
+      "sourceSha256": "a3bb06374ad49ed26c6b1548be5c43e54f245707814d32af2feec0cf006399d7",
+      "output": "bag0599100000671750.glb",
+      "atlasSize": [
+        305,
+        1406
+      ],
+      "decodedRgbaBytesIncludingMips": 2284656,
+      "layout": "packed-islands",
+      "islands": 20,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000656929",
+      "sourceSha256": "a3bb06374ad49ed26c6b1548be5c43e54f245707814d32af2feec0cf006399d7",
+      "output": "bag0599100000656929.glb",
+      "atlasSize": [
+        653,
+        873
+      ],
+      "decodedRgbaBytesIncludingMips": 3037740,
+      "layout": "packed-islands",
+      "islands": 13,
+      "emissionCrops": [
+        {
+          "material": 1,
+          "sourceTexture": 3,
+          "sourceSize": [
+            472,
+            933
+          ],
+          "sourceCrop": [
+            312,
+            0,
+            472,
+            272
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000671724",
+      "sourceSha256": "a3bb06374ad49ed26c6b1548be5c43e54f245707814d32af2feec0cf006399d7",
+      "output": "bag0599100000671724.glb",
+      "atlasSize": [
+        919,
+        452
+      ],
+      "decodedRgbaBytesIncludingMips": 2213976,
+      "layout": "packed-islands",
+      "islands": 14,
+      "emissionCrops": [
+        {
+          "material": 2,
+          "sourceTexture": 3,
+          "sourceSize": [
+            472,
+            933
+          ],
+          "sourceCrop": [
+            76,
+            900,
+            92,
+            906
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        },
+        {
+          "material": 3,
+          "sourceTexture": 5,
+          "sourceSize": [
+            396,
+            729
+          ],
+          "sourceCrop": [
+            378,
+            0,
+            396,
+            62
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        },
+        {
+          "material": 4,
+          "sourceTexture": 6,
+          "sourceSize": [
+            401,
+            597
+          ],
+          "sourceCrop": [
+            0,
+            234,
+            21,
+            250
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000638397",
+      "sourceSha256": "a3bb06374ad49ed26c6b1548be5c43e54f245707814d32af2feec0cf006399d7",
+      "output": "bag0599100000638397.glb",
+      "atlasSize": [
+        1078,
+        1187
+      ],
+      "decodedRgbaBytesIncludingMips": 6820916,
+      "layout": "packed-islands",
+      "islands": 84,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671734",
+      "sourceSha256": "a3bb06374ad49ed26c6b1548be5c43e54f245707814d32af2feec0cf006399d7",
+      "output": "bag0599100000671734.glb",
+      "atlasSize": [
+        322,
+        1247
+      ],
+      "decodedRgbaBytesIncludingMips": 2139828,
+      "layout": "packed-islands",
+      "islands": 15,
+      "emissionCrops": [
+        {
+          "material": 1,
+          "sourceTexture": 2,
+          "sourceSize": [
+            159,
+            82
+          ],
+          "sourceCrop": [
+            0,
+            0,
+            159,
+            82
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        },
+        {
+          "material": 2,
+          "sourceTexture": 3,
+          "sourceSize": [
+            472,
+            933
+          ],
+          "sourceCrop": [
+            0,
+            917,
+            18,
+            933
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        },
+        {
+          "material": 3,
+          "sourceTexture": 6,
+          "sourceSize": [
+            401,
+            597
+          ],
+          "sourceCrop": [
+            329,
+            0,
+            401,
+            20
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000671730",
+      "sourceSha256": "a3bb06374ad49ed26c6b1548be5c43e54f245707814d32af2feec0cf006399d7",
+      "output": "bag0599100000671730.glb",
+      "atlasSize": [
+        301,
+        1542
+      ],
+      "decodedRgbaBytesIncludingMips": 2472244,
+      "layout": "packed-islands",
+      "islands": 28,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671728",
+      "sourceSha256": "a3bb06374ad49ed26c6b1548be5c43e54f245707814d32af2feec0cf006399d7",
+      "output": "bag0599100000671728.glb",
+      "atlasSize": [
+        1242,
+        346
+      ],
+      "decodedRgbaBytesIncludingMips": 2290428,
+      "layout": "packed-islands",
+      "islands": 22,
+      "emissionCrops": [
+        {
+          "material": 4,
+          "sourceTexture": 6,
+          "sourceSize": [
+            401,
+            597
+          ],
+          "sourceCrop": [
+            69,
+            516,
+            157,
+            597
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000671727",
+      "sourceSha256": "a3bb06374ad49ed26c6b1548be5c43e54f245707814d32af2feec0cf006399d7",
+      "output": "bag0599100000671727.glb",
+      "atlasSize": [
+        580,
+        885
+      ],
+      "decodedRgbaBytesIncludingMips": 2736236,
+      "layout": "packed-islands",
+      "islands": 15,
+      "emissionCrops": [
+        {
+          "material": 0,
+          "sourceTexture": 1,
+          "sourceSize": [
+            69,
+            61
+          ],
+          "sourceCrop": [
+            0,
+            0,
+            69,
+            61
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        },
+        {
+          "material": 1,
+          "sourceTexture": 5,
+          "sourceSize": [
+            396,
+            729
+          ],
+          "sourceCrop": [
+            0,
+            715,
+            16,
+            729
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    }
+  ]
+}
