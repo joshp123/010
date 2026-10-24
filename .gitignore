@@ -8,3 +8,9 @@ node_modules/
 *.zip
 __pycache__/
 *.pyc
+.sites-runtime/
+.wrangler/
+.vinext/
+.next/
+*.tsbuildinfo
+dist/

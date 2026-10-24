@@ -15,7 +15,7 @@ from pyproj import Transformer
 project = Path(__file__).resolve().parent.parent
 ROOT = project / 'work/data-cache/bridge-surfaces'
 ROOT.mkdir(parents=True, exist_ok=True)
-output = project / 'dist/data/bridge-surfaces'
+output = project / 'public/data/bridge-surfaces'
 output.mkdir(parents=True, exist_ok=True)
 reviews = json.loads((project/'source-data/bridge-decks.json').read_text())
 earth_to_geographic = Transformer.from_crs(4978, 4979, always_xy=True)

@@ -21,7 +21,7 @@ from shapely.prepared import prep
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / 'work/data-cache/transit'
 SOURCE = ROOT / 'source-data/transit'
-OUTPUT = ROOT / 'dist/data/transit'
+OUTPUT = ROOT / 'public/data/transit'
 GTFS_URL = 'https://gtfs.ovapi.nl/nl/gtfs-nl.zip'
 LIVE_URL = 'https://gtfs.ovapi.nl/nl/vehiclePositions.pb'
 BOUNDARY_URL = 'https://api.pdok.nl/kadaster/brk-bestuurlijke-gebieden/ogc/v1/collections/gemeentegebied/items?naam=Rotterdam&f=json'

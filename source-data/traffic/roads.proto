@@ -1,0 +1,12 @@
+syntax = "proto3";
+package rotterdam.traffic;
+message Road {
+  uint64 source_id = 1;
+  uint64 start_junction = 2;
+  uint64 end_junction = 3;
+  enum Direction { UNKNOWN = 0; FORWARD = 1; REVERSE = 2; BOTH = 3; }
+  Direction direction = 4;
+  repeated sint64 coordinate_deltas_e7 = 5 [packed = true];
+  string road_class = 6;
+}
+message RoadNetwork { uint32 version = 1; repeated Road roads = 2; }

@@ -21,7 +21,7 @@ from shapely.geometry import MultiPolygon, Polygon, box, mapping, shape
 from shapely.ops import transform, unary_union
 
 PROJECT = Path(__file__).resolve().parents[1]
-OUTPUT = PROJECT / "dist" / "data"
+OUTPUT = PROJECT / "public" / "data"
 CACHE = PROJECT / "work" / "data-cache"
 BOUNDARY_URL = "https://api.pdok.nl/kadaster/brk-bestuurlijke-gebieden/ogc/v1/collections/gemeentegebied/items?naam=Rotterdam&f=json"
 TOPOGRAPHY_API = "https://api.pdok.nl/kadaster/brt-top10nl/ogc/v1"

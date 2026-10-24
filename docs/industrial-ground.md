@@ -26,7 +26,7 @@ node scripts/build-industrial-ground.mjs
 
 Python requires the existing Nix Shapely and pyproj environment. Node uses the already-vendored Three.js library. To acquire a new edition instead, run `fetch-industrial-ground.py --snapshot <UTC timestamp>` without `--rebuild`; a different timestamp produces separate cached requests.
 
-The intermediate GeoJSON is kept in `work/source-quality/port/industrial-ground.geojson`. Browser assets are standard 3D Tiles 1.1 and glTF 2.0 in `dist/data/industrial-ground/`. One-kilometre buckets contain complete features, and tile bounds include their full extent. Meshes expose the four display classes through `extras.surfaceKind`. Source hashes and rendering choices are recorded in the generated manifest.
+The intermediate GeoJSON is kept in `work/source-quality/port/industrial-ground.geojson`. Browser assets are standard 3D Tiles 1.1 and glTF 2.0 in `public/data/industrial-ground/`. One-kilometre buckets contain complete features, and tile bounds include their full extent. Meshes expose the four display classes through `extras.surfaceKind`. Source hashes and rendering choices are recorded in the generated manifest.
 
 The edition produces 329 tiles, 153,990 triangles and 3.06 MB of GLB data. The original source gzip is 31.01 MB and stays outside the browser assets. All 4,417 selected geometries are valid and have distinct source IDs. The generated mesh areas agree with projected source areas within 0.012%; feature holes survive triangulation.
 

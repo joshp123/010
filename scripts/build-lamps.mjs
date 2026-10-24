@@ -4,9 +4,9 @@
 import { readFile, writeFile, mkdir, stat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { gunzipSync, gzipSync } from 'node:zlib';
-import * as THREE from '../dist/vendor/three/build/three.module.js';
+import * as THREE from '../public/vendor/three/build/three.module.js';
 
-const project = new URL('../', import.meta.url), output = new URL('dist/data/lamps/', project), cache = new URL('work/data-cache/light-cost/', project);
+const project = new URL('../', import.meta.url), output = new URL('public/data/lamps/', project), cache = new URL('work/data-cache/light-cost/', project);
 const source = 'https://www.3drotterdam.nl/datasource-data/2602863a-3d22-44c2-8c95-bbf88a20bf37/tileset.json';
 const origin = { latitude: 51.915, longitude: 4.49 }, radians = Math.PI / 180, bucketMetres = 1000;
 const inventory = new Map(), requests = new Map();
@@ -94,7 +94,7 @@ const east = new THREE.Vector3(-Math.sin(longitude), Math.cos(longitude), 0), up
 const north = new THREE.Vector3(-Math.sin(latitude) * Math.cos(longitude), -Math.sin(latitude) * Math.sin(longitude), Math.cos(latitude));
 const earthToLocal = new THREE.Matrix4().set(east.x, east.y, east.z, -east.dot(earthOrigin), up.x, up.y, up.z, -up.dot(earthOrigin), -north.x, -north.y, -north.z, north.dot(earthOrigin), 0, 0, 0, 1);
 const enuToEarth = new THREE.Matrix4().set(east.x, north.x, up.x, earthOrigin.x, east.y, north.y, up.y, earthOrigin.y, east.z, north.z, up.z, earthOrigin.z, 0, 0, 0, 1);
-const municipalityBytes = await readFile(new URL('dist/data/municipality.geojson', project)), municipality = JSON.parse(municipalityBytes).features.find(feature => feature.properties.identificatie === 'GM0599');
+const municipalityBytes = await readFile(new URL('public/data/municipality.geojson', project)), municipality = JSON.parse(municipalityBytes).features.find(feature => feature.properties.identificatie === 'GM0599');
 if (!municipality) throw Error('Missing GM0599 municipality');
 const polygons = municipality.geometry.type === 'MultiPolygon' ? municipality.geometry.coordinates : [municipality.geometry.coordinates];
 function inRing(x, y, ring) {

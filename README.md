@@ -6,13 +6,18 @@ Real municipal 3D geometry provides the buildings, bridges, trees and streets. S
 
 ## Run locally
 
-No package installation or build step is required:
+The complete app uses a small Worker for public transport feeds. Dependencies and build output stay on your local machine:
 
 ```sh
-python3 -m http.server 8780 --directory dist
+devenv shell
+npm ci
+npm run build
+npm run start -- --port 8780
 ```
 
-Open `http://localhost:8780`. A WebGL2-capable browser and an internet connection are needed: detailed geometry streams directly from Rotterdam's public service. Large raw downloads and development captures belong in ignored `work/`.
+Open `http://localhost:8780`. The browser app lives in `public/`; `dist/` is generated. A WebGL2-capable browser and an internet connection are needed: detailed geometry streams from Rotterdam's public service. Large raw downloads and development captures belong in ignored `work/`.
+
+For a quick map-only preview, `python3 -m http.server 8780 --directory public` serves the frontend without the live transport proxy.
 
 ## Sources and design
 
@@ -20,6 +25,7 @@ Open `http://localhost:8780`. A WebGL2-capable browser and an internet connectio
 - [NYC and London reference inventory](docs/reference-inventory.md)
 - [Product requirements and user steering](requirements/README.md)
 - [Source pipeline and replacement boundaries](docs/pipeline.md)
+- [Actual map views and sharing checks](docs/visual-review.md)
 
 Code is MIT. Geographic data, weather data and vendored libraries retain their own licences and attribution. Night window patterns are an illustration, not measured interior or occupancy information. Building geometry reflects the source survey dates, not a live reconstruction.
 

@@ -2,11 +2,11 @@
 // Written by AI, gpt-6-astra, 2026-10-24. Standard 3D Tiles for measured BGT yards.
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
-import * as THREE from '../dist/vendor/three/build/three.module.js';
+import * as THREE from '../public/vendor/three/build/three.module.js';
 
 const project = new URL('../', import.meta.url);
 const input = new URL('work/source-quality/port/industrial-ground.geojson', project);
-const output = new URL('dist/data/industrial-ground/', project);
+const output = new URL('public/data/industrial-ground/', project);
 const sourceBytes = await readFile(input), collection = JSON.parse(sourceBytes);
 const origin = { lat: 51.915, lon: 4.49 }, radians = Math.PI / 180;
 const bucketSizeMetres = 1000, polygonHeightMetres = -0.65, railHeightMetres = -0.62, railWidthMetres = 0.35;

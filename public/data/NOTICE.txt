@@ -1,0 +1,63 @@
+Geographic data for 010
+
+Municipal boundary: Kadaster / PDOK, Bestuurlijke Gebieden, CC BY 4.0.
+https://api.pdok.nl/kadaster/brk-bestuurlijke-gebieden/ogc/v1
+
+Overview terrain and water: Kadaster / PDOK, BRT TOP10NL, CC BY 4.0.
+https://api.pdok.nl/kadaster/brt-top10nl/ogc/v1
+The source geometry was clipped to Rotterdam, classified and simplified for display.
+
+Public destinations: PDOK Locatieserver, using Kadaster BAG and CBS place records.
+Every destination retains a source URL and record ID.
+
+Detailed 3D model: Gemeente Rotterdam. Catalogue license: public domain.
+https://www.rotterdam.nl/rotterdam-in-3d
+https://data.overheid.nl/dataset/10230-rotterdam-3d
+
+Aerial imagery used for source research and validation: Samenwerkingsverband
+Beeldmateriaal / PDOK, Luchtfoto 2026, CC BY 4.0. Raw photographs are not
+displayed as the miniature's streets.
+https://www.pdok.nl/introductie/-/article/pdok-luchtfoto-rgb-open-
+
+CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+These source-data notices are separate from the MIT license for application code.
+
+Large yards, paving and crane tracks: Kadaster / PDOK BGT, CC0 1.0.
+https://api.pdok.nl/kadaster/bgt/ogc/v1
+See industrial-ground/manifest.json for source inventory and display geometry.
+
+Street/path/rail tiles: Kadaster / PDOK BRT TOP10NL, CC BY 4.0. Source and transformation manifest: streets/manifest.json.
+Surrounding land and water: Kadaster / PDOK BRT TOP10NL, CC BY 4.0. Simplified
+context outside the exact municipality. Source and transformation details:
+source-data/context-land.json and docs/context-land.md in the repository.
+
+Prepared streetlights: source positions and geometry from Gemeente Rotterdam,
+Rotterdam 3D public-domain model. Straight shafts and emitted light are illustrated.
+See lamps/manifest.json for source inventory and processing details.
+
+Prepared transit routes/trip links: OVapi / Stichting OpenGeo, GTFS NL, CC0 1.0.
+Transit shape database: OVapi / Stichting OpenGeo, GTFS NL, ODbL 1.0.
+https://gtfs.ovapi.nl/README
+https://opendatacommons.org/licenses/odbl/1-0/
+The municipal derivative is available in transit/map.pb.gz under ODbL 1.0;
+retain attribution and database share-alike terms. It is clipped to Kadaster /
+PDOK GM0599 (CC BY 4.0), without simplification, and quantised to 1e-7 degrees.
+The original table-specific licence, source hashes and rebuild transform are
+available in source-data/transit and scripts/build-transit.py in the project
+repository. These terms are separate from the MIT application code licence.
+Prepared geometry is not an observed vehicle position or measured tunnel depth.
+
+Metro physical-form subset (transit/metro-physical.json.gz): Kadaster / PDOK,
+BRT TOP10NL, CC BY 4.0. Extracted from the retained municipality-clipped rail
+network; physical forms classified, source IDs retained. Plan geometry only;
+application tunnel depth is illustrative. Source/rebuild details:
+source-data/transit/presentation.md and scripts/build-metro-physical.py.
+
+Simulated road traffic paths (traffic/roads.pb.gz): Rijkswaterstaat / PDOK,
+Nationaal Wegenbestand, CC0 1.0. Municipality clipping and BRT tunnel exclusion
+use Kadaster / PDOK CC BY 4.0 sources. Source vertices/junctions retained;
+clipping, tunnel subtraction and coordinate quantisation described in
+source-data/traffic/README.md. Cars, speeds and density are simulated, not
+live observations. Independent renderer/build code remains MIT.
+
+Measured port forms: Actueel Hoogtebestand Nederland (AHN) / Het Waterschapshuis — AHN6, CC BY 4.0. Selected survey flights from December 2025; these are dated structures and objects, not live vessel reports.

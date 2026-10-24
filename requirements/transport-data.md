@@ -1,10 +1,10 @@
 # Public transport and marine data
 
-Written by AI on 2026-10-24 by model GPT-6.1 Sol. Sources and endpoints checked on that date; feasibility research, not an implemented service.
+Written by AI on 2026-10-24 by models GPT-6.1 Sol and GPT-6. Sources and endpoints checked on that date.
 
 ## Decision
 
-Use free NDOV live feeds plus the national GTFS timetable. All five RET metro lines, trams and buses have live operational data; NS has a separate GPS feed. A shared backend is necessary. Smooth animation between reports is a visual estimate, especially underground. Do not promise continuous measured positions for every vehicle. Marine traffic remains optional pending access and reuse terms.
+The app uses free NDOV GTFS-Realtime reports and NS positions through NL Trains Live, via two same-origin Worker routes. National GTFS supplies route metadata. Reported coordinates and individual observation times are preserved; vehicles are not interpolated between reports. All RET modes were observed in source probes, but no feed establishes complete continuous coverage of every vehicle. [The live adapter](../source-data/transit/live-layer.md) records the implemented path and limits. Marine traffic remains optional pending access and reuse terms.
 
 ## Verified sources
 
@@ -31,11 +31,11 @@ Preserve observation time and source quality through the renderer. Keep the last
 
 ## Free access and public reuse
 
-[NDOV publishes CC0](https://data.ndovloket.nl/LICENTIE-CC0.TXT), but the national GTFS archive has table-specific terms. Its `licenses.txt`, inspected in the retained 2026-10-23 edition, assigns **ODbL 1.0 to shapes.txt** and **CC0 1.0 to the other timetable tables used here**. Restricted ticketing tables are excluded. The municipality-clipped shape database is an adapted database distributed under [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/), with source attribution and share-alike obligations; application code remains MIT. Attribute OVapi / Stichting OpenGeo and preserve the Kadaster boundary attribution separately. Do not imply official operator affiliation. The exact source licence, hashes, rebuild instructions and current limitations are retained in [source-data/transit](../source-data/transit/README.md). This preparation does not integrate a live service.
+[NDOV publishes CC0](https://data.ndovloket.nl/LICENTIE-CC0.TXT), but the national GTFS archive has table-specific terms. Its `licenses.txt`, inspected in the retained 2026-10-23 edition, assigns **ODbL 1.0 to shapes.txt** and **CC0 1.0 to the other timetable tables used here**. Restricted ticketing tables are excluded. The municipality-clipped shape database is an adapted database distributed under [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/), with source attribution and share-alike obligations; application code remains MIT. Attribute OVapi / Stichting OpenGeo and preserve the Kadaster boundary attribution separately. Do not imply official operator affiliation. The exact source licence, hashes, rebuild instructions and current limitations are retained in [source-data/transit](../source-data/transit/README.md). The route database is integrated separately from live observations.
 
 OVapi asks for an identifying User-Agent, gzip, and conditional HTTP requests when polling faster than once a minute. NDOV best-effort streams permit **one connection per consumer per stream**, without an SLA. One collector should serve every browser. Raw ZeroMQ needs a persistent process with TCP egress; ordinary static hosting or a request-only edge function does not provide that collector. A free-to-access data source does not establish free deployment capacity.
 
-The credible default is GTFS preprocessing + a small persistent NDOV collector + a cached Rotterdam-only browser feed. Use GTFS-RT as the simpler bootstrap/fallback. Match the actual municipality polygon, including Hoek van Holland and Maasvlakte, rather than a city-centre radius. No dedicated RET API, NS account or paid feed is needed for this path. The [NS API portal](https://apiportal.ns.nl/) is an alternative requiring registration/subscription; no account was created and no token-based endpoint was tested.
+The implemented default is GTFS preprocessing plus cached HTTP proxies for NDOV GTFS-Realtime and NL Trains Live. It needs no persistent ZeroMQ collector. Both sources are checked every 15 seconds with conditional requests; reports are filtered against the exact municipality, including Hoek van Holland and Maasvlakte. No dedicated RET API, NS account or paid feed is used. The [NS API portal](https://apiportal.ns.nl/) is an alternative requiring registration/subscription; no account was created and no token-based endpoint was tested.
 
 ## Metro cutaway
 
@@ -43,7 +43,7 @@ GTFS shapes supply a route in plan view, not tunnel depth. [RET's public procedu
 
 Public geometry candidates were checked: Rotterdam's [Sporen service](https://diensten.rotterdam.nl/arcgis/rest/services/SO_IBURO/Sporen/MapServer?f=pjson) currently returns empty layers; the accessible [Metro_Rotterdam layer](https://services.arcgis.com/EragpxjtJzKxLUpv/arcgis/rest/services/Metro_Rotterdam/FeatureServer/0?f=pjson) has `hasZ=false` and no explicit reuse licence. Neither establishes a usable 3D metro tunnel model.
 
-Default: route geometry with carefully authored, explicitly approximate underground profiles. [The station architect documents Wilhelminaplein at 16 metres below ground](https://www.zja.nl/en/metrostation-voetgangerstunnel-Wilhelminaplein-Rotterdam), a useful check rather than a network profile. OSM tunnel/layer tags can supplement classification under [ODbL attribution/share-alike terms](https://www.openstreetmap.org/copyright); layer numbers are not metres. ProRail's [weekly geometry service](https://maps.prorail.nl/arcgis/rest/services/Spoorgeometrie/FeatureServer) includes vertical railway geometry, with attribution required, but does not establish RET metro tunnel coverage. A surveyed, network-wide free RET vertical alignment remains unverified.
+The implemented cutaway follows only retained BRT rail segments explicitly classified in tunnel. It uses an illustrated constant 12 m depth and 42 m display opening, not a surveyed tunnel profile. Surface Hoek segments remain aboveground; missing physical tags limit classification completeness. See [presentation.md](../source-data/transit/presentation.md). [The station architect documents Wilhelminaplein at 16 metres below ground](https://www.zja.nl/en/metrostation-voetgangerstunnel-Wilhelminaplein-Rotterdam), a useful check rather than a network profile. OSM tunnel/layer tags can supplement classification under [ODbL attribution/share-alike terms](https://www.openstreetmap.org/copyright); layer numbers are not metres. ProRail's [weekly geometry service](https://maps.prorail.nl/arcgis/rest/services/Spoorgeometrie/FeatureServer) includes vertical railway geometry, with attribution required, but does not establish RET metro tunnel coverage. A surveyed, network-wide free RET vertical alignment remains unverified.
 
 ## Marine traffic
 

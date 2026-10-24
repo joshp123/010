@@ -1,0 +1,112 @@
+{
+  "status": "Retained source fixture. Rail-aligned solid reconstruction is integrated as a streamed measured-industrial layer; broad port selection is recorded separately.",
+  "source": "https://fsn1.your-objectstorage.com/hwh-ahn/AHN6/01_LAZ/AHN6_2026_C_60000_441000.COPC.LAZ",
+  "sourceIndex": "https://basisdata.nl/hwh-portal/20230609_tmp/links/nationaal/Nederland/AHN6_KM_PC_COPC.json",
+  "sourceEdition": "AHN6 2026",
+  "license": "CC BY 4.0",
+  "licenseEvidence": "https://www.ahn.nl/eerste-deel-ahn-6-beschikbaar",
+  "attribution": "Actueel Hoogtebestand Nederland (AHN) / Het Waterschapshuis \u2014 AHN6",
+  "horizontalCRS": "EPSG:28992",
+  "verticalCRS": "EPSG:5709",
+  "boundsRD_NAP": [
+    [
+      60000,
+      441550,
+      -5
+    ],
+    [
+      60400,
+      441950,
+      150
+    ]
+  ],
+  "queryResolutionMetres": 0.5,
+  "sourceCropSha256": "5fce11bcd8d2cd121ff9d2a5466f11ce4c9edb4889383bc127baf1ce6caa834e",
+  "sourceCropBytes": 23592775,
+  "sourcePoints": 2164688,
+  "retainedClass": 1,
+  "excludedClasses": {
+    "2": "ground",
+    "6": "buildings",
+    "9": "water"
+  },
+  "pointSourceId": 1135,
+  "surveyTimeUTC": [
+    "2025-12-16T18:10:55.306722Z",
+    "2025-12-16T18:11:18.397177Z"
+  ],
+  "selectionReason": "One coherent flight strip. Other strips observe cranes and container stacks at different times, so merging them creates duplicate poses. This pass has the widest source footprint of the observed passes. Its missing northern coverage remains missing.",
+  "otherPasses": [
+    {
+      "pointSourceId": 11351,
+      "surveyTimeUTC": [
+        "2025-12-16T19:52:43.176253Z",
+        "2025-12-16T19:53:03.032310Z"
+      ]
+    },
+    {
+      "pointSourceId": 1134,
+      "surveyTimeUTC": [
+        "2025-12-19T16:51:33.469812Z",
+        "2025-12-19T16:51:52.885117Z"
+      ]
+    }
+  ],
+  "groundSource": "https://fsn1.your-objectstorage.com/hwh-ahn/AHN6/02a_DTM_50cm/AHN6_2026_M_60000_441000.TIF",
+  "groundClearanceMetres": 0.8,
+  "unknownGroundMinimumNAP": 2,
+  "voxelMetres": 0.5,
+  "gaussianSigmaMetres": 0.4,
+  "gaussianTruncate": 2.5,
+  "isoLevel": 0.12,
+  "localOriginRD": [
+    60200,
+    441750,
+    0
+  ],
+  "rawPointCloudCache": "work/source-quality/height/port-400m-0.5m-sample.laz",
+  "rawGroundCache": "work/source-quality/height/port-ahn6-dtm.tif",
+  "referenceImage": {
+    "url": "https://service.pdok.nl/hwh/luchtfotorgb/wms/v1_0?service=WMS&version=1.1.1&request=GetMap&layers=2026_orthoHR&styles=&srs=EPSG%3A28992&bbox=60000%2C441550%2C60400%2C441950&width=1600&height=1600&format=image%2Fjpeg",
+    "license": "CC BY 4.0",
+    "attribution": "Samenwerkingsverband Beeldmateriaal / PDOK \u2014 Luchtfoto 2026",
+    "purpose": "Independent source comparison only; not visible map textures"
+  },
+  "comparedCandidates": [
+    {
+      "method": "Exposed 2 m occupied voxels, all strips",
+      "conclusion": "Rejected: fragmented lattice and duplicate crane poses"
+    },
+    {
+      "method": "Locally smoothed occupied surface, all strips",
+      "conclusion": "Rejected: smoothed overlapping poses are still false geometry"
+    },
+    {
+      "method": "Locally smoothed surface, one flight",
+      "conclusion": "Better spatial coherence; still rough, softened and incomplete"
+    },
+    {
+      "method": "Source RGB assigned to eleven muted per-face colours",
+      "conclusion": "Rejected: surface mottling clashes with solid miniature style"
+    },
+    {
+      "method": "Single-flight occupied cells aligned to measured crane rails, small-gap closing, one colour per connected form",
+      "conclusion": "Accepted as the solid-form direction for in-map and broader port checks"
+    }
+  ],
+  "productionReconstruction": {
+    "script": "scripts/build-industrial-structures.py",
+    "cellMetres": [
+      1,
+      1.5
+    ],
+    "alignment": "Measured BGT crane rails",
+    "closingNeighborhood": [
+      3,
+      3,
+      3
+    ],
+    "colour": "One muted source-derived colour per connected form",
+    "heightConvention": "NAP used numerically as model height to match the existing municipal model; not an ellipsoidal conversion"
+  }
+}

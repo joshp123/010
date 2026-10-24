@@ -1,0 +1,110 @@
+{
+  "source": "https://www.3drotterdam.nl/datasource-data/8b5d0ded-a222-4e44-bc70-2992bc2192fc/tileset.json",
+  "sources": [
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/8b5d0ded-a222-4e44-bc70-2992bc2192fc/tileset.json",
+      "file": "source-00.json.gz",
+      "acquiredAt": "2026-10-24T00:22:45.942663+00:00",
+      "sha256": "253a26a3a3006f95d7d487d2699363e06d43011880b509172b7345f725136242",
+      "decodedBytes": 5139,
+      "wireBytes": 908,
+      "headers": {
+        "ETag": "\"0491cfa180f2e49acf51cabafd863df4\"",
+        "Last-Modified": "Fri, 08 Sep 2023 06:39:10 GMT",
+        "Content-Type": "application/json",
+        "Content-Encoding": "gzip"
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/8b5d0ded-a222-4e44-bc70-2992bc2192fc/10/1046/216.json",
+      "file": "source-01.json.gz",
+      "acquiredAt": "2026-10-24T00:22:46.332735+00:00",
+      "sha256": "94813cb033795700db7f398c7e6e8f76d3418d2ed631094ba275d994de077625",
+      "decodedBytes": 232605,
+      "wireBytes": 14719,
+      "headers": {
+        "ETag": "\"2646ffe45ecd3b45e6d2e9e6b1b7a644\"",
+        "Last-Modified": "Fri, 08 Sep 2023 06:41:58 GMT",
+        "Content-Type": "application/json",
+        "Content-Encoding": "gzip"
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/8b5d0ded-a222-4e44-bc70-2992bc2192fc/10/1047/216.json",
+      "file": "source-02.json.gz",
+      "acquiredAt": "2026-10-24T00:22:46.900668+00:00",
+      "sha256": "4b64b632a470ea3c3495e63314a4db979eecc9a0ab16d3828d9f0f4c3ae657d6",
+      "decodedBytes": 722066,
+      "wireBytes": 44230,
+      "headers": {
+        "ETag": "\"6e518634f23e99e046e831da4b6e1de2\"",
+        "Last-Modified": "Fri, 08 Sep 2023 06:41:58 GMT",
+        "Content-Type": "application/json",
+        "Content-Encoding": "gzip"
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/8b5d0ded-a222-4e44-bc70-2992bc2192fc/10/1048/216.json",
+      "file": "source-03.json.gz",
+      "acquiredAt": "2026-10-24T00:22:47.568334+00:00",
+      "sha256": "58159ef22c657178a27625865d373aa2620aca636586996560f4d4df7c9f624b",
+      "decodedBytes": 785487,
+      "wireBytes": 47861,
+      "headers": {
+        "ETag": "\"70f114973f18bb65d5f07ccfc9fcf339\"",
+        "Last-Modified": "Fri, 08 Sep 2023 06:41:58 GMT",
+        "Content-Type": "application/json",
+        "Content-Encoding": "gzip"
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/8b5d0ded-a222-4e44-bc70-2992bc2192fc/10/1048/217.json",
+      "file": "source-04.json.gz",
+      "acquiredAt": "2026-10-24T00:22:48.328237+00:00",
+      "sha256": "3a89199c226ba5d31593279266690dfa41585d6787538a1fd5a3b9738264b7b6",
+      "decodedBytes": 44797,
+      "wireBytes": 3259,
+      "headers": {
+        "ETag": "\"5873f2d2ed24fbb5f88c77a4ae2e77f9\"",
+        "Last-Modified": "Fri, 08 Sep 2023 06:41:58 GMT",
+        "Content-Type": "application/json",
+        "Content-Encoding": "gzip"
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/8b5d0ded-a222-4e44-bc70-2992bc2192fc/10/1049/216.json",
+      "file": "source-05.json.gz",
+      "acquiredAt": "2026-10-24T00:22:48.996904+00:00",
+      "sha256": "a54fc316f12022421b804cf67664cce95f26ab1c3621dd41848fd04abd090d3c",
+      "decodedBytes": 2109407,
+      "wireBytes": 129561,
+      "headers": {
+        "ETag": "\"397990bf2ffacd23840eff166c17a7f3\"",
+        "Last-Modified": "Fri, 08 Sep 2023 06:41:58 GMT",
+        "Content-Type": "application/json",
+        "Content-Encoding": "gzip"
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/8b5d0ded-a222-4e44-bc70-2992bc2192fc/10/1050/216.json",
+      "file": "source-06.json.gz",
+      "acquiredAt": "2026-10-24T00:22:49.409964+00:00",
+      "sha256": "13e1db16e5ed382e02b0ec48659673a0cafc2263a9ad807ff3c4169099046ad6",
+      "decodedBytes": 130245,
+      "wireBytes": 8678,
+      "headers": {
+        "ETag": "\"a19d5d23f2fff7ca301609fac5474b0b\"",
+        "Last-Modified": "Fri, 08 Sep 2023 06:41:58 GMT",
+        "Content-Type": "application/json",
+        "Content-Encoding": "gzip"
+      }
+    }
+  ],
+  "outputSha256": "60b139c697c9805047fca01f324682946b7e6f598e7daf4660c80eddc4e99a93",
+  "outputBytes": 1590909,
+  "outputGzipBytes": 160878,
+  "inlinedExternalIndexes": 6,
+  "uniqueGeometryUrls": 4849,
+  "processing": "External JSON content pointer replaced by external root as child; all source wrapper/root fields, transforms, bounds, geometric errors and refinement retained. Geometry content URLs made absolute. No geometry asset changed.",
+  "sourceLicense": "Existing 3D Rotterdam native building source terms and attribution remain unchanged."
+}

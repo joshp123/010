@@ -5,11 +5,11 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { gzipSync, gunzipSync } from 'node:zlib';
-import * as THREE from '../dist/vendor/three/build/three.module.js';
+import * as THREE from '../public/vendor/three/build/three.module.js';
 
 const project = new URL('../', import.meta.url);
 const input = process.argv[2] ? new URL(process.argv[2], project) : new URL('source-data/transport-network.geojson.gz', project);
-const output = new URL('dist/data/streets/', project);
+const output = new URL('public/data/streets/', project);
 const inputBytes = await readFile(input), sourceBytes = input.pathname.endsWith('.gz') ? gunzipSync(inputBytes) : inputBytes, collection = JSON.parse(sourceBytes);
 const origin = { lat: 51.915, lon: 4.49 }, degrees = Math.PI / 180, eccentricitySquared = 0.00669437999014;
 const bucketSizeMetres = 1000, maximumQuantizationErrorMetres = 0.02;
