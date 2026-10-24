@@ -15,3 +15,11 @@ The manager inspected these native browser captures using the newer municipal ge
 ![Newer municipal source among surrounding buildings](current-source-runtime-desktop.png)
 
 ![Actual phone view of source and fallback buildings](current-source-runtime-phone.png)
+
+## Metro section without vehicle reports
+
+A native desktop reproduction at51.92514,4.51261,span220,bearing35 shows the black section over apparent rooftops even with no vehicle reports. This interim static server has no API routes; it does not test transit freshness. All22 runtime terrain samples are measured, around−1.48 to−1.06m, with floor−13.48 to−13.06m. The recorded geometry is below ground. This rules out elevated sampled roofs as the cause in this view; clipping/composition remains rejected.
+
+![Actual below-ground section still appears pasted over the city](metro-static-section.png)
+
+[Actual section diagnostics](metro-static-section-diagnostics.json)
