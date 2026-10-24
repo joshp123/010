@@ -1,0 +1,196 @@
+{
+  "license": "ODbL-1.0",
+  "attribution": "\u00a9 OpenStreetMap contributors",
+  "boundarySha256": "8ad975faec184b943517adc582316edee8251a9d7114481a0b9b29de00ffe404",
+  "tiles": [
+    {
+      "id": "35-864",
+      "bbox": [
+        51.84,
+        4.2,
+        51.9,
+        4.32
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.84,4.2,51.9,4.32);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/35-864.json.gz",
+      "rawSha256": "03a5944b66825dbfc90ea931fa103c5a4219adba29b1f5c2d1d54f9d51a88657"
+    },
+    {
+      "id": "36-864",
+      "bbox": [
+        51.84,
+        4.32,
+        51.9,
+        4.44
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.84,4.32,51.9,4.44);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/36-864.json.gz",
+      "rawSha256": "d8cb0a3c95fb5018fb1529b5c4c2fd1633a2ac94b95f6d855a2be5a67b36f624"
+    },
+    {
+      "id": "37-864",
+      "bbox": [
+        51.84,
+        4.44,
+        51.9,
+        4.56
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.84,4.44,51.9,4.56);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/37-864.json.gz",
+      "rawSha256": "289c9ee5e7ce6260540c6dc4fac4ab54582f97b94c2f51e050fac88bf588c294"
+    },
+    {
+      "id": "38-864",
+      "bbox": [
+        51.84,
+        4.56,
+        51.9,
+        4.68
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.84,4.56,51.9,4.68);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/38-864.json.gz",
+      "rawSha256": "4cb68f1a085b9056468f40456c69973ec4a3223514c7ce5eb8c231c5f4658114"
+    },
+    {
+      "id": "32-865",
+      "bbox": [
+        51.9,
+        3.84,
+        51.96,
+        3.96
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,3.84,51.96,3.96);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/32-865.json.gz",
+      "rawSha256": "65bf4548e9b9c3352f094a00a152517dd644268d0806559f9c0f5f26a01eb05b"
+    },
+    {
+      "id": "33-865",
+      "bbox": [
+        51.9,
+        3.96,
+        51.96,
+        4.08
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,3.96,51.96,4.08);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/33-865.json.gz",
+      "rawSha256": "afac7f8b903b072cbe18c60e148bcd3184a4364a8b4910c4bc4f8850f4ebc850"
+    },
+    {
+      "id": "34-865",
+      "bbox": [
+        51.9,
+        4.08,
+        51.96,
+        4.2
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.08,51.96,4.2);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/34-865.json.gz",
+      "rawSha256": "8b95274fcaab5c2e505585d574b1b596d4111ef018ef6bb7a0cb8dab5fdc206b"
+    },
+    {
+      "id": "35-865",
+      "bbox": [
+        51.9,
+        4.2,
+        51.96,
+        4.32
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.2,51.96,4.32);(._;>;);out body;",
+      "file": "source-data/traffic/osm-municipality-tiles/35-865.json.gz",
+      "rawSha256": "27997d30dded1e46b980d0a4aa4bb93f4886a56590c927ad759fc4d733b5fa61"
+    },
+    {
+      "id": "36-865",
+      "bbox": [
+        51.9,
+        4.32,
+        51.96,
+        4.44
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.32,51.96,4.44);(._;>;);out body;"
+    },
+    {
+      "id": "37-865",
+      "bbox": [
+        51.9,
+        4.44,
+        51.96,
+        4.56
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.44,51.96,4.56);(._;>;);out body;"
+    },
+    {
+      "id": "38-865",
+      "bbox": [
+        51.9,
+        4.56,
+        51.96,
+        4.68
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.9,4.56,51.96,4.68);(._;>;);out body;"
+    },
+    {
+      "id": "32-866",
+      "bbox": [
+        51.96,
+        3.84,
+        52.02,
+        3.96
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,3.84,52.02,3.96);(._;>;);out body;"
+    },
+    {
+      "id": "33-866",
+      "bbox": [
+        51.96,
+        3.96,
+        52.02,
+        4.08
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,3.96,52.02,4.08);(._;>;);out body;"
+    },
+    {
+      "id": "34-866",
+      "bbox": [
+        51.96,
+        4.08,
+        52.02,
+        4.2
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.08,52.02,4.2);(._;>;);out body;"
+    },
+    {
+      "id": "36-866",
+      "bbox": [
+        51.96,
+        4.32,
+        52.02,
+        4.44
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.32,52.02,4.44);(._;>;);out body;"
+    },
+    {
+      "id": "37-866",
+      "bbox": [
+        51.96,
+        4.44,
+        52.02,
+        4.56
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.44,52.02,4.56);(._;>;);out body;"
+    },
+    {
+      "id": "38-866",
+      "bbox": [
+        51.96,
+        4.56,
+        52.02,
+        4.68
+      ],
+      "query": "[out:json][timeout:45];rel[type=restriction](51.96,4.56,52.02,4.68);(._;>;);out body;"
+    }
+  ],
+  "completed": 8,
+  "required": 17,
+  "complete": false
+}
