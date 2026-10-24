@@ -10,7 +10,7 @@ Native browser captures of unaccepted rescue candidates, not final product appro
 
 ## Newer source input in the actual runtime
 
-The manager inspected these native browser captures using the newer municipal geometry and its own UVs. Desktop: Delfshaven at 200m span, bearing35; phone: Schiedamseweg at 200m span, bearing125, 390×844. Both settled without pending/refused tiles or loading errors. This is source-integration evidence, not art acceptance: photographic building islands, generic surrounding facades and dominant simple trees remain visibly inconsistent. The tower payload also exceeds the current hosting asset limit; source-preserving splitting is in progress.
+The manager inspected these native browser captures using the newer municipal geometry and its own UVs. Desktop: Delfshaven at 200m span, bearing35; phone: Schiedamseweg at 200m span, bearing125, 390×844. Both settled without pending/refused tiles or loading errors. This is source-integration evidence, not art acceptance: photographic building islands, generic surrounding facades and dominant simple trees remain visibly inconsistent. The tower payload subsequently passed the production host and actual renderer after source-preserving external texture splitting.
 
 ![Newer municipal source among surrounding buildings](current-source-runtime-desktop.png)
 
@@ -31,3 +31,24 @@ The manager reviewed17 native frames spanning27.73seconds, then repeated runtime
 ![Persistent queue and overlapping cars at the merge](blaak-stopped-queue-detail.png)
 
 [First vehicle sample](blaak-following-audit-a.json), [repeated sample](blaak-following-audit-b.json), [actual underlying source surfaces](blaak-queue-surface-audit.json).
+
+
+## Junction reservations and whole-feature metro opening
+
+The newer junction reservation candidate clears the former stopped queue in actual native browser motion review. The retained first/last images span26.7seconds; four intermediate images were also inspected, followed by runtime sampling at78.6simulation seconds. The old car50 now travels a later road at7m/s. This supports queue progress, not full traffic acceptance. The traffic-island placement and broader journey legality remain open.
+
+![Junction motion start](blaak-reservation-start.jpg)
+
+![Junction motion end](blaak-reservation-end.jpg)
+
+[Runtime vehicle and actual source-surface sample](blaak-reservation-audit.json).
+
+The whole-feature metro candidate removes the worst roof fragments and makes the silver train readable at the same rejected51.92514,4.51261,220m,35degree view. The actual phone still shows an exposed strip with weak earth-boundary composition and distracting source-building outlines. Rotation to80degrees strengthens the floating-strip impression. The report changed during review, so the rotated frame has no observed train; this is not evidence of train movement. Surveyed ground/floor ranges remain correct. Visual acceptance remains open.
+
+![Actual desktop whole-feature section](metro-whole-features-desktop.png)
+
+![Actual phone whole-feature section](metro-whole-features-phone.png)
+
+![Actual rotated section](metro-whole-features-rotated.png)
+
+[Actual runtime section and report](metro-whole-features-runtime.json).
