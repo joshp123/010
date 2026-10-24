@@ -36,18 +36,38 @@ function crownProfile(source) {
 export function createCrownGeometry(source) {
   const profile = crownProfile(source), positions = [], colors = [], indices = [];
   const rings = 24, sectors = 64;
-  const dark = new THREE.Color('#324b30'), body = new THREE.Color('#486338'), light = new THREE.Color('#607943');
-  // A connected, scalloped canopy with painted masses. All silhouette changes
-  // stay inside the retained inventory prototype, never its instance placement.
+  const dark = new THREE.Color('#344d3b'), body = new THREE.Color('#5c724b'), light = new THREE.Color('#81915e');
+  const masses = [
+    [-.18,.42,-.08,.32,.35,.33], [.19,.45,.08,.30,.30,.30],
+    [-.13,.70,.11,.28,.29,.29], [.13,.74,-.12,.26,.26,.27],
+    [.02,.28,.06,.28,.25,.25], [.28,.61,.12,.21,.25,.22],
+  ];
+  // Connected foliage masses interpret the inventory envelope, not branches or
+  // species. Their overlapping cross-sections avoid repeated vertical fluting.
   for (let ring = 0; ring <= rings; ring++) for (let sector = 0; sector <= sectors; sector++) {
     const y = ring / rings, angle = sector / sectors * Math.PI * 2;
-    const lobes = .88 + .08 * Math.cos(angle * 5 + y * 2) + .04 * Math.cos(angle * 9 - y * 3);
-    const radius = Math.min(.5, profile.radius(y)) * lobes * Math.pow(Math.max(0, Math.sin(Math.PI * y)), .32);
-    const x = Math.cos(angle) * radius, z = Math.sin(angle) * radius;
-    const upperMass = 1 - ((x + .16) / .50) ** 2 - ((y - .73) / .31) ** 2 - ((z + .10) / .52) ** 2;
-    const sideMass = .8 - ((x - .20) / .32) ** 2 - ((y - .57) / .27) ** 2 - ((z + .21) / .43) ** 2;
-    const shade = dark.clone().lerp(body, THREE.MathUtils.smoothstep(y - z * .22, .22, .28));
-    shade.lerp(light, THREE.MathUtils.smoothstep(Math.max(upperMass, sideMass), .30, .38));
+    const nx = Math.cos(angle), nz = Math.sin(angle);
+    let massRadius = 0, outerMass = masses[0];
+    for (const mass of masses) {
+      const [cx,cy,cz,rx,ry,rz] = mass;
+      const a = nx*nx/(rx*rx)+nz*nz/(rz*rz);
+      const b = -2*(nx*cx/(rx*rx)+nz*cz/(rz*rz));
+      const c = cx*cx/(rx*rx)+cz*cz/(rz*rz)+(y-cy)**2/(ry*ry)-1;
+      const discriminant = b*b-4*a*c;
+      if (discriminant < 0) continue;
+      const radius = (-b+Math.sqrt(discriminant))/(2*a);
+      if (radius > massRadius) outerMass = mass;
+      const overlap = Math.max(0, .07 - Math.abs(radius-massRadius)) / .07;
+      massRadius = Math.max(massRadius, radius) + overlap*overlap*.0175;
+    }
+    const leafEdge = 1 + .045*Math.sin(angle*19+y*27)*Math.sin(y*23-angle*9);
+    const radius = massRadius * Math.min(1, profile.radius(y)*2) * leafEdge;
+    const x = nx * radius, z = nz * radius;
+    const [,cy,,,ry] = outerMass;
+    const massTop = THREE.MathUtils.smoothstep((y-cy)/ry, -.35, .65);
+    const underside = THREE.MathUtils.smoothstep(y, .05, .42);
+    const shade = dark.clone().lerp(body, underside);
+    shade.lerp(light, massTop * .42 * underside);
     positions.push(x, y, z); colors.push(shade.r, shade.g, shade.b);
   }
   for (let ring = 0; ring < rings; ring++) for (let sector = 0; sector < sectors; sector++) {
@@ -57,6 +77,7 @@ export function createCrownGeometry(source) {
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+  geometry.setAttribute('canopyCoordinates', new THREE.Float32BufferAttribute(positions, 3));
   geometry.setIndex(indices);
   geometry.computeBoundingBox();
   const ownBox = geometry.boundingBox.clone(), ownSize = ownBox.getSize(new THREE.Vector3()), p = geometry.getAttribute('position');
@@ -65,7 +86,7 @@ export function createCrownGeometry(source) {
   }
   geometry.computeVertexNormals();
   geometry.computeBoundingBox(); geometry.computeBoundingSphere();
-  geometry.userData = { ...source.userData, vegetationInterpretation: 'Joined drawn canopy masses and broad olive shading within the original inventory envelope; no inferred branches, species or new tree positions' };
+  geometry.userData = { ...source.userData, vegetationInterpretation: 'Connected shaded foliage volumes within the original inventory envelope, using shared city light; no inferred branches, species or new tree positions' };
   return geometry;
 }
 
@@ -99,18 +120,30 @@ export function createVegetationStyle() {
         if (!canopyMaterial) {
           const material = sourceMaterial.clone();
           material.flatShading = false;
-          material.onBeforeCompile = shader => {
-            sourceMaterial.onBeforeCompile(shader);
-            shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
-              float canopyFacing = abs(dot(normalize(vNormal), normalize(vViewPosition)));
-              diffuseColor.rgb = mix(vec3(0.025, 0.042, 0.025), diffuseColor.rgb, smoothstep(0.04, 0.30, canopyFacing));
-            `);
+          material.onBeforeCompile = (shader, renderer) => {
+            sourceMaterial.onBeforeCompile(shader, renderer);
+            shader.vertexShader = 'attribute vec3 canopyCoordinates; varying vec3 canopyPosition;\n' + shader.vertexShader;
+            shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ncanopyPosition = canopyCoordinates;');
+            shader.fragmentShader = `
+              varying vec3 canopyPosition;
+              float canopyHash(vec3 p) { return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453); }
+              float canopyMass(vec3 p) {
+                vec3 cell=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
+                return mix(mix(mix(canopyHash(cell),canopyHash(cell+vec3(1,0,0)),f.x),mix(canopyHash(cell+vec3(0,1,0)),canopyHash(cell+vec3(1,1,0)),f.x),f.y),mix(mix(canopyHash(cell+vec3(0,0,1)),canopyHash(cell+vec3(1,0,1)),f.x),mix(canopyHash(cell+vec3(0,1,1)),canopyHash(cell+vec3(1,1,1)),f.x),f.y),f.z);
+              }
+            ` + shader.fragmentShader;
             shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
-              outgoingLight = mix(outgoingLight, diffuseColor.rgb, 0.90 * (1.0 - cityNight));
+              float canopyPigment = max(dot(diffuseColor.rgb, vec3(.2126,.7152,.0722)), .001);
+              float canopyIllumination = dot(outgoingLight, vec3(.2126,.7152,.0722)) / canopyPigment;
+              float canopyPaint = .50 + .23*smoothstep(.38,.48,canopyIllumination) + .27*smoothstep(.78,.88,canopyIllumination);
+              float foliageMass = canopyMass(canopyPosition*vec3(13.0,17.0,13.0));
+              float foliageShade = .82 + .15*smoothstep(.34,.43,foliageMass) + .15*smoothstep(.57,.66,foliageMass);
+              canopyPaint *= foliageShade;
+              outgoingLight = mix(outgoingLight, diffuseColor.rgb*canopyPaint, .95*(1.0-cityNight));
               #include <opaque_fragment>
             `);
           };
-          material.customProgramCacheKey = () => '010-drawn-canopy-masses-v1';
+          material.customProgramCacheKey = () => sourceMaterial.customProgramCacheKey() + '-joined-painted-canopy-v4';
           canopyMaterial = { material, references: 0 };
           canopyMaterials.set(sourceMaterial, canopyMaterial);
         }
