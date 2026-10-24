@@ -18,7 +18,45 @@ def samples(folder,doc,texture,uv,guard=False):
  return color
 for label,out in [('adjoining-32','illustrated-neighbourhood/adjoining'),('row-v5','illustrated-neighbourhood/row'),('apartment','illustrated-neighbourhood/apartment'),('tank','illustrated-tank')]:
  folder=ROOT/'source-data/bound-artwork'/label;meta=json.loads((folder/'georeference-and-identities.json').read_text());src,sb=read(folder/meta['geometry_asset']);target=ROOT/'public/data'/out;doc,db=read(target/'model.glb');key='bagId' if meta['identity_namespace']=='BAG' else 'featureId';expected=collections.Counter();actual=collections.Counter();count=0
- assert doc['nodes'][0]['matrix']==src['nodes'][0]['matrix'];assert 'CESIUM_RTC' not in doc.get('extensions',{});assert json.loads((target/'tileset.json').read_text())['root']['children'][0]['transform'][12:15]==meta['rtc_ecef_m'];assert 'KHR_texture_transform' in doc['extensionsRequired']
+ assert doc['nodes'][0]['matrix']==src['nodes'][0]['matrix'];assert 'CESIUM_RTC' not in doc.get('extensions',{});assert json.loads((target/'tileset.json').read_text())['root']['children'][0]['transform'][12:15]==meta['rtc_ecef_m']
+ bindingfile=folder/'runtime-bindings.json'
+ if bindingfile.exists() and json.loads((target/'manifest.json').read_text()).get('runtimeUVsAffineEquivalent'):
+  bindings=json.loads(bindingfile.read_text());max_error=0.;seen=collections.Counter();expectedtri=collections.Counter()
+  for mi,mesh in enumerate(src['meshes']):
+   for pi,p in enumerate(mesh['primitives']):
+    for tri in m.accessor(src,sb,p['indices'])[:,0].reshape(-1,3):expectedtri[(mi,pi,tuple(tri))]+=1
+  assert len(bindings['meshes'])==len(doc['meshes']);assert 'KHR_texture_transform' not in doc.get('extensionsRequired',[])
+  bary=np.array([[1,0,0],[0,1,0],[0,0,1],[1/3]*3,[.2,.3,.5],[.75,.2,.05]])
+  for binding in bindings['meshes']:
+   mesh=doc['meshes'][binding['runtimeMesh']];p=mesh['primitives'][0];mat=doc['materials'][p['material']];ix=m.accessor(doc,db,p['indices'])[:,0];mi=binding['sourceMesh'];assert mesh['extras'][key]==binding[key] and p['extras'][key]==binding[key]
+   for part in binding['parts']:
+    pi=part['sourcePrimitive'];original=src['meshes'][mi]['primitives'][pi];source_material=src['materials'][original['material']];sourceix=np.array(part['sourceTriangles']);targetix=ix[part['indexStart']:part['indexStart']+part['indexCount']].reshape(-1,3)
+    for tri in sourceix:seen[(mi,pi,tuple(tri))]+=1
+    for semantic,ai in original['attributes'].items():
+     if semantic=='TEXCOORD_0':continue
+     np.testing.assert_array_equal(m.accessor(src,sb,ai)[sourceix],m.accessor(doc,db,p['attributes'][semantic])[targetix])
+    count+=len(sourceix)
+    if 'TEXCOORD_0' not in original['attributes']:continue
+    native=m.accessor(src,sb,original['attributes']['TEXCOORD_0'])[sourceix].astype(np.float64)
+    rectangle=bindings['rectangles'][part['rectangle']]
+    packed=((native*np.array(rectangle['sourceSize'])+rectangle['packedOrigin']-np.array(rectangle['sourceCrop'][:2]))/bindings['atlasSize']).astype('<f4')
+    np.testing.assert_array_equal(packed,m.accessor(doc,db,p['attributes']['TEXCOORD_0'])[targetix])
+    if mat.get('emissiveTexture'):
+     crop=bindings['emissionCrops'][str(rectangle['emissionImage'])];size=np.array(crop['box'][2:])-crop['box'][:2];emission=((native*np.array(crop['sourceSize'])-crop['box'][:2])/size).astype('<f4')
+     np.testing.assert_array_equal(emission,m.accessor(doc,db,p['attributes']['TEXCOORD_1'])[targetix])
+    sourceuv=np.einsum('kc,tcd->tkd',bary,native).reshape(-1,2)
+    for channel in ('base','emission'):
+     a=source_material.get('pbrMetallicRoughness',{}).get('baseColorTexture') if channel=='base' else source_material.get('emissiveTexture');b=mat.get('pbrMetallicRoughness',{}).get('baseColorTexture') if channel=='base' else mat.get('emissiveTexture')
+     targetuv=np.einsum('kc,tcd->tkd',bary,m.accessor(doc,db,p['attributes']['TEXCOORD_'+str(b.get('texCoord',0))])[targetix]).reshape(-1,2) if b else sourceuv
+     before=samples(folder,src,a,sourceuv);after=samples(target,doc,b,targetuv,channel=='emission');error=float(np.max(abs(before-after))) if len(before) else 0.;max_error=max(error,max_error);np.testing.assert_allclose(before,after,atol=.25,rtol=0)
+    if mat.get('emissiveTexture'):assert mat['emissiveTexture']['texCoord']==1 and mat['extras']['emissionCropGuard'] and mat['emissiveFactor']==[1,1,1]
+  assert seen==expectedtri and count==meta['triangles'];assert len(doc['meshes'])<json.loads((target/'manifest.json').read_text())['sourceIslandDraws']
+  # Original source nodes retain their matrices and child topology; generated identity children are appended.
+  for i,node in enumerate(src['nodes']):
+   for field in ('matrix','translation','rotation','scale'):assert doc['nodes'][i].get(field)==node.get(field)
+   assert doc['nodes'][i].get('children',[])[:len(node.get('children',[]))]==node.get('children',[])
+  print(label,': consolidated draws',len(doc['meshes']),'triangles',count,'exact geometry/identity; maximum bilinear RGB error',max_error,'of255')
+  continue
  for mi,mesh in enumerate(src['meshes']):
   for pi,p in enumerate(mesh['primitives']):
    ix=m.accessor(src,sb,p['indices'])[:,0].reshape(-1,3);names=sorted(p['attributes']);values=[m.accessor(src,sb,p['attributes'][n]) for n in names]

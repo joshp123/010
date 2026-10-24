@@ -79,8 +79,13 @@
   </aside>
   <aside class="vehicle-card panel" id="vehicle-card" aria-label="Selected vehicle" hidden>
     <div class="transit-heading"><strong id="vehicle-title"></strong><button id="vehicle-close" class="close-button" aria-label="Close vehicle details">×</button></div>
-    <p id="vehicle-state"></p><dl id="vehicle-observation"></dl>
-    <small id="vehicle-presentation"></small>
+    <span id="vehicle-operator" class="vehicle-operator"></span>
+    <p id="vehicle-state"></p>
+    <p id="vehicle-position-note" hidden></p>
+    <details id="vehicle-source-details"><summary>Source details</summary>
+      <dl id="vehicle-observation"></dl>
+      <small id="vehicle-presentation"></small>
+    </details>
   </aside>
 
   <aside id="metro-map-status" class="metro-map-status panel" aria-label="Metro cutaway status" hidden>

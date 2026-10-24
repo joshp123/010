@@ -15,7 +15,7 @@ python3 scripts/prepare-bound-artwork.py work/bound-adjoining/assets --output pu
 
 This command retains the apartment entry already prepared below. Replacement
 requires the new exact identity set to contain every removed row identity.
-The block preserves source positions, UVs, BAGs and the root transform, with RTC
+The block preserves source positions, normals, BAGs and the root transform, with RTC
 applied once. It keeps only source-observed glazing from the original row;
 newly illustrated buildings receive no invented emission. Original external
 atlases and annotations remain in the retained handoff.
@@ -48,12 +48,14 @@ external tileset and rejects overlapping exact identities. BAG uses unprefixed
 16-digit `bagId`; OST keeps its full `featureId`, never masquerading as BAG.
 Source fallback reconciliation remains owned by the runtime.
 
-Original root matrices, positions, normals, UVs and batch attributes remain exact;
-only triangle index groups/attribute storage are compacted. RTC is removed from
+Original root matrices, positions, normals and batch identities remain exact.
+Source UVs remain retained with the input. Runtime UV0 bakes the equivalent packed
+colour transform; UV1 independently addresses cropped source emission. Compatible
+materials merge within the same BAG and original source-mesh frame. RTC is removed from
 the GLB extension and applied once in its child tile transform. The compiler
 reuses `uv_islands`/`pack_rectangles` from the existing appearance preparation to
-copy native texels without resampling. `KHR_texture_transform` maps unchanged
-source UVs into the packed external atlas. Two pixels of edge padding include
+copy native texels without resampling. The retained `runtime-bindings.json` records the inverse source/island mapping
+for every runtime triangle. Two pixels of edge padding include
 source-edge extrusion, preventing one-pixel materials from sampling an adjacent
 packed patch. Floating texture-coordinate arithmetic still has ordinary texel
 boundary precision limits; actual crisp sampling needs GPU review.
@@ -64,9 +66,9 @@ the existing `emissionCropGuard`, and the shared scene night uniform (zero by da
 Apartment and tank have no emission maps or invented night window grid.
 
 Final decoded RGBA+mip estimates: row 95.1 MB, apartment 15.1 MB, tank 45.8 MB.
-These are context assets, not proven city-scale residency/performance. There are
-315/47/109 material draws respectively; future tile-level consolidation may be
-needed. Retained handoff geometry/images and generated public binaries are
+These are context assets, not proven city-scale residency/performance. The new adjoining block uses 148 draws/11 materials instead of 835 island
+materials, without resizing its native atlas or changing its 32 building identities.
+Actual motion must determine the remaining rendering work. Retained handoff geometry/images and generated public binaries are
 reproducible from the archived handoffs, not duplicated in this source commit.
 
 Checks run:
@@ -78,7 +80,7 @@ node tests/bound-artwork-runtime.mjs
 
 These verify exact triangle attributes/identities/RTC, native bilinear texel
 correspondence, actual vendored GLTFLoader HTTP requests and PNG decoding,
-texture transforms and the day/night emission hook. They do not establish
+equivalent baked colour/emission coordinates and the day/night emission hook. They do not establish
 art quality, GPU sampling, placement appearance or city-context acceptance.
 
 The actual tile-cache estimator is overridden for appearance layers in app code.

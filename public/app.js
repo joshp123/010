@@ -34,18 +34,24 @@ function ageLabel(seconds) {
   return seconds < 60 ? `${Math.floor(seconds)} seconds old` : `${Math.floor(seconds / 60)} minutes old`;
 }
 function showVehicle(report) {
+  const selectionChanged = selectedVehicle?.id !== report?.id;
   selectedVehicle = report;
+  if (selectionChanged || !report) byId('vehicle-source-details').open = false;
   byId('vehicle-card').hidden = !report;
   if (!report) return;
   const fresh = report.freshness === 'fresh' && report.sourceConnected;
   byId('vehicle-title').textContent = `${report.mode[0].toUpperCase() + report.mode.slice(1)} ${report.label || '· route unknown'}`;
   byId('vehicle-state').textContent = `${report.sourceConnected ? fresh ? 'Fresh report' : report.freshness === 'stale' ? 'Stale report' : 'Unverified time' : 'Source disconnected'} · ${ageLabel(report.ageSeconds)}`;
   byId('vehicle-card').dataset.fresh = fresh;
+  byId('vehicle-operator').textContent = report.operator || '';
+  byId('vehicle-operator').hidden = !report.operator;
   const presentation = report.presentation || {};
   const represented = presentation.representedPosition;
+  byId('vehicle-position-note').textContent = represented ? 'Position shown approximately on the track.' : '';
+  byId('vehicle-position-note').hidden = !represented;
   const coordinates = point => Number.isFinite(point?.latitude) && Number.isFinite(point?.longitude) ? `${point.latitude.toFixed(6)}, ${point.longitude.toFixed(6)}` : 'Not supplied';
   const details = byId('vehicle-observation'); details.replaceChildren();
-  const observationDetails = [['Observed', observationTime(report.observedAt)], ['Source', report.source === 'ns' ? 'NS · NL Trains Live' : 'OVapi / NDOV'], ['Route', report.label || 'Not supplied'], ['Operator', report.operator || 'Not supplied'], ['Reported position', coordinates(report)]];
+  const observationDetails = [['Observed', observationTime(report.observedAt)], ['Source', report.source === 'ns' ? 'NS · NL Trains Live' : 'OVapi / NDOV'], ['Reported position', coordinates(report)]];
   if (represented) observationDetails.push(['Shown position · approximate', coordinates(represented)]);
   for (const [title, value] of observationDetails) {
     const term = document.createElement('dt'), description = document.createElement('dd'); term.textContent = title; description.textContent = value; details.append(term, description);
@@ -66,7 +72,7 @@ function showTransit(snapshot) {
   if (selectedVehicle) {
     const current = snapshot.vehicles.find(vehicle => vehicle.id === selectedVehicle.id);
     if (current) showVehicle(scene?.getTransitReport(current.id) || current);
-    else { byId('vehicle-state').textContent = 'No longer in the latest source snapshot'; }
+    else { byId('vehicle-state').textContent = 'No longer in the latest report'; byId('vehicle-card').dataset.fresh = false; }
   }
 }
 

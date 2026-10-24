@@ -48,8 +48,10 @@ def prepare(folder,out,retained):
      plans.append(plan)
  width,height=m.pack_rectangles(rectangles);atlas=Image.new('RGB',(width,height));emission_crops={}
  def native_patch(ii,box):
-  pixels=np.array(images[ii]);x0,y0,x1,y1=box
-  return Image.fromarray(pixels[np.clip(np.arange(y0,y1),0,pixels.shape[0]-1)[:,None],np.clip(np.arange(x0,x1),0,pixels.shape[1]-1)[None,:]])
+  image=images[ii];x0,y0,x1,y1=box;w,h=image.size
+  clipped=(max(0,x0),max(0,y0),min(w,x1),min(h,y1))
+  patch=np.array(image.crop(clipped));padding=((max(0,-y0),max(0,y1-h)),(max(0,-x0),max(0,x1-w)),(0,0))
+  return Image.fromarray(np.pad(patch,padding,mode='edge'))
  for r in rectangles:
   patch=native_patch(r['sourceImage'],r['sourceCrop']);atlas.paste(patch,tuple(r['packedOrigin']))
   # Confirm copied native texels; no resizing, filtering or repainting.
@@ -72,30 +74,46 @@ def prepare(folder,out,retained):
   uri=f'emission-{ii}.png';crop['image'].save(out/uri);crop['texture']=len(doc['textures']);doc['images'].append({'uri':uri});doc['textures'].append({'source':len(doc['images'])-1,'sampler':0})
  # Remove only the obsolete atlas produced by the earlier packaging attempt.
  if (out/'emission.png').exists():(out/'emission.png').unlink()
- triangle_count=0
+ triangle_count=0;groups={};materialmap={};bindings=[]
  for plan in plans:
-  mi,pi,bid=plan['mi'],plan['pi'],plan['bid'];original=src['meshes'][mi]['primitives'][pi];chosen=plan['indices'];used,remapped=np.unique(chosen.ravel(),return_inverse=True);q=copy.deepcopy(original);q['attributes']={}
-  for semantic,ai in original['attributes'].items():
-   values=np.ascontiguousarray(m.accessor(src,binary,ai)[used]);np.testing.assert_array_equal(values[remapped.reshape(-1,3)],m.accessor(src,binary,ai)[chosen]);q['attributes'][semantic]=attr(values,src['accessors'][ai],34962)
-  it=5123 if len(used)<=65535 else 5125;q['indices']=attr(remapped.astype(m.DTYPES[it]).reshape(-1,1),{'componentType':it,'type':'SCALAR'},34963)
-  mat=copy.deepcopy(src['materials'][plan['material']]);mat.pop('emissiveTexture',None);mat['emissiveFactor']=[0,0,0]
+  mi,pi,bid=plan['mi'],plan['pi'],plan['bid'];original=src['meshes'][mi]['primitives'][pi];chosen=plan['indices'];used,remapped=np.unique(chosen.ravel(),return_inverse=True)
+  values={semantic:np.ascontiguousarray(m.accessor(src,binary,ai)[used]) for semantic,ai in original['attributes'].items()}
+  templates={semantic:src['accessors'][ai] for semantic,ai in original['attributes'].items()}
+  mat=copy.deepcopy(src['materials'][plan['material']]);mat.pop('emissiveTexture',None);mat['emissiveFactor']=[0,0,0];mat.pop('name',None)
   if plan['rect'] is not None:
-   r=rectangles[plan['rect']];transform={'offset':((np.array(r['packedOrigin'])-r['sourceCrop'][:2])/[width,height]).tolist(),'scale':(np.array(r['sourceSize'])/[width,height]).tolist()};tex={'index':0,'texCoord':0,'extensions':{'KHR_texture_transform':transform}};mat['pbrMetallicRoughness']['baseColorTexture']=tex
+   r=rectangles[plan['rect']];source_uv=values['TEXCOORD_0'].astype(np.float64)
+   values['TEXCOORD_0']=np.ascontiguousarray(((source_uv*np.array(r['sourceSize'])+np.array(r['packedOrigin'])-r['sourceCrop'][:2])/[width,height]).astype('<f4'))
+   mat['pbrMetallicRoughness']['baseColorTexture']={'index':0,'texCoord':0}
    if r['emissionImage'] in emission_crops:
-    crop=emission_crops[r['emissionImage']];w,h=crop['image'].size;x,y=crop['box'][:2];emission_transform={'offset':[-x/w,-y/h],'scale':[crop['sourceSize'][0]/w,crop['sourceSize'][1]/h]}
-    mat['emissiveTexture']={'index':crop['texture'],'texCoord':0,'extensions':{'KHR_texture_transform':emission_transform}};mat['emissiveFactor']=[1,1,1];mat.setdefault('extras',{}).update(emissionCropGuard=True,sourceEmissionControl='Existing shared scene night uniform gates emission; day zero',occupancy='Source-observed glazing with illustrative occupancy, not live')
-  # These annotations remain retained with the original handoff, not runtime URLs.
+    crop=emission_crops[r['emissionImage']];w,h=crop['image'].size;x,y=crop['box'][:2]
+    values['TEXCOORD_1']=np.ascontiguousarray(((source_uv*np.array(crop['sourceSize'])-[x,y])/[w,h]).astype('<f4'));templates['TEXCOORD_1']={'componentType':5126,'type':'VEC2'}
+    mat['emissiveTexture']={'index':crop['texture'],'texCoord':1};mat['emissiveFactor']=[1,1,1];mat.setdefault('extras',{}).update(emissionCropGuard=True,sourceEmissionControl='Existing shared scene night uniform gates emission; day zero',occupancy='Source-observed glazing with illustrative occupancy, not live')
   for annotation in ('glazingMask','glazingPhase'):mat.get('extras',{}).pop(annotation,None)
-  q['material']=len(doc['materials']);doc['materials'].append(mat);q.setdefault('extras',{})[key]=identities[bid];extras={key:identities[bid],'identityNamespace':namespace,'sourceMesh':mi,'sourcePrimitive':pi,'sourceBatchId':bid};meshmap[mi].append(len(doc['meshes']));doc['meshes'].append({'name':namespace+'_'+identities[bid] if namespace=='BAG' else identities[bid],'primitives':[q],'extras':extras});triangle_count+=len(chosen)
+  materialkey=json.dumps(mat,sort_keys=True,separators=(',',':'))
+  if materialkey not in materialmap:materialmap[materialkey]=len(doc['materials']);doc['materials'].append(mat)
+  material=materialmap[materialkey]
+  # Group only inside the same source mesh frame, identity and complete material/attribute contract.
+  signature=tuple((name,templates[name]['componentType'],templates[name]['type'],templates[name].get('normalized',False)) for name in sorted(values))
+  groupkey=(mi,bid,material,signature)
+  if groupkey not in groups:groups[groupkey]={'values':{name:[] for name in values},'indices':[],'templates':templates,'vertices':0,'bindings':[]}
+  group=groups[groupkey];start=group['vertices'];first=sum(len(ix) for ix in group['indices']);group['indices'].append(remapped.astype(np.uint32)+start)
+  for semantic,array in values.items():group['values'][semantic].append(array)
+  group['bindings'].append({'sourcePrimitive':pi,'sourceVertices':used.tolist(),'sourceTriangles':chosen.tolist(),'vertexStart':start,'vertexCount':len(used),'indexStart':first,'indexCount':len(remapped),'rectangle':plan['rect']})
+  group['vertices']+=len(used);triangle_count+=len(chosen)
+ for (mi,bid,material,signature),group in groups.items():
+  q={'mode':4,'material':material,'attributes':{},'extras':{key:identities[bid]}}
+  for semantic,arrays in group['values'].items():q['attributes'][semantic]=attr(np.concatenate(arrays),group['templates'][semantic],34962)
+  it=5123 if group['vertices']<=65535 else 5125;q['indices']=attr(np.concatenate(group['indices']).astype(m.DTYPES[it]).reshape(-1,1),{'componentType':it,'type':'SCALAR'},34963)
+  meshindex=len(doc['meshes']);extras={key:identities[bid],'identityNamespace':namespace,'sourceMesh':mi,'sourceBatchId':bid};meshmap[mi].append(meshindex);doc['meshes'].append({'name':namespace+'_'+identities[bid] if namespace=='BAG' else identities[bid],'primitives':[q],'extras':extras})
+  bindings.append({'runtimeMesh':meshindex,**extras,'parts':group['bindings']})
+ write_json(retained/'runtime-bindings.json',{'sourceGLBSha256':m.digest(raw),'atlasSize':[width,height],'rectangles':rectangles,'emissionCrops':{str(ii):{'box':crop['box'],'sourceSize':crop['sourceSize'],'texture':crop['texture']} for ii,crop in emission_crops.items()},'meshes':bindings})
  for node in list(doc['nodes']):
   if 'mesh' not in node:continue
   mi=node.pop('mesh');children=node.setdefault('children',[])
   for index in meshmap[mi]:children.append(len(doc['nodes']));doc['nodes'].append({'mesh':index,'extras':{key:doc['meshes'][index]['extras'][key]}})
  doc.get('extensions',{}).pop('CESIUM_RTC',None)
- for k in ('extensionsUsed','extensionsRequired'):doc[k]=[x for x in doc.get(k,[]) if x!='CESIUM_RTC']
- for k in ('extensionsUsed','extensionsRequired'):
-  if 'KHR_texture_transform' not in doc[k]:doc[k].append('KHR_texture_transform')
- doc.setdefault('extras',{}).update({collection:list(identities.values()),'identityNamespace':namespace,'appearanceStatus':'Bound artwork context review, not accepted','texturePacking':{'nativeTexels':True,'sourceUVsRetained':True,'atlasSize':[width,height],'islands':rectangles}})
+ for k in ('extensionsUsed','extensionsRequired'):doc[k]=[x for x in doc.get(k,[]) if x not in ('CESIUM_RTC','KHR_texture_transform')]
+ doc.setdefault('extras',{}).update({collection:list(identities.values()),'identityNamespace':namespace,'appearanceStatus':'Bound artwork context review, not accepted','texturePacking':{'nativeTexels':True,'sourceUVsRetainedInSource':True,'runtimeUVs':'Affine packed UV0; cropped emission UV1','atlasSize':[width,height],'islands':rectangles}})
  points=[];yz=np.array([[1,0,0,0],[0,0,-1,0],[0,1,0,0],[0,0,0,1]])
  def walk(index,parent):
   node=doc['nodes'][index];assert not any(k in node for k in ('translation','rotation','scale'));matrix=parent@np.array(node.get('matrix',np.eye(4).flatten(order='F'))).reshape(4,4,order='F')
@@ -110,7 +128,7 @@ def prepare(folder,out,retained):
  tiles={'asset':{'version':'1.0','gltfUpAxis':'Y'},'geometricError':0,'root':{'boundingVolume':{'sphere':[*centre,radius]},'geometricError':0,'refine':'REPLACE','children':[{'boundingVolume':{'box':box},'transform':[1,0,0,0,0,1,0,0,0,0,1,0,*rtc,1],'geometricError':0,'content':{'uri':'model.glb'},'extras':{collection:list(identities.values())}}]}};write_json(out/'tileset.json',tiles)
  from pyproj import Transformer
  lon,lat,h=Transformer.from_crs(4978,4979,always_xy=True).transform(*world.T)
- manifest={'status':'context review only','namespace':namespace,collection:list(identities.values()),'sourceGLBSha256':m.digest(raw),'sourceMunicipalSha256':meta['source_decoded_sha256'],'outputGLBSha256':m.digest(output),'triangles':triangle_count,'draws':len(plans),'originalUVsAndGeometryRetained':True,'rtcAppliedOnce':True,'atlasSize':[width,height],'decodedRgbaBytesIncludingMips':m.rgba_mip_bytes(width,height)+sum(m.rgba_mip_bytes(*crop['image'].size) for crop in emission_crops.values()),'sourceReferencedImages':[{ 'uri':uri,'sha256':m.digest(data)} for uri,data in referenced.items()],'emission':has_emission,'boundsLonLatHeight':[np.array([lon,lat,h]).min(1).tolist(),np.array([lon,lat,h]).max(1).tolist()]};write_json(out/'manifest.json',manifest);write_json(retained/'integration.json',manifest)
+ manifest={'status':'context review only','namespace':namespace,collection:list(identities.values()),'sourceGLBSha256':m.digest(raw),'sourceMunicipalSha256':meta['source_decoded_sha256'],'outputGLBSha256':m.digest(output),'triangles':triangle_count,'draws':len(groups),'sourceIslandDraws':len(plans),'originalGeometryRetained':True,'originalUVsRetainedInSource':True,'runtimeUVsAffineEquivalent':True,'rtcAppliedOnce':True,'atlasSize':[width,height],'decodedRgbaBytesIncludingMips':m.rgba_mip_bytes(width,height)+sum(m.rgba_mip_bytes(*crop['image'].size) for crop in emission_crops.values()),'sourceReferencedImages':[{ 'uri':uri,'sha256':m.digest(data)} for uri,data in referenced.items()],'emission':has_emission,'boundsLonLatHeight':[np.array([lon,lat,h]).min(1).tolist(),np.array([lon,lat,h]).max(1).tolist()]};write_json(out/'manifest.json',manifest);write_json(retained/'integration.json',manifest)
  (retained/meta['geometry_asset']).write_bytes(raw)
  for uri,data in referenced.items():target=retained/uri;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
  for name in ['README.md','README.txt','georeference-and-identities.json','verification.json','texture-budget-estimate.json']:
