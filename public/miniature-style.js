@@ -118,14 +118,14 @@ export function createCityMaterial(kind, uniforms) {
 
 
 export function createLampPoolMaterial(night, pixelsPerMetre) {
-  return new THREE.ShaderMaterial({
+  const material = new THREE.ShaderMaterial({
     uniforms: { night, pixelsPerMetre }, transparent: true, depthWrite: false,
     blending: THREE.AdditiveBlending, toneMapped: false,
-    vertexShader: `uniform float pixelsPerMetre;
+    vertexShader: `uniform float pixelsPerMetre; attribute float _pool_radius;
       void main() {
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         gl_Position.z -= 0.000002 * gl_Position.w;
-        gl_PointSize = max(1.0, 18.0 * pixelsPerMetre);
+        gl_PointSize = max(1.0, 2.0 * _pool_radius * pixelsPerMetre);
       }`,
     fragmentShader: `uniform float night;
       void main() {
@@ -136,6 +136,8 @@ export function createLampPoolMaterial(night, pixelsPerMetre) {
         gl_FragColor = vec4(vec3(1.0, 0.58, 0.22), falloff * night * 0.16);
       }`,
   });
+  material.defaultAttributeValues._pool_radius = [9];
+  return material;
 }
 
 

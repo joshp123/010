@@ -72,13 +72,20 @@ def encode(records):
     binary=positions.tobytes()
     accessors=[{'bufferView':0,'componentType':5126,'count':len(points),'type':'VEC3','min':positions.min(axis=0).tolist(),'max':positions.max(axis=0).tolist()}]
     views=[{'buffer':0,'byteOffset':0,'byteLength':len(binary),'target':34962}]
+    radii=np.array([r['radius'] for r in records for _ in range(2)],dtype='<f4').tobytes()
+    views.append({'buffer':0,'byteOffset':len(binary),'byteLength':len(radii),'target':34962});binary+=radii
+    accessors.append({'bufferView':1,'componentType':5126,'count':len(points),'type':'SCALAR'})
     meshes=[]; nodes=[]
     for kind,indices,mode in [('lampShafts',list(range(count*2)),1),('lampHeads',list(range(1,count*2,2)),0),('lampPools',[i*2 for i,r in enumerate(records) if r['pool']],0)]:
         if not indices: continue
         values=np.array(indices,dtype='<u4').tobytes(); offset=len(binary);binary+=values
         views.append({'buffer':0,'byteOffset':offset,'byteLength':len(values),'target':34963})
         accessors.append({'bufferView':len(views)-1,'componentType':5125,'count':len(indices),'type':'SCALAR'})
-        meshes.append({'name':kind,'extras':{'objectKind':kind,'illustratedPole':True,'sourceIds':[r['id'] for r in records],'placement':'BGT 2D surveyed point; height and emitted light are illustrative'},'primitives':[{'attributes':{'POSITION':0},'indices':len(accessors)-1,'mode':mode}]})
+        meshes.append({'name':kind,'extras':{'objectKind':kind,'illustratedPole':True,'sourceIds':[r['id'] for r in records],'placement':'BGT 2D surveyed point; straight shaft and emitted light are illustrative. Heights follow corresponding lampHeads.heightEvidence.'},'primitives':[{'attributes':{'POSITION':0},'indices':len(accessors)-1,'mode':mode}]})
+        if kind=='lampPools':meshes[-1]['primitives'][0]['attributes']['_POOL_RADIUS']=1
+        if kind=='lampHeads':
+            meshes[-1]['extras']['heightEvidence']=[r['evidence'] for r in records]
+            meshes[-1]['extras']['placement']='BGT 2D point; AHN-supported upper-cluster height where recorded, otherwise illustrative10m. Light emission remains illustrative.'
         nodes.append({'mesh':len(meshes)-1,'translation':centre.tolist()})
     document={'asset':{'version':'2.0','generator':'010 supplementary BGT lamps'},'scene':0,'scenes':[{'nodes':list(range(len(nodes)))}],'nodes':nodes,'meshes':meshes,'accessors':accessors,'bufferViews':views,'buffers':[{'byteLength':len(binary)}]}
     js=packed(document);js+=b' '*((-len(js))%4);binary+=b'\0'*((-len(binary))%4)
@@ -98,9 +105,12 @@ def main(acquire):
                 prop=feature['properties']
                 if prop['status']=='bestaand' and not prop.get('termination_date') and not prop.get('eind_registratie') and municipality.covers(shape(feature['geometry'])):
                     selected[feature['id']]=feature
-        source={'type':'FeatureCollection','writtenBy':'AI, GPT-6, 2026-10-24','publisher':'Kadaster / PDOK / BGT source holders','license':'CC0-1.0','licenseUrl':'https://creativecommons.org/publicdomain/zero/1.0/','snapshot':SNAPSHOT,'inventory':[item for _,inventory in responses for item in inventory],'features':sorted(selected.values(),key=lambda f:f['id'])}
+        source={'type':'FeatureCollection','writtenBy':'AI, GPT-6.1 Sol, 2026-10-24','publisher':'Kadaster / PDOK / BGT source holders','license':'CC0-1.0','licenseUrl':'https://creativecommons.org/publicdomain/zero/1.0/','snapshot':SNAPSHOT,'inventory':[item for _,inventory in responses for item in inventory],'features':sorted(selected.values(),key=lambda f:f['id'])}
         SOURCE.write_bytes(gzip.compress(packed(source),mtime=0))
     source=json.loads(gzip.decompress(SOURCE.read_bytes()))
+    height_path=ROOT/'source-data/supplementary-lamp-heights.json'
+    height_source=json.loads(height_path.read_bytes())
+    measured_heights=height_source['fixtures']
     fixtures=source['features']; coords=np.array([f['geometry']['coordinates'] for f in fixtures])
     x,y,z=GEOCENTRIC.transform(coords[:,0],coords[:,1],np.zeros(len(coords)))
     bases=(np.array([x,y,z]).T-EARTH_ORIGIN)@ROTATION.T
@@ -115,7 +125,9 @@ def main(acquire):
         path=ROOT/'work/data-cache'/(hashlib.sha256(item['url'].encode()).hexdigest()+'.json')
         water_features.extend(json.loads(path.read_bytes())['features'])
     to_rd=Transformer.from_crs(4326,28992,always_xy=True).transform
-    land=transform(to_rd,municipality).difference(unary_union([transform(to_rd,shape(f['geometry'])) for f in water_features])).buffer(-9.1)
+    full_land=transform(to_rd,municipality).difference(unary_union([transform(to_rd,shape(f['geometry'])) for f in water_features]))
+    land=full_land.buffer(-9.1)
+    land_boundary=full_land.boundary
     # Ground uses the same free AHN DTM edition/height convention as structures.
     ahn_index=json.loads((ROOT/'work/data-cache/industrial-structures/ahn6-copc-index.json').read_bytes())
     ahn_tiles={tuple(map(lambda value:math.floor(value/1000),shape(f['geometry']).bounds[:2])):f for f in ahn_index['features']}
@@ -151,21 +163,25 @@ def main(acquire):
                 height=float(ground[row,column])
                 if height==-9999 or not math.isfinite(height):height=float(np.median(valid))
                 bottom=base.copy();bottom[1]+=height+.08
-                top_point=bottom.copy();top_point[1]+=10
-                pool=land.covers(transform(to_rd,shape(feature['geometry'])))
+                measurement=measured_heights.get(feature['id'])
+                mast_height=measurement['headNAP']-height if measurement else 10
+                top_point=bottom.copy();top_point[1]+=mast_height
+                pool_radius=max(9,min(30,mast_height*.55)) if measurement else 9
+                point=transform(to_rd,shape(feature['geometry']))
+                pool=land.covers(point) if pool_radius==9 else full_land.covers(point) and land_boundary.distance(point)>=pool_radius+.1
                 bucket_key=f'{math.floor(base[0]/2000)}_{math.floor(base[2]/2000)}'
-                buckets.setdefault(bucket_key,[]).append({'id':feature['id'],'points':[bottom.tolist(),top_point.tolist()],'pool':pool})
+                buckets.setdefault(bucket_key,[]).append({'id':feature['id'],'points':[bottom.tolist(),top_point.tolist()],'pool':pool,'radius':pool_radius,'evidence':'AHN selected-flight upper cluster' if measurement else 'illustrative10m'})
         print(f'ground {name}: {len(entries)} fixtures',flush=True)
     OUTPUT.mkdir(parents=True,exist_ok=True)
     children=[];all_points=[];total=0;tiles=[]
     for key,records in sorted(buckets.items()):
         glb,points=encode(records);(OUTPUT/f'{key}.glb').write_bytes(glb);all_points.extend(points.tolist());total+=len(glb)
         children.append({'boundingVolume':{'box':box(points)},'geometricError':0,'content':{'uri':f'{key}.glb'}})
-        tiles.append({'uri':f'{key}.glb','fixtures':len(records),'pools':sum(r['pool'] for r in records),'bytes':len(glb)})
+        tiles.append({'uri':f'{key}.glb','fixtures':len(records),'pools':sum(r['pool'] for r in records),'bytes':len(glb),'measuredHeads':sum(r['evidence']=='AHN selected-flight upper cluster' for r in records),'maximumPoolRadiusMetres':max(r['radius'] for r in records)})
     transform_values=[*east,0,*[-v for v in south],0,*up,0,*EARTH_ORIGIN.tolist(),1]
     tileset={'asset':{'version':'1.0','gltfUpAxis':'Y'},'geometricError':1000000,'root':{'transform':transform_values,'boundingVolume':{'box':box(np.array(all_points))},'geometricError':1000000,'refine':'REPLACE','children':children}}
     (OUTPUT/'tileset.json').write_bytes(packed(tileset))
-    manifest={'writtenBy':'AI, GPT-6, 2026-10-24','source':'../../../source-data/supplementary-lamps.geojson.gz','sourceSha256':hashlib.sha256(SOURCE.read_bytes()).hexdigest(),'publisher':source['publisher'],'license':source['license'],'licenseUrl':source['licenseUrl'],'snapshot':SNAPSHOT,'sourceFixtures':len(fixtures),'excludedMatchingNativeBases':excluded,'includedFixtures':sum(len(records) for records in buckets.values()),'unresolvedGroundFixtureIds':unresolved,'omittedElevatedFixtureIds':elevated,'groundLicense':'CC BY 4.0','groundAttribution':'Actueel Hoogtebestand Nederland (AHN)' ,'groundSources':ground_inventory,'groundIndexSha256':hashlib.sha256((ROOT/'work/data-cache/industrial-structures/ahn6-copc-index.json').read_bytes()).hexdigest(),'nativeLampManifestSha256':hashlib.sha256((ROOT/'public/data/lamps/manifest.json').read_bytes()).hexdigest(),'bucketMetres':2000,'bytes':total,'tiles':tiles,'interpretation':{'positions':'BGT paal plus_type=lichtmast 2D coordinates, existing status, exact municipality clip','coverage':'Exclude only surveyed plan points within 0.1m of a native prepared pole base. This bound exceeds <=2cm/axis native-output quantization error; the observed nearest-neighbour distribution is retained below. Distinct nearby points are preserved beyond this match bound.','height':'Ground is sampled from retained AHN6 0.5m DTM, nearest-cell height or median valid cell within 2m for no-data. No valid ground means omission. Same NAP numeric/Earth-curvature convention as other model layers. Head height is illustrative 10m above measured ground; BGT does not survey mast heights.','light':'Warm head glow and 9m light pools use existing lamp materials; pools only if full footprint lies inside municipality and outside unsimplified BRT water polygons. Pole heads/pools are illustration, not live operational status.','nearestNativeHistogram':np.histogram(distances,bins=[0,.1,.25,.5,1,2,5,10,50,100,1e9])[0].tolist(),'nearestNativeBinsMetres':[0,.1,.25,.5,1,2,5,10,50,100,1e9]}}
+    manifest={'writtenBy':'AI, GPT-6.1 Sol, 2026-10-24','source':'../../../source-data/supplementary-lamps.geojson.gz','sourceSha256':hashlib.sha256(SOURCE.read_bytes()).hexdigest(),'publisher':source['publisher'],'license':source['license'],'licenseUrl':source['licenseUrl'],'snapshot':SNAPSHOT,'sourceFixtures':len(fixtures),'excludedMatchingNativeBases':excluded,'includedFixtures':sum(len(records) for records in buckets.values()),'unresolvedGroundFixtureIds':unresolved,'omittedElevatedFixtureIds':elevated,'groundLicense':'CC BY 4.0','groundAttribution':'Actueel Hoogtebestand Nederland (AHN)' ,'groundSources':ground_inventory,'groundIndexSha256':hashlib.sha256((ROOT/'work/data-cache/industrial-structures/ahn6-copc-index.json').read_bytes()).hexdigest(),'nativeLampManifestSha256':hashlib.sha256((ROOT/'public/data/lamps/manifest.json').read_bytes()).hexdigest(),'bucketMetres':2000,'heightEvidence':{'source':'../../../source-data/supplementary-lamp-heights.json','sha256':hashlib.sha256(height_path.read_bytes()).hexdigest(),'supportedSourceFixtures':len(measured_heights),'renderedMeasuredHeads':sum(t['measuredHeads'] for t in tiles),'renderedIllustrativeHeads':sum(len(records) for records in buckets.values())-sum(t['measuredHeads'] for t in tiles),'poolRadius':'Measured upper-cluster height above terrain *0.55, minimum9m and maximum30m. Unmeasured fixtures retain9m. Spread and brightness remain illustrative, not photometry.'},'bytes':total,'tiles':tiles,'interpretation':{'positions':'BGT paal plus_type=lichtmast 2D coordinates, existing status, exact municipality clip','coverage':'Exclude only surveyed plan points within 0.1m of a native prepared pole base. This bound exceeds <=2cm/axis native-output quantization error; the observed nearest-neighbour distribution is retained below. Distinct nearby points are preserved beyond this match bound.','height':'Ground is sampled from retained AHN6 0.5m DTM, nearest-cell height or median valid cell within 2m for no-data. No valid ground means omission. Same NAP numeric/Earth-curvature convention as other model layers. Head height uses retained selected-flight AHN upper-cluster evidence where a continuous narrow shaft and compact widened head support the registered BGT fixture. Unsupported heads remain illustrative10m. AHN hardware surfaces approximate head placement, not photometric centres.','light':'Warm head glow and batched height-dependent pools use existing lamp materials; ordinary/unmeasured pools remain9m, supported tallmast pools are illustrative0.55*height capped30m. Pools require full-radius land clearance against retained unsimplified BRTwater, whose shoreline detail can differ from native BGT and precise current BGT. No new dynamic lights. Pole heads/pools are illustration, not live operational status.','nearestNativeHistogram':np.histogram(distances,bins=[0,.1,.25,.5,1,2,5,10,50,100,1e9])[0].tolist(),'nearestNativeBinsMetres':[0,.1,.25,.5,1,2,5,10,50,100,1e9]}}
     (OUTPUT/'manifest.json').write_bytes(packed(manifest));print(json.dumps({k:v for k,v in manifest.items() if k not in ['tiles','interpretation']},indent=2))
 
 if __name__=='__main__':
