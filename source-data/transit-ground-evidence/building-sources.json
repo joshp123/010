@@ -1,0 +1,16 @@
+[
+  {
+    "file": "building-67178-13862.b3dm.gz",
+    "url": "https://www.3drotterdam.nl/datasource-data/8b5d0ded-a222-4e44-bc70-2992bc2192fc/16/67178/13862.b3dm",
+    "decodedSha256": "dba472be38a18a3b34c166a4859c74db049a3b62f9ff562b9a6eec6ec2488812",
+    "acquiredAt": "2026-10-24T08:41:01.948180+00:00",
+    "license": "CC BY 4.0 Gemeente Rotterdam"
+  },
+  {
+    "file": "building-67179-13862.b3dm.gz",
+    "url": "https://www.3drotterdam.nl/datasource-data/8b5d0ded-a222-4e44-bc70-2992bc2192fc/16/67179/13862.b3dm",
+    "decodedSha256": "b1ac74dc1e0dad49c62be10c1553e26a5c1e7cacc3a5fcc879281c5720335d21",
+    "acquiredAt": "2026-10-24T08:41:08.148625+00:00",
+    "license": "CC BY 4.0 Gemeente Rotterdam"
+  }
+]

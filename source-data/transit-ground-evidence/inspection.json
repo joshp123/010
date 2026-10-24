@@ -1,0 +1,514 @@
+{
+  "sourceUrl": "https://www.3drotterdam.nl/datasource-data/0025cb58-e0f5-4169-bb4c-5339a3bc2a7e/15/33589/6931.b3dm",
+  "acquiredAt": "2026-10-24T08:28:11.894992+00:00",
+  "decodedSha256": "753952e076d0f064c3ffc225d1682b03fe4f7603033d80d6b8ea41d756b009f3",
+  "compressedSha256": "2e81ad46706eae8978f90435aa8f8065899c76c91becbc5696b7e7fcf042848f",
+  "license": "CC BY 4.0, Gemeente Rotterdam; source catalog evidence in source-data/current-building-evidence/catalog-evidence.json",
+  "featureClasses": {
+    "Scheiding": 18,
+    "Onbegroeid terreindeel": 711,
+    "Begroeid terreindeel": 119,
+    "Vegetatieobject": 2,
+    "Wegdeel": 759,
+    "Ondersteunend wegdeel": 11,
+    "Pand": 840,
+    "Overig bouwwerk": 7
+  },
+  "selectedPhysicalSourceId": "129886927",
+  "axisOffsetMetres": 5.5395166903905455,
+  "heightReference": "Source ECEF transformed to local geodetic up at each sample; native ellipsoid heights, not renderer local y. Highest vertical intersection; no renderer height fallback.",
+  "samples": [
+    {
+      "label": "raw report",
+      "longitude": 4.5126138,
+      "latitude": 51.9251404,
+      "highestAll": {
+        "height": -0.9864159204221157,
+        "id": "16493287",
+        "attributes": {
+          "FYSIEKVK": "open verharding",
+          "DGDT_ID": "16493287",
+          "FUNCTIE": "voetpad",
+          "KLASSE_IMG": "Wegdeel",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Voetpad",
+          "INWIN": "20190506"
+        }
+      },
+      "highestSemanticTerrain": {
+        "height": -0.9864159204221157,
+        "id": "16493287",
+        "attributes": {
+          "FYSIEKVK": "open verharding",
+          "DGDT_ID": "16493287",
+          "FUNCTIE": "voetpad",
+          "KLASSE_IMG": "Wegdeel",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Voetpad",
+          "INWIN": "20190506"
+        }
+      },
+      "allIntersections": [
+        {
+          "height": -0.9864159204221157,
+          "id": "16493287",
+          "attributes": {
+            "FYSIEKVK": "open verharding",
+            "DGDT_ID": "16493287",
+            "FUNCTIE": "voetpad",
+            "KLASSE_IMG": "Wegdeel",
+            "BRONHOUDER": "Rotterdam (G)",
+            "KLASSE": "Voetpad",
+            "INWIN": "20190506"
+          }
+        }
+      ]
+    },
+    {
+      "label": "axis -38m",
+      "longitude": 4.512054835804495,
+      "latitude": 51.92515374794203,
+      "highestAll": {
+        "height": -1.0704824952733394,
+        "id": "15573987",
+        "attributes": {
+          "FYSIEKVK": "open verharding",
+          "DGDT_ID": "15573987",
+          "FUNCTIE": "voetpad",
+          "KLASSE_IMG": "Wegdeel",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Voetpad",
+          "INWIN": "20151210"
+        }
+      },
+      "highestSemanticTerrain": {
+        "height": -1.0704824952733394,
+        "id": "15573987",
+        "attributes": {
+          "FYSIEKVK": "open verharding",
+          "DGDT_ID": "15573987",
+          "FUNCTIE": "voetpad",
+          "KLASSE_IMG": "Wegdeel",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Voetpad",
+          "INWIN": "20151210"
+        }
+      },
+      "allIntersections": [
+        {
+          "height": -1.0704824952733394,
+          "id": "15573987",
+          "attributes": {
+            "FYSIEKVK": "open verharding",
+            "DGDT_ID": "15573987",
+            "FUNCTIE": "voetpad",
+            "KLASSE_IMG": "Wegdeel",
+            "BRONHOUDER": "Rotterdam (G)",
+            "KLASSE": "Voetpad",
+            "INWIN": "20151210"
+          }
+        }
+      ]
+    },
+    {
+      "label": "axis -32m",
+      "longitude": 4.512140768956335,
+      "latitude": 51.925143915055514,
+      "highestAll": {
+        "height": -0.9457221432286504,
+        "id": "15491687",
+        "attributes": {
+          "FYSIEKVK": "open verharding",
+          "DGDT_ID": "15491687",
+          "FUNCTIE": "parkeervlak",
+          "KLASSE_IMG": "Wegdeel",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Parkeerplaats",
+          "INWIN": "20151111"
+        }
+      },
+      "highestSemanticTerrain": {
+        "height": -0.9457221432286504,
+        "id": "15491687",
+        "attributes": {
+          "FYSIEKVK": "open verharding",
+          "DGDT_ID": "15491687",
+          "FUNCTIE": "parkeervlak",
+          "KLASSE_IMG": "Wegdeel",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Parkeerplaats",
+          "INWIN": "20151111"
+        }
+      },
+      "allIntersections": [
+        {
+          "height": -0.9457221432286504,
+          "id": "15491687",
+          "attributes": {
+            "FYSIEKVK": "open verharding",
+            "DGDT_ID": "15491687",
+            "FUNCTIE": "parkeervlak",
+            "KLASSE_IMG": "Wegdeel",
+            "BRONHOUDER": "Rotterdam (G)",
+            "KLASSE": "Parkeerplaats",
+            "INWIN": "20151111"
+          }
+        }
+      ]
+    },
+    {
+      "label": "axis -24m",
+      "longitude": 4.512255346492122,
+      "latitude": 51.92513080454016,
+      "highestAll": {
+        "height": -0.7926223302333144,
+        "id": "15491686",
+        "attributes": {
+          "FYSIEKVK": "open verharding",
+          "DGDT_ID": "15491686",
+          "FUNCTIE": "voetpad",
+          "KLASSE_IMG": "Wegdeel",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Voetpad",
+          "INWIN": "20151111"
+        }
+      },
+      "highestSemanticTerrain": {
+        "height": -0.7926223302333144,
+        "id": "15491686",
+        "attributes": {
+          "FYSIEKVK": "open verharding",
+          "DGDT_ID": "15491686",
+          "FUNCTIE": "voetpad",
+          "KLASSE_IMG": "Wegdeel",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Voetpad",
+          "INWIN": "20151111"
+        }
+      },
+      "allIntersections": [
+        {
+          "height": -0.7926223302333144,
+          "id": "15491686",
+          "attributes": {
+            "FYSIEKVK": "open verharding",
+            "DGDT_ID": "15491686",
+            "FUNCTIE": "voetpad",
+            "KLASSE_IMG": "Wegdeel",
+            "BRONHOUDER": "Rotterdam (G)",
+            "KLASSE": "Voetpad",
+            "INWIN": "20151111"
+          }
+        }
+      ]
+    },
+    {
+      "label": "axis -16m",
+      "longitude": 4.512369924027908,
+      "latitude": 51.925117694024806,
+      "highestAll": {
+        "height": -0.7791277951801031,
+        "id": "15491686",
+        "attributes": {
+          "FYSIEKVK": "open verharding",
+          "DGDT_ID": "15491686",
+          "FUNCTIE": "voetpad",
+          "KLASSE_IMG": "Wegdeel",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Voetpad",
+          "INWIN": "20151111"
+        }
+      },
+      "highestSemanticTerrain": {
+        "height": -0.7791277951801031,
+        "id": "15491686",
+        "attributes": {
+          "FYSIEKVK": "open verharding",
+          "DGDT_ID": "15491686",
+          "FUNCTIE": "voetpad",
+          "KLASSE_IMG": "Wegdeel",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Voetpad",
+          "INWIN": "20151111"
+        }
+      },
+      "allIntersections": [
+        {
+          "height": -0.7791277951801031,
+          "id": "15491686",
+          "attributes": {
+            "FYSIEKVK": "open verharding",
+            "DGDT_ID": "15491686",
+            "FUNCTIE": "voetpad",
+            "KLASSE_IMG": "Wegdeel",
+            "BRONHOUDER": "Rotterdam (G)",
+            "KLASSE": "Voetpad",
+            "INWIN": "20151111"
+          }
+        }
+      ]
+    },
+    {
+      "label": "axis -8m",
+      "longitude": 4.512484501563695,
+      "latitude": 51.92510458350945,
+      "highestAll": {
+        "height": -0.89811955816174,
+        "id": "15997991",
+        "attributes": {
+          "FYSIEKVK": "open verharding",
+          "DGDT_ID": "15997991",
+          "FUNCTIE": "voetpad",
+          "KLASSE_IMG": "Wegdeel",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Voetpad",
+          "INWIN": "20170317"
+        }
+      },
+      "highestSemanticTerrain": {
+        "height": -0.89811955816174,
+        "id": "15997991",
+        "attributes": {
+          "FYSIEKVK": "open verharding",
+          "DGDT_ID": "15997991",
+          "FUNCTIE": "voetpad",
+          "KLASSE_IMG": "Wegdeel",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Voetpad",
+          "INWIN": "20170317"
+        }
+      },
+      "allIntersections": [
+        {
+          "height": -0.89811955816174,
+          "id": "15997991",
+          "attributes": {
+            "FYSIEKVK": "open verharding",
+            "DGDT_ID": "15997991",
+            "FUNCTIE": "voetpad",
+            "KLASSE_IMG": "Wegdeel",
+            "BRONHOUDER": "Rotterdam (G)",
+            "KLASSE": "Voetpad",
+            "INWIN": "20170317"
+          }
+        }
+      ]
+    },
+    {
+      "label": "axis 0m",
+      "longitude": 4.512599079099481,
+      "latitude": 51.9250914729941,
+      "highestAll": {
+        "height": -1.1800488898265702,
+        "id": "15957568",
+        "attributes": {
+          "FYSIEKVK": "",
+          "DGDT_ID": "15957568",
+          "measuredHeight": 0,
+          "FUNCTIE": "",
+          "KLASSE_IMG": "Pand",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Hoofdgebouw",
+          "INWIN": "20170207"
+        }
+      },
+      "highestSemanticTerrain": null,
+      "allIntersections": [
+        {
+          "height": -1.1800488898265702,
+          "id": "15957568",
+          "attributes": {
+            "FYSIEKVK": "",
+            "DGDT_ID": "15957568",
+            "measuredHeight": 0,
+            "FUNCTIE": "",
+            "KLASSE_IMG": "Pand",
+            "BRONHOUDER": "Rotterdam (G)",
+            "KLASSE": "Hoofdgebouw",
+            "INWIN": "20170207"
+          }
+        }
+      ]
+    },
+    {
+      "label": "axis 8m",
+      "longitude": 4.512713656635268,
+      "latitude": 51.92507836247874,
+      "highestAll": {
+        "height": -1.1800401168103967,
+        "id": "15957568",
+        "attributes": {
+          "FYSIEKVK": "",
+          "DGDT_ID": "15957568",
+          "measuredHeight": 0,
+          "FUNCTIE": "",
+          "KLASSE_IMG": "Pand",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Hoofdgebouw",
+          "INWIN": "20170207"
+        }
+      },
+      "highestSemanticTerrain": null,
+      "allIntersections": [
+        {
+          "height": -1.1800401168103967,
+          "id": "15957568",
+          "attributes": {
+            "FYSIEKVK": "",
+            "DGDT_ID": "15957568",
+            "measuredHeight": 0,
+            "FUNCTIE": "",
+            "KLASSE_IMG": "Pand",
+            "BRONHOUDER": "Rotterdam (G)",
+            "KLASSE": "Hoofdgebouw",
+            "INWIN": "20170207"
+          }
+        }
+      ]
+    },
+    {
+      "label": "axis 16m",
+      "longitude": 4.512828234171055,
+      "latitude": 51.92506525196339,
+      "highestAll": {
+        "height": -1.1800414216173205,
+        "id": "15957568",
+        "attributes": {
+          "FYSIEKVK": "",
+          "DGDT_ID": "15957568",
+          "measuredHeight": 0,
+          "FUNCTIE": "",
+          "KLASSE_IMG": "Pand",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Hoofdgebouw",
+          "INWIN": "20170207"
+        }
+      },
+      "highestSemanticTerrain": null,
+      "allIntersections": [
+        {
+          "height": -1.1800414216173205,
+          "id": "15957568",
+          "attributes": {
+            "FYSIEKVK": "",
+            "DGDT_ID": "15957568",
+            "measuredHeight": 0,
+            "FUNCTIE": "",
+            "KLASSE_IMG": "Pand",
+            "BRONHOUDER": "Rotterdam (G)",
+            "KLASSE": "Hoofdgebouw",
+            "INWIN": "20170207"
+          }
+        }
+      ]
+    },
+    {
+      "label": "axis 24m",
+      "longitude": 4.512942811706841,
+      "latitude": 51.925052141448035,
+      "highestAll": {
+        "height": -1.1800463194437778,
+        "id": "15957568",
+        "attributes": {
+          "FYSIEKVK": "",
+          "DGDT_ID": "15957568",
+          "measuredHeight": 0,
+          "FUNCTIE": "",
+          "KLASSE_IMG": "Pand",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Hoofdgebouw",
+          "INWIN": "20170207"
+        }
+      },
+      "highestSemanticTerrain": null,
+      "allIntersections": [
+        {
+          "height": -1.1800463194437778,
+          "id": "15957568",
+          "attributes": {
+            "FYSIEKVK": "",
+            "DGDT_ID": "15957568",
+            "measuredHeight": 0,
+            "FUNCTIE": "",
+            "KLASSE_IMG": "Pand",
+            "BRONHOUDER": "Rotterdam (G)",
+            "KLASSE": "Hoofdgebouw",
+            "INWIN": "20170207"
+          }
+        }
+      ]
+    },
+    {
+      "label": "axis 32m",
+      "longitude": 4.513057389242628,
+      "latitude": 51.92503903093268,
+      "highestAll": {
+        "height": -1.1800382497544655,
+        "id": "15957568",
+        "attributes": {
+          "FYSIEKVK": "",
+          "DGDT_ID": "15957568",
+          "measuredHeight": 0,
+          "FUNCTIE": "",
+          "KLASSE_IMG": "Pand",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Hoofdgebouw",
+          "INWIN": "20170207"
+        }
+      },
+      "highestSemanticTerrain": null,
+      "allIntersections": [
+        {
+          "height": -1.1800382497544655,
+          "id": "15957568",
+          "attributes": {
+            "FYSIEKVK": "",
+            "DGDT_ID": "15957568",
+            "measuredHeight": 0,
+            "FUNCTIE": "",
+            "KLASSE_IMG": "Pand",
+            "BRONHOUDER": "Rotterdam (G)",
+            "KLASSE": "Hoofdgebouw",
+            "INWIN": "20170207"
+          }
+        }
+      ]
+    },
+    {
+      "label": "axis 38m",
+      "longitude": 4.513143322394468,
+      "latitude": 51.92502919804616,
+      "highestAll": {
+        "height": -1.180033815008211,
+        "id": "15957568",
+        "attributes": {
+          "FYSIEKVK": "",
+          "DGDT_ID": "15957568",
+          "measuredHeight": 0,
+          "FUNCTIE": "",
+          "KLASSE_IMG": "Pand",
+          "BRONHOUDER": "Rotterdam (G)",
+          "KLASSE": "Hoofdgebouw",
+          "INWIN": "20170207"
+        }
+      },
+      "highestSemanticTerrain": null,
+      "allIntersections": [
+        {
+          "height": -1.180033815008211,
+          "id": "15957568",
+          "attributes": {
+            "FYSIEKVK": "",
+            "DGDT_ID": "15957568",
+            "measuredHeight": 0,
+            "FUNCTIE": "",
+            "KLASSE_IMG": "Pand",
+            "BRONHOUDER": "Rotterdam (G)",
+            "KLASSE": "Hoofdgebouw",
+            "INWIN": "20170207"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -39,7 +39,7 @@ export function createBuildingBatches() {
       if (geometry.drawRange.start !== 0 || geometry.drawRange.count < elementCount) return;
       if (geometry.groups.length && (geometry.groups[0].start !== 0 || geometry.groups[0].count !== elementCount)) return;
       if (mesh.matrixAutoUpdate) mesh.updateMatrix();
-      const key = [mesh.parent.id, mesh.material.id, mesh.matrix.elements.join(','), mesh.castShadow, mesh.receiveShadow, mesh.renderOrder, mesh.layers.mask, mesh.frustumCulled, attributeLayout(geometry)].join(';');
+      const key = [mesh.parent.id, mesh.material.id, mesh.customDepthMaterial?.id ?? '', mesh.matrix.elements.join(','), mesh.castShadow, mesh.receiveShadow, mesh.renderOrder, mesh.layers.mask, mesh.frustumCulled, attributeLayout(geometry)].join(';');
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(mesh);
     });
@@ -84,6 +84,7 @@ export function createBuildingBatches() {
       const merged = new THREE.Mesh(geometry, first.material);
       merged.name = 'Native building primitives · combined draw';
       merged.matrixAutoUpdate = false; merged.matrix.copy(first.matrix);
+      merged.customDepthMaterial = first.customDepthMaterial;
       merged.castShadow = first.castShadow; merged.receiveShadow = first.receiveShadow;
       merged.renderOrder = first.renderOrder; merged.layers.mask = first.layers.mask; merged.frustumCulled = first.frustumCulled;
       merged.userData = { ...first.userData, sourcePrimitiveCount: meshes.length };

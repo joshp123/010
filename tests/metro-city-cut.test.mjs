@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import * as THREE from '../public/vendor/three/build/three.module.js';
+const source=(await readFile(new URL('../public/metro-city-cut.js',import.meta.url),'utf8')).replace("'three'",JSON.stringify(new URL('../public/vendor/three/build/three.module.js',import.meta.url).href));
+const {createMetroCityCut}=await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
+const cut=createMetroCityCut(),model=new THREE.Group();
+const boxes=[new THREE.BoxGeometry(20,20,12).translate(0,10,0).toNonIndexed(),new THREE.BoxGeometry(20,20,12).translate(120,10,0).toNonIndexed()];
+const positions=Float32Array.from(boxes.flatMap(box=>Array.from(box.getAttribute('position').array))),ids=new Float32Array(positions.length/3);ids.fill(1,boxes[0].getAttribute('position').count);
+const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.BufferAttribute(positions,3));geometry.setAttribute('_batchid',new THREE.BufferAttribute(ids,1));
+const mesh=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial());model.add(mesh);model.batchTable={};model.updateMatrixWorld(true);
+const section={enabled:true,halfWidth:3,depth:12,projection:new THREE.Vector2(.8,1.1),segments:[{start:new THREE.Vector3(-38,0,0),end:new THREE.Vector3(38,0,0)}]};
+const before=positions.slice();assert.equal(cut.update([model],section),true);
+const flags=geometry.getAttribute('_metroExcised');assert.ok(Array.from(flags.array.slice(0,36)).every(x=>x===1),'whole intersecting feature removed');assert.ok(Array.from(flags.array.slice(36)).every(x=>x===0),'unrelated feature in same merged mesh retained');
+assert.equal(cut.diagnostics().selectedFeatures,1);assert.equal(cut.group.children.length,1);assert.equal(cut.group.children[0].material.depthWrite,false,'ghost cannot fill depth over train');
+assert.deepEqual(positions,before,'original source positions unchanged');
+assert.equal(cut.update([model],section),false);assert.equal(cut.diagnostics().featureBuilds,1,'unchanged frames do not rescan vertices');
+cut.update([model],{...section,enabled:false});assert.ok(Array.from(flags.array).every(x=>x===0));assert.equal(cut.group.children.length,0);
+// A BAG feature may span multiple material primitives. Selection must be whole.
+const bag=new THREE.Group();bag.userData.bagId='fixture';
+const roof=new THREE.Mesh(new THREE.BoxGeometry(8,2,8),new THREE.MeshBasicMaterial());roof.position.set(0,20,0);
+const distantPrimitive=new THREE.Mesh(new THREE.BoxGeometry(4,4,4),new THREE.MeshBasicMaterial());distantPrimitive.position.set(100,20,0);bag.add(roof,distantPrimitive);bag.updateMatrixWorld(true);
+cut.update([bag],section);assert.ok(Array.from(distantPrimitive.geometry.getAttribute('_metroExcised').array).every(x=>x===1),'all primitives of selected source BAG grouped');
+cut.dispose();assert.ok(Array.from(distantPrimitive.geometry.getAttribute('_metroExcised').array).every(x=>x===0));
+console.log('Whole feature excision, source retention, lifecycle/cache and ghost depth tests passed.');

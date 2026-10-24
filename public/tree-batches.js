@@ -50,9 +50,9 @@ export function createTreeBatches(scene) {
       if (!groups.has(key)) groups.set(key, candidates);
       geometryGroups.set(mesh.geometry, candidates);
     }
-    let group = candidates.find(candidate => candidate.material === mesh.material && candidate.castShadow === mesh.castShadow && candidate.receiveShadow === mesh.receiveShadow && sameGeometry(candidate.geometry, mesh.geometry));
+    let group = candidates.find(candidate => candidate.material === mesh.material && candidate.customDepthMaterial === mesh.customDepthMaterial && candidate.castShadow === mesh.castShadow && candidate.receiveShadow === mesh.receiveShadow && sameGeometry(candidate.geometry, mesh.geometry));
     if (!group) {
-      group = { geometry: mesh.geometry.clone(), material: mesh.material, castShadow: mesh.castShadow, receiveShadow: mesh.receiveShadow, records: new Set(), capacity: 0, mesh: null, count: 0, ranges: [], inputs: [] };
+      group = { geometry: mesh.geometry.clone(), material: mesh.material, customDepthMaterial: mesh.customDepthMaterial, castShadow: mesh.castShadow, receiveShadow: mesh.receiveShadow, records: new Set(), capacity: 0, mesh: null, count: 0, ranges: [], inputs: [] };
       candidates.push(group);
     }
     if (!record.groups.has(group)) { record.groups.add(group); group.records.add(record); group.capacity += record.capacity; }
@@ -100,6 +100,7 @@ export function createTreeBatches(scene) {
         group.mesh = new THREE.InstancedMesh(group.geometry, group.material, group.capacity);
         group.mesh.name = 'Source tree prototype batch';
         group.mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        group.mesh.customDepthMaterial = group.customDepthMaterial;
         group.mesh.castShadow = group.castShadow; group.mesh.receiveShadow = group.receiveShadow;
         // object-detail has already culled against the union of render cameras.
         group.mesh.frustumCulled = false;

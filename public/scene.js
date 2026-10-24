@@ -10,6 +10,7 @@ import { createObjectDetail } from './object-detail.js';
 import { createSimulatedTraffic } from './simulated-traffic.js';
 import { inspectTrafficSurfaces } from './traffic-surface-audit.js';
 import { createTransitView } from './transit-view.js';
+import { createMetroCityCut } from './metro-city-cut.js';
 import { createBuildingBatches } from './building-batches.js';
 import { createTreeBatches } from './tree-batches.js';
 import { createVegetationStyle } from './vegetation-style.js';
@@ -168,6 +169,13 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   const emptyCutawayTexture = new THREE.DataTexture(new Uint8Array([0]), 1, 1, THREE.RedFormat);
   emptyCutawayTexture.needsUpdate = true;
   const cutawayUniforms = { enabled: { value: 0 }, mask: { value: emptyCutawayTexture }, bounds: { value: new THREE.Vector4(0, 0, 1, 1) }, projection: { value: new THREE.Vector2() } };
+  const metroCityCut = createMetroCityCut();
+  scene.add(metroCityCut.group);
+  const cutawayDepthMaterial = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, side: THREE.DoubleSide });
+  applyMetroCutaway(cutawayDepthMaterial, cutawayUniforms);
+  function bindCutawayShadows(model) {
+    model.traverse(mesh => { if (mesh.isMesh && mesh.castShadow) mesh.customDepthMaterial = cutawayDepthMaterial; });
+  }
   // The tunnel section must not cut holes through unrelated overground bridges.
   for (const material of [...Object.entries(materials).filter(([kind]) => !['bridges', 'bridgeSurfaces'].includes(kind)).map(([, material]) => material), cartographicMaterial, contextLandMaterial, lampGlowMaterial, lampPoolMaterial, lampShaftMaterial]) applyMetroCutaway(material, cutawayUniforms);
   Object.assign(materials.bridgeSurfaces, { polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
@@ -342,6 +350,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
         applyLighting: material => fixtureSurfaceLighting.apply(material),
         applyCutaway: material => applyMetroCutaway(material, cutawayUniforms),
       });
+      bindCutawayShadows(model);
       return;
     }
     if (kind === 'ground') model.userData.groundHeightFilter = omitInvalidGroundTriangles(model);
@@ -378,6 +387,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       if (kind === 'streets') mesh.renderOrder = -10;
       if (kind === 'yards') mesh.renderOrder = -11;
     });
+    if (!['bridges', 'bridgeSurfaces'].includes(kind)) bindCutawayShadows(model);
     if (kind === 'buildings') { buildingAppearance.addModel(model); buildingBatches.addModel(model); }
     if (kind === 'trees' && vegetationEnabled) vegetationStyle.addModel(model);
     if (kind === 'trees' || kind === 'lights') objectDetail.addModel(model);
@@ -598,6 +608,8 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       scheduleDeferredUpdate(Math.max(1, 1501 - (now - lastTrafficProjection)));
     }
     }
+    const sectionModels = tilesets.filter(layer => ['buildings', 'appearanceBuildings'].includes(layer.kind) && layer.group.visible).flatMap(layer => [...layer.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean));
+    if (metroCityCut.update(sectionModels, transit.getSectionGeometry())) renderer.shadowMap.needsUpdate = true;
     const reflectCity = uniforms.night.value > 0.1 && view.span < 6500;
     if (reflectCity) {
       reflectionCamera.copy(camera);
@@ -828,12 +840,12 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     setView, getView: () => ({ ...view }), setLighting, captureCanvas,
     zoom: factor => setView({ span: view.span / factor }), reset: () => setView(DEFAULT_VIEW),
     render: () => { needsRender = true; frame(); }, getCanvas: () => canvas, resize,
-    getDiagnostics: () => ({ vegetation: { mode: vegetationEnabled ? 'clustered' : 'native', ...vegetationStyle.diagnostics() }, shaderErrors: shaderErrors.slice(), buildingAppearance: { edition: appearanceEdition, ...buildingAppearance.diagnostics(), textures: appearanceTextureDiagnostics([...tilesets.find(layer => layer.kind === 'appearanceBuildings').visibleTiles].map(tile => tile.engineData.scene)) }, fixtureSurfaceLighting: fixtureSurfaceLighting.diagnostics(), readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, cyclists: { ...cyclists.statistics(), state: cyclistsState }, transit: { ...transit.statistics(), metroState }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count || mesh.geometry.getAttribute('position')?.count || 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
+    getDiagnostics: () => ({ vegetation: { mode: vegetationEnabled ? 'clustered' : 'native', ...vegetationStyle.diagnostics() }, shaderErrors: shaderErrors.slice(), buildingAppearance: { edition: appearanceEdition, ...buildingAppearance.diagnostics(), textures: appearanceTextureDiagnostics([...tilesets.find(layer => layer.kind === 'appearanceBuildings').visibleTiles].map(tile => tile.engineData.scene)) }, fixtureSurfaceLighting: fixtureSurfaceLighting.diagnostics(), readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, cyclists: { ...cyclists.statistics(), state: cyclistsState }, transit: { ...transit.statistics(), metroState, cityCut: metroCityCut.diagnostics() }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count || mesh.geometry.getAttribute('position')?.count || 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
     dispose() {
       disposed = true; clearTimeout(deferredUpdateTimer); if (scheduledFrame) cancelAnimationFrame(scheduledFrame); observer.disconnect();
       for (const [event, handler] of [['pointerdown', pointerDown], ['pointermove', pointerMove], ['pointerup', pointerUp], ['pointercancel', pointerUp], ['wheel', wheel], ['dblclick', doubleClick], ['contextmenu', contextMenu]]) canvas.removeEventListener(event, handler);
       document.removeEventListener('visibilitychange', pauseTraffic); reducedMotion.removeEventListener('change', pauseTraffic);
-      buildingBatches.dispose(); for (const layer of simulatedLayers) layer.dispose(); transit.dispose(); emptyCutawayTexture.dispose();
+      buildingBatches.dispose(); for (const layer of simulatedLayers) layer.dispose(); transit.dispose(); metroCityCut.dispose(); emptyCutawayTexture.dispose(); cutawayDepthMaterial.dispose();
       for (const query of surfaceQueries.values()) query.dispose();
       sourceFusion.dispose(); treeBatches.dispose(); objectDetail.dispose(); vegetationStyle.dispose(); fixtureSurfaceLighting.dispose();
       for (const tiles of tilesets) tiles.dispose();

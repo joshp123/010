@@ -7,7 +7,7 @@ const html=await page.text(),tags=Object.fromEntries([...html.matchAll(/<meta pr
 const hosted=value=>new URL(new URL(value).pathname,origin);
 assert.ok(tags['og:image']?.startsWith('https://'),'HTTPS poster fallback missing');
 const poster=await fetch(hosted(tags['og:image']),{method:'HEAD'});assert.equal(poster.status,200);assert.match(poster.headers.get('content-type')||'',/^image\/jpeg/);
-if(!tags['og:video']){console.log('Static poster verified; no accepted social video is referenced. Final clip verification remains pending.');process.exitCode=2;}
+if(!tags['og:video']){console.log('Static poster verified; no social video is referenced. Final clip verification remains pending.');process.exitCode=2;}
 else {
   assert.ok(tags['og:video'].startsWith('https://'));
   assert.equal(tags['og:video:secure_url'],tags['og:video']);assert.equal(tags['og:video:type'],'video/mp4');

@@ -35,8 +35,9 @@ export function createTransitView({ project, localPosition, requestRender = () =
   const bodyMaterial = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.9, metalness: 0, flatShading: true });
   const roofMaterial = new THREE.MeshStandardMaterial({ color: '#e3e2ce', roughness: 0.95, metalness: 0 });
   const floorMaterial = new THREE.MeshStandardMaterial({ color: '#293333', roughness: 1, side: THREE.DoubleSide });
-  const earthMaterial = new THREE.MeshStandardMaterial({ color: '#514b3e', roughness: 1, side: THREE.DoubleSide });
-  const tunnelMaterial = new THREE.MeshStandardMaterial({ color: '#555d57', roughness: 1, side: THREE.DoubleSide });
+  const earthMaterial = new THREE.MeshStandardMaterial({ color: '#88745c', roughness: 1, side: THREE.DoubleSide });
+  const tunnelMaterial = new THREE.MeshStandardMaterial({ color: '#89928b', roughness: 1, side: THREE.DoubleSide });
+  const rimMaterial = new THREE.MeshStandardMaterial({color:'#b1a18a',roughness:1,side:THREE.DoubleSide});
   const metroBodyMaterial = bodyMaterial.clone(), metroRoofMaterial = roofMaterial.clone();
   for (const material of [metroBodyMaterial, metroRoofMaterial]) {
     const isBody = material === metroBodyMaterial;
@@ -236,7 +237,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
 
   function drawSection(segments, halfWidth, viewDirection) {
     for (const child of [...cutawayGroup.children]) { cutawayGroup.remove(child); child.geometry.dispose(); }
-    const surfaces = [[], [], [], [], [], []]; // floor, earth, concrete, bed, sleepers, rail
+    const surfaces = [[], [], [], [], [], [], []]; // floor, earth, concrete, bed, sleepers, rail, ground edge
     const addQuad = (a,b,c,d,out) => { for (const point of [a,b,c,a,c,d]) out.push(point.x,point.y,point.z); };
     for (const segment of segments) {
       const {start,end}=segment;
@@ -248,6 +249,15 @@ export function createTransitView({ project, localPosition, requestRender = () =
       addQuad(...floor,surfaces[0]);
       // Retain the far earth face, remove only the near face to reveal depth.
       const edge=side.dot(viewDirection)>0 ? [0,3] : [1,2];
+      // A restrained surface lip and lower maintenance ledge distinguish
+      // ground, illustrated soil and the concrete chamber without inventing strata.
+      const inward=side.clone().multiplyScalar(edge[0]===0?-.35:.35);
+      addQuad(corners[edge[0]],corners[edge[1]],corners[edge[1]].clone().add(inward),corners[edge[0]].clone().add(inward),surfaces[6]);
+      for(const sign of [-1,1]){
+        const outer=side.clone().multiplyScalar(sign*(halfWidth-.12)),inner=side.clone().multiplyScalar(sign*(halfWidth-.65));
+        const lift=new THREE.Vector3(0,-TUNNEL_DEPTH+.3,0);
+        addQuad(start.clone().add(outer).add(lift),end.clone().add(outer).add(lift),end.clone().add(inner).add(lift),start.clone().add(inner).add(lift),surfaces[2]);
+      }
       const farEnd = direction.dot(viewDirection) < 0 ? (segment.capStart ? [[0,1]] : []) : (segment.capEnd ? [[3,2]] : []);
       for (const [a,b] of [edge, ...farEnd]) {
         addQuad(corners[a],corners[b],lower[b],lower[a],surfaces[1]);
@@ -264,8 +274,8 @@ export function createTransitView({ project, localPosition, requestRender = () =
       for(let distance=.6;distance<length;distance+=1.2){const centre=trackStart.clone().lerp(trackEnd,distance/length);strip(centre.clone().addScaledVector(direction,-.14),centre.clone().addScaledVector(direction,.14),1.3,.08,surfaces[4]);}
       for(const offset of [-.75,.75])strip(trackStart.clone().addScaledVector(side,offset),trackEnd.clone().addScaledVector(side,offset),.075,.2,surfaces[5]);
     }
-    const materialList=[floorMaterial,earthMaterial,tunnelMaterial,...trackMaterials];
-    const names=['Section floor','Cut earth face · depth illustrated','Concrete chamber','Illustrated track bed','Illustrated sleepers','Illustrated rails'];
+    const materialList=[floorMaterial,earthMaterial,tunnelMaterial,...trackMaterials,rimMaterial];
+    const names=['Section floor','Cut earth face · depth illustrated','Concrete chamber','Illustrated track bed','Illustrated sleepers','Illustrated rails','Section ground edge'];
     for(let i=0;i<surfaces.length;i++){
       if(!surfaces[i].length)continue;
       const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(surfaces[i],3));geometry.computeVertexNormals();
@@ -413,13 +423,14 @@ export function createTransitView({ project, localPosition, requestRender = () =
     setView(view) { camera = view.camera || camera; span = view.span ?? span; viewportHeight = view.viewportHeight ?? viewportHeight; updateCutawayMask(); rebuild(); },
     setCutaway(enabled) { cutaway = typeof enabled === 'object' ? enabled.enabled : enabled; cutawayGroup.visible = cutaway; updateCutawayMask(); rebuild(); return cutawayMask; },
     getCutaway() { return cutawayMask; },
+    getSectionGeometry() { return {enabled:cutaway,segments:sectionSegments,halfWidth:CHAMBER_HALF_WIDTH,depth:TUNNEL_DEPTH,projection:cutawayMask?.projection||new THREE.Vector2()}; },
     setMetroData, loadMetro, pick,
     getReport(id) { return presentReport(records.find(record => record.report.id === id)); },
     statistics() { return { ...metroVisibility(), observations: records.length, underground: records.filter(record => record.underground).length, batches: batches.size, drawCalls: [...batches.values()].filter(batch => batch.body.count).length * 2 + (cutaway ? cutawayGroup.children.length : 0), railSegments: railSegments.length, mask: cutawayMask ? { width: cutawayMask.texture.image.width, height: cutawayMask.texture.image.height, metresPerTexel: [cutawayMask.bounds.z / cutawayMask.texture.image.width, cutawayMask.bounds.w / cutawayMask.texture.image.height], rebuilds: maskRebuilds, milliseconds: maskMilliseconds } : null }; },
     dispose() {
       for (const batch of batches.values()) { batch.body.dispose(); batch.roof.dispose(); }
       for (const child of cutawayGroup.children) child.geometry.dispose();
-      cutawayMask?.texture.dispose(); box.dispose(); reportMarker.dispose(); bodyMaterial.dispose(); roofMaterial.dispose(); metroBodyMaterial.dispose(); metroRoofMaterial.dispose(); tunnelMaterial.dispose(); floorMaterial.dispose(); earthMaterial.dispose(); trackMaterials.forEach(material => material.dispose());
+      cutawayMask?.texture.dispose(); box.dispose(); reportMarker.dispose(); bodyMaterial.dispose(); roofMaterial.dispose(); metroBodyMaterial.dispose(); metroRoofMaterial.dispose(); tunnelMaterial.dispose(); floorMaterial.dispose(); earthMaterial.dispose(); rimMaterial.dispose(); trackMaterials.forEach(material => material.dispose());
       group.removeFromParent(); group.clear(); batches.clear();
     },
   };

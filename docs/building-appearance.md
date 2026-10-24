@@ -245,3 +245,13 @@ original material separation; no cache budget was changed. Verify generated
 limits and references with `python tests/building-appearance-deployment.py`.
 Regenerate using the same current-edition command above; `--reuse-native` also
 supports the generated external image references when rebuilding retained output.
+
+The built-server request path is also verified by
+`node tests/building-appearance-external-loader.mjs --start-built-server` after
+`npm run build`. It starts Wrangler, uses the actual vendored GLTFLoader and
+production compressed-model plugin, parses the served tower with the original
+model-directory resource base, and decodes all downloaded PNGs. Appearance is
+not in the gzip interception directory set. The observed tower request plus all23
+texture requests returned HTTP200 at `/data/current-building-appearance/` with
+no blob-relative or missing paths, producing23meshes,1,394triangles and23texture
+maps. This is real built-asset loading and CPU decoding, not GPU visual acceptance.
