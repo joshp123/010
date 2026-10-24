@@ -41,7 +41,7 @@
         },
         "geometricError": 0,
         "content": {
-          "uri": "north18-night-spatial/tileset.json"
+          "uri": "shared-north18-night-spatial/tileset.json"
         }
       },
       {
