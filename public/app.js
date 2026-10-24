@@ -6,6 +6,10 @@ export const PUBLIC_DOMAIN = '010.jjpcodes.com';
 const INITIAL_VIEW = { lat: 51.9105, lon: 4.4875, span: 1700, bearing: 35 };
 const byId = id => document.getElementById(id);
 const url = new URL(location.href);
+const municipalityData = fetch('./data/municipality.geojson').then(response => {
+  if (!response.ok) throw new Error('Municipality outline could not load.');
+  return response.json();
+});
 let lightingMode = ['live', 'day', 'golden', 'night'].includes(url.searchParams.get('light')) ? url.searchParams.get('light') : 'live';
 let weather = null;
 let scene;
@@ -265,9 +269,7 @@ async function loadPlaces() {
 
 async function loadMinimap() {
   try {
-    const response = await fetch('./data/municipality.geojson');
-    if (!response.ok) return;
-    const data = await response.json();
+    const data = await municipalityData;
     const geometry = data.features[0].geometry;
     const polygons = geometry.type === 'MultiPolygon' ? geometry.coordinates : [geometry.coordinates];
     const points = polygons.flat(2);
@@ -370,7 +372,7 @@ loadPlaces();
 loadMinimap();
 
 try {
-  scene = await createScene({ canvas: byId('city'), onViewChange: updateView, onStatus: showSceneStatus, onTransitSelect: showVehicle });
+  scene = await createScene({ canvas: byId('city'), municipalityData, onViewChange: updateView, onStatus: showSceneStatus, onTransitSelect: showVehicle });
   const params = url.searchParams;
   if (['lat', 'lon', 'span'].every(key => params.has(key) && Number.isFinite(Number(params.get(key))))) {
     const lat = Number(params.get('lat')), lon = Number(params.get('lon'));

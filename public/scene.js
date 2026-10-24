@@ -75,7 +75,7 @@ function solarDirection(date, lat, lon) {
   return { altitude, direction: new THREE.Vector3(-Math.cos(altitude) * Math.sin(azimuth), Math.sin(altitude), Math.cos(altitude) * Math.cos(azimuth)) };
 }
 
-export async function createScene({ canvas, onViewChange = () => {}, onStatus = () => {}, onTransitSelect = () => {} }) {
+export async function createScene({ canvas, municipalityData, onViewChange = () => {}, onStatus = () => {}, onTransitSelect = () => {} }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -446,7 +446,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
       contextState = 'ready';
       requestRender();
     }).catch(error => { contextState = 'error'; console.warn('010: surrounding context could not load', error); requestRender(); });
-    const collections = await Promise.all(['municipality.geojson', 'overview.geojson'].map(fetchCollection));
+    const collections = await Promise.all([municipalityData, fetchCollection('overview.geojson')]);
     if (disposed) return;
     addFeatures(collections[0], true);
     addFeatures(collections[1]);
