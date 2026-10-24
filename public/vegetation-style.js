@@ -3,9 +3,7 @@ import * as THREE from 'three';
 // Interpret the municipality's generic crown envelopes; never change source
 // instance placement, diameter, height or orientation. This is illustrated
 // foliage architecture, not measured branches or a species identification.
-const foliage = ['#3c5438', '#526b43', '#637c4e', '#768b59'].map(value => new THREE.Color(value));
 const bark = new THREE.Color('#6a5846');
-const number = (seed, n) => { const x = Math.sin(seed * 17.31 + n * 91.77) * 43758.5453; return x - Math.floor(x); };
 
 function treePart(mesh) {
   let parent = mesh;
@@ -37,68 +35,59 @@ function crownProfile(source) {
 
 export function createCrownGeometry(source) {
   const profile = crownProfile(source);
-  const positions = [], colors = [];
-  // Thin, directional sprays have real gaps and a broken edge. The former
-  // overlapping solid balls produced rounded plastic highlights at every scale.
-  // This is a leaf-on illustration within the municipal crown envelope, not a
-  // reconstruction of individual leaves (the retained 2026 aerial is leaf-off).
-  function leaf(origin, along, across, length, width, shade) {
-    const base = origin.clone().addScaledVector(along, -length * .45);
-    const tip = origin.clone().addScaledVector(along, length * .55);
-    const left = origin.clone().addScaledVector(across, width * .5);
-    const right = origin.clone().addScaledVector(across, -width * .5);
-    const ridge = origin.clone().add(new THREE.Vector3(0, width * .12, 0));
-    const outline = [base, left, tip, right];
-    for (let edge = 0; edge < 4; edge++) {
-      const triangle = [outline[edge], outline[(edge + 1) % 4], ridge];
-      // Closed two-sided leaf geometry also works with the existing shared
-      // shadow/depth material; no transparency or scene shader special cases.
-      for (const face of [triangle, [...triangle].reverse()]) for (const point of face) {
-        const y = THREE.MathUtils.clamp(point.y, 0, 1);
-        const limit = Math.min(.5, profile.radius(y)), radius = Math.hypot(point.x, point.z);
-        const factor = radius > limit ? limit / radius : 1;
-        positions.push(point.x * factor, y, point.z * factor);
-        colors.push(shade.r, shade.g, shade.b);
-      }
+  const positions = [], colors = [], rings = 20, sectors = 48;
+  const dark = new THREE.Color('#29432b'), body = new THREE.Color('#436132'), light = new THREE.Color('#687f3c');
+  // One closed canopy: broad interlocking painted masses, rather than leaf
+  // particles or separate balls. Its outline follows the inventory prototype.
+  function point(ring, sector) {
+    const y = ring / rings, angle = sector / sectors * Math.PI * 2;
+    const lobes = .90 + .065 * Math.sin(angle * 5 + y * 5) + .035 * Math.sin(angle * 9 - y * 8);
+    const radius = Math.min(.5, profile.radius(y)) * lobes;
+    const taper = Math.pow(Math.max(0, Math.sin(Math.PI * y)), .32);
+    return new THREE.Vector3(Math.cos(angle) * radius * taper, y, Math.sin(angle) * radius * taper);
+  }
+  function triangle(a, b, c) {
+    for (const point of [a, b, c]) {
+      const angle = Math.atan2(point.z, point.x);
+      const patches = Math.sin(angle * 3 + point.y * 6) * .5 + Math.sin(angle * 5 - point.y * 9) * .25;
+      const value = .37 + point.y * .20 + point.x * .22 - point.z * .18 + patches * .30;
+      const shade = dark.clone().lerp(body, THREE.MathUtils.smoothstep(value, .26, .32));
+      shade.lerp(light, THREE.MathUtils.smoothstep(value, .59, .65));
+      positions.push(point.x, point.y, point.z);
+      colors.push(shade.r, shade.g, shade.b);
     }
   }
-  const sprays = 1150;
-  for (let i = 0; i < sprays; i++) {
-    const y = .035 + .93 * number(i + 1, 1);
-    const angle = i * 2.39996323;
-    const envelope = Math.min(.5, profile.radius(y));
-    const radial = envelope * (.15 + .80 * Math.sqrt(number(i + 1, 4)));
-    const centre = new THREE.Vector3(Math.cos(angle) * radial, y, Math.sin(angle) * radial);
-    const direction = new THREE.Vector3(Math.cos(angle), -.25 + number(i + 1, 6) * 1.1, Math.sin(angle)).normalize();
-    const across = new THREE.Vector3(-Math.sin(angle), .65 * Math.sin(i), Math.cos(angle)).normalize();
-    // Each spray shares a coherent olive family, with lighter outward tips.
-    const shade = foliage[Math.min(foliage.length - 1, Math.floor((y * .35 + (radial / Math.max(envelope, .01)) * .65) * foliage.length))];
-    for (let j = 0; j < 5; j++) {
-      const side = j % 2 ? 1 : -1, step = Math.floor(j / 2);
-      const anchor = centre.clone().addScaledVector(direction, (step - 1) * .027).addScaledVector(across, side * .018);
-      const axis = direction.clone().multiplyScalar(.6).addScaledVector(across, side * (.4 + number(i + j, 8))).normalize();
-      const cross = new THREE.Vector3(-axis.z, -.5 + number(i + j, 9), axis.x).normalize();
-      const length = (.035 + .020 * number(i + 1, 5)) * (1 - step * .08);
-      leaf(anchor, axis, cross, length, length * .8, shade);
-    }
+  for (let ring = 0; ring < rings; ring++) for (let sector = 0; sector < sectors; sector++) {
+    const a = point(ring, sector), b = point(ring, sector + 1);
+    const c = point(ring + 1, sector), d = point(ring + 1, sector + 1);
+    triangle(a, c, b); triangle(b, c, d);
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
   geometry.computeBoundingBox();
-  // Fit the illustrated crown to the exact inventory prototype envelope, so a
-  // 12 m inventory crown stays 12 m, including after instance transforms.
   const ownBox = geometry.boundingBox.clone(), ownSize = ownBox.getSize(new THREE.Vector3()), p = geometry.getAttribute('position');
   for (let i = 0; i < p.count; i++) for (let axis = 0; axis < 3; axis++) {
     p.setComponent(i, axis, profile.box.min.getComponent(axis) + (p.getComponent(i, axis) - ownBox.min.getComponent(axis)) / ownSize.getComponent(axis) * profile.size.getComponent(axis));
   }
-  geometry.computeVertexNormals(); geometry.computeBoundingBox(); geometry.computeBoundingSphere();
-  geometry.userData = { ...source.userData, vegetationInterpretation: 'Directional leaf sprays and open gaps inside the original inventory envelope; leaf-on illustration, not surveyed leaves or branches' };
+  // Analytic canopy normals avoid a triangular low-poly surface. Colour marks
+  // carry the drawn masses while real 3D still catches light and casts shadows.
+  const normals = [];
+  for (let ring = 0; ring < rings; ring++) for (let sector = 0; sector < sectors; sector++) {
+    for (const [r, s] of [[ring, sector], [ring + 1, sector], [ring, sector + 1], [ring, sector + 1], [ring + 1, sector], [ring + 1, sector + 1]]) {
+      const angle = s / sectors * Math.PI * 2, y = r / rings;
+      const n = new THREE.Vector3(Math.cos(angle), (y - .45) * 2.2, Math.sin(angle)).normalize();
+      normals.push(n.x, n.y, n.z);
+    }
+  }
+  geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+  geometry.computeBoundingBox(); geometry.computeBoundingSphere();
+  geometry.userData = { ...source.userData, vegetationInterpretation: 'Joined drawn canopy masses and broad olive shading within the original inventory envelope; no inferred branches, species or new tree positions' };
   return geometry;
 }
 
 export function createVegetationStyle() {
-  const models = new Map(), geometries = new Map();
+  const models = new Map(), geometries = new Map(), canopyMaterials = new Map();
   let crowns = 0, trunks = 0;
   function addModel(model) {
     if (models.has(model)) return;
@@ -120,14 +109,43 @@ export function createVegetationStyle() {
         }
         record = { source, geometry, references: 0, part }; geometries.set(source, record);
       }
-      record.references++; records.push({ mesh, record }); mesh.geometry = record.geometry;
+      const sourceMaterial = mesh.material;
+      let canopyMaterial;
+      if (part === 'kruin') {
+        canopyMaterial = canopyMaterials.get(sourceMaterial);
+        if (!canopyMaterial) {
+          const material = sourceMaterial.clone();
+          material.flatShading = false;
+          material.onBeforeCompile = shader => {
+            sourceMaterial.onBeforeCompile(shader);
+            shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+              float canopyFacing = abs(dot(normalize(vNormal), normalize(vViewPosition)));
+              diffuseColor.rgb *= mix(0.62, 1.0, smoothstep(0.04, 0.15, canopyFacing));
+            `);
+            shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
+              outgoingLight = mix(outgoingLight, diffuseColor.rgb, 0.80 * (1.0 - cityNight));
+              #include <opaque_fragment>
+            `);
+          };
+          material.customProgramCacheKey = () => '010-drawn-canopy-masses-v1';
+          canopyMaterial = { material, references: 0 };
+          canopyMaterials.set(sourceMaterial, canopyMaterial);
+        }
+        canopyMaterial.references++;
+        mesh.material = canopyMaterial.material;
+      }
+      record.references++; records.push({ mesh, record, sourceMaterial, canopyMaterial }); mesh.geometry = record.geometry;
       if (part === 'kruin') crowns += mesh.count; else trunks += mesh.count;
     });
     models.set(model, records);
   }
   function removeModel(model) {
-    for (const { mesh, record } of models.get(model) || []) {
+    for (const { mesh, record, sourceMaterial, canopyMaterial } of models.get(model) || []) {
       mesh.geometry = record.source;
+      mesh.material = sourceMaterial;
+      if (canopyMaterial && --canopyMaterial.references === 0) {
+        canopyMaterial.material.dispose(); canopyMaterials.delete(sourceMaterial);
+      }
       if (--record.references === 0) { record.geometry.dispose(); geometries.delete(record.source); }
     }
     models.delete(model);
