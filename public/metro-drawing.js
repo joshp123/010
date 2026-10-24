@@ -3,11 +3,17 @@ import * as THREE from 'three';
 // Drawn from RET's SG3/HSG3 elevations retained in source-data/metro-artwork.
 // This illustrates the family, not a rolling-stock identification from the feed.
 export function createMetroCarriageGeometry({ roof = false } = {}) {
-  const vertices = [], colours = [], glazing = [];
+  const vertices = [], colours = [], glazing = [], materialGroups = [];
+  let paintingOverlay = false;
   const palette = { silver:'#bfc4bd', light:'#d7dbd0', lower:'#808d89', roof:'#66736f', dark:'#283c40', glass:'#88a7a4', reflection:'#b4c7bc', teal:'#007f80', red:'#c73536', rubber:'#25312f' };
   const face = (points, tone) => {
     const colour = new THREE.Color(palette[tone] || tone);
+    const start = vertices.length / 3;
     for (let i=1;i<points.length-1;i++) for(const p of [points[0],points[i],points[i+1]]) { vertices.push(...p); colours.push(colour.r,colour.g,colour.b); glazing.push(Number(tone === 'glass' || tone === 'reflection')); }
+    const count = vertices.length / 3 - start, materialIndex = Number(paintingOverlay);
+    const previous = materialGroups.at(-1);
+    if (previous?.materialIndex === materialIndex) previous.count += count;
+    else materialGroups.push({ start, count, materialIndex });
   };
   const quad = (a,b,c,d,tone) => face([a,b,c,d],tone);
   const block = (x0,x1,y0,y1,z0,z1,tone) => {
@@ -40,8 +46,9 @@ export function createMetroCarriageGeometry({ roof = false } = {}) {
       block(-.43,.43,-.34,.37,gap-.005,gap+.005,'rubber');
       for(const fold of [-.003,0,.003])block(-.445,.445,-.31,.34,gap+fold-.0006,gap+fold+.0006,'lower');
     }
-    let panelLayer = 0;
-    const sidePanel=(sign,z0,z1,y0,y1,tone)=>{ const x=sign*(.502+(panelLayer++)*.00002);quad([x,y0,z0],[x,y0,z1],[x,y1,z1],[x,y1,z0],tone); };
+    paintingOverlay = true;
+    const sidePanels = [];
+    const sidePanel = (sign,z0,z1,y0,y1,tone) => sidePanels.push({sign,z0,z1,y0,y1,tone});
     for(const sign of [-1,1]) {
       for(const [first,last] of [[220,370],[460,625],[812,974],[1059,1230],[1410,1580],[1667,1823]]) {
         const a=along(first),b=along(last);
@@ -70,14 +77,30 @@ export function createMetroCarriageGeometry({ roof = false } = {}) {
         const hub=[];for(let i=0;i<10;i++){const angle=i/10*Math.PI*2;hub.push([sign*.41,-.47+Math.sin(angle)*.043,wheelZ+Math.cos(angle)*.0035]);}face(hub,'lower');
       }
     }
+    // One surface partition keeps frames, panes and mullions disjoint in depth.
+    for (const sign of [-1,1]) {
+      const panels = sidePanels.filter(panel => panel.sign === sign);
+      const zCuts = [...new Set(panels.flatMap(panel => [panel.z0,panel.z1]))].sort((a,b)=>a-b);
+      const yCuts = [...new Set(panels.flatMap(panel => [panel.y0,panel.y1]))].sort((a,b)=>a-b);
+      for (let zi=1;zi<zCuts.length;zi++) for (let yi=1;yi<yCuts.length;yi++) {
+        const z0=zCuts[zi-1],z1=zCuts[zi],y0=yCuts[yi-1],y1=yCuts[yi];
+        const z=(z0+z1)/2,y=(y0+y1)/2;
+        const panel=panels.findLast(panel=>z>panel.z0&&z<panel.z1&&y>panel.y0&&y<panel.y1);
+        if (panel) quad([sign*.514,y0,z0],[sign*.514,y0,z1],[sign*.514,y1,z1],[sign*.514,y1,z0],panel.tone);
+      }
+    }
+    const framedGlass = outer => {
+      const inset=(u,v)=>outer[0].map((_,axis)=>(1-v)*((1-u)*outer[0][axis]+u*outer[1][axis])+v*((1-u)*outer[3][axis]+u*outer[2][axis]));
+      const inner=[inset(.1,.1),inset(.9,.1),inset(.9,.9),inset(.1,.9)];
+      for(let edge=0;edge<4;edge++)quad(outer[edge],outer[(edge+1)%4],inner[(edge+1)%4],inner[edge],'dark');
+      face(inner,'glass');
+    };
     for(const sign of [-1,1]) {
       for(const side of [-1,1]) {
-        quad([side*.452,-.035,sign*.492],[side*.497,-.035,sign*.471],[side*.447,.30,sign*.471],[side*.383,.30,sign*.482],'dark');
-        quad([side*.455,-.008,sign*.488],[side*.499,-.008,sign*.474],[side*.449,.27,sign*.474],[side*.397,.27,sign*.482],'glass');
+        framedGlass([[side*.452,-.035,sign*.492],[side*.497,-.035,sign*.471],[side*.447,.30,sign*.471],[side*.383,.30,sign*.482]]);
       }
       const end=sign*.5;
-      quad([-.34,-.04,end-sign*.007],[.34,-.04,end-sign*.007],[.32,.34,end-sign*.017],[-.32,.34,end-sign*.017],'dark');
-      quad([-.28,-.005,end-sign*.0065],[.28,-.005,end-sign*.0065],[.27,.29,end-sign*.0165],[-.27,.29,end-sign*.0165],'glass');
+      framedGlass([[ -.34,-.04,end-sign*.007],[.34,-.04,end-sign*.007],[.32,.34,end-sign*.017],[-.32,.34,end-sign*.017]]);
       block(-.22,.22,-.39,-.33,end-sign*.006,end+sign*.004,'rubber');
       for(const x of [-.29,.29])block(x-.035,x+.035,-.25,-.225,end-sign*.005,end+sign*.001,'light');
     }
@@ -86,5 +109,6 @@ export function createMetroCarriageGeometry({ roof = false } = {}) {
   geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
   geometry.setAttribute('color',new THREE.Float32BufferAttribute(colours,3));
   geometry.setAttribute('metroGlazing',new THREE.Float32BufferAttribute(glazing,1));
+  for (const group of materialGroups) geometry.addGroup(group.start, group.count, group.materialIndex);
   geometry.computeVertexNormals();return geometry;
 }

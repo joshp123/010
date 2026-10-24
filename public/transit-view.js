@@ -56,6 +56,12 @@ export function createTransitView({ project, localPosition, requestRender = () =
     };
     material.customProgramCacheKey = () => '010-source-drawn-sg3-glazing-v1';
   }
+  const metroPaintMaterial = metroBodyMaterial.clone();
+  metroPaintMaterial.onBeforeCompile = metroBodyMaterial.onBeforeCompile;
+  metroPaintMaterial.customProgramCacheKey = metroBodyMaterial.customProgramCacheKey;
+  metroPaintMaterial.polygonOffset = true;
+  metroPaintMaterial.polygonOffsetFactor = -1;
+  metroPaintMaterial.polygonOffsetUnits = -2;
   const trackMaterials = [
     new THREE.MeshStandardMaterial({ color: '#414a46', roughness: 1, side: THREE.DoubleSide }),
     new THREE.MeshStandardMaterial({ color: '#62665c', roughness: 1, side: THREE.DoubleSide }),
@@ -96,7 +102,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     if (!batch || batch.capacity < count) {
       if (batch) { group.remove(batch.body, batch.roof); batch.body.dispose(); batch.roof.dispose(); }
       const capacity = Math.max(16, count);
-      const body = new THREE.InstancedMesh(mode === 'metro-position' ? reportMarker : mode === 'metro' ? metroBodyGeometry : box, mode === 'metro-position' ? reportMarkerMaterial : mode === 'metro' ? metroBodyMaterial : bodyMaterial, capacity);
+      const body = new THREE.InstancedMesh(mode === 'metro-position' ? reportMarker : mode === 'metro' ? metroBodyGeometry : box, mode === 'metro-position' ? reportMarkerMaterial : mode === 'metro' ? [metroBodyMaterial, metroPaintMaterial] : bodyMaterial, capacity);
       const roof = new THREE.InstancedMesh(mode === 'metro' ? metroRoofGeometry : box, mode === 'metro' ? metroRoofMaterial : roofMaterial, capacity);
       body.name = mode === 'metro-position' ? 'Reported metro position · track mismatch' : `Observed ${mode}`; roof.name = `${mode} roofs`;
       body.instanceMatrix.setUsage(THREE.DynamicDrawUsage); roof.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -533,7 +539,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     dispose() {
       for (const batch of batches.values()) { batch.body.dispose(); batch.roof.dispose(); }
       for (const child of cutawayGroup.children) child.geometry.dispose();
-      cutawayMask?.texture.dispose(); box.dispose(); metroBodyGeometry.dispose(); metroRoofGeometry.dispose(); reportMarker.dispose(); reportMarkerMaterial.dispose(); bodyMaterial.dispose(); roofMaterial.dispose(); metroBodyMaterial.dispose(); metroRoofMaterial.dispose(); tunnelMaterial.dispose(); floorMaterial.dispose(); earthMaterial.dispose(); trackMaterials.forEach(material => material.dispose());
+      cutawayMask?.texture.dispose(); box.dispose(); metroBodyGeometry.dispose(); metroRoofGeometry.dispose(); reportMarker.dispose(); reportMarkerMaterial.dispose(); bodyMaterial.dispose(); roofMaterial.dispose(); metroBodyMaterial.dispose(); metroPaintMaterial.dispose(); metroRoofMaterial.dispose(); tunnelMaterial.dispose(); floorMaterial.dispose(); earthMaterial.dispose(); trackMaterials.forEach(material => material.dispose());
       group.removeFromParent(); group.clear(); batches.clear();
     },
   };
