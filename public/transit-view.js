@@ -503,7 +503,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
       : !inspected.underground
       ? `${fresh(inspected) ? 'Fresh' : 'Older/unverified'} selected metro · above ground`
       : null;
-    const inspectionAgeSeconds = inspected ? Math.max(0, Math.round((Date.now() - inspected.report.observedAt) / 1000)) : null;
+    const inspectionAgeSeconds = inspected ? Math.max(0, Math.round(Date.now() / 1000 - inspected.report.observedAt)) : null;
     return {
       metroObservations: metros.length,
       visibleMetroObservations: visible.length,
