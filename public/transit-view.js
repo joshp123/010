@@ -251,15 +251,24 @@ export function createTransitView({ project, localPosition, requestRender = () =
       const edge=side.dot(viewDirection)>0 ? [0,3] : [1,2];
       // A restrained surface lip and lower maintenance ledge distinguish
       // ground, illustrated soil and the concrete chamber without inventing strata.
-      const inward=side.clone().multiplyScalar(edge[0]===0?-.35:.35);
-      addQuad(corners[edge[0]],corners[edge[1]],corners[edge[1]].clone().add(inward),corners[edge[0]].clone().add(inward),surfaces[6]);
+      const outside=side.clone().multiplyScalar(edge[0]===0?2:-2);
+      // A horizontal ground shelf gives the earth cut a visible thickness.
+      addQuad(corners[edge[0]],corners[edge[1]],corners[edge[1]].clone().add(outside),corners[edge[0]].clone().add(outside),surfaces[6]);
+      const outerTop=[corners[edge[0]].clone().add(outside),corners[edge[1]].clone().add(outside)];
+      addQuad(outerTop[0],outerTop[1],outerTop[1].clone().add(new THREE.Vector3(0,-TUNNEL_DEPTH,0)),outerTop[0].clone().add(new THREE.Vector3(0,-TUNNEL_DEPTH,0)),surfaces[1]);
+      for(const [indices,extension] of [...(segment.capStart?[[[0,1],direction.clone().multiplyScalar(-2)]]:[]),...(segment.capEnd?[[[3,2],direction.clone().multiplyScalar(2)]]:[])]){
+        const [a,b]=indices;
+        addQuad(corners[a],corners[b],corners[b].clone().add(extension),corners[a].clone().add(extension),surfaces[6]);
+        const outerA=corners[a].clone().add(extension),outerB=corners[b].clone().add(extension);
+        addQuad(outerA,outerB,outerB.clone().add(new THREE.Vector3(0,-TUNNEL_DEPTH,0)),outerA.clone().add(new THREE.Vector3(0,-TUNNEL_DEPTH,0)),surfaces[1]);
+      }
       for(const sign of [-1,1]){
         const outer=side.clone().multiplyScalar(sign*(halfWidth-.12)),inner=side.clone().multiplyScalar(sign*(halfWidth-.65));
         const lift=new THREE.Vector3(0,-TUNNEL_DEPTH+.3,0);
         addQuad(start.clone().add(outer).add(lift),end.clone().add(outer).add(lift),end.clone().add(inner).add(lift),start.clone().add(inner).add(lift),surfaces[2]);
       }
-      const farEnd = direction.dot(viewDirection) < 0 ? (segment.capStart ? [[0,1]] : []) : (segment.capEnd ? [[3,2]] : []);
-      for (const [a,b] of [edge, ...farEnd]) {
+      const endFaces = [...(segment.capStart?[[0,1]]:[]),...(segment.capEnd?[[3,2]]:[])];
+      for (const [a,b] of [edge, ...endFaces]) {
         addQuad(corners[a],corners[b],lower[b],lower[a],surfaces[1]);
         addQuad(lower[a],lower[b],floor[b],floor[a],surfaces[2]);
       }
@@ -305,6 +314,10 @@ export function createTransitView({ project, localPosition, requestRender = () =
     if(!force&&previousSelectedReportId===selectedReportId&&sectionAnchor&&anchor&&sectionAnchor.distanceToSquared(anchor)<100&&maskViewDirection.distanceToSquared(viewDirection)<.000001&&metresPerPixel>=maskMetresPerPixel*.8&&metresPerPixel<=maskMetresPerPixel*1.25)return;
     sectionAnchor=anchor;
     sectionSegments=anchor&&selectedRail?tunnelSegments.filter(segment=>segment.id===selectedRail.id).flatMap(segment=>clipToSection(segment,anchor,38)||[]):[];
+    for(const segment of sectionSegments){
+      const connected=point=>sectionSegments.some(other=>other!==segment&&[other.start,other.end].some(end=>Math.hypot(point.x-end.x,point.z-end.z)<.05));
+      segment.capStart=!connected(segment.start);segment.capEnd=!connected(segment.end);
+    }
     // An offset report is uncertainty, not evidence for a wider tunnel.
     const halfWidth=CHAMBER_HALF_WIDTH;
     drawSection(sectionSegments,halfWidth,viewDirection);
@@ -327,7 +340,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     // The aperture is exactly the projected physical section, never a dilated
     // centreline. Every removed city ray must have a floor/earth face behind it.
     const triangles=[];
-    for (const mesh of cutawayGroup.children.slice(0,3)) {
+    for (const mesh of cutawayGroup.children.filter(mesh=>['Section floor','Cut earth face · depth illustrated','Concrete chamber','Section ground edge'].includes(mesh.name))) {
       const position=mesh.geometry.getAttribute('position');
       for(let index=0;index<position.count;index+=3){
         const triangle=[];
@@ -358,7 +371,13 @@ export function createTransitView({ project, localPosition, requestRender = () =
         if((e0>=0&&e1>=0&&e2>=0)||(e0<=0&&e1<=0&&e2<=0))pixels[y*width+x]=255;
       }
     }
-    cutawayMask.texture.image={data:pixels,width,height};cutawayMask.texture.needsUpdate=true;
+    // Keep the aperture conservative at finite texel resolution: a boundary
+    // texel may overlap a face although its centre lies inside the triangle.
+    const interior=pixels.slice();
+    for(let y=1;y<height-1;y++)for(let x=1;x<width-1;x++)if(pixels[y*width+x]){
+      for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(!pixels[(y+dy)*width+x+dx])interior[y*width+x]=0;
+    }
+    cutawayMask.texture.image={data:interior,width,height};cutawayMask.texture.needsUpdate=true;
     cutawayMask.bounds.set(bounds.min.x,bounds.min.z,sx,sz);
     maskMetresPerPixel=metresPerPixel;maskViewDirection.copy(viewDirection);
     maskRebuilds++;maskMilliseconds=performance.now()-started;
@@ -423,7 +442,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     setView(view) { camera = view.camera || camera; span = view.span ?? span; viewportHeight = view.viewportHeight ?? viewportHeight; updateCutawayMask(); rebuild(); },
     setCutaway(enabled) { cutaway = typeof enabled === 'object' ? enabled.enabled : enabled; cutawayGroup.visible = cutaway; updateCutawayMask(); rebuild(); return cutawayMask; },
     getCutaway() { return cutawayMask; },
-    getSectionGeometry() { return {enabled:cutaway,segments:sectionSegments,halfWidth:CHAMBER_HALF_WIDTH,depth:TUNNEL_DEPTH,projection:cutawayMask?.projection||new THREE.Vector2()}; },
+    getSectionGeometry() { return {enabled:cutaway,segments:sectionSegments,halfWidth:CHAMBER_HALF_WIDTH,selectionHalfWidth:CHAMBER_HALF_WIDTH+2,depth:TUNNEL_DEPTH,projection:cutawayMask?.projection||new THREE.Vector2()}; },
     setMetroData, loadMetro, pick,
     getReport(id) { return presentReport(records.find(record => record.report.id === id)); },
     statistics() { return { ...metroVisibility(), observations: records.length, underground: records.filter(record => record.underground).length, batches: batches.size, drawCalls: [...batches.values()].filter(batch => batch.body.count).length * 2 + (cutaway ? cutawayGroup.children.length : 0), railSegments: railSegments.length, mask: cutawayMask ? { width: cutawayMask.texture.image.width, height: cutawayMask.texture.image.height, metresPerTexel: [cutawayMask.bounds.z / cutawayMask.texture.image.width, cutawayMask.bounds.w / cutawayMask.texture.image.height], rebuilds: maskRebuilds, milliseconds: maskMilliseconds } : null }; },

@@ -12,6 +12,7 @@ const section={enabled:true,halfWidth:3,depth:12,projection:new THREE.Vector2(.8
 const before=positions.slice();assert.equal(cut.update([model],section),true);
 const flags=geometry.getAttribute('_metroExcised');assert.ok(Array.from(flags.array.slice(0,36)).every(x=>x===1),'whole intersecting feature removed');assert.ok(Array.from(flags.array.slice(36)).every(x=>x===0),'unrelated feature in same merged mesh retained');
 assert.equal(cut.diagnostics().selectedFeatures,1);assert.equal(cut.group.children.length,1);assert.equal(cut.group.children[0].material.depthWrite,false,'ghost cannot fill depth over train');
+assert.ok(Array.from(cut.group.children[0].geometry.getAttribute('position').array).filter((_,index)=>index%3===1).every(y=>y<=.6),'context retains only low original foundation edges, no roof wire cage');
 assert.deepEqual(positions,before,'original source positions unchanged');
 assert.equal(cut.update([model],section),false);assert.equal(cut.diagnostics().featureBuilds,1,'unchanged frames do not rescan vertices');
 cut.update([model],{...section,enabled:false});assert.ok(Array.from(flags.array).every(x=>x===0));assert.equal(cut.group.children.length,0);

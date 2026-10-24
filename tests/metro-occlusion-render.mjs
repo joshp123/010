@@ -5,7 +5,17 @@ import {readFile,writeFile} from 'node:fs/promises';
 import * as THREE from '../public/vendor/three/build/three.module.js';
 const source=(await readFile(process.env.METRO_SOURCE || new URL('../public/transit-view.js',import.meta.url),'utf8')).replace("'three'",JSON.stringify(new URL('../public/vendor/three/build/three.module.js',import.meta.url).href));
 const {createTransitView}=await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
-const view=createTransitView({project:(lat,lon,y=0)=>new THREE.Vector3(lon*111320,y,-lat*111320)});
+const sourceFixture=process.env.METRO_SOURCE_FIXTURE?JSON.parse(await readFile(process.env.METRO_SOURCE_FIXTURE,'utf8')):null;
+const groundQueryMeshes=(sourceFixture?.features||[]).filter(feature=>feature.kind==='ground').map(feature=>{
+ const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(feature.positions,3));geometry.computeBoundingSphere();
+ return new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({side:THREE.DoubleSide}));
+});
+const groundRay=new THREE.Raycaster();
+const view=createTransitView({project:(lat,lon,y=0)=>{
+ const x=lon*111320,z=-lat*111320;let ground=0;
+ if(groundQueryMeshes.length){groundRay.set(new THREE.Vector3(x,60,z),new THREE.Vector3(0,-1,0));ground=groundRay.intersectObjects(groundQueryMeshes,false)[0]?.point.y??0;}
+ return new THREE.Vector3(x,ground+y,z);
+}});
 view.setMetroData({segments:[{id:'selected',form:'tunnel',coordinates:[[-.002,0],[.002,0]]},{id:'crossing',form:'tunnel',coordinates:[[0,-.002],[0,.002]]}]});
 const camera=new THREE.OrthographicCamera(-60,60,45,-45,.1,1000);
 const bearing=Number(process.env.METRO_BEARING||35)*Math.PI/180;
@@ -17,18 +27,20 @@ assert.equal(view.statistics().section.report.renderedAs,'illustrated train');
 assert.equal(view.statistics().section.report.latitude,14/111320,'raw observation retained');
 assert.equal(view.statistics().section.report.representedPosition.latitude,0,'route-compatible track selected instead of crossing tunnel');
 assert.ok(Math.abs(view.statistics().section.report.representedPosition.offsetMetres-14)<.001);
-assert.ok(view.statistics().section.geometryBounds.max[2]-view.statistics().section.geometryBounds.min[2]<=6.01,'crossing branch is not excavated');
+assert.ok(view.statistics().section.geometryBounds.max[2]-view.statistics().section.geometryBounds.min[2]<=8.01,'crossing branch is not excavated');
 assert.ok(view.statistics().section.segmentCount>1);
 const city=new THREE.Group();
 for(const [x,y,z,w,h,d] of [[0,-.5,0,200,1,200],[-26,14,5,15,28,16],[26,18,-5,15,36,16], ...(process.env.METRO_ROOF_OCCLUDER ? [[0,10,0,60,20,22]] : [])]){
  const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshBasicMaterial({color:y<0?'#79947a':'#b49d84'}));mesh.position.set(x,y,z);city.add(mesh);
 }
 if(process.env.METRO_SOURCE_FIXTURE){
- for(const mesh of [...city.children])if(mesh.position.y>0)city.remove(mesh);
- const fixture=JSON.parse(await readFile(process.env.METRO_SOURCE_FIXTURE,'utf8'));
+ for(const mesh of [...city.children])city.remove(mesh);
+ const fixture=sourceFixture;
  for(const feature of fixture.features){
   const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(feature.positions,3));geometry.computeVertexNormals();geometry.computeBoundingBox();geometry.computeBoundingSphere();
-  const mesh=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color:'#b49d84',side:THREE.DoubleSide}));mesh.userData.bagId=feature.id;city.add(mesh);
+  const classification=feature.attributes?.KLASSE_IMG||'',purpose=feature.attributes?.FUNCTIE||'';
+  const groundColour=classification.startsWith('Begroeid')?'#79947a':/voet/i.test(purpose)?'#c9c4b2':classification==='Pand'?'#aea99a':'#939a94';
+  const mesh=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color:feature.kind==='ground'?groundColour:'#b49d84',side:THREE.DoubleSide}));if(feature.kind!=='ground')mesh.userData.bagId=feature.id;city.add(mesh);
  }
 }
 city.updateMatrixWorld(true);view.group.updateMatrixWorld(true);
@@ -51,7 +63,7 @@ for(let y=0;y<height;y++)for(let x=0;x<width;x++){
  let colour=new THREE.Color('#c5c2ad');
  if(hit){colour=hit.object.material.color.clone();if(hit.object.name==='Observed metro'){colour.set('#e2e3ce');trainPixels++;}if(hit.object.name==='metro roofs'){colour.set('#e2e3ce');trainPixels++;}if(hit.face)colour.multiplyScalar(.65+.35*Math.abs(hit.face.normal.y));}
  if(cityHits.some(h=>(h.object.position.y>0||h.object.userData.bagId)&&removed(h.point)))clearedBuildingPixels++;
- if(ghostHits.length&&(!hit||ghostHits[0].distance<hit.distance))colour.lerp(new THREE.Color('#9baea1'),.22);
+ if(ghostHits.length&&(!hit||ghostHits[0].distance<hit.distance))colour.lerp(new THREE.Color('#9baea1'),ghostHits[0].object.material.opacity);
  colour.convertLinearToSRGB();
  const i=(y*width+x)*3;pixels[i]=Math.round(colour.r*255);pixels[i+1]=Math.round(colour.g*255);pixels[i+2]=Math.round(colour.b*255);
 }

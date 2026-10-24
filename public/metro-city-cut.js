@@ -4,7 +4,7 @@ import * as THREE from 'three';
 // Source triangles stay intact; a reversible attribute controls their draw/shadow.
 export function createMetroCityCut() {
   const group = new THREE.Group(); group.name = 'Metro section · source building outlines';
-  const material = new THREE.LineBasicMaterial({color:'#9baea1',transparent:true,opacity:.22,depthWrite:false});
+  const material = new THREE.LineBasicMaterial({color:'#9baea1',transparent:true,opacity:.12,depthWrite:false});
   const records = new Map(), sourceKeys=new WeakMap();let nextSourceKey=0;
   function sourceKey(mesh,model,id,hasIds){
     for(let ancestor=mesh;ancestor;ancestor=ancestor.parent)if(ancestor.userData?.bagId)return `bag:${ancestor.userData.bagId}`;
@@ -38,8 +38,14 @@ export function createMetroCityCut() {
     const sourceIndex=record.geometry.index,count=sourceIndex?.count??record.position.count;
     for(let offset=0;offset<count;offset+=3){const a=sourceIndex?sourceIndex.getX(offset):offset;if((record.ids?.getX(a)??0)!==feature.id)continue;for(let corner=0;corner<3;corner++)indices.push(mapping.get(sourceIndex?sourceIndex.getX(offset+corner):offset+corner));}
     const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.setIndex(indices);
-    const edges=new THREE.EdgesGeometry(geometry,28);geometry.dispose();
-    const lines=new THREE.LineSegments(edges,material);lines.name='Original building feature · section ghost';group.add(lines);return lines;
+    const allEdges=new THREE.EdgesGeometry(geometry,28);geometry.dispose();
+    const original=allEdges.getAttribute('position'),baseEdges=[];
+    // Retain only original low foundation edges, never a roof/facade wire cage.
+    for(let i=0;i<original.count;i+=2)if(original.getY(i)<=feature.bounds.min.y+.6&&original.getY(i+1)<=feature.bounds.min.y+.6){
+      for(const index of [i,i+1])baseEdges.push(original.getX(index),original.getY(index),original.getZ(index));
+    }
+    allEdges.dispose();const edges=new THREE.BufferGeometry();edges.setAttribute('position',new THREE.Float32BufferAttribute(baseEdges,3));
+    const lines=new THREE.LineSegments(edges,material);lines.name='Original foundation edges · section context';group.add(lines);return lines;
   }
   const cross=(a,b,c)=>(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);
   function hull(points){
@@ -77,7 +83,7 @@ export function createMetroCityCut() {
     const project=p=>({x:p.x-p.y*projection.x,y:p.z-p.y*projection.y});
     const footprints=[],physicalFootprints=[];
     if(section?.enabled)for(const segment of section.segments){
-      const side=new THREE.Vector3(-(segment.end.z-segment.start.z),0,segment.end.x-segment.start.x).normalize().multiplyScalar(section.halfWidth);
+      const side=new THREE.Vector3(-(segment.end.z-segment.start.z),0,segment.end.x-segment.start.x).normalize().multiplyScalar(section.selectionHalfWidth??section.halfWidth);
       const points=[];
       for(const end of [segment.start,segment.end])for(const sign of [-1,1])for(const depth of [0,-section.depth])points.push(project(end.clone().addScaledVector(side,sign).add(new THREE.Vector3(0,depth,0))));
       footprints.push(hull(points));
