@@ -11,7 +11,7 @@ export function createGroundArtwork({baseUrl='./data/ground-artwork/',requestRen
     models.add(model);
     if(!manifest)return;
     model.traverse(mesh=>{
-      if(!mesh.isMesh||!mesh.geometry?.getAttribute('position'))return;
+      if(!mesh.isMesh||!mesh.geometry?.getAttribute('position')||mesh.geometry.userData.sourceBoundarySegments)return;
       const geometry=mesh.geometry,batch=geometry.getAttribute('_batchid');
       if(!batch)return;
       let parent=mesh;while(parent&&!parent.batchTable)parent=parent.parent;
@@ -58,7 +58,7 @@ export function createGroundArtwork({baseUrl='./data/ground-artwork/',requestRen
       shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\n groundArtworkAllowed=_groundArtworkAllowed;');
       shader.fragmentShader='uniform sampler2D groundArtwork; uniform vec4 groundArtworkU; uniform vec4 groundArtworkV; uniform float groundArtworkReady; varying float groundArtworkAllowed;\n'+shader.fragmentShader;
       shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
-        if(groundArtworkReady>.5 && groundArtworkAllowed>.999) {
+        if(groundArtworkReady>.5 && groundArtworkAllowed>.999 && abs(normalize(cityWorldNormal).y)>.75) {
           vec4 groundPoint=vec4(cityWorldPosition,1.0);
           vec2 groundUV=vec2(dot(groundArtworkU,groundPoint),dot(groundArtworkV,groundPoint));
           if(all(greaterThanEqual(groundUV,vec2(0.0)))&&all(lessThanEqual(groundUV,vec2(1.0)))) {

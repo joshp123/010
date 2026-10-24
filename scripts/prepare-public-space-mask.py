@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Derive exact BGT eligible-feature and highest-surface masks on the dated ortho grid."""
-import gzip,hashlib,importlib.util,json
+import gzip,hashlib,importlib.util,json,argparse
 from pathlib import Path
 import numpy as np
 from PIL import Image,ImageDraw
 from pyproj import Transformer
 ROOT=Path(__file__).resolve().parents[1];SRC=ROOT/'source-data/public-space-pilot';OUT=ROOT/'work/public-space-pilot';OUT.mkdir(exist_ok=True)
+parser=argparse.ArgumentParser();parser.add_argument('--year',default='2026');args=parser.parse_args();year=args.year
 s=importlib.util.spec_from_file_location('source',ROOT/'scripts/prepare-building-appearance.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
-meta=json.loads((SRC/'schiedamseweg-2025.json').read_text());bounds=meta['boundsRD'];width,height=meta['imageSize'];pixel=meta['pixelMetres']
+meta=json.loads((SRC/('schiedamseweg-'+year+'.json')).read_text());bounds=meta['boundsRD'];width,height=meta['imageSize'];pixel=meta['pixelMetres']
 raw=gzip.decompress((SRC/'33577-6934.b3dm.gz').read_bytes());doc,buf,batch,ft=next(m.b3dm_parts(raw));assert hashlib.sha256(raw).hexdigest()==json.loads((SRC/'33577-6934.b3dm.json').read_text())['decodedSha256']
 rd=Transformer.from_crs(4978,28992,always_xy=True);geo=Transformer.from_crs(4978,4979,always_xy=True)
 yz=np.array([[1,0,0,0],[0,0,-1,0],[0,1,0,0],[0,0,0,1]]);rtc=np.eye(4);rtc[:3,3]=ft['RTC_CENTER'];idmap=np.full((height,width),-1,np.int32);zbuf=np.full((height,width),-np.inf);surface=np.zeros((height,width),np.uint8);triangles=[]
@@ -35,7 +36,7 @@ def visit(i,parent):
  for child in n.get('children',[]):visit(child,mat)
 for i in doc['scenes'][doc.get('scene',0)]['nodes']:visit(i,np.eye(4))
 palette=np.array([[42,46,48],[135,139,136],[171,122,102],[191,187,173],[111,135,91],[63,87,91]],np.uint8);Image.fromarray(palette[surface]).save(OUT/'source-semantic-mask.png');eligible=surface>0;Image.fromarray((eligible*255).astype('uint8')).save(OUT/'eligible-ground.png');np.savez_compressed(OUT/'source-mask.npz',feature=idmap,surface=surface,height=zbuf)
-source=Image.open(SRC/'schiedamseweg-2025.jpg').convert('RGB');overlay=np.array(source);edge=np.zeros_like(eligible);edge[:,1:]|=idmap[:,1:]!=idmap[:,:-1];edge[1:,:]|=idmap[1:,:]!=idmap[:-1,:];overlay[edge]=[245,212,109];Image.fromarray(overlay).save(OUT/'source-with-bgt-edges.png')
+source=Image.open(SRC/('schiedamseweg-'+year+'.jpg')).convert('RGB');overlay=np.array(source);edge=np.zeros_like(eligible);edge[:,1:]|=idmap[:,1:]!=idmap[:,:-1];edge[1:,:]|=idmap[1:,:]!=idmap[:-1,:];overlay[edge]=[245,212,109];Image.fromarray(overlay).save(OUT/'source-with-bgt-edges.png')
 # Fit metre-exact local-world to RD image projection, verifying independent points.
 ll=Transformer.from_crs(28992,4326,always_xy=True);earth=Transformer.from_crs(4979,4978,always_xy=True);origin=np.array(earth.transform(4.49,51.915,0));lon,lat=np.radians([4.49,51.915]);basis=np.array([[-np.sin(lon),np.cos(lon),0],[np.cos(lat)*np.cos(lon),np.cos(lat)*np.sin(lon),np.sin(lat)],[np.sin(lat)*np.cos(lon),np.sin(lat)*np.sin(lon),-np.cos(lat)]])
 points=[];uv=[]

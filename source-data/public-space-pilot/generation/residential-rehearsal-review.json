@@ -1,0 +1,13 @@
+{
+  "status": "REJECTED FOR DIRECT GEOGRAPHIC PROJECTION",
+  "tool": "Built-in image_gen imagegen",
+  "modelVersion": "Not exposed by built-in tool",
+  "generationDate": "2026-10-24",
+  "editTarget": "source-data/roof-ortho/residential-2025.jpg",
+  "styleReference": "work/illustrated-row-review/asset-render-verification.png",
+  "prompt": "residential-rehearsal-prompt.txt",
+  "output": "residential-rehearsal-REJECTED.png",
+  "finding": "Cars and cast shadows removed and deliberate paint produced, but source layout drifts and the model completes concealed white markings. Must not directly project onto source ground.",
+  "replacementPath": "Exact BGT semantic masks and original source-visible marking support must constrain compilation; model output alone is not georeference evidence.",
+  "scope": "Different residential location ~160 m south; rehearsal, never substituted for Schiedamseweg source."
+}
