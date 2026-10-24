@@ -123,8 +123,23 @@ def convert(doc,binary,batch,feature,label):
                 selected.update(int(x) for x in np.unique(accessor(doc,binary,p['attributes']['_BATCHID'])))
     if not selected:return None
     # Repack misaligned legacy bufferViews into valid 4-byte aligned GLB storage.
+    source_doc=copy.deepcopy(doc)
+    old_views=source_doc['bufferViews']
+    doc['bufferViews']=[];doc['accessors']=[]
     views=doc['bufferViews'];new_binary=bytearray()
-    old_views=copy.deepcopy(views)
+    def append_view(raw,target=None):
+        new_binary.extend(b'\0'*((-len(new_binary))%4))
+        view={'buffer':0,'byteOffset':len(new_binary),'byteLength':len(raw)}
+        if target is not None:view['target']=target
+        views.append(view);new_binary.extend(raw)
+        return len(views)-1
+    def append_accessor(values,template,target):
+        a={k:copy.deepcopy(v) for k,v in template.items() if k not in ('bufferView','byteOffset','count','min','max','sparse')}
+        a.update(bufferView=append_view(values.tobytes(),target),count=len(values))
+        if 'min' in template:a['min']=values.min(axis=0).tolist()
+        if 'max' in template:a['max']=values.max(axis=0).tolist()
+        doc['accessors'].append(a)
+        return len(doc['accessors'])-1
     image_data={}
     for i,im in enumerate(doc.get('images',[])):
         v=old_views[im['bufferView']];raw=binary[v.get('byteOffset',0):v.get('byteOffset',0)+v['byteLength']]
@@ -140,28 +155,36 @@ def convert(doc,binary,batch,feature,label):
                     for column,(title,im) in enumerate([('SOURCE',full_source),('BASELINE: 48 COLOURS',baseline),('MINIATURE: 24 + REGION MODE',miniature)]):
                         crop=im.crop(box);crop.thumbnail((376,360),Image.Resampling.NEAREST);comparison.paste(crop,(column*380,35));draw.text((column*380+6,10),title,fill='#222222')
                     comparison.save(OUTPUT/f'{name}-presets.jpg',quality=94)
-    for i,v in enumerate(views):
-        old=old_views[i];raw=image_data.get(i,binary[old.get('byteOffset',0):old.get('byteOffset',0)+old['byteLength']])
-        new_binary.extend(b'\0'*((-len(new_binary))%4));v['byteOffset']=len(new_binary);v['byteLength']=len(raw);v['buffer']=0
-        if v.get('byteStride',4)<4:v.pop('byteStride',None)
-        new_binary.extend(raw)
+    image_views={}
+    for im in doc.get('images',[]):
+        old_index=im['bufferView']
+        if old_index not in image_views:image_views[old_index]=append_view(image_data[old_index])
+        im['bufferView']=image_views[old_index]
     original_meshes=doc['meshes'];doc['meshes']=[]
     mesh_map={}
     for mi,mesh in enumerate(original_meshes):
         split={}
         for p in mesh['primitives']:
             if p.get('mode',4)!=4:continue
-            batch_ids=accessor({'accessors':doc['accessors'],'bufferViews':old_views},binary,p['attributes']['_BATCHID'])[:,0]
-            indices=accessor({'accessors':doc['accessors'],'bufferViews':old_views},binary,p['indices'])[:,0] if 'indices' in p else np.arange(len(batch_ids),dtype=np.uint32)
+            batch_ids=accessor(source_doc,binary,p['attributes']['_BATCHID'])[:,0]
+            indices=accessor(source_doc,binary,p['indices'])[:,0] if 'indices' in p else np.arange(len(batch_ids),dtype=np.uint32)
             triangles=indices.reshape(-1,3)
             if not np.all(batch_ids[triangles]==batch_ids[triangles[:,0],None]):raise ValueError('Triangle spans multiple BAG IDs')
             for bid in selected:
                 chosen=triangles[batch_ids[triangles[:,0]]==bid].reshape(-1)
                 if not len(chosen):continue
-                new_binary.extend(b'\0'*((-len(new_binary))%4));offset=len(new_binary);raw=chosen.astype('<u4').tobytes();new_binary.extend(raw)
-                vi=len(views);views.append({'buffer':0,'byteOffset':offset,'byteLength':len(raw),'target':34963})
-                ai=len(doc['accessors']);doc['accessors'].append({'bufferView':vi,'componentType':5125,'count':len(chosen),'type':'SCALAR','min':[int(chosen.min())],'max':[int(chosen.max())]})
-                cp=copy.deepcopy(p);cp['indices']=ai;cp['attributes'].pop('_BATCHID',None);split.setdefault(bid,[]).append(cp)
+                # Remap only referenced vertices. Keeping tile-wide accessors here
+                # makes each BAG geometry charge the full tile to the shared cache.
+                vertices,remapped=np.unique(chosen,return_inverse=True)
+                cp=copy.deepcopy(p);cp['attributes']={}
+                for semantic,source_ai in p['attributes'].items():
+                    if semantic=='_BATCHID':continue
+                    values=np.ascontiguousarray(accessor(source_doc,binary,source_ai)[vertices])
+                    cp['attributes'][semantic]=append_accessor(values,source_doc['accessors'][source_ai],34962)
+                index_type=5123 if len(vertices)<=65535 else 5125
+                values=remapped.astype(DTYPES[index_type]).reshape(-1,1)
+                cp['indices']=append_accessor(values,{'componentType':index_type,'type':'SCALAR','min':[0],'max':[len(vertices)-1]},34963)
+                split.setdefault(bid,[]).append(cp)
         mesh_map[mi]=[]
         for bid,primitives in split.items():
             mesh_map[mi].append(len(doc['meshes']))
