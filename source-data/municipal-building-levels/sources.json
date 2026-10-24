@@ -1,0 +1,37 @@
+{
+  "attribution": "Gemeente Rotterdam, 3D Rotterdam municipal building source",
+  "retainedAt": "2026-10-24",
+  "note": "Unmodified decoded HTTP response bodies. Genuine source parents for ordinary Hoek van Holland; not generated artwork. Metadata written by AI, GPT-6 Astra.",
+  "files": [
+    {
+      "file": "raw/tileset.json",
+      "source": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/tileset.json",
+      "bytes": 21949,
+      "sha256": "df401fdb7c4a6df3f07d3b5ead2198591bd5567433bc1ead32adfa82e303ba7a"
+    },
+    {
+      "file": "raw/12_4190_865.json",
+      "source": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/12/4190/865.json",
+      "bytes": 869349,
+      "sha256": "87b9c4ee0811427d8a7f509d4b43aa705ee36f9014f9b842b66f54a307b3600d"
+    },
+    {
+      "file": "raw/15_33521_6921.b3dm",
+      "source": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/15/33521/6921.b3dm",
+      "bytes": 4007032,
+      "sha256": "246ab8d75dc7ce2a3a14d1c59c8d934de46c60467002f26e2179571dcef4e72e"
+    },
+    {
+      "file": "raw/16_67042_13843.b3dm",
+      "source": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/16/67042/13843.b3dm",
+      "bytes": 904656,
+      "sha256": "6171e3acbec225849a2b29c7e8b5947bc6c675bbd7b4552dd16ebdc3f5b215db"
+    },
+    {
+      "file": "raw/17_134084_27686.b3dm",
+      "source": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/17/134084/27686.b3dm",
+      "bytes": 222160,
+      "sha256": "3e362aacb00abe7aa2053dcf64d42d2ec968d9868f8bc262cf03b5e6ed9adc74"
+    }
+  ]
+}
