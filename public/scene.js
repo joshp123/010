@@ -168,7 +168,6 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   sea.receiveShadow = true; sea.renderOrder = -30;
   scene.add(sea);
   let needsRender = true, disposed = false, scheduledFrame = null, width = 1, height = 1;
-  const loadedByLayer = {};
   let loadErrors = 0, loadedTiles = 0, lighting = { mode: 'day', date: new Date(), cloudCover: 0, rain: 0, snow: 0 };
   let sunVector = new THREE.Vector3(-0.65, 0.8, 0.45).normalize();
   let lastStatus = '', lastPresentation = 0, lastCityRender = {};
@@ -360,7 +359,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     const originalCache = tiles.lruCache;
     tiles.lruCache = tileCaches[kind] || tileCaches.city;
     tiles.lruCache.unloadPriorityCallback = originalCache.unloadPriorityCallback;
-    tiles.addEventListener('load-model', event => { colorModel(event.scene, kind); if (['ground', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) transitSurfaceDirty = true; if (kind === 'ground') sourceFusion.addGround(event.scene); loadedTiles++; loadedByLayer[kind] = (loadedByLayer[kind] || 0) + 1; renderer.shadowMap.needsUpdate = true; requestRender(); });
+    tiles.addEventListener('load-model', event => { colorModel(event.scene, kind); if (['ground', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) transitSurfaceDirty = true; if (kind === 'ground') sourceFusion.addGround(event.scene); loadedTiles++; renderer.shadowMap.needsUpdate = true; requestRender(); });
     if (['ground', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) tiles.addEventListener('dispose-model', () => { transitSurfaceDirty = true; });
     if (kind === 'buildings') tiles.addEventListener('dispose-model', event => buildingBatches.removeModel(event.scene));
     if (kind === 'ground') tiles.addEventListener('dispose-model', event => sourceFusion.removeGround(event.scene));
@@ -508,7 +507,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     viewUpdateDeferred = deferViewUpdates;
     if (!deferViewUpdates) {
     for (const tiles of tilesets) {
-      const visible = tiles.kind === 'streets' ? true : tiles.kind === 'lamps' ? uniforms.night.value > 0.1 : tiles.kind === 'ground' ? view.span < 1400 : tiles.kind === 'greenTerrain' ? view.span >= 1400 && view.span < 12000 : ['industrialStructures', 'industrialTerrain'].includes(tiles.kind) ? view.span < 18000 : tiles.kind === 'trees' ? view.span < 3500 && (loadedByLayer.buildings || 0) >= 6 : tiles.kind === 'lights' ? view.span < 700 && uniforms.night.value > 0.1 : ['bridges', 'bridgeSurfaces'].includes(tiles.kind) ? view.span < 12000 : tiles.kind === 'tanks' ? view.span < 18000 : true;
+      const visible = tiles.kind === 'streets' ? true : tiles.kind === 'lamps' ? uniforms.night.value > 0.1 : tiles.kind === 'ground' ? view.span < 1400 : tiles.kind === 'greenTerrain' ? view.span >= 1400 && view.span < 12000 : ['industrialStructures', 'industrialTerrain'].includes(tiles.kind) ? view.span < 18000 : tiles.kind === 'trees' ? view.span < 3500 : tiles.kind === 'lights' ? view.span < 700 && uniforms.night.value > 0.1 : ['bridges', 'bridgeSurfaces'].includes(tiles.kind) ? view.span < 12000 : tiles.kind === 'tanks' ? view.span < 18000 : true;
       if (!visible && tiles.group.visible) {
         for (const tile of tiles.usedSet) tiles.lruCache.markUnused(tile);
         tiles.lruCache.scheduleUnload();
