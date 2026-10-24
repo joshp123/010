@@ -6,6 +6,8 @@ The current published map is rejected on visual quality. Existing screenshots, s
 
 Josh's further steering: **“the work and approach must be deep and holistic btw not tiny patches”.** Evaluate and improve the full source-to-image approach and the whole experience. Small candidates may validate an approach before scaling; isolated fixes or a handful of polished buildings do not satisfy the rescue.
 
+Josh also asked: **“compare with how the prior art versions did it btw?”** Compare the actual production methods in [NYC's writeup](https://cannoneyed.com/projects/isometric-nyc) and [London's writeup](https://tiny.london/how/), not just their screenshots. Both use geographically aligned textured renders as input to offline model-generated illustration, then serve image pyramids. NYC uses fine-tuning and neighbour-aware infill; London uses fine-tuning and overlapping shared-latent sampling. Assess whether this architecture is the right foundation here, including source fidelity, consistent adjoining areas, free-resource feasibility, and geographic alignment of transport, night and metro presentation. Do not assume inherited live-3D materials can achieve the same result.
+
 ## Corrections
 
 - Buildings have strange colours and far too little detail. The result must resemble a miniature pixel-art Rotterdam, with recognisable architecture and coherent materials throughout the municipality. A coarse 3D map with generic windows does not meet the references.
