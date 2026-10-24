@@ -1,3 +1,4 @@
+import { createFixtureSurfaceLighting } from './fixture-surface-lighting.js';
 import * as THREE from 'three';
 import { createCityMaterial, featureColor, streetColor, yardColor, createLampPoolMaterial, applyMetroCutaway } from './miniature-style.js';
 import { createSourceFusion } from './source-fusion.js';
@@ -141,6 +142,8 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   const lampPoolMaterial = createLampPoolMaterial(uniforms.night, lampPixelsPerMetre);
   const lampShaftMaterial = new THREE.LineBasicMaterial({ color: '#53666a', transparent: true, opacity: 0.55 });
   const materials = Object.fromEntries(LAYERS.map(([kind]) => [kind, createCityMaterial(['streets', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind) ? 'ground' : kind, uniforms)]));
+  const fixtureSurfaceLighting = createFixtureSurfaceLighting({ enabled: true, night: uniforms.night, requestRender });
+  for (const kind of ['buildings', 'industrialStructures', 'bridges', 'tanks']) fixtureSurfaceLighting.apply(materials[kind]);
   const cartographicMaterial = createCityMaterial('ground', uniforms);
   cartographicMaterial.depthWrite = false;
   const contextLandMaterial = createCityMaterial('ground', uniforms);
@@ -469,6 +472,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     camera.updateProjectionMatrix();
     camera.updateMatrixWorld();
     updateShadowCamera();
+    fixtureSurfaceLighting.setView(camera);
     transit.setView({ camera, span: view.span, viewportHeight: height * renderer.getPixelRatio() });
     traffic.setView({ camera, span: view.span, viewportHeight: height * renderer.getPixelRatio() });
     const drawingSize = renderer.getDrawingBufferSize(new THREE.Vector2());
@@ -587,6 +591,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     const golden = mode === 'golden' || mode === 'live' && solar.altitude > 0 && solar.altitude < 13 * DEGREES;
     const cloud = Math.min(1, Math.max(0, Number(lighting.cloudCover) / 100));
     uniforms.night.value = night;
+    fixtureSurfaceLighting.setView(camera);
     uniforms.snow.value = Math.min(1, Number(lighting.snow) || 0);
     sunVector = mode === 'live' && night < 0.9 ? solar.direction : golden ? new THREE.Vector3(-0.9, 0.24, 0.34).normalize() : night ? new THREE.Vector3(-0.5, 0.75, -0.45).normalize() : new THREE.Vector3(-0.65, 0.8, 0.45).normalize();
     sun.color.set(night > 0.5 ? '#9bbaff' : golden ? '#ffc077' : '#fff0d1');
@@ -649,6 +654,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
         if (performance.now() - started > 20000) throw new Error('City detail is still loading. Please try exporting again shortly.');
         await new Promise(resolve => requestAnimationFrame(resolve));
       }
+      await fixtureSurfaceLighting.prepareView(captureCamera);
       const liveView = { ...view }, liveTarget = target.clone();
       try {
         Object.assign(view, captureView); target.copy(captureTarget);
@@ -761,14 +767,14 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     setView, getView: () => ({ ...view }), setLighting, captureCanvas,
     zoom: factor => setView({ span: view.span / factor }), reset: () => setView(DEFAULT_VIEW),
     render: () => { needsRender = true; frame(); }, getCanvas: () => canvas, resize,
-    getDiagnostics: () => ({ readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, transit: { ...transit.statistics(), metroState }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count || mesh.geometry.getAttribute('position')?.count || 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
+    getDiagnostics: () => ({ fixtureSurfaceLighting: fixtureSurfaceLighting.diagnostics(), readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, transit: { ...transit.statistics(), metroState }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count || mesh.geometry.getAttribute('position')?.count || 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
     dispose() {
       disposed = true; clearTimeout(deferredUpdateTimer); if (scheduledFrame) cancelAnimationFrame(scheduledFrame); observer.disconnect();
       for (const [event, handler] of [['pointerdown', pointerDown], ['pointermove', pointerMove], ['pointerup', pointerUp], ['pointercancel', pointerUp], ['wheel', wheel], ['dblclick', doubleClick], ['contextmenu', contextMenu]]) canvas.removeEventListener(event, handler);
       document.removeEventListener('visibilitychange', pauseTraffic); reducedMotion.removeEventListener('change', pauseTraffic);
       buildingBatches.dispose(); traffic.dispose(); transit.dispose(); emptyCutawayTexture.dispose();
       for (const query of surfaceQueries.values()) query.dispose();
-      sourceFusion.dispose(); treeBatches.dispose(); objectDetail.dispose();
+      sourceFusion.dispose(); treeBatches.dispose(); objectDetail.dispose(); fixtureSurfaceLighting.dispose();
       for (const tiles of tilesets) tiles.dispose();
       for (const material of Object.values(materials)) material.dispose();
       lampGlowMaterial.dispose(); lampPoolMaterial.dispose(); lampShaftMaterial.dispose(); reflectionTarget.dispose(); cityTarget.dispose(); presentationQuad.geometry.dispose(); presentationMaterial.dispose();
