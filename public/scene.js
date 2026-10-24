@@ -818,7 +818,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   }
   return {
     trafficReady: () => trafficReady, cyclistsReady: () => cyclistsReady,
-    updateTransit, setMetroCutaway, metroReady: () => metroReady, getTransitStatistics: () => ({ ...transit.statistics(), metroState }),
+    updateTransit, getTransitReport: id => transit.getReport(id), setMetroCutaway, metroReady: () => metroReady, getTransitStatistics: () => ({ ...transit.statistics(), metroState }),
     setView, getView: () => ({ ...view }), setLighting, captureCanvas,
     zoom: factor => setView({ span: view.span / factor }), reset: () => setView(DEFAULT_VIEW),
     render: () => { needsRender = true; frame(); }, getCanvas: () => canvas, resize,

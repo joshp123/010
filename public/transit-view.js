@@ -358,6 +358,11 @@ export function createTransitView({ project, localPosition, requestRender = () =
     return cutawayMask;
   }
 
+  function presentReport(record) {
+    if (!record) return null;
+    return { ...record.report, presentation: { physicalForm: record.rail?.form || 'unclassified', sourceSegmentId: record.rail?.id || null, illustrativeDepthMetres: record.underground ? TUNNEL_DEPTH : null, orientation: record.orientation, representedPosition:record.representedPosition, dimensions: 'illustrative', sourceAxisDistanceMetres: record.rail?.distance ?? null, positionUncertainty: record.uncertainTrackPosition ? 'Reported point is outside the illustrated track chamber; position marker, not track-snapped train' : null } };
+  }
+
   function pick(raycaster) {
     const hits = raycaster.intersectObjects([...batches.values()].flatMap(batch => [batch.body, batch.roof]), false);
     const hit = hits.find(hit => {
@@ -367,7 +372,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     if (!hit) return null;
     const batch = [...batches.values()].find(batch => batch.body === hit.object || batch.roof === hit.object);
     const record = batch.records[hit.instanceId];
-    return { ...record.report, presentation: { physicalForm: record.rail?.form || 'unclassified', sourceSegmentId: record.rail?.id || null, illustrativeDepthMetres: record.underground ? TUNNEL_DEPTH : null, orientation: record.orientation, representedPosition:record.representedPosition, dimensions: 'illustrative', sourceAxisDistanceMetres: record.rail?.distance ?? null, positionUncertainty: record.uncertainTrackPosition ? 'Reported point is outside the illustrated track chamber; position marker, not track-snapped train' : null } };
+    return presentReport(record);
   }
 
   function metroVisibility() {
@@ -404,6 +409,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     setCutaway(enabled) { cutaway = typeof enabled === 'object' ? enabled.enabled : enabled; cutawayGroup.visible = cutaway; updateCutawayMask(); rebuild(); return cutawayMask; },
     getCutaway() { return cutawayMask; },
     setMetroData, loadMetro, pick,
+    getReport(id) { return presentReport(records.find(record => record.report.id === id)); },
     statistics() { return { ...metroVisibility(), observations: records.length, underground: records.filter(record => record.underground).length, batches: batches.size, drawCalls: [...batches.values()].filter(batch => batch.body.count).length * 2 + (cutaway ? cutawayGroup.children.length : 0), railSegments: railSegments.length, mask: cutawayMask ? { width: cutawayMask.texture.image.width, height: cutawayMask.texture.image.height, metresPerTexel: [cutawayMask.bounds.z / cutawayMask.texture.image.width, cutawayMask.bounds.w / cutawayMask.texture.image.height], rebuilds: maskRebuilds, milliseconds: maskMilliseconds } : null }; },
     dispose() {
       for (const batch of batches.values()) { batch.body.dispose(); batch.roof.dispose(); }

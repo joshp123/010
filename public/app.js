@@ -40,12 +40,17 @@ function showVehicle(report) {
   byId('vehicle-title').textContent = `${report.mode[0].toUpperCase() + report.mode.slice(1)} ${report.label || '· route unknown'}`;
   byId('vehicle-state').textContent = `${report.sourceConnected ? fresh ? 'Fresh report' : report.freshness === 'stale' ? 'Stale report' : 'Unverified time' : 'Source disconnected'} · ${ageLabel(report.ageSeconds)}`;
   byId('vehicle-card').dataset.fresh = fresh;
+  const presentation = report.presentation || {};
+  const represented = presentation.representedPosition;
+  const coordinates = point => Number.isFinite(point?.latitude) && Number.isFinite(point?.longitude) ? `${point.latitude.toFixed(6)}, ${point.longitude.toFixed(6)}` : 'Not supplied';
   const details = byId('vehicle-observation'); details.replaceChildren();
-  for (const [title, value] of [['Observed', observationTime(report.observedAt)], ['Source', report.source === 'ns' ? 'NS · NL Trains Live' : 'OVapi / NDOV'], ['Route', report.label || 'Not supplied'], ['Operator', report.operator || 'Not supplied']]) {
+  const observationDetails = [['Observed', observationTime(report.observedAt)], ['Source', report.source === 'ns' ? 'NS · NL Trains Live' : 'OVapi / NDOV'], ['Route', report.label || 'Not supplied'], ['Operator', report.operator || 'Not supplied'], ['Reported position', coordinates(report)]];
+  if (represented) observationDetails.push(['Shown position · approximate', coordinates(represented)]);
+  for (const [title, value] of observationDetails) {
     const term = document.createElement('dt'), description = document.createElement('dd'); term.textContent = title; description.textContent = value; details.append(term, description);
   }
-  const presentation = report.presentation || {};
-  byId('vehicle-presentation').textContent = `${presentation.physicalForm === 'tunnel' ? 'Tunnel plan · depth illustrated at 12 m. ' : ''}Exact reported plan position. Height: ${presentation.surfacePlacement || 'graphic surface height'}. Size illustrated. ${presentation.orientation === 'reported-bearing' ? 'Reported bearing: ' + Math.round(report.bearing) + '°.' : presentation.orientation === 'source-track-axis' || presentation.orientation === 'source-route-axis' ? 'Aligned with source route; direction unreported.' : 'Heading unreported; camera-facing symbol.'}`;
+  const positionDescription = represented ? `Approximate track position, ${represented.offsetMetres.toFixed(1)} m from the report. No movement is inferred between reports.` : 'Reported position.';
+  byId('vehicle-presentation').textContent = `${presentation.physicalForm === 'tunnel' ? 'Tunnel plan · depth illustrated at 12 m. ' : ''}${positionDescription} Height: ${presentation.surfacePlacement || 'graphic surface height'}. Size illustrated. ${presentation.orientation === 'reported-bearing' ? 'Reported bearing: ' + Math.round(report.bearing) + '°.' : presentation.orientation === 'source-track-axis' || presentation.orientation === 'source-route-axis' ? 'Aligned with source route; direction unreported.' : 'Heading unreported; camera-facing symbol.'}`;
 }
 function showTransit(snapshot) {
   latestTransitSnapshot = snapshot;
@@ -59,7 +64,7 @@ function showTransit(snapshot) {
   }).join(' · ') + (snapshot.map.status === 'error' ? ' · Route names unavailable' : '');
   if (selectedVehicle) {
     const current = snapshot.vehicles.find(vehicle => vehicle.id === selectedVehicle.id);
-    if (current) showVehicle({ ...current, presentation: selectedVehicle.presentation });
+    if (current) showVehicle(scene?.getTransitReport(current.id) || current);
     else { byId('vehicle-state').textContent = 'No longer in the latest source snapshot'; }
   }
 }

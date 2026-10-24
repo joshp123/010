@@ -95,5 +95,18 @@ assert.equal(offsetStats.section.widthMetres,14,'uncertain reporting must not wi
 assert.match(offsetStats.cutawayMessage,/14 m from mapped track/);
 assert.equal(elevatedEndpointView.group.children.find(child=>child.name==='Reported metro position · track mismatch').count,1);
 assert.equal(elevatedEndpointView.group.children.find(child=>child.name==='Observed metro').count,0,'offset report is not a guessed train on tracks');
+const oldDetail=elevatedEndpointView.getReport(metro.id);
+assert.equal(oldDetail.latitude,.014);
+assert.equal(oldDetail.presentation.representedPosition,null);
+assert.match(oldDetail.presentation.positionUncertainty,/outside/);
+elevatedEndpointView.update({vehicles:[{...metro,latitude:.002,observedAt:12345}]});
+const newDetail=elevatedEndpointView.getReport(metro.id);
+assert.equal(newDetail.latitude,.002,'detail uses current raw report');
+assert.equal(newDetail.observedAt,12345);
+assert.equal(newDetail.presentation.representedPosition.latitude,0,'current representation replaces old marker presentation');
+assert.equal(newDetail.presentation.positionUncertainty,null);
+assert.equal(oldDetail.presentation.representedPosition,null,'previous detail is not mutated');
+elevatedEndpointView.update({vehicles:[]});
+assert.equal(elevatedEndpointView.getReport(metro.id),null,'removed reports cannot leave stale details');
 elevatedEndpointView.dispose();
 console.log('Local surface resampling, bridge exclusion, elevation diagnostics and offset-report tests passed.');
