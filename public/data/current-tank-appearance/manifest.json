@@ -1,0 +1,638 @@
+{
+  "featureKind": "tanks",
+  "source": "https://www.3drotterdam.nl/datasource-data/25da2fa9-d5b7-4d44-b100-7ab3b3bf51dc/16/67119/13875.b3dm",
+  "sourceSha256": "a655739ae46aafa829afe581810c4274ac027af3f09961945b4aecc818d8affb",
+  "retainedRaw": "source-data/current-tank-evidence/raw/16_67119_13875.b3dm.gz",
+  "license": "CC BY 4.0",
+  "attribution": "Gemeente Rotterdam \u2014 3D Rotterdam",
+  "catalogueEvidence": "source-data/current-tank-evidence/catalogue-evidence.json",
+  "photographyDate": "Unknown; model creationDate2024-05-23 is not photography date",
+  "style": "source",
+  "featureIds": [
+    "OST_12968350",
+    "OST_12968359",
+    "OST_12968353",
+    "OST_12968345",
+    "OST_12968354",
+    "OST_12968344",
+    "OST_12968352",
+    "OST_12968358",
+    "OST_12968356",
+    "OST_12968355",
+    "OST_12968351",
+    "OST_12968357",
+    "OST_14427971",
+    "OST_14428305"
+  ],
+  "featureCount": 14,
+  "nativeReference": {
+    "output": "16-67119-13875-native.glb",
+    "sha256": "e53f6f8206db9e9b5b36644804b14a2e3bdc80e90d881b8b6ec52c1ba22c14b6",
+    "bytes": 20615880,
+    "maxTextureSize": 1024,
+    "dimensions": [
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ],
+      [
+        1024,
+        1024
+      ]
+    ],
+    "decodedRgbaBytesIncludingMips": 123032888,
+    "samplingMetersPerTexel": 0.05383417870799404,
+    "geometricError": 0
+  },
+  "contextLOD": {
+    "output": "16-67119-13875-tex512.glb",
+    "sha256": "b2fa9a13818b941beda7f8a8f6000bcc1a096d0f74c357518083e7b5ed1a9298",
+    "bytes": 6616816,
+    "maxTextureSize": 512,
+    "dimensions": [
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ],
+      [
+        512,
+        512
+      ]
+    ],
+    "decodedRgbaBytesIncludingMips": 30758200,
+    "samplingMetersPerTexel": 0.10766835741598808,
+    "geometricError": 0.10766835741598808
+  },
+  "features": [
+    {
+      "atlasSize": [
+        263,
+        4921
+      ],
+      "decodedRgbaBytesIncludingMips": 6890656,
+      "layout": "packed-islands",
+      "islands": 108,
+      "featureId": "OST_12968350",
+      "output": "OST_12968350.glb",
+      "sha256": "df8c77fabe6cd7caa341fba61d830ec8190acdb8d7ee6226f1b453b3deefad8f",
+      "bytes": 1110544,
+      "boundingVolume": {
+        "box": [
+          -5.938159146972259,
+          -86.36688093278322,
+          23.29702402255172,
+          -0.55971976092322,
+          7.359484021231275,
+          0.0,
+          4.427450257292793,
+          0.3367262422694639,
+          5.660768071720963,
+          5.785588076742786,
+          0.440018344461725,
+          -4.551249727281736
+        ]
+      }
+    },
+    {
+      "atlasSize": [
+        271,
+        4785
+      ],
+      "decodedRgbaBytesIncludingMips": 6903604,
+      "layout": "packed-islands",
+      "islands": 108,
+      "featureId": "OST_12968359",
+      "output": "OST_12968359.glb",
+      "sha256": "1d815ec3adc8eeb6f5be8fa029df2a58c735fd5eca2e45979c6da8b7dd2a0eb5",
+      "bytes": 954292,
+      "boundingVolume": {
+        "box": [
+          -8.453494493579628,
+          3.971027006952899,
+          19.236035733109045,
+          -0.5611572166309187,
+          7.378384430061915,
+          0.0,
+          4.5144022562677195,
+          0.34333930806832136,
+          5.771941562322877,
+          5.776225673030943,
+          0.43930629422122686,
+          -4.543884765107618
+        ]
+      }
+    },
+    {
+      "atlasSize": [
+        268,
+        4617
+      ],
+      "decodedRgbaBytesIncludingMips": 6596564,
+      "layout": "packed-islands",
+      "islands": 108,
+      "featureId": "OST_12968353",
+      "output": "OST_12968353.glb",
+      "sha256": "25fe1f705725815a6f88346b6d1df971c95255c972b2c25a9e2d3d78790dd873",
+      "bytes": 1004872,
+      "boundingVolume": {
+        "box": [
+          5.985392875750014,
+          -59.84647092280501,
+          11.985854520866019,
+          -0.5559258889176589,
+          7.3096002358929315,
+          0.0,
+          4.430915989087535,
+          0.3369898257715112,
+          5.665199223455873,
+          5.746382356512057,
+          0.4370365842879057,
+          -4.5204084331658825
+        ]
+      }
+    },
+    {
+      "atlasSize": [
+        300,
+        4946
+      ],
+      "decodedRgbaBytesIncludingMips": 7910732,
+      "layout": "packed-islands",
+      "islands": 108,
+      "featureId": "OST_12968345",
+      "output": "OST_12968345.glb",
+      "sha256": "9afe84e7d129c662355adc68b6504588c9ea947e13284ca5ad34930868754785",
+      "bytes": 1181664,
+      "boundingVolume": {
+        "box": [
+          -66.20509105852162,
+          -80.73072884778578,
+          71.0804148803409,
+          -0.6529926878191534,
+          8.585884557763803,
+          0.0,
+          5.132258045909081,
+          0.39032984352779393,
+          6.561908275369218,
+          6.74979594479799,
+          0.5133504144589167,
+          -5.309746657640409
+        ]
+      }
+    },
+    {
+      "atlasSize": [
+        271,
+        4637
+      ],
+      "decodedRgbaBytesIncludingMips": 6689948,
+      "layout": "packed-islands",
+      "islands": 108,
+      "featureId": "OST_12968354",
+      "output": "OST_12968354.glb",
+      "sha256": "2238648789269c7f5f42b74f9627b00159962c4dbd53eac74db40d5f5cc3cfe5",
+      "bytes": 1131344,
+      "boundingVolume": {
+        "box": [
+          -15.45815623795058,
+          -43.870171967607256,
+          27.839060486099584,
+          -0.5642660719151271,
+          7.4192612623372565,
+          0.0,
+          4.447806241279036,
+          0.3382744005992147,
+          5.686794452035001,
+          5.832626055976584,
+          0.4435957809253546,
+          -4.588252290775718
+        ]
+      }
+    },
+    {
+      "atlasSize": [
+        1002,
+        1722
+      ],
+      "decodedRgbaBytesIncludingMips": 9199840,
+      "layout": "packed-islands",
+      "islands": 108,
+      "featureId": "OST_12968344",
+      "output": "OST_12968344.glb",
+      "sha256": "417e10771c5348e3fa2dd8293a41622147481039fb25d237ab650596b46ed79d",
+      "bytes": 1390156,
+      "boundingVolume": {
+        "box": [
+          -42.71125497747368,
+          -73.72233104610714,
+          52.17180221654831,
+          -0.6454091384890408,
+          8.486172140915903,
+          0.0,
+          5.105542155769802,
+          0.3882979875446205,
+          6.52775036299992,
+          6.67138010857838,
+          0.5073865597953542,
+          -5.248060611472741
+        ]
+      }
+    },
+    {
+      "atlasSize": [
+        269,
+        4535
+      ],
+      "decodedRgbaBytesIncludingMips": 6497280,
+      "layout": "packed-islands",
+      "islands": 108,
+      "featureId": "OST_12968352",
+      "output": "OST_12968352.glb",
+      "sha256": "cab4c04f6a43d0f2ab8f04afcd5e65e837ba875a6546f5c88cf723eabf3e5dc9",
+      "bytes": 940244,
+      "boundingVolume": {
+        "box": [
+          -10.77617044124605,
+          -65.20425734586338,
+          25.410126311495574,
+          -0.5559266121385218,
+          7.309609745173747,
+          0.0,
+          4.450550611981156,
+          0.33848312155150484,
+          5.690303299146709,
+          5.746398863986834,
+          0.43703783975089866,
+          -4.520421418819041
+        ]
+      }
+    },
+    {
+      "atlasSize": [
+        1035,
+        1214
+      ],
+      "decodedRgbaBytesIncludingMips": 6697308,
+      "layout": "packed-islands",
+      "islands": 108,
+      "featureId": "OST_12968358",
+      "output": "OST_12968358.glb",
+      "sha256": "d2354a248c924d73ae93f0d0f25d99077114fd164162bc59ad64ae7bcd214e66",
+      "bytes": 1255076,
+      "boundingVolume": {
+        "box": [
+          -24.988515535712178,
+          -1.5771102901671943,
+          32.60284045481543,
+          -0.5612301896160421,
+          7.3793439164968975,
+          0.0,
+          4.436935278993947,
+          0.3374476181245654,
+          5.672895256643489,
+          5.801277379342774,
+          0.44121158201411087,
+          -4.563591762911004
+        ]
+      }
+    },
+    {
+      "atlasSize": [
+        1287,
+        908
+      ],
+      "decodedRgbaBytesIncludingMips": 6229732,
+      "layout": "packed-islands",
+      "islands": 108,
+      "featureId": "OST_12968356",
+      "output": "OST_12968356.glb",
+      "sha256": "28396371293ffb7c52e2921cda686e13d84597f7664cce26fda806833a06ab57",
+      "bytes": 1158004,
+      "boundingVolume": {
+        "box": [
+          -20.418051117248215,
+          -22.310240871454326,
+          30.36358383880944,
+          -0.5468232503248831,
+          7.189914050141547,
+          0.0,
+          4.440933246599427,
+          0.3377516804020108,
+          5.678006904670613,
+          5.652343855515563,
+          0.4298845601591097,
+          -4.44643277220676
+        ]
+      }
+    },
+    {
+      "atlasSize": [
+        915,
+        1475
+      ],
+      "decodedRgbaBytesIncludingMips": 7193052,
+      "layout": "packed-islands",
+      "islands": 108,
+      "featureId": "OST_12968355",
+      "output": "OST_12968355.glb",
+      "sha256": "4aab11dc47a8970be7daa1ac12bf02550f07705ce818d7abdaec61a09b721ee4",
+      "bytes": 1001160,
+      "boundingVolume": {
+        "box": [
+          1.147006720274439,
+          -38.655654510453274,
+          14.312525533752696,
+          -0.5551661454005897,
+          7.299610736388961,
+          0.0,
+          4.5264293183655475,
+          0.34425401680368706,
+          5.787318902589511,
+          5.738545795277605,
+          0.43644058079527587,
+          -4.514243779424892
+        ]
+      }
+    },
+    {
+      "atlasSize": [
+        1368,
+        964
+      ],
+      "decodedRgbaBytesIncludingMips": 7032580,
+      "layout": "packed-islands",
+      "islands": 108,
+      "featureId": "OST_12968351",
+      "output": "OST_12968351.glb",
+      "sha256": "beab462cec75dde7232c04d0ecaa72a9d92342fa0ede097dff45ca412d59cd0d",
+      "bytes": 1018528,
+      "boundingVolume": {
+        "box": [
+          10.822578183440061,
+          -80.90471725215453,
+          9.414241835821612,
+          -0.571094289375437,
+          7.509042186294193,
+          0.0,
+          4.453673233247047,
+          0.3387206100525133,
+          5.694295762920393,
+          5.9031510386721795,
+          0.4489595029389652,
+          -4.643730974014534
+        ]
+      }
+    },
+    {
+      "atlasSize": [
+        939,
+        1453
+      ],
+      "decodedRgbaBytesIncludingMips": 7271632,
+      "layout": "packed-islands",
+      "islands": 108,
+      "featureId": "OST_12968357",
+      "output": "OST_12968357.glb",
+      "sha256": "13d8d8fbac094e957d0eab11735fb363d1af1170a6acf1083e2237663994c7cc",
+      "bytes": 1020968,
+      "boundingVolume": {
+        "box": [
+          -3.8134459664603546,
+          -17.255933177141603,
+          16.784746463139875,
+          -0.5490978522625644,
+          7.219821689256192,
+          0.0,
+          4.507014779197938,
+          0.3427774593181379,
+          5.762496217508826,
+          5.675841708082604,
+          0.431671670829245,
+          -4.4649174264318585
+        ]
+      }
+    },
+    {
+      "atlasSize": [
+        398,
+        5326
+      ],
+      "decodedRgbaBytesIncludingMips": 11298632,
+      "layout": "packed-islands",
+      "islands": 108,
+      "featureId": "OST_14427971",
+      "output": "OST_14427971.glb",
+      "sha256": "745c84a814a84cf8e82256edea793d2e185789346f20599a18077a42b09fbee1",
+      "bytes": 2254748,
+      "boundingVolume": {
+        "box": [
+          -97.19019330959425,
+          -101.20573130181282,
+          100.7871904450472,
+          -0.9320509294469388,
+          12.255086207648565,
+          0.0,
+          6.632795785811349,
+          0.5044520595162255,
+          8.480438272281019,
+          9.633042180968697,
+          0.7326334361132316,
+          -7.577860714845421
+        ]
+      }
+    },
+    {
+      "atlasSize": [
+        393,
+        5965
+      ],
+      "decodedRgbaBytesIncludingMips": 12492952,
+      "layout": "packed-islands",
+      "islands": 108,
+      "featureId": "OST_14428305",
+      "output": "OST_14428305.glb",
+      "sha256": "981f39e2b093fe9ccd6b99784d2bee2f8613ae4a6825ec23a8ccd11d0586810d",
+      "bytes": 2394572,
+      "boundingVolume": {
+        "box": [
+          -102.87627294490106,
+          -74.40709993598317,
+          103.48416685711352,
+          -0.9441872987567298,
+          12.414661449129847,
+          0.0,
+          6.593944919187257,
+          0.5014972874539771,
+          8.430765044449243,
+          9.764685972120017,
+          0.742645500966919,
+          -7.681418686935458
+        ]
+      }
+    }
+  ],
+  "assetLimitBytes": 26214400,
+  "largestAssetBytes": 20615880,
+  "replacementContract": "Only replace old tanks with matching literal OST identifiers while corresponding source features are visible; never suppress BAG buildings; retain older tanks outside this bounded coverage.",
+  "replacementEvidence": "source-data/tank-reconciliation/report.json"
+}

@@ -1,0 +1,86 @@
+{
+  "status": "review only, no art acceptance",
+  "libraryId": "libfile_e8b039daa49c819191f9685d96ab9d8c",
+  "inputArchiveSha256": "b655be5f0df5dd234f3e22db0bc2c23f2c8c7a0a3a6382d0d8e2b3ba2fc21980",
+  "inputGLBSha256": "c8db392d435a233a228b4144646f945be8a2b93d7f0fc7b4d60ca5afe77ee407",
+  "sourceMunicipalSha256": "c51f35cc165e106b2d77a00f8614fecd1e22d977f35a0406f2efb8acfacf4425",
+  "outputGLBSha256": "cedbeda8b8451f43a974c7a36415f9797daf59586a377ce66bb24b9c48d13271",
+  "bagIds": [
+    "0599100000671717",
+    "0599100000671715",
+    "0599100000671712",
+    "0599100000671708",
+    "0599100000671699",
+    "0599100000760416",
+    "0599100000671675",
+    "0599100000760417"
+  ],
+  "triangles": 678,
+  "textures": [
+    {
+      "uri": "textures/atlas-00.png",
+      "bytes": 2238937,
+      "sha256": "796f9e580253b98f314e9b73a29bbe63aa73892d57c4b15344ef7a52c44f7ae7"
+    },
+    {
+      "uri": "textures/atlas-01.png",
+      "bytes": 2455087,
+      "sha256": "2cc078419e1c96228b88f01c6d0416caa337ce4b24c96c4669ae35ecca121ac4"
+    },
+    {
+      "uri": "textures/atlas-02.png",
+      "bytes": 2886908,
+      "sha256": "d4979341b303ef712a0255af0e2ec5306b92e03edbe4e4515694ea0a779cca5c"
+    },
+    {
+      "uri": "textures/atlas-03.png",
+      "bytes": 1888821,
+      "sha256": "7165f5906e80f4fe5f26b7b5e5a0f23ab970aaadba6e24a71dd284d309127616"
+    },
+    {
+      "uri": "textures/atlas-04.png",
+      "bytes": 3153079,
+      "sha256": "c59e4c9c476b10d2cf39fe84f70e4649c4dc42496ceff6c877a800ee896c058e"
+    },
+    {
+      "uri": "textures/atlas-05.png",
+      "bytes": 2756460,
+      "sha256": "c461c25752e5be367907dae83ae34c3c4542dce6d922e2219a2aef195a913c6c"
+    },
+    {
+      "uri": "textures/atlas-06.png",
+      "bytes": 2671078,
+      "sha256": "18d138b57c8db51b1eafe42c51f54015cbdc81942db386c8d0903b0b62b8a561"
+    },
+    {
+      "uri": "textures/atlas-07.png",
+      "bytes": 2277446,
+      "sha256": "03c48e4cae86dc0b068052cb2c0e3b1a3f1b684ab0738bd198b94c655200c7c5"
+    },
+    {
+      "uri": "textures/atlas-08.png",
+      "bytes": 2540436,
+      "sha256": "cc3f7691ad9e38ca8c7799ee5ab201d7695225947acc927fe745680e87469f4b"
+    },
+    {
+      "uri": "textures/atlas-09.png",
+      "bytes": 2168457,
+      "sha256": "9b4d6dde0c4fda83542713a7f3d954fe786cd6c3447e1c3876279bb6c973cd7c"
+    }
+  ],
+  "rootMatrixRetained": true,
+  "rtcApplied": "Once in child 3D Tiles transform; removed CESIUM_RTC extension",
+  "boundsLonLatHeight": [
+    [
+      4.446845802012474,
+      51.90951845951065,
+      2.4438599478453398
+    ],
+    [
+      4.447366393871849,
+      51.909741892351164,
+      18.487675012089312
+    ]
+  ],
+  "changes": "Split source draw indices by exact original _BATCHID; compacted unchanged attribute values; unchanged external painted PNGs and materials; no art filtering"
+}

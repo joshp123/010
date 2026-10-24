@@ -1,0 +1,16 @@
+{
+  "sourceSha256": "753952e076d0f064c3ffc225d1682b03fe4f7603033d80d6b8ea41d756b009f3",
+  "sourceTile": "33589/6931",
+  "nativeGroundTriangles": 50510,
+  "boundaryTriangles": 10944,
+  "sourceClasses": {
+    "0": 78081,
+    "1": 4896,
+    "2": 0,
+    "3": 78702,
+    "4": 6792,
+    "5": 0,
+    "6": 0
+  },
+  "limits": "CPU geometry diagnostic; material shader, actual city silhouette, night and phone need manager WebGL review."
+}

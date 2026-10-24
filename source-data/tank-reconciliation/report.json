@@ -1,0 +1,791 @@
+{
+  "currentSource": "https://www.3drotterdam.nl/datasource-data/25da2fa9-d5b7-4d44-b100-7ab3b3bf51dc/16/67119/13875.b3dm",
+  "currentSourceSha256": "a655739ae46aafa829afe581810c4274ac027af3f09961945b4aecc818d8affb",
+  "currentIds": [
+    "OST_12968344",
+    "OST_12968345",
+    "OST_12968350",
+    "OST_12968351",
+    "OST_12968352",
+    "OST_12968353",
+    "OST_12968354",
+    "OST_12968355",
+    "OST_12968356",
+    "OST_12968357",
+    "OST_12968358",
+    "OST_12968359",
+    "OST_14427971",
+    "OST_14428305"
+  ],
+  "oldSourceRoot": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/tileset.json",
+  "oldLeaves": [
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67118/13875.b3dm",
+      "bounds": {
+        "region": [
+          0.075836175,
+          0.905623907,
+          0.075884112,
+          0.905671844,
+          2.9,
+          17.5
+        ]
+      },
+      "ids": [
+        "OST_12968349",
+        "OST_14427961",
+        "OST_14427965",
+        "OST_12968348",
+        "OST_14427964",
+        "OST_14427963",
+        "OST_14427962"
+      ],
+      "matchedCurrentOST": [],
+      "batchAttributes": [
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        }
+      ]
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67119/13875.b3dm",
+      "bounds": {
+        "region": [
+          0.07588119,
+          0.905623907,
+          0.075932049,
+          0.905673374,
+          2.7,
+          25.5
+        ]
+      },
+      "ids": [
+        "OST_12968350",
+        "OST_12968355",
+        "OST_14427971",
+        "OST_14428305",
+        "OST_12968351",
+        "OST_12968352",
+        "OST_12968357",
+        "OST_12968354",
+        "OST_12968356",
+        "OST_12968344",
+        "OST_12968358",
+        "OST_12968353",
+        "OST_12968359",
+        "OST_12968345"
+      ],
+      "matchedCurrentOST": [
+        "OST_12968344",
+        "OST_12968345",
+        "OST_12968350",
+        "OST_12968351",
+        "OST_12968352",
+        "OST_12968353",
+        "OST_12968354",
+        "OST_12968355",
+        "OST_12968356",
+        "OST_12968357",
+        "OST_12968358",
+        "OST_12968359",
+        "OST_14427971",
+        "OST_14428305"
+      ],
+      "batchAttributes": [
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        }
+      ]
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67118/13874.b3dm",
+      "bounds": {
+        "region": [
+          0.075836175,
+          0.905671844,
+          0.075884112,
+          0.905719781,
+          3.7,
+          48.4
+        ]
+      },
+      "ids": [
+        "OST_12968340",
+        "OST_14428548",
+        "OST_14427975",
+        "OST_14337128",
+        "OST_14337129",
+        "OST_14428524",
+        "OST_14337126",
+        "OST_14428549",
+        "OST_14427984",
+        "OST_14337127",
+        "OST_12970915",
+        "OST_12968378",
+        "OST_14337130",
+        "OST_12968336",
+        "OST_14427986"
+      ],
+      "matchedCurrentOST": [],
+      "batchAttributes": [
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        }
+      ]
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67119/13874.b3dm",
+      "bounds": {
+        "region": [
+          0.075880554,
+          0.905671844,
+          0.075932049,
+          0.905720059,
+          3.8,
+          25.1
+        ]
+      },
+      "ids": [
+        "OST_14427973",
+        "OST_12970980",
+        "OST_13842389",
+        "OST_12968342",
+        "OST_14428541",
+        "OST_14428542",
+        "OST_14428545",
+        "OST_14428544",
+        "OST_14427974",
+        "OST_14428543"
+      ],
+      "matchedCurrentOST": [],
+      "batchAttributes": [
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        }
+      ]
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67119/13876.b3dm",
+      "bounds": {
+        "region": [
+          0.075884112,
+          0.90557597,
+          0.075932192,
+          0.905623907,
+          3.8,
+          18.2
+        ]
+      },
+      "ids": [
+        "OST_14428271",
+        "OST_12968584",
+        "OST_14428270",
+        "OST_14428273",
+        "OST_14428272"
+      ],
+      "matchedCurrentOST": [],
+      "batchAttributes": [
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        }
+      ]
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67120/13875.b3dm",
+      "bounds": {
+        "region": [
+          0.075932049,
+          0.905623907,
+          0.075979985,
+          0.905671844,
+          4.6,
+          17.3
+        ]
+      },
+      "ids": [
+        "OST_14489810",
+        "OST_14489811"
+      ],
+      "matchedCurrentOST": [],
+      "batchAttributes": [
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        }
+      ]
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67120/13876.b3dm",
+      "bounds": {
+        "region": [
+          0.075932049,
+          0.90557597,
+          0.075979985,
+          0.905623907,
+          3.1,
+          22.9
+        ]
+      },
+      "ids": [
+        "OST_12968216",
+        "OST_12968210",
+        "OST_12968194",
+        "OST_12968203",
+        "OST_12968193",
+        "OST_12968182",
+        "OST_14428287",
+        "OST_14428120",
+        "OST_12968195",
+        "OST_12968185",
+        "OST_12968206",
+        "OST_12968186",
+        "OST_12968174",
+        "OST_12968200",
+        "OST_12968180",
+        "OST_12968175",
+        "OST_14428288",
+        "OST_12968204",
+        "OST_12968211",
+        "OST_14428114",
+        "OST_12968197",
+        "OST_12968202",
+        "OST_12968189",
+        "OST_12968188",
+        "OST_12968184",
+        "OST_12968181",
+        "OST_12968198",
+        "OST_12968190",
+        "OST_12968212",
+        "OST_12968208",
+        "OST_12968187",
+        "OST_12968209",
+        "OST_12968207",
+        "OST_12968179",
+        "OST_12968177",
+        "OST_12968173",
+        "OST_12968183",
+        "OST_14428102"
+      ],
+      "matchedCurrentOST": [],
+      "batchAttributes": [
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        },
+        {
+          "creationDate": "2023-09-13"
+        }
+      ]
+    }
+  ],
+  "matched": [
+    "OST_12968344",
+    "OST_12968345",
+    "OST_12968350",
+    "OST_12968351",
+    "OST_12968352",
+    "OST_12968353",
+    "OST_12968354",
+    "OST_12968355",
+    "OST_12968356",
+    "OST_12968357",
+    "OST_12968358",
+    "OST_12968359",
+    "OST_14427971",
+    "OST_14428305"
+  ],
+  "missing": [],
+  "identityPolicy": "Exact literal OST equality only. No BAG conversion or spatial-nearest guesses. Geometry changes are not inferred from identifier equality.",
+  "evidence": [
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/tileset.json",
+      "sha256": "9f5ae93637a593bdae401f1d8bcf053e1c77a2c1b4826a6c3b861ef22af663ee",
+      "decodedBytes": 2180,
+      "acquiredAt": "2026-10-24T08:46:25.636635+00:00",
+      "responseHeaders": {
+        "date": "Sat, 24 Oct 2026 08:46:25 GMT",
+        "content-type": "application/json",
+        "content-length": "563",
+        "server": "envoy",
+        "x-amz-id-2": "q342LYmnMH5jrBDhnrGZKehhVxsErQ9OZOB+SBy9LfYQVPk5oFqt/pNj4TFuKEGPZHLAdI0ZoYk=",
+        "x-amz-request-id": "30G8H4JQ904KKZTV",
+        "last-modified": "Thu, 14 Sep 2023 07:30:17 GMT",
+        "etag": "\"e67824005294f54554b2ee832b448d71\"",
+        "x-amz-server-side-encryption": "AES256",
+        "content-encoding": "gzip",
+        "accept-ranges": "bytes",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "sameorigin",
+        "x-xss-protection": "1; mode=block",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "content-security-policy": "default-src https: wss: blob: 'unsafe-eval' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; img-src 'self' blob: https: data:; style-src-elem 'self' data: 'unsafe-inline'; style-src 'self' data: 'unsafe-inline'; connect-src 'self' blob: data: https:;",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-envoy-upstream-service-time": "618",
+        "connection": "close"
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/10/1048/216.json",
+      "sha256": "974b59d7255aa5c214fcd0090fe35e8aaccf7d2a6900a57a3789c6cbddb8d35f",
+      "decodedBytes": 362614,
+      "acquiredAt": "2026-10-24T08:46:30.407556+00:00",
+      "responseHeaders": {
+        "date": "Sat, 24 Oct 2026 08:46:30 GMT",
+        "content-type": "application/json",
+        "content-length": "21930",
+        "server": "envoy",
+        "x-amz-id-2": "PFCD633+Q0DzA0gXG9f2won+M1xsuO2lHeecJDDUrTD5Pah6HraHEqzCNyjZ1X4/M1vpqrWb7m7wHPG5XdlmAy9no1gyR0+X",
+        "x-amz-request-id": "JZ2R1M1V7SNYAH44",
+        "last-modified": "Thu, 14 Sep 2023 07:30:47 GMT",
+        "etag": "\"2b821e5627ca5f6a29838e88464069ed\"",
+        "x-amz-server-side-encryption": "AES256",
+        "content-encoding": "gzip",
+        "accept-ranges": "bytes",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "sameorigin",
+        "x-xss-protection": "1; mode=block",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "content-security-policy": "default-src https: wss: blob: 'unsafe-eval' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; img-src 'self' blob: https: data:; style-src-elem 'self' data: 'unsafe-inline'; style-src 'self' data: 'unsafe-inline'; connect-src 'self' blob: data: https:;",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-envoy-upstream-service-time": "205",
+        "connection": "close"
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67118/13875.b3dm",
+      "sha256": "a5ef295dc20270ac1184301b34bd6e947cf463b2845b3d13227cc576e7671213",
+      "decodedBytes": 145736,
+      "acquiredAt": "2026-10-24T08:46:35.023258+00:00",
+      "responseHeaders": {
+        "date": "Sat, 24 Oct 2026 08:46:34 GMT",
+        "content-type": "application/octet-stream",
+        "content-length": "42892",
+        "server": "envoy",
+        "x-amz-id-2": "sKGf5jEkDw1GWglm+QmmHC4NMIiGI20uY3Gi6RZbeh2ut212+dL2o30xEm0KeJCMY7Rzpsv3RZE=",
+        "x-amz-request-id": "M1FHVFMF5R33FM9H",
+        "last-modified": "Thu, 14 Sep 2023 07:30:25 GMT",
+        "etag": "\"aadc66b5fb920fb5602a39f2d1afa3b5\"",
+        "x-amz-server-side-encryption": "AES256",
+        "content-encoding": "gzip",
+        "accept-ranges": "bytes",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "sameorigin",
+        "x-xss-protection": "1; mode=block",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "content-security-policy": "default-src https: wss: blob: 'unsafe-eval' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; img-src 'self' blob: https: data:; style-src-elem 'self' data: 'unsafe-inline'; style-src 'self' data: 'unsafe-inline'; connect-src 'self' blob: data: https:;",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-envoy-upstream-service-time": "219",
+        "connection": "close"
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67119/13875.b3dm",
+      "sha256": "31bc53be8eaf714139cafb50671dd641cc069ab86c54785a05ab75e6c22cbe84",
+      "decodedBytes": 320024,
+      "acquiredAt": "2026-10-24T08:46:39.790447+00:00",
+      "responseHeaders": {
+        "date": "Sat, 24 Oct 2026 08:46:39 GMT",
+        "content-type": "application/octet-stream",
+        "content-length": "97976",
+        "server": "envoy",
+        "x-amz-id-2": "gEY3wjqWSJNMFpzA8s2B1HVwn+L//EiT0GTjYc+STvAGi7qkLEtF2WX1CxPcqus+rcMZnWNsmbLgr/knuln5CRhcNJq7NxT5",
+        "x-amz-request-id": "F9ZFVNK49PS5N1TS",
+        "last-modified": "Thu, 14 Sep 2023 07:30:25 GMT",
+        "etag": "\"b561ce9d23d34264ad9796e6f8da519b\"",
+        "x-amz-server-side-encryption": "AES256",
+        "content-encoding": "gzip",
+        "accept-ranges": "bytes",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "sameorigin",
+        "x-xss-protection": "1; mode=block",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "content-security-policy": "default-src https: wss: blob: 'unsafe-eval' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; img-src 'self' blob: https: data:; style-src-elem 'self' data: 'unsafe-inline'; style-src 'self' data: 'unsafe-inline'; connect-src 'self' blob: data: https:;",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-envoy-upstream-service-time": "258",
+        "connection": "close"
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67118/13874.b3dm",
+      "sha256": "43778fef174560669df390f16ffa807739e5f7db8a200113f4d8d1ed0eb6f3dd",
+      "decodedBytes": 963848,
+      "acquiredAt": "2026-10-24T08:46:44.653790+00:00",
+      "responseHeaders": {
+        "date": "Sat, 24 Oct 2026 08:46:44 GMT",
+        "content-type": "application/octet-stream",
+        "content-length": "300607",
+        "server": "envoy",
+        "x-amz-request-id": "38Z8GHYG8BRAWE50",
+        "x-amz-id-2": "RPQc7clegbwf0uvcUgeIlZVRiTeHmtzQrUtk70l68bJ+VUZFwy8lF+COYcXiFKXgU76NgWiPp2LKtcBXl7RG+eJct+azUXUn",
+        "accept-ranges": "bytes",
+        "last-modified": "Thu, 14 Sep 2023 07:30:25 GMT",
+        "etag": "\"3b9a814d0604fede385c619fc8ea8fc8\"",
+        "content-encoding": "gzip",
+        "x-amz-server-side-encryption": "AES256",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "sameorigin",
+        "x-xss-protection": "1; mode=block",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "content-security-policy": "default-src https: wss: blob: 'unsafe-eval' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; img-src 'self' blob: https: data:; style-src-elem 'self' data: 'unsafe-inline'; style-src 'self' data: 'unsafe-inline'; connect-src 'self' blob: data: https:;",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-envoy-upstream-service-time": "233",
+        "connection": "close"
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67119/13874.b3dm",
+      "sha256": "4df0644853dbfc02133999910a3b992a7d3de48401b43498289c36f1548c9d96",
+      "decodedBytes": 587520,
+      "acquiredAt": "2026-10-24T08:46:49.419365+00:00",
+      "responseHeaders": {
+        "date": "Sat, 24 Oct 2026 08:46:49 GMT",
+        "content-type": "application/octet-stream",
+        "content-length": "173560",
+        "server": "envoy",
+        "x-amz-request-id": "1FMEJDF5JXCNR33D",
+        "x-amz-id-2": "ZoVLj/NawFIgAypGwC9I8OYnO2PHJ754eetY6v/UUqHedb+BFvBZ+bDqBBIwvdXUZUC87fS3c1czNtrmVEGi1/rd20jBS7/a",
+        "accept-ranges": "bytes",
+        "last-modified": "Thu, 14 Sep 2023 07:30:25 GMT",
+        "etag": "\"9403d82c5b78f15ca20226499cf38e0a\"",
+        "content-encoding": "gzip",
+        "x-amz-server-side-encryption": "AES256",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "sameorigin",
+        "x-xss-protection": "1; mode=block",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "content-security-policy": "default-src https: wss: blob: 'unsafe-eval' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; img-src 'self' blob: https: data:; style-src-elem 'self' data: 'unsafe-inline'; style-src 'self' data: 'unsafe-inline'; connect-src 'self' blob: data: https:;",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-envoy-upstream-service-time": "232",
+        "connection": "close"
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67119/13876.b3dm",
+      "sha256": "fa7d2695bdd05f5b4a3403fb1a9f73867b0cd481a1cb812d00de5fccdf4849c6",
+      "decodedBytes": 92856,
+      "acquiredAt": "2026-10-24T08:46:54.080944+00:00",
+      "responseHeaders": {
+        "date": "Sat, 24 Oct 2026 08:46:53 GMT",
+        "content-type": "application/octet-stream",
+        "content-length": "28535",
+        "server": "envoy",
+        "x-amz-id-2": "+4sFzi3qeAUXe1OoI0uUMXEVL6G/5rS3aRq/nOSdG6OavgUc0dhV9qL04K+RZYMDl1FwTGxDT3I=",
+        "x-amz-request-id": "R6G84XZXX8EXDJX4",
+        "last-modified": "Thu, 14 Sep 2023 07:30:25 GMT",
+        "etag": "\"37f291bfe59263d581d46c798b6ceb25\"",
+        "x-amz-server-side-encryption": "AES256",
+        "content-encoding": "gzip",
+        "accept-ranges": "bytes",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "sameorigin",
+        "x-xss-protection": "1; mode=block",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "content-security-policy": "default-src https: wss: blob: 'unsafe-eval' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; img-src 'self' blob: https: data:; style-src-elem 'self' data: 'unsafe-inline'; style-src 'self' data: 'unsafe-inline'; connect-src 'self' blob: data: https:;",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-envoy-upstream-service-time": "215",
+        "connection": "close"
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67120/13875.b3dm",
+      "sha256": "cc2ec934840dc4a2fbdc59f83c39c110c44e76333cd4fa71529262c08cd97843",
+      "decodedBytes": 163920,
+      "acquiredAt": "2026-10-24T08:46:58.603293+00:00",
+      "responseHeaders": {
+        "date": "Sat, 24 Oct 2026 08:46:58 GMT",
+        "content-type": "application/octet-stream",
+        "content-length": "51598",
+        "server": "envoy",
+        "x-amz-id-2": "CfO8UFL5aD0OHeUBoejpzUmi9yDYZr/ufiRYtcKYQziI6qVLbi59Qv1FcVu0R5fi7OWmXbv68/R+uhpGo9mvPHsNxlw1xd19",
+        "x-amz-request-id": "VDPVGQHK8P9NBDJD",
+        "last-modified": "Thu, 14 Sep 2023 07:30:25 GMT",
+        "etag": "\"ad3f15d18b4c541e5ec8a53d90d5d11c\"",
+        "x-amz-server-side-encryption": "AES256",
+        "content-encoding": "gzip",
+        "accept-ranges": "bytes",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "sameorigin",
+        "x-xss-protection": "1; mode=block",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "content-security-policy": "default-src https: wss: blob: 'unsafe-eval' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; img-src 'self' blob: https: data:; style-src-elem 'self' data: 'unsafe-inline'; style-src 'self' data: 'unsafe-inline'; connect-src 'self' blob: data: https:;",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-envoy-upstream-service-time": "227",
+        "connection": "close"
+      }
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67120/13876.b3dm",
+      "sha256": "d463c32a45527e528e2581d09181530c2a5ff3c51fced6b4bb3f775f5053df95",
+      "decodedBytes": 1451360,
+      "acquiredAt": "2026-10-24T08:47:08.395506+00:00",
+      "responseHeaders": {
+        "date": "Sat, 24 Oct 2026 08:47:08 GMT",
+        "content-type": "application/octet-stream",
+        "content-length": "438422",
+        "server": "envoy",
+        "x-amz-id-2": "5/xQHRzYCPkaPDHqKRvRTy7fW72en5OdPlMd0y2XXubyK0r91RPaUdMZRaOfj8VBxxL+db+y87o=",
+        "x-amz-request-id": "NCXD8M9KJSFCTWWJ",
+        "last-modified": "Thu, 14 Sep 2023 07:30:25 GMT",
+        "etag": "\"d9c099a74aaaba568072e818e976c966\"",
+        "x-amz-server-side-encryption": "AES256",
+        "content-encoding": "gzip",
+        "accept-ranges": "bytes",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "sameorigin",
+        "x-xss-protection": "1; mode=block",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "content-security-policy": "default-src https: wss: blob: 'unsafe-eval' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; img-src 'self' blob: https: data:; style-src-elem 'self' data: 'unsafe-inline'; style-src 'self' data: 'unsafe-inline'; connect-src 'self' blob: data: https:;",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "x-envoy-upstream-service-time": "246",
+        "connection": "close"
+      }
+    }
+  ]
+}

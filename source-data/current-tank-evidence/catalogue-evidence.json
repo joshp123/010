@@ -1,0 +1,14 @@
+{
+  "resource": "https://www.3drotterdam.nl/datasource-data/25da2fa9-d5b7-4d44-b100-7ab3b3bf51dc/tileset.json",
+  "name": "Opslagtanks LOD2 texture - Actueel",
+  "municipalConfigEvidence": "raw/module.json.gz",
+  "municipalConfigSha256": "e696e87eb0643c58871f8eed35531227cfd3e20e96c85a9b06e8942e81690a55",
+  "catalogue": "https://hub.clearly.app/datasets/65ef2475fe2ac522c6ac7b63/information",
+  "catalogueObservation": "Manager independently viewed live Clearly dataset and resource table: CC BY4.0, maintainer Gemeente Rotterdam, this textured tank endpoint and no-texture tank endpoint listed as resources. Delegated observation supplied2026-10-24; no invented separate tank-specific catalogue URL.",
+  "sharedCatalogueEvidence": "../current-building-evidence/catalog-evidence.json",
+  "sharedCatalogueEvidenceSha256": "b4add237ad9e56921edd9e97e1837aeb177032446f3dd3caeee7bec15ebd79c6",
+  "license": "CC BY4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "attribution": "Gemeente Rotterdam \u20143D Rotterdam",
+  "changes": "Two CPU renderings and literal embedded-GLB extraction; original B3DM retained. No altered source geometry or pixels."
+}

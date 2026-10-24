@@ -30,7 +30,16 @@ function batchTableFor(mesh) {
   return null;
 }
 
-export function createBuildingAppearanceReconciliation(batches) {
+export function normalizedTankId(value) {
+  return /^OST_\d+$/.test(String(value ?? '')) ? String(value) : null;
+}
+
+export function createTankAppearanceReconciliation() {
+  return createBuildingAppearanceReconciliation(null, { tanks: true });
+}
+
+export function createBuildingAppearanceReconciliation(batches, { tanks = false } = {}) {
+  const normalize = tanks ? normalizedTankId : normalizedBagId;
   const models = new Map();
   let replaced = new Set();
   let hiddenTriangles = 0;
@@ -62,9 +71,10 @@ export function createBuildingAppearanceReconciliation(batches) {
         for (let i = 0; i < count; i += 3) {
           const id = ids.getX(indices[i]);
           if (!lookup.has(id)) {
-            let attributes = {};
-            try { attributes = table.getDataFromId(id)?.attributes || {}; } catch {}
-            lookup.set(id, normalizedBagId(attributes.GEBOUWNUMMER || attributes.gebouwnummer || attributes['gml:id']));
+            let data = {};
+            try { data = table.getDataFromId(id) || {}; } catch {}
+            const attributes = data.attributes || {};
+            lookup.set(id, tanks ? normalizedTankId(data.id) : normalizedBagId(attributes.GEBOUWNUMMER || attributes.gebouwnummer || attributes['gml:id']));
           }
           triangleIds.push(lookup.get(id));
         }
@@ -76,20 +86,25 @@ export function createBuildingAppearanceReconciliation(batches) {
     setVisibleModels(visibleModels) {
       const next = new Set();
       for (const model of visibleModels) model.traverseVisible(mesh => {
-        const id = normalizedBagId(mesh.userData.bagId);
+        const id = normalize(tanks ? mesh.userData.featureId : mesh.userData.bagId);
         if (mesh.isMesh && id) next.add(id);
       });
       if (next.size === replaced.size && [...next].every(id => replaced.has(id))) return false;
       replaced = next; hiddenTriangles = 0;
       for (const entry of models.values()) {
-        batches.removeModel(entry.model);
+        batches?.removeModel(entry.model);
         apply(entry);
         hiddenTriangles += entry.meshes.reduce((n, record) => n + record.triangleIds.filter(id => replaced.has(id)).length, 0);
-        batches.addModel(entry.model);
+        batches?.addModel(entry.model);
       }
       return true;
     },
-    diagnostics() { return { visibleSourceBuildings: replaced.size, hiddenNewerTriangles: hiddenTriangles, preparedScope: 'bounded source-appearance pilot; not municipality-wide' }; },
+    diagnostics() {
+      hiddenTriangles = [...models.values()].reduce((sum, entry) => sum + entry.meshes.reduce((n, record) => n + record.triangleIds.filter(id => replaced.has(id)).length, 0), 0);
+      return tanks
+        ? { visibleSourceTanks: replaced.size, hiddenOlderTriangles: hiddenTriangles, preparedScope: 'bounded OST tank pilot; not municipality-wide' }
+        : { visibleSourceBuildings: replaced.size, hiddenNewerTriangles: hiddenTriangles, preparedScope: 'bounded source-appearance pilot; not municipality-wide' };
+    },
   };
 }
 

@@ -3,7 +3,7 @@ import * as THREE from 'three';
 // Interpret the municipality's generic crown envelopes; never change source
 // instance placement, diameter, height or orientation. This is illustrated
 // foliage architecture, not measured branches or a species identification.
-const foliage = ['#526c49', '#648154', '#71895a', '#5b774d'].map(value => new THREE.Color(value));
+const foliage = ['#52694b', '#617b51', '#71875a', '#5d754d'].map(value => new THREE.Color(value));
 const bark = new THREE.Color('#6a5846');
 const number = (seed, n) => { const x = Math.sin(seed * 17.31 + n * 91.77) * 43758.5453; return x - Math.floor(x); };
 
@@ -37,18 +37,27 @@ function crownProfile(source) {
 
 export function createCrownGeometry(source) {
   const profile = crownProfile(source);
-  const positions = [], colors = [], primitive = new THREE.IcosahedronGeometry(1, 0);
+  const positions = [], colors = [], primitive = new THREE.IcosahedronGeometry(1, 1);
   const shape = primitive.getAttribute('position');
-  // Three staggered whorls and a cap give gaps, shelf shadows and an irregular
-  // outline at building scale. The source's overall dimensions remain exact.
-  const lobes = [{ y: .48, ring: 0, radius: .32, tall: .32, seed: 1 }];
-  for (const [level, y, count, radius] of [[0, .28, 5, .225], [1, .53, 5, .235], [2, .77, 4, .18]]) {
+  // Many small overlapping foliage masses replace the previous 16 giant
+  // polyhedra. Their centres follow the retained prototype's radial profile.
+  // These masses are explicitly illustration: the inventory has no leaves.
+  const lobes = [];
+  for (let level = 0; level < 9; level++) {
+    const y = .055 + level * .111;
+    const envelope = Math.min(.5, profile.radius(y));
+    const count = Math.max(4, Math.round(envelope * 34));
     for (let i = 0; i < count; i++) {
-      const angle = i / count * Math.PI * 2 + level * 1.1;
-      lobes.push({ y: y + (number(level + 1, i) - .5) * .07, ring: profile.radius(y) * .48, angle, radius, tall: radius * .94, seed: level * 7 + i + 2 });
+      const seed = level * 19 + i + 1;
+      const radius = .070 + number(seed, 2) * .035;
+      const angle = i / count * Math.PI * 2 + level * 2.39996;
+      lobes.push({y: y + (number(seed, 3) - .5) * .035,
+        ring: Math.max(0, envelope - radius * .62), angle,
+        radius, tall: radius * .9, seed});
     }
+    // A shaded continuous core prevents hollow ring-shaped crowns.
+    lobes.push({y, ring: 0, radius: envelope * .84, tall: .13, seed: level * 19});
   }
-  lobes.push({ y: .9, ring: 0, radius: .14, tall: .16, seed: 26 });
   for (const lobe of lobes) {
     const angle = lobe.angle || 0, cx = Math.cos(angle) * lobe.ring, cz = Math.sin(angle) * lobe.ring;
     const shade = foliage[lobe.seed % foliage.length];
@@ -59,7 +68,8 @@ export function createCrownGeometry(source) {
       const y = THREE.MathUtils.clamp(lobe.y + shape.getY(i) * lobe.tall, 0, 1);
       const r = Math.hypot(x, z), limit = Math.min(.5, profile.radius(y));
       if (r > limit && r) { x *= limit / r; z *= limit / r; }
-      positions.push(x, y, z); colors.push(shade.r, shade.g, shade.b);
+      positions.push(x, y, z); const shadeFactor = .83 + .17 * y;
+      colors.push(shade.r * shadeFactor, shade.g * shadeFactor, shade.b * shadeFactor);
     }
   }
   primitive.dispose();
@@ -74,7 +84,7 @@ export function createCrownGeometry(source) {
     p.setComponent(i, axis, profile.box.min.getComponent(axis) + (p.getComponent(i, axis) - ownBox.min.getComponent(axis)) / ownSize.getComponent(axis) * profile.size.getComponent(axis));
   }
   geometry.computeVertexNormals(); geometry.computeBoundingBox(); geometry.computeBoundingSphere();
-  geometry.userData = { ...source.userData, vegetationInterpretation: 'Faceted crown clusters within original inventory envelope; illustrative, not surveyed leaves or branches' };
+  geometry.userData = { ...source.userData, vegetationInterpretation: 'Fine overlapping foliage masses inside the original inventory envelope; illustrative, not surveyed leaves or branches' };
   return geometry;
 }
 

@@ -1,0 +1,24 @@
+{
+  "url": "https://www.3drotterdam.nl/configs/cb3219f4-7a7e-4f79-a1a9-7c8db2e56d78.json",
+  "sha256": "e696e87eb0643c58871f8eed35531227cfd3e20e96c85a9b06e8942e81690a55",
+  "decodedBytes": 183772,
+  "headers": {
+    "date": "Sat, 24 Oct 2026 08:35:57 GMT",
+    "content-type": "application/json",
+    "content-length": "183772",
+    "server": "envoy",
+    "last-modified": "Fri, 11 Sep 2026 09:16:06 GMT",
+    "etag": "\"2cddc-65b3188c27b60\"",
+    "accept-ranges": "bytes",
+    "vary": "Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "sameorigin",
+    "x-xss-protection": "1; mode=block",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "content-security-policy": "default-src https: wss: blob: 'unsafe-eval' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; img-src 'self' blob: https: data:; style-src-elem 'self' data: 'unsafe-inline'; style-src 'self' data: 'unsafe-inline'; connect-src 'self' blob: data: https:;",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "x-envoy-upstream-service-time": "266",
+    "connection": "close"
+  },
+  "acquiredAt": "2026-10-24T08:35:57.872035+00:00"
+}

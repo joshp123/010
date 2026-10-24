@@ -115,10 +115,13 @@ def stylise(raw,style=None):
     out=io.BytesIO();image.save(out,format='PNG',optimize=True)
     return out.getvalue(),original,image
 
-def convert(doc,binary,batch,feature,label):
+def convert(doc,binary,batch,feature,label,feature_kind='buildings'):
+    identity_key,collection_key,prefix=('bagId','bagIds','BAG_') if feature_kind=='buildings' else ('featureId','featureIds','')
+    if feature_kind not in ('buildings','tanks'):raise ValueError('Unsupported explicit feature kind')
     doc=copy.deepcopy(doc)
     ids=[str(a.get('gebouwnummer') or a.get('GEBOUWNUMMER') or batch.get('id',[''])[i]).removeprefix('ID_').removeprefix('BAG_') for i,a in enumerate(batch.get('attributes',[]))]
-    if not ids:raise ValueError('No source BAG identity')
+    if not ids:raise ValueError('No source identity')
+    if feature_kind=='tanks' and not all(x.startswith('OST_') for x in ids):raise ValueError('Expected literal OST source identity')
     textured_materials=set()
     for i,m in enumerate(doc.get('materials',[])):
         legacy=m.get('extensions',{}).get('KHR_techniques_webgl')
@@ -203,7 +206,7 @@ def convert(doc,binary,batch,feature,label):
         mesh_map[mi]=[]
         for bid,primitives in split.items():
             mesh_map[mi].append(len(doc['meshes']))
-            doc['meshes'].append({'name':f'BAG_{ids[bid]}','primitives':primitives,'extras':{'bagId':ids[bid],'sourceEdition':('current municipal textured mesh (3adbe5af)' if EDITION=='current' else '2019 municipal textured mesh'),'appearance':f'source atlas, {STYLE} preset'}})
+            doc['meshes'].append({'name':f'{prefix}{ids[bid]}','primitives':primitives,'extras':{identity_key:ids[bid],'sourceEdition':('current municipal textured mesh ('+BASE.split('/')[-2]+')' if EDITION=='current' else '2019 municipal textured mesh'),'appearance':f'source atlas, {STYLE} preset'}})
     for node in list(doc['nodes']):
         # Legacy exporter wrote both matrix and bogus TRS. glTF permits one only.
         if 'matrix' in node:
@@ -211,8 +214,8 @@ def convert(doc,binary,batch,feature,label):
         if 'mesh' not in node:continue
         mi=node.pop('mesh');children=node.setdefault('children',[])
         for new_mi in mesh_map[mi]:
-            children.append(len(doc['nodes']));bag=doc['meshes'][new_mi]['extras']['bagId']
-            doc['nodes'].append({'mesh':new_mi,'name':f'BAG_{bag}','extras':{'bagId':bag}})
+            children.append(len(doc['nodes']));bag=doc['meshes'][new_mi]['extras'][identity_key]
+            doc['nodes'].append({'mesh':new_mi,'name':f'{prefix}{bag}','extras':{identity_key:bag}})
     rtc=doc.get('extensions',{}).get('CESIUM_RTC',{}).get('center',feature.get('RTC_CENTER'))
     if not rtc:raise ValueError('Expected source RTC origin')
     for key in ('extensionsUsed','extensionsRequired'):
@@ -221,7 +224,7 @@ def convert(doc,binary,batch,feature,label):
     for key in ('CESIUM_RTC','KHR_techniques_webgl'):doc.get('extensions',{}).pop(key,None)
     if not doc.get('extensions'):doc.pop('extensions',None)
     doc['buffers']=[{'byteLength':len(new_binary)}]
-    doc['extras']={'bagIds':[ids[i] for i in sorted(selected)],'source':'Gemeente Rotterdam / Rotterdam 3D','sourceLicense':('CC BY 4.0; Gemeente Rotterdam — 3D Rotterdam' if EDITION=='current' else 'Public domain; see docs/data-sources.md'),'interpretation':'Bounded source appearance review candidate; photographic capture date not established'}
+    doc['extras']={collection_key:[ids[i] for i in sorted(selected)],'source':'Gemeente Rotterdam / Rotterdam 3D','sourceLicense':('CC BY 4.0; Gemeente Rotterdam — 3D Rotterdam' if EDITION=='current' else 'Public domain; see docs/data-sources.md'),'interpretation':'Bounded source appearance review candidate; photographic capture date not established'}
     for key in ('animations','cameras','skins'):
         if not doc.get(key):doc.pop(key,None)
     doc.pop('samplerRepeat',None)
@@ -230,7 +233,7 @@ def convert(doc,binary,batch,feature,label):
     jb=pad(packed_json(doc),fill=b' ');bb=pad(bytes(new_binary))
     glb=struct.pack('<4sII',b'glTF',2,12+8+len(jb)+8+len(bb))+struct.pack('<I4s',len(jb),b'JSON')+jb+struct.pack('<I4s',len(bb),b'BIN\0')+bb
     transform=[1,0,0,0,0,1,0,0,0,0,1,0,*rtc,1]
-    return glb,transform,doc['extras']['bagIds'],len(doc.get('images',[]))
+    return glb,transform,doc['extras'][collection_key],len(doc.get('images',[]))
 
 def read_glb(raw):
     size=struct.unpack_from('<I',raw,12)[0]
@@ -374,8 +377,10 @@ def pack_rectangles(rectangles):
     for i,x,y in best[3]:rectangles[i]['packedOrigin']=[x,y]
     return best[1],best[2]
 
-def spatial_buildings(glb,label):
+def spatial_buildings(glb,label,feature_kind='buildings'):
     """Per-BAG native texels packed by connected UV island, with tight local boxes."""
+    identity_key,collection_key=('bagId','bagIds') if feature_kind=='buildings' else ('featureId','featureIds')
+    if feature_kind not in ('buildings','tanks'):raise ValueError('Unsupported explicit feature kind')
     src,binary=read_glb(glb);worlds={}
     def walk(ni,parent):
         node=src['nodes'][ni]
@@ -389,7 +394,7 @@ def spatial_buildings(glb,label):
         v=src['bufferViews'][im['bufferView']]
         atlases.append(Image.open(io.BytesIO(binary[v.get('byteOffset',0):v.get('byteOffset',0)+v['byteLength']])).convert('RGB'))
     grouped={}
-    for mi,mesh in enumerate(src['meshes']):grouped.setdefault(mesh['extras']['bagId'],[]).append(mi)
+    for mi,mesh in enumerate(src['meshes']):grouped.setdefault(mesh['extras'][identity_key],[]).append(mi)
     for bag,mesh_ids in grouped.items():
         rectangles=[];plans={};provenance=[]
         separate_materials=EDITION=='current' and len(grouped)==1 and len(binary)>MAX_ASSET_BYTES
@@ -411,7 +416,7 @@ def spatial_buildings(glb,label):
         width,height=pack_rectangles(rectangles)
         atlas=Image.new('RGB',(width,height))
         for r in rectangles:atlas.paste(atlases[r['sourceImage']].crop(r['sourceCrop']),tuple(r['packedOrigin']))
-        doc={'asset':copy.deepcopy(src['asset']),'scene':0,'scenes':[{'nodes':[]}],'nodes':[],'meshes':[],'accessors':[],'bufferViews':[],'buffers':[],'materials':[],'extras':{**src['extras'],'bagIds':[bag],'spatialSource':label}}
+        doc={'asset':copy.deepcopy(src['asset']),'scene':0,'scenes':[{'nodes':[]}],'nodes':[],'meshes':[],'accessors':[],'bufferViews':[],'buffers':[],'materials':[],'extras':{**src['extras'],collection_key:[bag],'spatialSource':label}}
         payload=bytearray()
         def view(raw,target=None):
             payload.extend(b'\0'*((-len(payload))%4));v={'buffer':0,'byteOffset':len(payload),'byteLength':len(raw)}
@@ -465,7 +470,7 @@ def spatial_buildings(glb,label):
                 mesh['primitives'].append(cp)
             new_mi=len(doc['meshes']);doc['meshes'].append(mesh)
             for matrix in worlds[mi]:
-                doc['scenes'][0]['nodes'].append(len(doc['nodes']));doc['nodes'].append({'mesh':new_mi,'matrix':matrix.flatten(order='F').tolist(),'extras':{'bagId':bag}})
+                doc['scenes'][0]['nodes'].append(len(doc['nodes']));doc['nodes'].append({'mesh':new_mi,'matrix':matrix.flatten(order='F').tolist(),'extras':{identity_key:bag}})
         points=np.concatenate(bounds)
         up_axis=np.array([[1,0,0],[0,0,-1],[0,1,0]],dtype=float)
         frame=up_axis@worlds[mesh_ids[0]][0][:3,:3]
@@ -474,7 +479,7 @@ def spatial_buildings(glb,label):
         in_frame=points@frame;low=in_frame.min(axis=0);high=in_frame.max(axis=0)
         centre=((low+high)/2)@frame.T;half=(high-low)/2+.001
         box=[*centre,*(frame*half).flatten(order='F')]
-        provenance={'bagId':bag,'sourceAsset':label,'sourceAssetSha256':digest(glb),'atlasSize':[width,height],'paddingPixels':2,'mapping':'originalUV = (packedUV * atlasSize - packedOrigin + sourceCrop.xy) / sourceSize','islands':rectangles}
+        provenance={identity_key:bag,'sourceAsset':label,'sourceAssetSha256':digest(glb),'atlasSize':[width,height],'paddingPixels':2,'mapping':'originalUV = (packedUV * atlasSize - packedOrigin + sourceCrop.xy) / sourceSize','islands':rectangles}
         if separate_materials:provenance.update(layout='original-materials',sourceImageSizes=[list(a.size) for a in atlases])
         doc['extras']['texturePacking']=provenance
         doc['buffers']=[{'byteLength':len(payload)}];jb=pad(packed_json(doc),fill=b' ');bb=pad(bytes(payload))

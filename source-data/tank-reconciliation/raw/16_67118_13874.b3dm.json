@@ -1,0 +1,27 @@
+{
+  "url": "https://www.3drotterdam.nl/datasource-data/c70023a7-2878-41e9-bb81-a7c454bc310a/16/67118/13874.b3dm",
+  "sha256": "43778fef174560669df390f16ffa807739e5f7db8a200113f4d8d1ed0eb6f3dd",
+  "decodedBytes": 963848,
+  "acquiredAt": "2026-10-24T08:46:44.653790+00:00",
+  "responseHeaders": {
+    "date": "Sat, 24 Oct 2026 08:46:44 GMT",
+    "content-type": "application/octet-stream",
+    "content-length": "300607",
+    "server": "envoy",
+    "x-amz-request-id": "38Z8GHYG8BRAWE50",
+    "x-amz-id-2": "RPQc7clegbwf0uvcUgeIlZVRiTeHmtzQrUtk70l68bJ+VUZFwy8lF+COYcXiFKXgU76NgWiPp2LKtcBXl7RG+eJct+azUXUn",
+    "accept-ranges": "bytes",
+    "last-modified": "Thu, 14 Sep 2023 07:30:25 GMT",
+    "etag": "\"3b9a814d0604fede385c619fc8ea8fc8\"",
+    "content-encoding": "gzip",
+    "x-amz-server-side-encryption": "AES256",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "sameorigin",
+    "x-xss-protection": "1; mode=block",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "content-security-policy": "default-src https: wss: blob: 'unsafe-eval' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; img-src 'self' blob: https: data:; style-src-elem 'self' data: 'unsafe-inline'; style-src 'self' data: 'unsafe-inline'; connect-src 'self' blob: data: https:;",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "x-envoy-upstream-service-time": "233",
+    "connection": "close"
+  }
+}
