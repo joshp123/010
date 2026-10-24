@@ -10,6 +10,7 @@ import { createSimulatedTraffic } from './simulated-traffic.js';
 import { createTransitView } from './transit-view.js';
 import { createBuildingBatches } from './building-batches.js';
 import { createTreeBatches } from './tree-batches.js';
+import { createVegetationStyle } from './vegetation-style.js';
 import { createBuildingAppearanceReconciliation, prepareAppearanceModel } from './building-appearance.js';
 import { TilesRenderer } from '3d-tiles-renderer';
 import { LRUCache, unifiedPriorityCallback, FAILED, LOADED } from './vendor/3d-tiles-renderer/build/index.core.js';
@@ -164,7 +165,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   materials.streets.depthWrite = materials.yards.depthWrite = false;
   const emptyCutawayTexture = new THREE.DataTexture(new Uint8Array([0]), 1, 1, THREE.RedFormat);
   emptyCutawayTexture.needsUpdate = true;
-  const cutawayUniforms = { enabled: { value: 0 }, mask: { value: emptyCutawayTexture }, bounds: { value: new THREE.Vector4(0, 0, 1, 1) } };
+  const cutawayUniforms = { enabled: { value: 0 }, mask: { value: emptyCutawayTexture }, bounds: { value: new THREE.Vector4(0, 0, 1, 1) }, projection: { value: new THREE.Vector2() } };
   // The tunnel section must not cut holes through unrelated overground bridges.
   for (const material of [...Object.entries(materials).filter(([kind]) => !['bridges', 'bridgeSurfaces'].includes(kind)).map(([, material]) => material), cartographicMaterial, contextLandMaterial, lampGlowMaterial, lampPoolMaterial, lampShaftMaterial]) applyMetroCutaway(material, cutawayUniforms);
   Object.assign(materials.bridgeSurfaces, { polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
@@ -195,6 +196,8 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   const failedTileRetries = new Map();
   const tilesets = [];
   const sourceFusion = createSourceFusion();
+  const vegetationStyle = createVegetationStyle();
+  const vegetationEnabled = new URLSearchParams(location.search).get('vegetation') !== 'native';
   const objectDetail = createObjectDetail({ maximumPixelError: 1 });
   const treeBatches = createTreeBatches(scene);
   const buildingBatches = createBuildingBatches();
@@ -264,6 +267,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     const corridor = transit.getCutaway();
     cutawayUniforms.mask.value = corridor.texture;
     cutawayUniforms.bounds.value = corridor.bounds;
+    cutawayUniforms.projection.value = corridor.projection;
     requestRender();
   }).catch(error => { metroState = 'error'; console.warn('010: metro plan unavailable', error); throw error; });
   // UI consumes this rejection through the public method below.
@@ -367,6 +371,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       if (kind === 'yards') mesh.renderOrder = -11;
     });
     if (kind === 'buildings') { buildingAppearance.addModel(model); buildingBatches.addModel(model); }
+    if (kind === 'trees' && vegetationEnabled) vegetationStyle.addModel(model);
     if (kind === 'trees' || kind === 'lights') objectDetail.addModel(model);
     if (kind === 'trees') treeBatches.addModel(model);
   }
@@ -402,7 +407,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (['ground', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) tiles.addEventListener('dispose-model', () => { transitSurfaceDirty = true; });
     if (kind === 'buildings') tiles.addEventListener('dispose-model', event => { buildingAppearance.removeModel(event.scene); buildingBatches.removeModel(event.scene); });
     if (kind === 'ground') tiles.addEventListener('dispose-model', event => sourceFusion.removeGround(event.scene));
-    if (kind === 'trees' || kind === 'lights') tiles.addEventListener('dispose-model', event => { if (kind === 'trees') treeBatches.removeModel(event.scene); objectDetail.removeModel(event.scene); });
+    if (kind === 'trees' || kind === 'lights') tiles.addEventListener('dispose-model', event => { if (kind === 'trees') treeBatches.removeModel(event.scene); objectDetail.removeModel(event.scene); if (kind === 'trees') vegetationStyle.removeModel(event.scene); });
     for (const event of ['load-tileset', 'needs-update', 'tile-visibility-change', 'tiles-load-end']) tiles.addEventListener(event, requestRender);
     tiles.addEventListener('load-error', event => {
       loadErrors++; console.warn(`010: ${kind} tile could not load`, event.error);
@@ -809,14 +814,14 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     setView, getView: () => ({ ...view }), setLighting, captureCanvas,
     zoom: factor => setView({ span: view.span / factor }), reset: () => setView(DEFAULT_VIEW),
     render: () => { needsRender = true; frame(); }, getCanvas: () => canvas, resize,
-    getDiagnostics: () => ({ shaderErrors: shaderErrors.slice(), buildingAppearance: buildingAppearance.diagnostics(), fixtureSurfaceLighting: fixtureSurfaceLighting.diagnostics(), readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, cyclists: { ...cyclists.statistics(), state: cyclistsState }, transit: { ...transit.statistics(), metroState }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count || mesh.geometry.getAttribute('position')?.count || 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
+    getDiagnostics: () => ({ vegetation: { mode: vegetationEnabled ? 'clustered' : 'native', ...vegetationStyle.diagnostics() }, shaderErrors: shaderErrors.slice(), buildingAppearance: buildingAppearance.diagnostics(), fixtureSurfaceLighting: fixtureSurfaceLighting.diagnostics(), readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, cyclists: { ...cyclists.statistics(), state: cyclistsState }, transit: { ...transit.statistics(), metroState }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count || mesh.geometry.getAttribute('position')?.count || 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
     dispose() {
       disposed = true; clearTimeout(deferredUpdateTimer); if (scheduledFrame) cancelAnimationFrame(scheduledFrame); observer.disconnect();
       for (const [event, handler] of [['pointerdown', pointerDown], ['pointermove', pointerMove], ['pointerup', pointerUp], ['pointercancel', pointerUp], ['wheel', wheel], ['dblclick', doubleClick], ['contextmenu', contextMenu]]) canvas.removeEventListener(event, handler);
       document.removeEventListener('visibilitychange', pauseTraffic); reducedMotion.removeEventListener('change', pauseTraffic);
       buildingBatches.dispose(); for (const layer of simulatedLayers) layer.dispose(); transit.dispose(); emptyCutawayTexture.dispose();
       for (const query of surfaceQueries.values()) query.dispose();
-      sourceFusion.dispose(); treeBatches.dispose(); objectDetail.dispose(); fixtureSurfaceLighting.dispose();
+      sourceFusion.dispose(); treeBatches.dispose(); objectDetail.dispose(); vegetationStyle.dispose(); fixtureSurfaceLighting.dispose();
       for (const tiles of tilesets) tiles.dispose();
       for (const material of Object.values(materials)) material.dispose();
       lampGlowMaterial.dispose(); lampPoolMaterial.dispose(); lampShaftMaterial.dispose(); reflectionTarget.dispose(); cityTarget.dispose(); presentationQuad.geometry.dispose(); presentationMaterial.dispose();

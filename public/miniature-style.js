@@ -152,6 +152,7 @@ export function applyMetroCutaway(material, uniforms) {
       metroCutawayEnabled: uniforms.enabled,
       metroCutawayMask: uniforms.mask,
       metroCutawayBounds: uniforms.bounds,
+      metroCutawayProjection: uniforms.projection,
     });
     shader.vertexShader = 'varying vec3 metroWorldPosition;\n' + shader.vertexShader;
     const worldPosition = `vec4 metroVertex = vec4(position, 1.0);
@@ -160,10 +161,11 @@ export function applyMetroCutaway(material, uniforms) {
       #endif
       metroWorldPosition = (modelMatrix * metroVertex).xyz;`;
     shader.vertexShader = shader.vertexShader.replace(/void main\s*\(\s*\)\s*{/, 'void main() {\n' + worldPosition);
-    shader.fragmentShader = `uniform float metroCutawayEnabled; uniform sampler2D metroCutawayMask; uniform vec4 metroCutawayBounds; varying vec3 metroWorldPosition;\n` + shader.fragmentShader;
+    shader.fragmentShader = `uniform float metroCutawayEnabled; uniform sampler2D metroCutawayMask; uniform vec4 metroCutawayBounds; uniform vec2 metroCutawayProjection; varying vec3 metroWorldPosition;\n` + shader.fragmentShader;
     shader.fragmentShader = shader.fragmentShader.replace(/void main\s*\(\s*\)\s*{/, `void main() {
       if (metroCutawayEnabled > 0.5) {
-        vec2 metroUV = (metroWorldPosition.xz - metroCutawayBounds.xy) / metroCutawayBounds.zw;
+        vec2 metroProjectedXZ = metroWorldPosition.xz - metroWorldPosition.y * metroCutawayProjection;
+        vec2 metroUV = (metroProjectedXZ - metroCutawayBounds.xy) / metroCutawayBounds.zw;
         if (all(greaterThanEqual(metroUV, vec2(0.0))) && all(lessThanEqual(metroUV, vec2(1.0))) && texture2D(metroCutawayMask, metroUV).r > 0.5) discard;
       }`);
   };

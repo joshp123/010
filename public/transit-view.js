@@ -10,13 +10,12 @@ const VEHICLE_STYLES = {
 };
 const TUNNEL_DEPTH = 12;
 const CLASSIFICATION_DISTANCE = 18;
-const CUTAWAY_HALF_WIDTH = 8; // View-projected illustrated aperture, not tunnel engineering.
 const CHAMBER_HALF_WIDTH = 7;
 
 function pointOnSegment(point, start, end) {
   const dx = end.x - start.x, dz = end.z - start.z;
   const fraction = THREE.MathUtils.clamp(((point.x - start.x) * dx + (point.z - start.z) * dz) / (dx * dx + dz * dz || 1), 0, 1);
-  return { distance: Math.hypot(point.x - start.x - fraction * dx, point.z - start.z - fraction * dz), heading: Math.atan2(dx, dz) };
+  return { distance: Math.hypot(point.x - start.x - fraction * dx, point.z - start.z - fraction * dz), fraction, heading: Math.atan2(dx, dz) };
 }
 
 // project returns the intended local ground surface plus offsetMetres. Shapes
@@ -32,7 +31,9 @@ export function createTransitView({ project, localPosition, requestRender = () =
   const box = new THREE.BoxGeometry(1, 1, 1);
   const bodyMaterial = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.9, metalness: 0, flatShading: true });
   const roofMaterial = new THREE.MeshStandardMaterial({ color: '#e3e2ce', roughness: 0.95, metalness: 0 });
-  const tunnelMaterial = new THREE.MeshStandardMaterial({ color: '#a8aaa0', roughness: 1, side: THREE.DoubleSide });
+  const floorMaterial = new THREE.MeshStandardMaterial({ color: '#293333', roughness: 1, side: THREE.DoubleSide });
+  const earthMaterial = new THREE.MeshStandardMaterial({ color: '#796a58', roughness: 1, side: THREE.DoubleSide });
+  const tunnelMaterial = new THREE.MeshStandardMaterial({ color: '#78817c', roughness: 1, side: THREE.DoubleSide });
   const metroBodyMaterial = bodyMaterial.clone(), metroRoofMaterial = roofMaterial.clone();
   for (const material of [metroBodyMaterial, metroRoofMaterial]) {
     const isBody = material === metroBodyMaterial;
@@ -59,15 +60,16 @@ export function createTransitView({ project, localPosition, requestRender = () =
     material.customProgramCacheKey = () => `010-metro-articulation-${isBody ? 'body' : 'roof'}-v1`;
   }
   const trackMaterials = [
-    new THREE.MeshStandardMaterial({ color: '#3c443e', roughness: 1, side: THREE.DoubleSide }),
-    new THREE.MeshStandardMaterial({ color: '#7c8170', roughness: 1, side: THREE.DoubleSide }),
-    new THREE.MeshStandardMaterial({ color: '#c5c4a7', roughness: 0.8, side: THREE.DoubleSide }),
+    new THREE.MeshStandardMaterial({ color: '#414a46', roughness: 1, side: THREE.DoubleSide }),
+    new THREE.MeshStandardMaterial({ color: '#62665c', roughness: 1, side: THREE.DoubleSide }),
+    new THREE.MeshStandardMaterial({ color: '#949e92', roughness: 0.8, side: THREE.DoubleSide }),
   ];
   const batches = new Map();
   const transform = new THREE.Object3D(), color = new THREE.Color();
   let snapshot = { vehicles: [] }, records = [], railSegments = [], cutaway = false, cutawayMask = null;
   let span = 1700, viewportHeight = 900, camera = null;
   const maskViewDirection = new THREE.Vector3();
+  let physicalData = null, sectionAnchor = null, sectionSegments = [];
   let tunnelSegments = [], maskRebuilds = 0, maskMilliseconds = 0, maskMetresPerPixel = Infinity;
 
   function batchFor(mode, count) {
@@ -126,7 +128,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     }
     const modes = new Map();
     for (const record of records) {
-      if (record.underground && !cutaway) continue;
+      if (record.underground && (!cutaway || sectionAnchor && Math.hypot(record.ground.x-sectionAnchor.x,record.ground.z-sectionAnchor.z)>95)) continue;
       if (!modes.has(record.mode)) modes.set(record.mode, []);
       modes.get(record.mode).push(record);
     }
@@ -144,15 +146,17 @@ export function createTransitView({ project, localPosition, requestRender = () =
         transform.scale.set(style.width * scale, style.height * scale, style.length * scale);
         transform.updateMatrix(); batch.body.setMatrixAt(index, transform.matrix);
         color.set(style.color);
-        if (report.freshness !== 'fresh' || !report.sourceConnected) color.set('#92968e');
+        if (report.freshness !== 'fresh' || !report.sourceConnected) color.set('#737d80');
         batch.body.setColorAt(index, color);
         transform.position.y += style.height * scale * 0.48;
-        transform.scale.set(style.width * scale * 0.8, style.height * scale * 0.16, style.length * scale * 0.76);
+        transform.scale.set(style.width * scale * 0.8, style.height * scale * 0.16, style.length * scale * (mode === 'metro' ? .97 : .76));
         transform.updateMatrix(); batch.roof.setMatrixAt(index, transform.matrix);
+        batch.roof.setColorAt(index, new THREE.Color(report.freshness === 'fresh' && report.sourceConnected ? '#ffffff' : '#929b99'));
       }
       batch.body.count = batch.roof.count = reports.length;
       batch.body.instanceMatrix.needsUpdate = batch.roof.instanceMatrix.needsUpdate = true;
       if (batch.body.instanceColor) batch.body.instanceColor.needsUpdate = true;
+      if (batch.roof.instanceColor) batch.roof.instanceColor.needsUpdate = true;
       batch.body.computeBoundingSphere(); batch.roof.computeBoundingSphere();
     }
     for (const [mode, batch] of batches) if (!modes.has(mode)) { batch.body.count = batch.roof.count = 0; batch.records = []; }
@@ -160,127 +164,146 @@ export function createTransitView({ project, localPosition, requestRender = () =
     requestRender();
   }
 
-  function setMetroData(data) {
+  function projectRails() {
     railSegments = [];
-    for (const segment of data.segments) {
+    for (const segment of physicalData?.segments || []) {
       const points = segment.coordinates.map(([longitude, latitude]) => place(latitude, longitude, 0));
       for (let index = 1; index < points.length; index++) railSegments.push({ ...segment, coordinates: undefined, start: points[index - 1], end: points[index] });
     }
-    for (const child of [...cutawayGroup.children]) { cutawayGroup.remove(child); child.geometry.dispose(); }
+    tunnelSegments = railSegments.filter(segment => segment.form === 'tunnel');
+  }
+
+  function setMetroData(data) {
+    physicalData = data; projectRails();
     cutawayMask?.texture.dispose();
-    const tunnels = railSegments.filter(segment => segment.form === 'tunnel');
-    if (!tunnels.length) { cutawayMask = null; rebuild(true); return; }
-    const vertices = [];
-    const trackVertices = [[], [], []];
-    const bounds = new THREE.Box3();
-    const addQuad = (a, b, c, d, output = vertices) => { for (const point of [a, b, c, a, c, d]) output.push(point.x, point.y, point.z); };
-    for (const segment of tunnels) {
-      const { start, end } = segment;
-      bounds.expandByPoint(start); bounds.expandByPoint(end);
-      const direction = new THREE.Vector3().subVectors(end, start).setY(0).normalize();
-      const side = new THREE.Vector3(-direction.z, 0, direction.x).multiplyScalar(CHAMBER_HALF_WIDTH);
-      const a = start.clone().add(side), b = start.clone().sub(side), c = end.clone().sub(side), d = end.clone().add(side);
-      const floor = [a, b, c, d].map(point => point.clone().add(new THREE.Vector3(0, -TUNNEL_DEPTH, 0)));
-      addQuad(...floor);
-      const wallTop = floor.map(point => point.clone().add(new THREE.Vector3(0, 4.2, 0)));
-      addQuad(wallTop[0], wallTop[3], floor[3], floor[0]); addQuad(wallTop[1], floor[1], floor[2], wallTop[2]);
-      const trackSide = new THREE.Vector3(-direction.z, 0, direction.x);
-      const trackStart = start.clone().add(new THREE.Vector3(0, -TUNNEL_DEPTH, 0));
-      const trackEnd = end.clone().add(new THREE.Vector3(0, -TUNNEL_DEPTH, 0));
-      const strip = (from, to, halfWidth, elevation, output) => {
-        const left = trackSide.clone().multiplyScalar(halfWidth);
-        const lift = new THREE.Vector3(0, elevation, 0);
-        addQuad(from.clone().add(left).add(lift), from.clone().sub(left).add(lift), to.clone().sub(left).add(lift), to.clone().add(left).add(lift), output);
-      };
-      // The source gives a rail corridor axis, not gauge or sleeper engineering.
-      strip(trackStart, trackEnd, 1.8, .02, trackVertices[0]);
-      const length = Math.hypot(end.x-start.x, end.z-start.z);
-      for (let distance = .6; distance < length; distance += 1.2) {
-        const centre = trackStart.clone().lerp(trackEnd, distance/length);
-        strip(centre.clone().addScaledVector(direction, -.14), centre.clone().addScaledVector(direction, .14), 1.3, .08, trackVertices[1]);
-      }
-      for (const offset of [-.75, .75]) {
-        const lateral = trackSide.clone().multiplyScalar(offset);
-        strip(trackStart.clone().add(lateral), trackEnd.clone().add(lateral), .11, .2, trackVertices[2]);
-      }
-    }
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3)); geometry.computeVertexNormals();
-    cutawayGroup.add(new THREE.Mesh(geometry, tunnelMaterial));
-    for (let index = 0; index < trackVertices.length; index++) {
-      const trackGeometry = new THREE.BufferGeometry();
-      trackGeometry.setAttribute('position', new THREE.Float32BufferAttribute(trackVertices[index], 3));
-      trackGeometry.computeVertexNormals();
-      const mesh = new THREE.Mesh(trackGeometry, trackMaterials[index]);
-      mesh.name = ['Illustrated track bed', 'Illustrated sleepers', 'Illustrated rails'][index];
-      mesh.userData.source = data.source;
-      mesh.userData.dimensions = 'Illustrated gauge 1.5 m, rail width 0.22 m, sleepers every 1.2 m; source corridor axis only';
-      cutawayGroup.add(mesh);
-    }
     const texture = new THREE.DataTexture(new Uint8Array([0]), 1, 1, THREE.RedFormat, THREE.UnsignedByteType);
     texture.minFilter = texture.magFilter = THREE.LinearFilter;
     texture.generateMipmaps = false; texture.needsUpdate = true;
-    tunnelSegments = tunnels;
     maskMetresPerPixel = Infinity;
-    cutawayMask = { texture, bounds: new THREE.Vector4(0, 0, 1, 1), illustrativeDepthMetres: TUNNEL_DEPTH, source: data.source, classification: 'BRT explicitly in tunnel', sourceSegmentCount: data.segments.filter(segment => segment.form === 'tunnel').length };
-    updateCutawayMask(true);
-    rebuild(true);
+    cutawayMask = { texture, bounds: new THREE.Vector4(0, 0, 1, 1), projection: new THREE.Vector2(), illustrativeDepthMetres: TUNNEL_DEPTH, source: data.source, classification: 'BRT explicitly in tunnel', sourceSegmentCount: data.segments.filter(segment => segment.form === 'tunnel').length };
+    rebuild(true); updateCutawayMask(true); rebuild();
+  }
+
+  function inViewport(record) {
+    if (!camera) return false;
+    const position = record.ground.clone();
+    position.y += record.underground ? -TUNNEL_DEPTH + 2 : 2;
+    position.project(camera);
+    return Math.abs(position.x) <= 1 && Math.abs(position.y) <= 1 && Math.abs(position.z) <= 1;
+  }
+  function fresh(record) { return record.report.freshness === 'fresh' && record.report.sourceConnected; }
+  function clipToSection(segment, centre, radius) {
+    const dx = segment.end.x - segment.start.x, dz = segment.end.z - segment.start.z;
+    const x = segment.start.x - centre.x, z = segment.start.z - centre.z;
+    const a = dx * dx + dz * dz;
+    if (a < .001) return null;
+    const b = 2 * (x * dx + z * dz), c = x * x + z * z - radius * radius;
+    const discriminant = b * b - 4 * a * c;
+    if (discriminant < 0) return null;
+    const from = Math.max(0, (-b - Math.sqrt(discriminant)) / (2 * a));
+    const to = Math.min(1, (-b + Math.sqrt(discriminant)) / (2 * a));
+    if (to <= from) return null;
+    return { ...segment, start: segment.start.clone().lerp(segment.end, from), end: segment.start.clone().lerp(segment.end, to), capStart: from > .001, capEnd: to < .999 };
+  }
+
+  function drawSection(segments, halfWidth, viewDirection) {
+    for (const child of [...cutawayGroup.children]) { cutawayGroup.remove(child); child.geometry.dispose(); }
+    const surfaces = [[], [], [], [], [], []]; // floor, earth, concrete, bed, sleepers, rail
+    const addQuad = (a,b,c,d,out) => { for (const point of [a,b,c,a,c,d]) out.push(point.x,point.y,point.z); };
+    for (const segment of segments) {
+      const {start,end}=segment;
+      const direction=end.clone().sub(start).setY(0).normalize();
+      const side=new THREE.Vector3(-direction.z,0,direction.x);
+      const corners=[start.clone().addScaledVector(side,halfWidth),start.clone().addScaledVector(side,-halfWidth),end.clone().addScaledVector(side,-halfWidth),end.clone().addScaledVector(side,halfWidth)];
+      const floor=corners.map(point=>point.clone().add(new THREE.Vector3(0,-TUNNEL_DEPTH,0)));
+      const lower=floor.map(point=>point.clone().add(new THREE.Vector3(0,4.2,0)));
+      addQuad(...floor,surfaces[0]);
+      // Retain the far earth face, remove only the near face to reveal depth.
+      const edge=side.dot(viewDirection)>0 ? [0,3] : [1,2];
+      for (const [a,b] of [edge,...(segment.capStart?[[0,1]]:[]),...(segment.capEnd?[[3,2]]:[])]) {
+        addQuad(corners[a],corners[b],lower[b],lower[a],surfaces[1]);
+        addQuad(lower[a],lower[b],floor[b],floor[a],surfaces[2]);
+      }
+      const trackStart=start.clone().add(new THREE.Vector3(0,-TUNNEL_DEPTH,0));
+      const trackEnd=end.clone().add(new THREE.Vector3(0,-TUNNEL_DEPTH,0));
+      const strip=(from,to,hw,y,out)=>{
+        const lift=new THREE.Vector3(0,y,0), lateral=side.clone().multiplyScalar(hw);
+        addQuad(from.clone().add(lateral).add(lift),from.clone().sub(lateral).add(lift),to.clone().sub(lateral).add(lift),to.clone().add(lateral).add(lift),out);
+      };
+      strip(trackStart,trackEnd,1.8,.02,surfaces[3]);
+      const length=start.distanceTo(end);
+      for(let distance=.6;distance<length;distance+=1.2){const centre=trackStart.clone().lerp(trackEnd,distance/length);strip(centre.clone().addScaledVector(direction,-.14),centre.clone().addScaledVector(direction,.14),1.3,.08,surfaces[4]);}
+      for(const offset of [-.75,.75])strip(trackStart.clone().addScaledVector(side,offset),trackEnd.clone().addScaledVector(side,offset),.075,.2,surfaces[5]);
+    }
+    const materialList=[floorMaterial,earthMaterial,tunnelMaterial,...trackMaterials];
+    const names=['Section floor','Cut earth face · depth illustrated','Concrete chamber','Illustrated track bed','Illustrated sleepers','Illustrated rails'];
+    for(let i=0;i<surfaces.length;i++){
+      if(!surfaces[i].length)continue;
+      const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(surfaces[i],3));geometry.computeVertexNormals();
+      const mesh=new THREE.Mesh(geometry,materialList[i]);mesh.name=names[i];mesh.receiveShadow=false;cutawayGroup.add(mesh);
+    }
   }
 
   function updateCutawayMask(force = false) {
     if (!cutawayMask || !camera || !cutaway && !force) return;
-    const started = performance.now(), visibleBounds = new THREE.Box3();
-    const ray = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-    for (const x of [-1, 1]) for (const y of [-1, 1]) {
-      ray.setFromCamera(new THREE.Vector2(x, y), camera);
-      const point = ray.ray.intersectPlane(plane, new THREE.Vector3());
-      if (point) visibleBounds.expandByPoint(point);
+    const started=performance.now();
+    const viewDirection=camera.getWorldDirection(new THREE.Vector3());
+    const ray=new THREE.Raycaster();ray.setFromCamera(new THREE.Vector2(0,0),camera);
+    const centre=ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,1,0),0),new THREE.Vector3());
+    if(!centre)return;
+    const candidates=records.filter(record=>record.underground&&inViewport(record));
+    candidates.sort((a,b)=>Number(fresh(b))-Number(fresh(a))||a.ground.distanceToSquared(centre)-b.ground.distanceToSquared(centre));
+    let anchor=candidates[0]?.ground.clone()||null;
+    if(!anchor){
+      let best=Infinity;
+      for(const segment of tunnelSegments){const result=pointOnSegment(centre,segment.start,segment.end);if(result.distance<best){best=result.distance;anchor=segment.start.clone().lerp(segment.end,result.fraction);}}
+      if(best>span*.8)anchor=null;
     }
-    if (visibleBounds.isEmpty()) return;
-    // Reuse the padded viewport until a pan exits it or zoom changes by 25%.
-    const metresPerPixel = span / viewportHeight;
-    const viewDirection = camera.getWorldDirection(new THREE.Vector3());
-    const apertureShift = viewDirection.clone().multiplyScalar(TUNNEL_DEPTH / Math.min(-0.1, viewDirection.y)).setY(0);
-    const previous = cutawayMask.bounds;
-    if (!force && maskViewDirection.distanceToSquared(viewDirection) < .000001 && metresPerPixel >= maskMetresPerPixel * .8 && metresPerPixel <= maskMetresPerPixel * 1.25 &&
-      visibleBounds.min.x >= previous.x + 40 && visibleBounds.min.z >= previous.y + 40 &&
-      visibleBounds.max.x <= previous.x + previous.z - 40 && visibleBounds.max.z <= previous.y + previous.w - 40) return;
-    const size = visibleBounds.getSize(new THREE.Vector3());
-    visibleBounds.min.x -= Math.max(80, size.x * .15); visibleBounds.max.x += Math.max(80, size.x * .15);
-    visibleBounds.min.z -= Math.max(80, size.z * .15); visibleBounds.max.z += Math.max(80, size.z * .15);
-    const sizeX = visibleBounds.max.x - visibleBounds.min.x, sizeZ = visibleBounds.max.z - visibleBounds.min.z;
-    const width = Math.min(2048, Math.max(64, Math.ceil(sizeX / metresPerPixel)));
-    const height = Math.min(2048, Math.max(64, Math.ceil(sizeZ / metresPerPixel)));
-    const cellX = sizeX / width, cellZ = sizeZ / height, edgeWidth = Math.hypot(cellX, cellZ);
-    const pixels = new Uint8Array(width * height), radius = CUTAWAY_HALF_WIDTH;
-    for (const segment of tunnelSegments) {
-      // An oblique cut follows the viewing rays from the real tunnel floor to
-      // the ground. A narrow opening can reveal depth without erasing a 40 m
-      // road-width stripe centred blindly above the tunnel.
-      const start = segment.start.clone().add(apertureShift);
-      const end = segment.end.clone().add(apertureShift);
-      const padding = radius + edgeWidth;
-      const left = Math.max(0, Math.floor((Math.min(start.x, end.x) - padding - visibleBounds.min.x) / cellX));
-      const right = Math.min(width - 1, Math.ceil((Math.max(start.x, end.x) + padding - visibleBounds.min.x) / cellX));
-      const top = Math.max(0, Math.floor((Math.min(start.z, end.z) - padding - visibleBounds.min.z) / cellZ));
-      const bottom = Math.min(height - 1, Math.ceil((Math.max(start.z, end.z) + padding - visibleBounds.min.z) / cellZ));
-      const dx = end.x - start.x, dz = end.z - start.z, lengthSquared = dx * dx + dz * dz || 1;
-      for (let y = top; y <= bottom; y++) for (let x = left; x <= right; x++) {
-        const px = visibleBounds.min.x + (x + .5) * cellX - start.x;
-        const pz = visibleBounds.min.z + (y + .5) * cellZ - start.z;
-        const fraction = THREE.MathUtils.clamp((px * dx + pz * dz) / lengthSquared, 0, 1);
-        const distance = Math.hypot(px - fraction * dx, pz - fraction * dz);
-        const coverage = Math.round(255 * THREE.MathUtils.clamp(.5 + (radius - distance) / edgeWidth, 0, 1));
-        const index = y * width + x;
-        if (coverage > pixels[index]) pixels[index] = coverage;
+    const metresPerPixel=span/viewportHeight;
+    if(!force&&sectionAnchor&&anchor&&sectionAnchor.distanceToSquared(anchor)<100&&maskViewDirection.distanceToSquared(viewDirection)<.000001&&metresPerPixel>=maskMetresPerPixel*.8&&metresPerPixel<=maskMetresPerPixel*1.25)return;
+    sectionAnchor=anchor;
+    sectionSegments=anchor?tunnelSegments.map(segment=>clipToSection(segment,anchor,70)).filter(Boolean):[];
+    // Keep the unmodified reported point inside the illustration even when the
+    // upstream point is offset from the retained corridor. Never snap it.
+    const halfWidth=Math.max(CHAMBER_HALF_WIDTH,(candidates[0]?.rail?.distance||0)+3);
+    drawSection(sectionSegments,halfWidth,viewDirection);
+    const projection=cutawayMask.projection.set(viewDirection.x/Math.min(-.1,viewDirection.y),viewDirection.z/Math.min(-.1,viewDirection.y));
+    const projectToOpening=point=>new THREE.Vector3(point.x-point.y*projection.x,0,point.z-point.y*projection.y);
+    const bounds=new THREE.Box3();
+    const projected=[];
+    for(const segment of sectionSegments){
+      // Union of surface and floor projections gives a real depth section,
+      // rather than a displaced floating rail strip with no earth face.
+      const surfaceStart=projectToOpening(segment.start),surfaceEnd=projectToOpening(segment.end);
+      const floorStart=projectToOpening(segment.start.clone().add(new THREE.Vector3(0,-TUNNEL_DEPTH,0))),floorEnd=projectToOpening(segment.end.clone().add(new THREE.Vector3(0,-TUNNEL_DEPTH,0)));
+      projected.push({surfaceStart,surfaceEnd,floorStart,floorEnd});
+      for(const point of [surfaceStart,surfaceEnd,floorStart,floorEnd])bounds.expandByPoint(point);
+    }
+    if(bounds.isEmpty()){bounds.min.set(-1,0,-1);bounds.max.set(1,0,1);}
+    bounds.expandByScalar(halfWidth+2);
+    const sx=bounds.max.x-bounds.min.x,sz=bounds.max.z-bounds.min.z;
+    const width=Math.min(1024,Math.max(64,Math.ceil(sx/metresPerPixel))),height=Math.min(1024,Math.max(64,Math.ceil(sz/metresPerPixel)));
+    const cellX=sx/width,cellZ=sz/height,edgeWidth=Math.hypot(cellX,cellZ);
+    const pixels=new Uint8Array(width*height), radius=halfWidth+.5;
+    for(const segment of projected){
+      const steps=Math.max(1,Math.ceil(segment.surfaceStart.distanceTo(segment.floorStart)/2));
+      for(let step=0;step<=steps;step++){
+        const start=segment.surfaceStart.clone().lerp(segment.floorStart,step/steps),end=segment.surfaceEnd.clone().lerp(segment.floorEnd,step/steps);
+        const padding=radius+edgeWidth;
+        const left=Math.max(0,Math.floor((Math.min(start.x,end.x)-padding-bounds.min.x)/cellX)),right=Math.min(width-1,Math.ceil((Math.max(start.x,end.x)+padding-bounds.min.x)/cellX));
+        const top=Math.max(0,Math.floor((Math.min(start.z,end.z)-padding-bounds.min.z)/cellZ)),bottom=Math.min(height-1,Math.ceil((Math.max(start.z,end.z)+padding-bounds.min.z)/cellZ));
+        for(let y=top;y<=bottom;y++)for(let x=left;x<=right;x++){
+          const point={x:bounds.min.x+(x+.5)*cellX,z:bounds.min.z+(y+.5)*cellZ};
+          const distance=pointOnSegment(point,start,end).distance;
+          const coverage=Math.round(255*THREE.MathUtils.clamp(.5+(radius-distance)/edgeWidth,0,1));
+          pixels[y*width+x]=Math.max(pixels[y*width+x],coverage);
+        }
       }
     }
-    cutawayMask.texture.image = { data: pixels, width, height };
-    cutawayMask.texture.needsUpdate = true;
-    cutawayMask.bounds.set(visibleBounds.min.x, visibleBounds.min.z, sizeX, sizeZ);
-    maskMetresPerPixel = metresPerPixel;
-    maskViewDirection.copy(viewDirection);
-    maskRebuilds++; maskMilliseconds = performance.now() - started;
+    cutawayMask.texture.image={data:pixels,width,height};cutawayMask.texture.needsUpdate=true;
+    cutawayMask.bounds.set(bounds.min.x,bounds.min.z,sx,sz);
+    maskMetresPerPixel=metresPerPixel;maskViewDirection.copy(viewDirection);
+    maskRebuilds++;maskMilliseconds=performance.now()-started;
   }
 
   async function loadMetro(url = './data/transit/metro-physical.json.gz') {
@@ -306,31 +329,30 @@ export function createTransitView({ project, localPosition, requestRender = () =
 
   function metroVisibility() {
     const metros = records.filter(record => record.mode === 'metro');
-    const inside = record => {
-      if (!camera) return false;
-      const position = record.ground.clone();
-      position.y += record.underground ? -TUNNEL_DEPTH + 2 : 2;
-      position.project(camera);
-      return Math.abs(position.x) <= 1 && Math.abs(position.y) <= 1 && Math.abs(position.z) <= 1;
-    };
-    const visible = metros.filter(inside);
-    const underground = visible.filter(record => record.underground);
-    const fresh = record => record.report.freshness === 'fresh' && record.report.sourceConnected;
+    const visible = metros.filter(inViewport);
+    const underground = visible.filter(record => record.underground && (!cutaway || sectionAnchor && Math.hypot(record.ground.x-sectionAnchor.x,record.ground.z-sectionAnchor.z)<=70));
+    const freshCount = underground.filter(fresh).length;
+    const focusCandidates = metros.filter(record=>record.underground&&(fresh(record)||record.report.freshness==='stale'));
+    focusCandidates.sort((a,b)=>Number(fresh(b))-Number(fresh(a))||(b.report.observedAt||0)-(a.report.observedAt||0));
+    const focus=focusCandidates[0]?.report;
     return {
       metroObservations: metros.length,
       visibleMetroObservations: visible.length,
       visibleUndergroundObservations: underground.length,
       visibleFreshMetroObservations: visible.filter(fresh).length,
-      visibleFreshUndergroundObservations: underground.filter(fresh).length,
-      cutawayMessage: !cutaway ? null : underground.length
-        ? `${underground.filter(fresh).length} fresh metro reports in this cutaway`
-        : 'No metro report in this cutaway view',
+      visibleFreshUndergroundObservations: freshCount,
+      metroFocus: focus ? {id:focus.id,latitude:focus.latitude,longitude:focus.longitude,label:focus.label,observedAt:focus.observedAt,freshness:focus.freshness,sourceConnected:focus.sourceConnected} : null,
+      cutawayMessage: !cutaway ? null : freshCount
+        ? `${freshCount} fresh metro ${freshCount===1?'report':'reports'} · illustrated section`
+        : underground.length ? `${underground.length} ${underground.every(record=>record.report.freshness==='stale')?'older':'unverified'} metro ${underground.length===1?'report':'reports'} · not live`
+        : 'No metro report in this section',
+      section: sectionAnchor ? {radiusMetres:70,segmentCount:sectionSegments.length,illustrativeDepthMetres:TUNNEL_DEPTH} : null,
     };
   }
 
   return {
     group,
-    update(nextSnapshot) { snapshot = nextSnapshot; rebuild(true); },
+    update(nextSnapshot) { snapshot = nextSnapshot; projectRails(); rebuild(true); updateCutawayMask(true); rebuild(); },
     setView(view) { camera = view.camera || camera; span = view.span ?? span; viewportHeight = view.viewportHeight ?? viewportHeight; updateCutawayMask(); rebuild(); },
     setCutaway(enabled) { cutaway = typeof enabled === 'object' ? enabled.enabled : enabled; cutawayGroup.visible = cutaway; updateCutawayMask(); rebuild(); return cutawayMask; },
     getCutaway() { return cutawayMask; },
@@ -339,7 +361,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     dispose() {
       for (const batch of batches.values()) { batch.body.dispose(); batch.roof.dispose(); }
       for (const child of cutawayGroup.children) child.geometry.dispose();
-      cutawayMask?.texture.dispose(); box.dispose(); bodyMaterial.dispose(); roofMaterial.dispose(); metroBodyMaterial.dispose(); metroRoofMaterial.dispose(); tunnelMaterial.dispose(); trackMaterials.forEach(material => material.dispose());
+      cutawayMask?.texture.dispose(); box.dispose(); bodyMaterial.dispose(); roofMaterial.dispose(); metroBodyMaterial.dispose(); metroRoofMaterial.dispose(); tunnelMaterial.dispose(); floorMaterial.dispose(); earthMaterial.dispose(); trackMaterials.forEach(material => material.dispose());
       group.removeFromParent(); group.clear(); batches.clear();
     },
   };

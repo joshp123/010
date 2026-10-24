@@ -65,9 +65,18 @@ function showTransit(snapshot) {
 }
 
 function showMetroViewStatus() {
-  const message = scene?.getTransitStatistics().cutawayMessage;
-  byId('metro-view-status').hidden = !message;
-  byId('metro-view-status').textContent = message || '';
+  const statistics = scene?.getTransitStatistics();
+  const message = statistics?.cutawayMessage;
+  byId('metro-map-status').hidden = !message;
+  document.body.dataset.metroCutaway = message ? 'true' : 'false';
+  byId('metro-view-status').textContent = message ? `Metro cutaway · ${message}` : '';
+  const target = statistics?.metroFocus;
+  const targetFresh = target?.freshness === 'fresh' && target.sourceConnected;
+  const canFind = target && Number.isFinite(target.latitude) && Number.isFinite(target.longitude)
+    && (!statistics.visibleUndergroundObservations || targetFresh && !statistics.visibleFreshUndergroundObservations);
+  byId('metro-find').hidden = !message || !canFind;
+  byId('metro-find').textContent = targetFresh ? 'Find reported metro ↗' : 'Find older metro report ↗';
+  byId('metro-find').title = target ? `${target.label || 'Metro'} · observed ${observationTime(target.observedAt)}` : '';
 }
 
 function say(message) {
@@ -304,6 +313,13 @@ byId('transit-toggle').addEventListener('click', () => {
 });
 byId('vehicle-close').addEventListener('click', () => showVehicle(null));
 byId('metro-cutaway').addEventListener('change', event => { scene?.setMetroCutaway(event.target.checked); showMetroViewStatus(); });
+byId('metro-find').addEventListener('click', () => {
+  const target = scene?.getTransitStatistics().metroFocus;
+  if (!target || !Number.isFinite(target.latitude) || !Number.isFinite(target.longitude)) return say('That metro report is no longer available.');
+  setViewPanel(false);
+  navigateTo({ lat: target.latitude, lon: target.longitude, span: 220, name: `Metro ${target.label || ''}`.trim() });
+  showMetroViewStatus();
+});
 byId('zoom-in').addEventListener('click', () => scene?.zoom(1.4));
 byId('zoom-out').addEventListener('click', () => scene?.zoom(.7));
 byId('rotate').addEventListener('click', () => scene?.setView({ ...currentView, bearing: currentView.bearing + 45 }));
