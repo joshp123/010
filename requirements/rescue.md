@@ -4,6 +4,8 @@ Written by AI on 2026-10-24 by model GPT-6, from Josh's correction.
 
 The current published map is rejected on visual quality. Existing screenshots, successful builds and past agent reviews do not establish acceptance. Read this with [the original steering](steering.md) and [the product contract](README.md).
 
+Josh's further steering: **“the work and approach must be deep and holistic btw not tiny patches”.** Evaluate and improve the full source-to-image approach and the whole experience. Small candidates may validate an approach before scaling; isolated fixes or a handful of polished buildings do not satisfy the rescue.
+
 ## Corrections
 
 - Buildings have strange colours and far too little detail. The result must resemble a miniature pixel-art Rotterdam, with recognisable architecture and coherent materials throughout the municipality. A coarse 3D map with generic windows does not meet the references.
