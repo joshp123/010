@@ -1,3 +1,4 @@
+import { clampViewSpan } from './view-limits.js';
 import { createScene } from './scene.js';
 import { createLiveTransit } from './live-transit.js';
 import { watchWeather, rotterdamTime } from './weather.js';
@@ -456,7 +457,7 @@ try {
     const lat = Number(params.get('lat')), lon = Number(params.get('lon'));
     if (lat > 51.7 && lat < 52.1 && lon > 3.8 && lon < 4.7) {
       locationLabel = 'Rotterdam'; selectedDestination = null;
-      scene.setView({ lat, lon, span: Math.max(200, Math.min(65000, Number(params.get('span')))), bearing: Number(params.get('bearing')) || 0 });
+      scene.setView({ lat, lon, span: clampViewSpan(params.get('span'), currentView.span), bearing: Number(params.get('bearing')) || 0 });
     }
   }
   applyLighting();

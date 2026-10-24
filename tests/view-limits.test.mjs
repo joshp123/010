@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {clampViewSpan,MIN_VIEW_SPAN,MAX_VIEW_SPAN} from '../public/view-limits.js';
+assert.equal(clampViewSpan('90'),90,'close-detail shared span survives');
+assert.equal(clampViewSpan(0),MIN_VIEW_SPAN);
+assert.equal(clampViewSpan(-100),MIN_VIEW_SPAN);
+assert.equal(clampViewSpan(90000),MAX_VIEW_SPAN);
+for(const input of [undefined,NaN,Infinity,'not-a-span'])assert.equal(clampViewSpan(input,280),280);
+assert.equal(clampViewSpan(NaN,NaN),1700);
+const scene=await readFile(new URL('../public/scene.js',import.meta.url),'utf8');
+const app=await readFile(new URL('../public/app.js',import.meta.url),'utf8');
+assert.match(scene,/view\.span = clampViewSpan\(nextView\.span \?\? view\.span, view\.span\)/);
+assert.match(app,/span: clampViewSpan\(params\.get\('span'\), currentView\.span\)/);
+console.log('Shared camera span: 90m preserved, 40–50000m bounds, invalid values preserve prior span');

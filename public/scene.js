@@ -1,3 +1,4 @@
+import { clampViewSpan } from './view-limits.js';
 import { createFixtureSurfaceLighting } from './fixture-surface-lighting.js';
 import * as THREE from 'three';
 import { createCityMaterial, featureColor, streetColor, yardColor, createLampPoolMaterial, applyMetroCutaway } from './miniature-style.js';
@@ -636,7 +637,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   function setView(nextView, notify = true) {
     view.lat = THREE.MathUtils.clamp(Number(nextView.lat ?? view.lat), 51.80, 52.05);
     view.lon = THREE.MathUtils.clamp(Number(nextView.lon ?? view.lon), 3.88, 4.66);
-    view.span = THREE.MathUtils.clamp(Number(nextView.span ?? view.span), 160, 50000);
+    view.span = clampViewSpan(nextView.span ?? view.span, view.span);
     view.bearing = Number(nextView.bearing ?? view.bearing);
     target.copy(localPosition(view.lat, view.lon));
     updateCamera();
