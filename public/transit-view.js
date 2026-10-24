@@ -465,7 +465,9 @@ export function createTransitView({ project, localPosition, requestRender = () =
     for(let y=1;y<height-1;y++)for(let x=1;x<width-1;x++)if(pixels[y*width+x]){
       for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(!pixels[(y+dy)*width+x+dx])interior[y*width+x]=0;
     }
-    cutawayMask.texture.image={data:interior,width,height};cutawayMask.texture.needsUpdate=true;
+    const texture=cutawayMask.texture;
+    if(texture.image.width!==width||texture.image.height!==height)texture.dispose();
+    texture.image={data:interior,width,height};texture.needsUpdate=true;
     cutawayMask.bounds.set(bounds.min.x,bounds.min.z,sx,sz);
     maskMetresPerPixel=metresPerPixel;maskViewDirection.copy(viewDirection);
     maskRebuilds++;maskMilliseconds=performance.now()-started;
