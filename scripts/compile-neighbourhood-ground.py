@@ -16,6 +16,11 @@ along=(columns*np.cos(angle)+rows*np.sin(angle))*pixel
 across=(-columns*np.sin(angle)+rows*np.cos(angle))*pixel
 rgb=np.zeros((height,width,3),float);eligible=surface['surface']>0;material=np.zeros((height,width),np.uint8)
 colours={1:[107,113,114],2:[157,110,95],3:[179,177,163],4:[112,133,76],5:[68,97,102],6:[143,132,117],7:[160,118,99]}
+pavingPath=source/'drawing/pavement-material.png'
+paving=np.array(Image.open(pavingPath).convert('RGB'),float)
+# Nine drawn units span2.7m; the source-bound atlas therefore keeps .30m units.
+pavingCoordinates=[np.mod(across,2.7)/2.7*(paving.shape[0]-1),np.mod(along,2.7)/2.7*(paving.shape[1]-1)]
+pavingField=np.stack([ndimage.map_coordinates(paving[:,:,channel],pavingCoordinates,order=1,mode='wrap') for channel in range(3)],axis=-1)
 sourceIds=[]
 for record in metadata['features']:
  mask=feature==record['batchId'];a=record['attributes'];physical=a.get('FYSIEKVK','').lower();purpose=a.get('FUNCTIE','').lower();kind=int(surface['surface'][mask][0]) if mask.any() else 0
@@ -36,7 +41,7 @@ for record in metadata['features']:
    return np.clip((pixel*.5+lineWidth*.5-distance)/pixel,0,lineWidth/pixel)
   coverage=np.maximum(joint_coverage(along),joint_coverage(across))
   field-=coverage*.22
- rgb[mask]=np.array(colours[kind])*field[mask,None]
+ rgb[mask]=pavingField[mask] if kind==3 else np.array(colours[kind])*field[mask,None]
 # Exact source material boundaries are quietly inked inside the native footprint.
 edge=np.zeros_like(eligible)
 for axis in [0,1]:
@@ -57,5 +62,5 @@ road=np.isin(material,[1,2,6,7]);paint&=eligible&road;rgb[paint]=[222,219,200]
 nearest=ndimage.distance_transform_edt(~eligible,return_distances=False,return_indices=True);rgb[~eligible]=rgb[nearest[0][~eligible],nearest[1][~eligible]]
 rgba=np.dstack([np.clip(rgb,0,255).astype('uint8'),eligible.astype('uint8')*255]);Image.fromarray(rgba).save(out/'neighbourhood-ground.png')
 preview=rgba[:,:,:3].copy();preview[~eligible]=[42,46,48];Image.fromarray(preview).save(work/'drawn-ground-review.png')
-manifest={k:metadata[k] for k in ['boundsRD','imageSize','worldToImageUV','sourceDecodedSha256','orthophotoSha256','projectionMaximumErrorPixels']};manifest.update(status='review-candidate',texture='neighbourhood-ground.png',areaId='adjoining-neighbourhood',sourceFeatureIds=sourceIds,eligiblePixels=int(eligible.sum()),paintPixels=int(paint.sum()),interpretation='Exact source material footprints and observed crossing fragments. Small quiet local paving joints follow observed street axes; generated geographic bands are excluded. Source OV reservation remains red-brown.',notSurveyed='Individual paving unit boundaries and .30/.21m drawing units are approximate illustration, not measured slab inventory.',acceptance='Unaccepted whole-neighbourhood actual city candidate.')
+manifest={k:metadata[k] for k in ['boundsRD','imageSize','worldToImageUV','sourceDecodedSha256','orthophotoSha256','projectionMaximumErrorPixels']};manifest.update(status='review-candidate',texture='neighbourhood-ground.png',areaId='adjoining-neighbourhood',sourceFeatureIds=sourceIds,eligiblePixels=int(eligible.sum()),paintPixels=int(paint.sum()),pavementMaterialSha256=hashlib.sha256(pavingPath.read_bytes()).hexdigest(),interpretation='Model-drawn local .30m pavement units inside exact source footway regions. Exact source material footprints and observed crossing fragments. Small quiet local paving joints follow observed street axes; generated geographic bands are excluded. Source OV reservation remains red-brown.',notSurveyed='Individual paving unit boundaries and .30/.21m drawing units are approximate illustration, not measured slab inventory.',acceptance='Unaccepted whole-neighbourhood actual city candidate.')
 (out/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');(source/'drawing/source-marking-review.json').write_text(json.dumps({'sourceSha256':metadata['orthophotoSha256'],'regions':regions,'method':'Observed crossing bars retain source local-contrast support only; no gap filling. Existing reviewed source paint retained at exact RD coordinates.'},indent=2)+'\n');print(json.dumps({'features':len(sourceIds),'paintPixels':int(paint.sum())}))

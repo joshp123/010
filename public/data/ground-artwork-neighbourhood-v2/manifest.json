@@ -234,7 +234,8 @@
   ],
   "eligiblePixels": 1473059,
   "paintPixels": 5695,
-  "interpretation": "Exact source material footprints and observed crossing fragments. Small quiet local paving joints follow observed street axes; generated geographic bands are excluded. Source OV reservation remains red-brown.",
+  "pavementMaterialSha256": "207a11681bb02429d97ee6a1deeda793813759a207054e2e6fdc785e4b694006",
+  "interpretation": "Model-drawn local .30m pavement units inside exact source footway regions. Exact source material footprints and observed crossing fragments. Small quiet local paving joints follow observed street axes; generated geographic bands are excluded. Source OV reservation remains red-brown.",
   "notSurveyed": "Individual paving unit boundaries and .30/.21m drawing units are approximate illustration, not measured slab inventory.",
   "acceptance": "Unaccepted whole-neighbourhood actual city candidate."
 }

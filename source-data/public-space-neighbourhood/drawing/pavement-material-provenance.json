@@ -1,0 +1,9 @@
+{
+  "writtenBy": "AI, GPT-6, 2026-10-24",
+  "tool": "built-in image generation",
+  "sourceFile": "exec-c5dd1317-6eda-4962-8ca2-545ef65be952.png",
+  "intent": "Quiet warm-grey small square Dutch pavement units, top-down drawn material only. No geographic bands, curbs, paths, objects, perspective or markings.",
+  "outputObservation": "Nine units across; runtime binding repeats the sample at2.7m to represent approximate .30m paving units.",
+  "sourceLimit": "Official dated orthophoto supports small grey paving and street orientation. Individual joint boundaries and exact unit dimensions are illustration; they are not measured slab records.",
+  "acceptance": "Unaccepted local material candidate; judge complete actual city."
+}
