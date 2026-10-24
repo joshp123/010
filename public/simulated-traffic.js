@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { rightHandOffset, turnWeight, safeStep, followingDistance, speedForRoadClass } from './traffic-motion.js';
+import { rightHandOffset, safeStep, followingDistance, speedForRoadClass } from './traffic-motion.js';
+import { createJourneyPlanner } from './traffic-journeys.js';
 
 class RoadReader {
   constructor(bytes) { this.bytes = bytes; this.offset = 0; }
@@ -78,9 +79,10 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
   const cruiseSpeed = roadClass => bicycles ? 4.2 : speedForRoadClass(roadClass);
   const transform = new THREE.Object3D(), color = new THREE.Color(), position = new THREE.Vector3(), tangent = new THREE.Vector3();
   const frustum = new THREE.Frustum(), cameraMatrix = new THREE.Matrix4();
-  let sourceNetwork = null, roads = [], outgoing = new Map(), candidates = [], cars = [];
+  let sourceNetwork = null, roads = [], planner = null, candidates = [], cars = [];
   let span = 1700, viewportHeight = 900, hasView = false, enabled = true, paused = false, lastTime = null, elapsed = 0, sequence = 1;
-  let desiredCount = 0, seeded = false;
+  let desiredCount = 0, seeded = false, plannedJourneys = 0, completedJourneys = 0;
+  const unroutableOrigins = new Set();
   const nextPosition = new THREE.Vector3(), cornerTangent = new THREE.Vector3();
 
   function random() { sequence = (Math.imul(sequence, 1664525) + 1013904223) >>> 0; return sequence / 4294967296; }
@@ -107,46 +109,28 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
 
   function setRoads(network, preserveCars = false) {
     const previousCars = preserveCars ? cars : [];
-    sourceNetwork = network; roads = []; outgoing = new Map(); cars = []; lastTime = null;
+    sourceNetwork = network; roads = []; cars = []; lastTime = null; unroutableOrigins.clear();
     for (const source of network.roads) {
       if (source.coordinates.length < 2 || ![1, 2, 3].includes(source.direction)) continue;
       const points = source.coordinates.map(([longitude, latitude]) => place(latitude, longitude, .2, { source: 'NWB', roadId: source.id, roadClass: source.roadClass }));
       const distances = [0];
       for (let index = 1; index < points.length; index++) distances.push(distances.at(-1) + Math.hypot(points[index].x - points[index - 1].x, points[index].z - points[index - 1].z));
-      if (distances.at(-1) < 1) continue;
+      if (distances.at(-1) < .1) continue;
       const road = { ...source, sourceIndex: roads.length, points, distances, length: distances.at(-1), bounds: new THREE.Box3().setFromPoints(points).expandByScalar(5) };
       roads.push(road);
-      for (const direction of source.direction === 3 ? [1, -1] : [source.direction === 1 ? 1 : -1]) {
-        const start = direction === 1 ? road.start : road.end;
-        if (start) { if (!outgoing.has(start)) outgoing.set(start, []); outgoing.get(start).push({ road, direction }); }
-      }
     }
+    planner = createJourneyPlanner(roads);
     if (preserveCars) {
       cars = previousCars.flatMap(car => {
         const road = roads[car.road.sourceIndex];
         if (!road || road.id !== car.road.id) return [];
-        return [{ ...car, road, distance: car.distance / car.road.length * road.length, next: car.next ? { ...car.next, road: roads[car.next.road.sourceIndex] } : car.next }];
+        const journey = { ...car.journey, path: car.journey.path.map(step => ({ ...step, road: roads[step.roadIndex] })) };
+        if (journey.path.some(step => !step.road)) return [];
+        if (journey.path.some((step, index) => index && !planner.transitions(journey.path[index - 1].roadIndex, journey.path[index - 1].direction).some(next => next.roadIndex === step.roadIndex && next.direction === step.direction))) return [];
+        return [{ ...car, road, journey, distance: car.distance / car.road.length * road.length, next: journey.path[car.journeyIndex + 1] || null }];
       });
-    } else seeded = false;
+    } else { seeded = false; plannedJourneys = 0; completedJourneys = 0; }
     selectRoads(!preserveCars); render();
-  }
-
-  function nextRoad(car) {
-    const end = car.direction === 1 ? car.road.end : car.road.start;
-    const endpoint = car.direction === 1 ? car.road.points.at(-1) : car.road.points[0];
-    const incoming = car.direction === 1
-      ? endpoint.clone().sub(car.road.points.at(-2))
-      : endpoint.clone().sub(car.road.points[1]);
-    const options = (outgoing.get(end) || []).flatMap(next => {
-      if (next.road === car.road || next.road.id === car.road.id) return [];
-      const start = next.direction === 1 ? next.road.points[0] : next.road.points.at(-1);
-      if (Math.hypot(endpoint.x - start.x, endpoint.z - start.z) > .5) return [];
-      const forward = (next.direction === 1 ? next.road.points[1] : next.road.points.at(-2)).clone().sub(start);
-      const weight = turnWeight([incoming.x, incoming.z], [forward.x, forward.z]);
-      return weight ? [{ ...next, weight }] : [];
-    });
-    let choice = random() * options.reduce((sum, next) => sum + next.weight, 0);
-    return options.find(next => (choice -= next.weight) <= 0) || null;
   }
 
   function selectRoads(allowInterior = true) {
@@ -171,7 +155,15 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
         if (!hasView || inside(nextPosition)) continue;
       }
       if (cars.some(car => car.road === road && Math.abs(car.distance - distance) < 14)) continue;
-      cars.push({ road, distance, direction, speed: 0, cruise: cruiseSpeed(road.roadClass) * (.85 + random() * .3),
+      const originKey = `${road.sourceIndex}:${direction}`;
+      if (unroutableOrigins.has(originKey)) continue;
+      const journey = planner.plan({ roadIndex: road.sourceIndex, direction, random,
+        minDistance: bicycles ? 150 : 350, maxDistance: bicycles ? 1800 : 4000,
+        preferDestination: point => hasView && !inside(point) });
+      if (!journey) { unroutableOrigins.add(originKey); continue; }
+      plannedJourneys++;
+      cars.push({ road, distance, direction, journey, journeyIndex: 0, next: journey.path[1] || null, ending: journey.path.length === 1,
+        speed: 0, cruise: cruiseSpeed(road.roadClass) * (.85 + random() * .3),
         heading: Math.atan2(tangent.x * direction, tangent.z * direction), age: allowInterior ? 1 : 0,
         color: PALETTE[Math.floor(random() * PALETTE.length)] });
     }
@@ -239,7 +231,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     return statistics();
   }
 
-  function statistics() { return { simulated: true, sourceRoads: roads.length, visibleRoads: candidates.length, cars: bicycles ? 0 : body.count, cyclists: bicycles ? body.count : 0, vehicles: body.count, maximumVehicles, drawCalls: body.count && group.visible ? (bicycles ? 4 : 2) : 0, paused, enabled, simulationSeconds: elapsed }; }
+  function statistics() { return { simulated: true, sourceRoads: roads.length, visibleRoads: candidates.length, cars: bicycles ? 0 : body.count, cyclists: bicycles ? body.count : 0, vehicles: body.count, maximumVehicles, drawCalls: body.count && group.visible ? (bicycles ? 4 : 2) : 0, paused, enabled, simulationSeconds: elapsed, plannedJourneys, completedJourneys, unroutableOrigins: unroutableOrigins.size, network: planner?.diagnostics() || null }; }
 
   return {
     group, load, setRoads,
@@ -259,11 +251,8 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
       cars = cars.filter(car => {
         car.age += delta;
         let endDistance = car.direction === 1 ? car.road.length - car.distance : car.distance;
-        if (endDistance < 30 && car.next === undefined) {
-          car.next = nextRoad(car); car.ending = !car.next;
-        }
         let targetSpeed = car.cruise;
-        // Brake into turns. Direction choices remain illustrative, not traffic rules.
+        // Brake into the planned turn. Trip demand is illustrative; legal turn restrictions are not in this source.
         if (car.next && car.next.weight < 5) targetSpeed = Math.min(targetSpeed, 3.5 + endDistance * .25);
         for (const other of cars) {
           if (other === car || other.road !== car.road || other.direction !== car.direction) continue;
@@ -281,10 +270,10 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
           const available = car.direction === 1 ? car.road.length - car.distance : car.distance;
           if (remaining < available) { car.distance += remaining * car.direction; break; }
           remaining -= available;
-          const next = car.next === undefined ? nextRoad(car) : car.next;
-          if (!next) return false;
+          const next = car.next;
+          if (!next) { completedJourneys++; return false; }
           car.road = next.road; car.direction = next.direction; car.distance = car.direction === 1 ? 0 : car.road.length;
-          car.next = undefined; car.ending = false;
+          car.journeyIndex++; car.next = car.journey.path[car.journeyIndex + 1] || null; car.ending = !car.next;
           car.cruise = cruiseSpeed(car.road.roadClass);
         }
         locate(car.road, car.distance);
@@ -299,6 +288,6 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     setEnabled(value) { enabled = value; group.visible = enabled && span <= maximumSpan; lastTime = null; if (enabled) { selectRoads(); render(); } else requestRender(); },
     refreshProjection() { if (sourceNetwork) setRoads(sourceNetwork, true); },
     statistics,
-    dispose() { group.removeFromParent(); group.clear(); body.dispose(); roof.dispose(); geometry.dispose(); wheels?.dispose(); frames?.dispose(); wheelGeometry?.dispose(); bicycleMaterial?.dispose(); material.dispose(); roofMaterial.dispose(); roads = []; cars = []; outgoing.clear(); },
+    dispose() { group.removeFromParent(); group.clear(); body.dispose(); roof.dispose(); geometry.dispose(); wheels?.dispose(); frames?.dispose(); wheelGeometry?.dispose(); bicycleMaterial?.dispose(); material.dispose(); roofMaterial.dispose(); roads = []; cars = []; planner = null; unroutableOrigins.clear(); },
   };
 }

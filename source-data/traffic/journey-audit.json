@@ -1,0 +1,62 @@
+{
+  "cars": {
+    "directedEdges": 45500,
+    "connections": 71895,
+    "rejectedEndpointGaps": 0,
+    "rejectedHeightGaps": 0,
+    "rejectedReversals": 1779,
+    "terminalEdges": 3077,
+    "components": 181,
+    "largestComponentEdges": 39802,
+    "areas": {
+      "centre": 31,
+      "Hoek": 49
+    },
+    "bridgeJourneys": [
+      {
+        "sourceId": 600728317,
+        "origin": 600176474,
+        "destination": 188270034,
+        "edges": 25,
+        "metres": 2122
+      },
+      {
+        "sourceId": 600892247,
+        "origin": 600176904,
+        "destination": 186273018,
+        "edges": 17,
+        "metres": 1823
+      }
+    ]
+  },
+  "bicycles": {
+    "directedEdges": 13999,
+    "connections": 16751,
+    "rejectedEndpointGaps": 0,
+    "rejectedHeightGaps": 0,
+    "rejectedReversals": 589,
+    "terminalEdges": 2369,
+    "components": 887,
+    "largestComponentEdges": 5698,
+    "areas": {
+      "centre": 29,
+      "Hoek": 47
+    },
+    "bridgeJourneys": [
+      {
+        "sourceId": 600491271,
+        "origin": 600280628,
+        "destination": 600178674,
+        "edges": 33,
+        "metres": 2862
+      },
+      {
+        "sourceId": 601435887,
+        "origin": 600280298,
+        "destination": 600176956,
+        "edges": 20,
+        "metres": 2230
+      }
+    ]
+  }
+}

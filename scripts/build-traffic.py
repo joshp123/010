@@ -74,12 +74,19 @@ def main():
     options = parser.parse_args()
     if options.download:
         acquire()
+    source_path = SOURCE / 'nwb-roads.geojson.gz'
+    previous_report_path = SOURCE / 'provenance.json'
+    previous_report = json.loads(previous_report_path.read_bytes()) if previous_report_path.exists() else {}
     pages = sorted(CACHE.glob('nwb-rotterdam-*.json'))
-    if not pages:
-        raise SystemExit('No municipal source pages. Use --download.')
-    if any(link['rel'] == 'next' for link in json.loads(pages[-1].read_bytes())['links']):
-        raise SystemExit('Source acquisition incomplete. Resume with --download.')
-    features = [feature for path in pages for feature in json.loads(path.read_bytes())['features']]
+    retained = not options.download and source_path.exists()
+    if retained:
+        features = json.loads(gzip.decompress(source_path.read_bytes()))['features']
+    else:
+        if not pages:
+            raise SystemExit('No retained source or municipal pages. Use --download.')
+        if any(link['rel'] == 'next' for link in json.loads(pages[-1].read_bytes())['links']):
+            raise SystemExit('Source acquisition incomplete. Resume with --download.')
+        features = [feature for path in pages for feature in json.loads(path.read_bytes())['features']]
     boundary_path = ROOT / 'source-data/transit/municipality.geojson'
     boundary_json = json.loads(boundary_path.read_bytes())
     boundary = shape(boundary_json['features'][0]['geometry'] if 'features' in boundary_json else boundary_json['geometry'] if 'geometry' in boundary_json else boundary_json)
@@ -102,7 +109,7 @@ def main():
             clipped = original.intersection(boundary).difference(tunnels)
             parts = list(clipped.geoms) if hasattr(clipped, 'geoms') else [clipped]
             for part in parts:
-                if part.geom_type != 'LineString' or part.length < 8:
+                if part.geom_type != 'LineString' or part.length < .1:
                     continue
                 source_start = props['jte_id_beg'] if Point(part.coords[0]).distance(Point(original.coords[0])) < .05 else 0
                 source_end = props['jte_id_end'] if Point(part.coords[-1]).distance(Point(original.coords[-1])) < .05 else 0
@@ -117,7 +124,15 @@ def main():
     output = integer(1, 1) + b''.join(blob(2, road['bytes']) for road in roads)
     (OUTPUT / 'roads.pb.gz').write_bytes(gzip.compress(output, mtime=0))
     vertices = [point for road in roads for point in road['coordinates']]
-    report = {'source': URL, 'sourceDescription': 'Rijkswaterstaat / PDOK NWB roads, municipal selection Rotterdam', 'license': 'NWB source CC0 1.0; boundary and BRT tunnel exclusion CC BY 4.0', 'preparedAt': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'rawPages': len(pages), 'rawFeatures': len(features), 'selectedSourceFeatures': len(selected), 'outputRoads': len(roads), 'sourceVertices': len(vertices), 'kilometres': sum(road['length'] for road in roads)/1000, 'excludedClasses': dict(removed), 'bounds': [min(p[0] for p in vertices),min(p[1] for p in vertices),max(p[0] for p in vertices),max(p[1] for p in vertices)], 'outputGzipBytes': len(gzip.compress(output,mtime=0)), 'sourceSha256': hashlib.sha256(source_path.read_bytes()).hexdigest(), 'boundarySha256': hashlib.sha256(boundary_path.read_bytes()).hexdigest(), 'brtTunnelSourceSha256': hashlib.sha256(brt_path.read_bytes()).hexdigest(), 'rawPageSha256': {p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in pages}, 'processing': 'Original NWB vertices, exact municipality clip, subtract explicitly BRT-tagged tunnel polygons with 2m buffer, discard pieces shorter than 8m, retain original junction IDs only at unchanged original endpoints, quantize coordinates 1e-7 degrees. No route shortcut or line simplification.'}
+    report = {'source': URL, 'sourceDescription': 'Rijkswaterstaat / PDOK NWB roads, municipal selection Rotterdam', 'license': 'NWB source CC0 1.0; boundary and BRT tunnel exclusion CC BY 4.0', 'preparedAt': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'rawPages': len(pages), 'rawFeatures': len(features), 'selectedSourceFeatures': len(selected), 'outputRoads': len(roads), 'sourceVertices': len(vertices), 'kilometres': sum(road['length'] for road in roads)/1000, 'excludedClasses': dict(removed), 'bounds': [min(p[0] for p in vertices),min(p[1] for p in vertices),max(p[0] for p in vertices),max(p[1] for p in vertices)], 'outputGzipBytes': len(gzip.compress(output,mtime=0)), 'sourceSha256': hashlib.sha256(source_path.read_bytes()).hexdigest(), 'boundarySha256': hashlib.sha256(boundary_path.read_bytes()).hexdigest(), 'brtTunnelSourceSha256': hashlib.sha256(brt_path.read_bytes()).hexdigest(), 'rawPageSha256': {p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in pages}, 'processing': 'Original NWB vertices, exact municipality clip, subtract explicitly BRT-tagged tunnel polygons with 2m buffer, discard degenerate pieces shorter than 0.1m, retain original junction IDs only at unchanged original endpoints, quantize coordinates 1e-7 degrees. No route shortcut or line simplification.'}
+    if retained:
+        for key in ('rawPages', 'rawFeatures', 'excludedClasses', 'rawPageSha256'):
+            if key in previous_report:
+                report[key] = previous_report[key]
+            else:
+                report.pop(key, None)
+    report['preparationInput'] = 'retained selected NWB source' if retained else 'complete municipal source pages'
+    report['outputSha256'] = hashlib.sha256((OUTPUT / 'roads.pb.gz').read_bytes()).hexdigest()
     (SOURCE / 'provenance.json').write_text(json.dumps(report, indent=2)+'\n')
     print(json.dumps({k:v for k,v in report.items() if k!='rawPageSha256'}, indent=2))
 

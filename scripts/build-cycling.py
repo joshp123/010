@@ -40,14 +40,16 @@ records=[]; unknown=0; length=0
 for feature in features:
     props=feature['properties']
     if isinstance(props.get('rel_hoogte'),(float,int)) and props['rel_hoogte'] < 0: continue
-    direction=traffic.DIRECTIONS.get(props.get('rijrichtng'),3)
-    if props.get('rijrichtng') not in traffic.DIRECTIONS: unknown+=1
+    if props.get('rijrichtng') not in traffic.DIRECTIONS:
+        unknown+=1
+        continue
+    direction=traffic.DIRECTIONS[props['rijrichtng']]
     lines=feature['geometry']['coordinates'] if feature['geometry']['type']=='MultiLineString' else [feature['geometry']['coordinates']]
     for points in lines:
         original=transform(to_metres,LineString(points))
         clipped=original.intersection(boundary).difference(tunnels)
         for part in list(clipped.geoms) if hasattr(clipped,'geoms') else [clipped]:
-            if part.geom_type!='LineString' or part.length<8: continue
+            if part.geom_type!='LineString' or part.length<.1: continue
             start=props['jte_id_beg'] if Point(part.coords[0]).distance(Point(original.coords[0])) < .05 else 0
             end=props['jte_id_end'] if Point(part.coords[-1]).distance(Point(original.coords[-1])) < .05 else 0
             geographic=list(transform(from_metres,part).coords)
@@ -55,6 +57,6 @@ for feature in features:
             records.append(record);length+=part.length
 output=ROOT/'public/data/traffic/cycleways.pb.gz'
 output.write_bytes(gzip.compress(traffic.integer(1,1)+b''.join(traffic.blob(2,r) for r in records),mtime=0))
-report={'preparedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'source':traffic.URL,'sourceLicense':'NWB CC0; boundary and BRT tunnel mask Kadaster CC BY 4.0','selectedFPFeatures':len(features),'runtimePieces':len(records),'kilometres':length/1000,'unspecifiedDirectionFeatures':unknown,'directionInterpretation':'H/T/B retained; O/unknown simulated bidirectionally, not a legal direction claim','processing':'Same NWB source vertices and source junctions; exact municipality clip; exclude explicit BRT tunnels and negative rel_hoogte; omit fragments <8m; quantize 1e-7 degrees','sourceSha256':hashlib.sha256(source.read_bytes()).hexdigest(),'boundarySha256':hashlib.sha256(boundary_path.read_bytes()).hexdigest(),'tunnelMaskSourceSha256':hashlib.sha256(brt_path.read_bytes()).hexdigest(),'outputSha256':hashlib.sha256(output.read_bytes()).hexdigest(),'outputBytes':output.stat().st_size,'rawPageSha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in pages}}
+report={'preparedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'source':traffic.URL,'sourceLicense':'NWB CC0; boundary and BRT tunnel mask Kadaster CC BY 4.0','selectedFPFeatures':len(features),'runtimePieces':len(records),'kilometres':length/1000,'unspecifiedDirectionFeatures':unknown,'directionInterpretation':'Only source H/T/B directions retained; O/unknown excluded from runtime, preserved in raw source','processing':'Same NWB source vertices and source junctions; exact municipality clip; exclude unknown directions, explicit BRT tunnels and negative rel_hoogte; omit degenerate fragments <0.1m; quantize 1e-7 degrees','sourceSha256':hashlib.sha256(source.read_bytes()).hexdigest(),'boundarySha256':hashlib.sha256(boundary_path.read_bytes()).hexdigest(),'tunnelMaskSourceSha256':hashlib.sha256(brt_path.read_bytes()).hexdigest(),'outputSha256':hashlib.sha256(output.read_bytes()).hexdigest(),'outputBytes':output.stat().st_size,'rawPageSha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in pages}}
 (ROOT/'source-data/traffic/cycling-provenance.json').write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps({k:v for k,v in report.items() if k!='rawPageSha256'},indent=2))
