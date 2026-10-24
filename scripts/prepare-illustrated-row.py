@@ -3,7 +3,7 @@
 import argparse,copy,hashlib,importlib.util,json,shutil,struct,tempfile,zipfile
 from pathlib import Path
 import numpy as np
-ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'public/data/illustrated-row';RETAINED=ROOT/'source-data/illustrated-row';LIBRARY='libfile_e8b039daa49c819191f9685d96ab9d8c'
+ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'public/data/illustrated-row';RETAINED=ROOT/'source-data/illustrated-row';SOURCE_ARCHIVE='010-current-row-runtime-candidate.zip'
 s=importlib.util.spec_from_file_location('m',ROOT/'scripts/prepare-building-appearance.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
 def read(raw):
  size=struct.unpack_from('<I',raw,12)[0];return json.loads(raw[20:20+size]),raw[28+size:]
@@ -45,7 +45,7 @@ def main():
   for key in ['extensionsUsed','extensionsRequired']:
    if key in d:d[key]=[x for x in d[key] if x!='CESIUM_RTC']
    if key in d and not d[key]:d.pop(key)
-  d.setdefault('extras',{}).update(bagIds=list(mapping.values()),sourceArtifactLibraryId=LIBRARY,appearanceStatus='Illustrated row review candidate; not accepted production art')
+  d.setdefault('extras',{}).update(bagIds=list(mapping.values()),sourceArtifactArchive=SOURCE_ARCHIVE,appearanceStatus='Illustrated row review candidate; not accepted production art')
   points=[];yz=np.array([[1,0,0,0],[0,0,-1,0],[0,1,0,0],[0,0,0,1]])
   def walk(i,parent):
    node=d['nodes'][i];mat=parent@np.array(node.get('matrix',np.eye(4).T.ravel())).reshape(4,4).T
@@ -61,5 +61,5 @@ def main():
   transform=[1,0,0,0,0,1,0,0,0,0,1,0,*rtc,1];tiles={'asset':{'version':'1.0','gltfUpAxis':'Y'},'geometricError':0,'root':{'boundingVolume':{'sphere':[*wc,radius]},'geometricError':0,'refine':'REPLACE','children':[{'boundingVolume':{'box':box},'transform':transform,'geometricError':0,'content':{'uri':'row.glb'},'extras':{'bagIds':list(mapping.values())}}]}};(OUT/'tileset.json').write_bytes(m.packed_json(tiles)+b'\n')
   from pyproj import Transformer
   lon,lat,h=Transformer.from_crs(4978,4979,always_xy=True).transform(*world.T)
-  manifest={'status':'review only, no art acceptance','libraryId':LIBRARY,'inputArchiveSha256':archive_hash,'inputGLBSha256':m.digest(raw),'sourceMunicipalSha256':meta['source_decoded_sha256'],'outputGLBSha256':m.digest((OUT/'row.glb').read_bytes()),'bagIds':list(mapping.values()),'triangles':triangle_count,'textures':textures,'rootMatrixRetained':True,'rtcApplied':'Once in child 3D Tiles transform; removed CESIUM_RTC extension','boundsLonLatHeight':[np.array([lon,lat,h]).min(1).tolist(),np.array([lon,lat,h]).max(1).tolist()],'changes':'Split source draw indices by exact original _BATCHID; compacted unchanged attribute values; unchanged external painted PNGs and materials; no art filtering'};(OUT/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');(RETAINED/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');shutil.copyfile(source/'georeference-and-identities.json',RETAINED/'georeference-and-identities.json');shutil.copyfile(source/'README.md',RETAINED/'artifact-README.md');assert triangle_count==678;print(json.dumps({'triangles':triangle_count,'bags':len(mapping),'meshes':len(d['meshes']),'glbBytes':(OUT/'row.glb').stat().st_size,'bounds':manifest['boundsLonLatHeight']}))
+  manifest={'status':'review only, no art acceptance','sourceArchive':SOURCE_ARCHIVE,'inputArchiveSha256':archive_hash,'inputGLBSha256':m.digest(raw),'sourceMunicipalSha256':meta['source_decoded_sha256'],'outputGLBSha256':m.digest((OUT/'row.glb').read_bytes()),'bagIds':list(mapping.values()),'triangles':triangle_count,'textures':textures,'rootMatrixRetained':True,'rtcApplied':'Once in child 3D Tiles transform; removed CESIUM_RTC extension','boundsLonLatHeight':[np.array([lon,lat,h]).min(1).tolist(),np.array([lon,lat,h]).max(1).tolist()],'changes':'Split source draw indices by exact original _BATCHID; compacted unchanged attribute values; unchanged external painted PNGs and materials; no art filtering'};(OUT/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');(RETAINED/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n');shutil.copyfile(source/'georeference-and-identities.json',RETAINED/'georeference-and-identities.json');shutil.copyfile(source/'README.md',RETAINED/'artifact-README.md');assert triangle_count==678;print(json.dumps({'triangles':triangle_count,'bags':len(mapping),'meshes':len(d['meshes']),'glbBytes':(OUT/'row.glb').stat().st_size,'bounds':manifest['boundsLonLatHeight']}))
 if __name__=='__main__':main()

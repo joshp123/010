@@ -1,10 +1,10 @@
 {
   "status": "review only, no art acceptance",
-  "libraryId": "libfile_e8b039daa49c819191f9685d96ab9d8c",
+  "sourceArchive": "010-current-row-runtime-candidate.zip",
   "inputArchiveSha256": "b655be5f0df5dd234f3e22db0bc2c23f2c8c7a0a3a6382d0d8e2b3ba2fc21980",
   "inputGLBSha256": "c8db392d435a233a228b4144646f945be8a2b93d7f0fc7b4d60ca5afe77ee407",
   "sourceMunicipalSha256": "c51f35cc165e106b2d77a00f8614fecd1e22d977f35a0406f2efb8acfacf4425",
-  "outputGLBSha256": "cedbeda8b8451f43a974c7a36415f9797daf59586a377ce66bb24b9c48d13271",
+  "outputGLBSha256": "d8dd59c795d74db977f16b04094812a857442d426efe18efa402681343c5dd5e",
   "bagIds": [
     "0599100000671717",
     "0599100000671715",

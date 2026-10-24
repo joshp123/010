@@ -1,7 +1,8 @@
 {
+  "sourceArchive": "010-source-glazing-emission.zip",
   "archiveSha256": "05cc4c4b907e3e5c6f9a60417506b9a7ba222dad6fa2cc6abf74b790d76f23f0",
-  "baseGLBSha256": "cedbeda8b8451f43a974c7a36415f9797daf59586a377ce66bb24b9c48d13271",
-  "outputGLBSha256": "d8e1042525f12fbdb58b00a7b58ddb1d465c41a3547aea208dd1f874eca35009",
+  "baseGLBSha256": "d8dd59c795d74db977f16b04094812a857442d426efe18efa402681343c5dd5e",
+  "outputGLBSha256": "499cda31a73833f854977b7412ab828319ce5d8dbe6b7e463c6d7d0c5be35964",
   "geometryBinarySha256": "eaf0892e92c6d4c4b7aa0b208ca6812096c5139c407ba12957c1cd1f39f2fb5a",
   "sourceMunicipalSha256": "c51f35cc165e106b2d77a00f8614fecd1e22d977f35a0406f2efb8acfacf4425",
   "sourceBindings": [
@@ -269,6 +270,5 @@
     "emission": "sRGB via standard glTF emissiveTexture",
     "maskAndPhase": "linear data retained as metadata, not loaded as RGB material maps"
   },
-  "status": "Partial source-observed glazing; illustrative occupancy; runtime visual review required",
-  "sourceArchive": "010-source-glazing-emission.zip"
+  "status": "Partial source-observed glazing; illustrative occupancy; runtime visual review required"
 }

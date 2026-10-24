@@ -1,7 +1,7 @@
 # Illustrated row review artifact provenance
 
 Original attachment: `010-current-row-runtime-candidate(1).zip`, preserved as
-Library file **libfile_e8b039daa49c819191f9685d96ab9d8c**. The exact input archive,
+Source archive **010-current-row-runtime-candidate.zip**; exact bytes are identified by the retained hash. The exact input archive,
 input geometry and output geometry hashes are recorded in `manifest.json`.
 `artifact-README.md` and `georeference-and-identities.json` are unmodified copies
 from the attachment, including its explicit unresolved art issues. The original
