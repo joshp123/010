@@ -69,3 +69,10 @@ The row has much richer architectural identity, but remains a photographic-looki
 ![Actual phone night with source block not yet emissive](illustrated-row-night-front-phone.png)
 
 [Exact runtime identities, readiness and appearance state](illustrated-row-runtime-audit.json). The ten unchanged2048² textures use223.7MB decoded including mipmaps. This is not a final performance decision or permission to reduce detail before art quality is established.
+
+
+Actual c31f83e review, 2026-10-24 (AI, GPT-6): [night desktop](ground-fixture-night-desktop.png), [phone](ground-fixture-night-phone.png), [runtime](ground-fixture-night-runtime.json). Ground now receives source fixture illumination, but broad cream bands/bright facades remain visually flat. Supporting integration, not acceptance.
+
+[Port source desktop](current-port-source-desktop.png), [phone](current-port-source-phone.png), [runtime](current-port-source-runtime.json): fourteen matching OST tanks render; roof seams and ladder markings visible. Source contamination, washed-out texture and coarse triangulated ground remain. Close120m review still selected512px context textures, so native refinement needs investigation. This is source evidence, not illustrated art.
+
+[Metro earth-volume desktop](metro-earth-volume-desktop.png), [phone](metro-earth-volume-phone.png), [runtime](metro-earth-volume-runtime.json): actual Find selected a fresh B report at51.91007,4.44576 with source-compatible approximate track position. Train readable, roof wire cage removed, but long brown vertical slab still reads above the street rather than a convincing excavation. New location because earlier report departed. Pending tiles noted in runtime; repeated settled scene preserves same composition. No new height-cause claim. Still rejected.
