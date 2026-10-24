@@ -24,8 +24,8 @@ export function createMetroLocationCue() {
     camera.right = width; camera.top = height; camera.updateProjectionMatrix();
     const projected = section.streetAnchor.clone().project(cityCamera);
     const actual = { x: (projected.x + 1) * width / 2, y: (1 - projected.y) * height / 2 };
-    const x = THREE.MathUtils.clamp(actual.x, 40, width - 40);
-    const y = THREE.MathUtils.clamp(actual.y, 112, height - section.viewportHeight - 34);
+    const x = THREE.MathUtils.clamp(actual.x + (section.integrated ? 48 : 0), 40, width - 40);
+    const y = THREE.MathUtils.clamp(actual.y - (section.integrated ? 46 : 0), 112, height - section.viewportHeight - 34);
     const offscreen = Math.abs(x - actual.x) > 1 || Math.abs(y - actual.y) > 1;
     const directions = ['→', '↘', '↓', '↙', '←', '↖', '↑', '↗'];
     const arrow = offscreen ? directions[(Math.round(Math.atan2(actual.y - y, actual.x - x) / (Math.PI / 4)) + 8) % 8] : '↓';

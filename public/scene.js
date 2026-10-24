@@ -1,4 +1,4 @@
-import { createMunicipalBuildingVisibility } from './municipal-buildings.js';
+import { createMunicipalBuildingVisibility, configureMunicipalBuildingStreaming } from './municipal-buildings.js';
 import { clampViewSpan } from './view-limits.js';
 import { createFixtureSurfaceLighting } from './fixture-surface-lighting.js';
 import * as THREE from 'three';
@@ -98,6 +98,7 @@ function solarDirection(date, lat, lon) {
 
 export async function createScene({ canvas, municipalityData, onViewChange = () => {}, onStatus = () => {}, onTransitSelect = () => {} }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+  renderer.localClippingEnabled = true;
   const shaderErrors = [];
   renderer.debug.onShaderError = (gl, program, vertexShader, fragmentShader) => {
     const diagnostic = {
@@ -214,7 +215,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   sea.position.y = -4;
   sea.receiveShadow = true; sea.renderOrder = -30;
   scene.add(sea);
-  let needsRender = true, disposed = false, scheduledFrame = null, width = 1, height = 1;
+  let needsRender = true, disposed = false, scheduledFrame = null, width = 1, height = 1, sceneInitialized = false;
   let loadErrors = 0, loadedTiles = 0, lighting = { mode: 'day', date: new Date(), cloudCover: 0, rain: 0, snow: 0 };
   let sunVector = new THREE.Vector3(-0.65, 0.8, 0.45).normalize();
   let lastStatus = '', lastPresentation = 0, lastCityRender = {};
@@ -342,7 +343,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (metroState !== 'ready') return false;
     transit.setCutaway({ enabled });
     // The underground inspector has its own view; keep the real street intact.
-    cutawayUniforms.enabled.value = 0;
+    cutawayUniforms.enabled.value = enabled ? 1 : 0;
     renderer.shadowMap.needsUpdate = true;
     requestRender();
     return true;
@@ -356,7 +357,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   const overview = new THREE.Group();
   scene.add(overview);
 
-  function requestRender() { needsRender = true; if (!scheduledFrame && !disposed) scheduledFrame = requestAnimationFrame(frame); }
+  function requestRender() { needsRender = true; if (sceneInitialized && !scheduledFrame && !disposed) scheduledFrame = requestAnimationFrame(frame); }
   function scheduleDeferredUpdate(delay) {
     clearTimeout(deferredUpdateTimer);
     deferredUpdateTimer = setTimeout(() => { deferredUpdateTimer = null; requestRender(); }, delay);
@@ -526,6 +527,9 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     const originalCache = tiles.lruCache;
     tiles.lruCache = tileCaches[kind] || tileCaches.city;
     tiles.lruCache.unloadPriorityCallback = originalCache.unloadPriorityCallback;
+    if (tiles.appearanceRole === 'municipal') {
+      configureMunicipalBuildingStreaming(tiles);
+    }
     tiles.addEventListener('load-model', event => { if (municipalSource) event.scene.userData.municipalSource = true; colorModel(event.scene, kind); if (['ground', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) transitSurfaceDirty = true; if (kind === 'ground') sourceFusion.addGround(event.scene); loadedTiles++; renderer.shadowMap.needsUpdate = true; requestRender(); });
     if (['ground', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) tiles.addEventListener('dispose-model', () => { transitSurfaceDirty = true; });
     if (kind === 'buildings') tiles.addEventListener('dispose-model', event => { buildingAppearance.removeModel(event.scene); buildingBatches.removeModel(event.scene); });
@@ -551,6 +555,11 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   let paintedBuildingIds = new Set(), currentBuildingIds = new Set();
   const prioritizeCitySurfaces = (a, b) => {
     const firstLayer = a.internal?.renderer?.kind, secondLayer = b.internal?.renderer?.kind;
+    if (municipalSourceEnabled) {
+      const sourcePriority = tile => tile.internal?.renderer?.appearanceRole === 'painted' ? 10 : tile.internal?.renderer?.kind === 'ground' ? 9 : tile.internal?.renderer?.appearanceRole === 'municipal' ? 8 : layerPriority[tile.internal?.renderer?.kind];
+      const difference = sourcePriority(a) - sourcePriority(b);
+      if (difference) return difference;
+    }
     if (firstLayer && secondLayer && firstLayer !== secondLayer) return layerPriority[firstLayer] - layerPriority[secondLayer];
     if (firstLayer === 'appearanceBuildings') {
       const rolePriority = { painted: 2, current: 1, municipal: 1, legacy: 0 };
@@ -730,7 +739,9 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     }
     }
     const sectionModels = tilesets.filter(layer => ['buildings', 'appearanceBuildings'].includes(layer.kind) && layer.group.visible).flatMap(layer => [...layer.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean));
-    if (metroCityCut.update(sectionModels, transit.getSectionGeometry())) renderer.shadowMap.needsUpdate = true;
+    const metroSection = transit.getSectionGeometry();
+    cutawayUniforms.enabled.value = metroSection.enabled ? 1 : 0;
+    if (metroCityCut.update(sectionModels, metroSection)) renderer.shadowMap.needsUpdate = true;
     const reflectCity = uniforms.night.value > 0.1 && view.span < 6500;
     if (reflectCity) {
       reflectionCamera.copy(camera);
@@ -773,11 +784,6 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
         renderer.render(metroLocationCue.scene, metroLocationCue.camera);
         renderer.autoClear = autoClear;
       }
-      renderer.setScissorTest(true);
-      renderer.setScissor(0, 0, width, sectionView.viewportHeight);
-      renderer.setViewport(0, 0, width, sectionView.viewportHeight);
-      renderer.clearDepth();
-      renderer.render(sectionView.scene, sectionView.camera);
       renderer.setScissorTest(false);
       renderer.setViewport(0, 0, width, height);
     }
@@ -915,7 +921,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   }
   function sectionPoint(clientX, clientY) {
     const section = metroSectionView();
-    if (!section.enabled) return null;
+    if (!section.enabled || section.integrated) return null;
     const bounds = canvas.getBoundingClientRect();
     const sectionHeight = section.viewportHeight * bounds.height / height;
     const top = bounds.bottom - sectionHeight;
@@ -984,6 +990,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   canvas.addEventListener('dblclick', doubleClick);
   const contextMenu = event => event.preventDefault(); canvas.addEventListener('contextmenu', contextMenu);
   const observer = new ResizeObserver(resize); observer.observe(canvas);
+  sceneInitialized = true;
   resize(); setLighting(lighting); reportStatus();
   function groundHeightDiagnostics(tiles) {
     if (tiles.kind !== 'ground') return undefined;
@@ -1012,7 +1019,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     reviewAppearanceSampling,
     trafficReady: () => trafficReady, cyclistsReady: () => cyclistsReady,
     inspectTrafficSurfaces: (options = {}) => inspectTrafficSurfaces({ samples: [...traffic.sampleVehicles(options), ...cyclists.sampleVehicles(options)], tilesets, camera, width: canvas.clientWidth, height: canvas.clientHeight }),
-    updateTransit, getTransitReport: id => transit.getReport(id), setMetroCutaway, metroReady: () => metroReady, getTransitStatistics: () => ({ ...transit.statistics(), metroState, sectionEnabled: metroSectionView().enabled }),
+    updateTransit, getTransitReport: id => transit.getReport(id), setMetroCutaway, metroReady: () => metroReady, getTransitStatistics: () => ({ ...transit.statistics(), metroState, sectionEnabled: false }),
     setView, getView: () => ({ ...view }), setLighting, captureCanvas,
     zoom: factor => setView({ span: view.span / factor }), reset: () => setView(DEFAULT_VIEW),
     render: () => { needsRender = true; frame(); }, getCanvas: () => canvas, resize,
