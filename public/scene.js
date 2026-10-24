@@ -250,7 +250,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   const appearanceEdition = ['legacy', 'current', 'illustrated-row', 'illustrated-neighbourhood'].includes(appearanceOption) ? appearanceOption : 'illustrated-neighbourhood';
   const tankAppearanceEdition = new URLSearchParams(location.search).get('tanks');
   const tankAppearanceEnabled = tankAppearanceEdition === 'illustrated' || (appearanceEdition === 'current' && tankAppearanceEdition === 'current');
-  let capturingFullDetail = false;
+  let capturingFullDetail = false, captureInspectionSpan = null;
   let transitSnapshot = { vehicles: [] }, transitSurfaceDirty = false;
   fetch('./data/ground-corrections/soetensteeg.json').then(response => {
     if (!response.ok) throw new Error(`Ground correction: HTTP ${response.status}`);
@@ -415,7 +415,15 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
         tile.engineData.scene?.traverseVisible(mesh => {
           if (!mesh.isMesh) return;
           const materialList = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-          meshes.push({ bagId: mesh.userData.bagId,
+          const position = mesh.geometry.getAttribute('position'), index = mesh.geometry.index;
+          const screenBounds = [Infinity, Infinity, -Infinity, -Infinity], projected = new THREE.Vector3();
+          for (let vertex = 0, count = index?.count ?? position.count; vertex < count; vertex++) {
+            projected.fromBufferAttribute(position, index ? index.getX(vertex) : vertex).applyMatrix4(mesh.matrixWorld).project(camera);
+            const x = (projected.x + 1) * width / 2, y = (1 - projected.y) * height / 2;
+            screenBounds[0] = Math.min(screenBounds[0], x); screenBounds[1] = Math.min(screenBounds[1], y);
+            screenBounds[2] = Math.max(screenBounds[2], x); screenBounds[3] = Math.max(screenBounds[3], y);
+          }
+          meshes.push({ bagId: mesh.userData.bagId, screenBounds: screenBounds.map(value => Math.round(value)),
             triangles: (mesh.geometry.index?.count ?? mesh.geometry.getAttribute('position')?.count ?? 0) / 3,
             maps: materialList.map(material => ({ width: material.map?.image?.width, height: material.map?.image?.height })) });
         });
@@ -698,7 +706,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     camera.updateMatrixWorld();
     updateShadowCamera();
     fixtureSurfaceLighting.setView(camera);
-    transit.setView({ camera, span: view.span, viewportHeight: height * renderer.getPixelRatio() });
+    transit.setView({ camera, span: captureInspectionSpan ?? view.span, viewportHeight: height * renderer.getPixelRatio() });
     for (const layer of simulatedLayers) layer.setView({ camera, span: view.span, viewportHeight: height * renderer.getPixelRatio() });
     const drawingSize = renderer.getDrawingBufferSize(new THREE.Vector2());
     for (const tiles of tilesets) tiles.setResolution(camera, drawingSize.x, drawingSize.y);
@@ -892,16 +900,27 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (disposed) throw new Error('The city view has closed.');
     if (!Number.isInteger(captureWidth) || !Number.isInteger(captureHeight) || captureWidth < 1 || captureHeight < 1 || Math.max(captureWidth, captureHeight) > renderer.capabilities.maxTextureSize) throw new Error('The requested image size is not supported by this device.');
     capturePending = true;
+    captureInspectionSpan = view.span;
     const previousTreeCacheLimit = tileCaches.trees.maxBytesSize;
     const previousLightCacheLimit = tileCaches.lights.maxBytesSize;
     tileCaches.trees.maxBytesSize = Math.max(previousTreeCacheLimit, 64 * 1024 * 1024);
     tileCaches.lights.maxBytesSize = Math.max(previousLightCacheLimit, 64 * 1024 * 1024);
     const captureView = { ...view }, captureTarget = target.clone(), captureCamera = camera.clone();
     const captureAspect = captureWidth / captureHeight;
+    const framingScale = Math.min(1, (width / height) / captureAspect);
+    captureView.span *= framingScale;
+    const sourceDetailHeight = Math.max(1, Math.round(renderer.getDrawingBufferSize(new THREE.Vector2()).y * framingScale));
+    const sourceDetailWidth = Math.ceil(sourceDetailHeight * captureAspect);
+    captureCamera.top = captureView.span / 2;
+    captureCamera.bottom = -captureView.span / 2;
     captureCamera.left = -captureView.span * captureAspect / 2;
     captureCamera.right = captureView.span * captureAspect / 2;
     captureCamera.updateProjectionMatrix(); captureCamera.updateMatrixWorld();
-    for (const tiles of tilesets) { tiles.setCamera(captureCamera); tiles.setResolution(captureCamera, captureWidth, captureHeight); }
+    for (const tiles of tilesets) {
+      tiles.deleteCamera(camera);
+      tiles.setCamera(captureCamera);
+      tiles.setResolution(captureCamera, sourceDetailWidth, sourceDetailHeight);
+    }
     try {
       const started = performance.now();
       let settledFrames = 0;
@@ -923,6 +942,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
         scheduledFrame = null; needsRender = true; frame();
         const output = document.createElement('canvas');
         output.width = captureWidth; output.height = captureHeight;
+        output.captureView = { ...captureView };
         const context = output.getContext('2d');
         if (!context) throw new Error('The image canvas could not be created.');
         context.drawImage(canvas, 0, 0);
@@ -941,13 +961,21 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       } finally {
         capturingFullDetail = false;
         Object.assign(view, liveView); target.copy(liveTarget);
-        for (const tiles of tilesets) tiles.deleteCamera(captureCamera);
+        for (const tiles of tilesets) {
+          tiles.deleteCamera(captureCamera);
+          tiles.setCamera(camera);
+        }
         resize();
         if (scheduledFrame) cancelAnimationFrame(scheduledFrame);
         scheduledFrame = null; needsRender = true; frame();
       }
     } finally {
-      for (const tiles of tilesets) tiles.deleteCamera(captureCamera);
+      for (const tiles of tilesets) {
+        tiles.deleteCamera(captureCamera);
+        tiles.setCamera(camera);
+      }
+      captureInspectionSpan = null;
+      updateCamera();
       tileCaches.trees.maxBytesSize = previousTreeCacheLimit;
       tileCaches.lights.maxBytesSize = previousLightCacheLimit;
       tileCaches.trees.scheduleUnload();
