@@ -4,6 +4,8 @@ Written by AI on 2026-10-24 by model GPT-6.
 
 Read [the rescue brief](rescue.md), [original steering](steering.md) and [product contract](README.md) before dispatching work. Latest steering requires a deep, holistic rescue and comparison with how the reference projects were actually made.
 
+Further direct steering retains the 3D foundation combined with model interpretation. Image quality comes first, with realistic source fidelity and blazing fast performance. No guessed/invented city detail: acquire better evidence and preserve real architecture across zoom/viewpoints. A static picture replacement does not satisfy this steer. Manager remains actively engaged through the entire project; scheduled checks supplement the review loop.
+
 ## Current judgement
 
 The published scene has not met visual acceptance. No rescue candidate has been published.
