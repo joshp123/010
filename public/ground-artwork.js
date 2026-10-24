@@ -3,7 +3,7 @@
 // Never project an aerial-derived image onto buildings, trees or unknown ground.
 import * as THREE from 'three';
 
-export function createGroundArtwork({baseUrl='./data/ground-artwork/',requestRender=()=>{},enabled=false}={}) {
+export function createGroundArtwork({baseUrl='./data/ground-artwork/',requestRender=()=>{},enabled=false,anisotropy=1}={}) {
   const uniforms={groundArtwork:{value:new THREE.Texture()},groundArtworkU:{value:new THREE.Vector4()},groundArtworkV:{value:new THREE.Vector4()},groundArtworkReady:{value:0}};
   const models=new Set(),stats={enabled,loaded:false,error:null,sourceFeatures:0,eligibleVertices:0};
   let manifest=null,allowed=new Set(),disposed=false;
@@ -13,7 +13,7 @@ export function createGroundArtwork({baseUrl='./data/ground-artwork/',requestRen
     model.traverse(mesh=>{
       if(!mesh.isMesh||!mesh.geometry?.getAttribute('position')||mesh.geometry.userData.sourceBoundarySegments)return;
       const geometry=mesh.geometry,batch=geometry.getAttribute('_batchid');
-      if(!batch)return;
+      if(!batch||geometry.getAttribute('_groundArtworkAllowed'))return;
       let parent=mesh;while(parent&&!parent.batchTable)parent=parent.parent;
       if(!parent)return;
       const flags=new Float32Array(batch.count),cached=new Map();let eligible=0;
@@ -38,7 +38,7 @@ export function createGroundArtwork({baseUrl='./data/ground-artwork/',requestRen
       if(data.status!=='review-candidate')throw Error('Unrecognised ground artwork status');
       const texture=await new THREE.TextureLoader().loadAsync(new URL(data.texture,base).href);
       if(disposed){texture.dispose();return;}
-      texture.colorSpace=THREE.SRGBColorSpace;texture.magFilter=THREE.NearestFilter;texture.minFilter=THREE.LinearMipmapLinearFilter;texture.wrapS=texture.wrapT=THREE.ClampToEdgeWrapping;
+      texture.anisotropy=anisotropy;texture.colorSpace=THREE.SRGBColorSpace;texture.magFilter=THREE.LinearFilter;texture.minFilter=THREE.LinearMipmapLinearFilter;texture.wrapS=texture.wrapT=THREE.ClampToEdgeWrapping;
       // Compiler rows map world position to top-left image-normalized pixels.
       // Three TextureLoader flips image upload, so invert V here exactly once.
       uniforms.groundArtwork.value.dispose();uniforms.groundArtwork.value=texture;
@@ -48,8 +48,9 @@ export function createGroundArtwork({baseUrl='./data/ground-artwork/',requestRen
       uniforms.groundArtworkReady.value=1;stats.loaded=true;requestRender();
     }catch(error){stats.error=String(error);console.warn('010 ground artwork:',error);}
   })():Promise.resolve();
-  return {ready,addModel,removeModel(model){models.delete(model);},apply(material){
-    if(!enabled)return;
+  return {ready,addModel,refresh(){for(const model of models)addModel(model);},removeModel(model){models.delete(model);},apply(material){
+    if(!enabled||material.userData.groundArtwork)return;
+    material.userData.groundArtwork=true;
     material.defaultAttributeValues={...material.defaultAttributeValues,_groundArtworkAllowed:[0]};
     const compile=material.onBeforeCompile,key=material.customProgramCacheKey();
     material.onBeforeCompile=function(shader,renderer){

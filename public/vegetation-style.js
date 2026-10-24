@@ -3,7 +3,7 @@ import * as THREE from 'three';
 // Interpret the municipality's generic crown envelopes; never change source
 // instance placement, diameter, height or orientation. This is illustrated
 // foliage architecture, not measured branches or a species identification.
-const foliage = ['#52694b', '#617b51', '#71875a', '#5d754d'].map(value => new THREE.Color(value));
+const foliage = ['#3c5438', '#526b43', '#637c4e', '#768b59'].map(value => new THREE.Color(value));
 const bark = new THREE.Color('#6a5846');
 const number = (seed, n) => { const x = Math.sin(seed * 17.31 + n * 91.77) * 43758.5453; return x - Math.floor(x); };
 
@@ -37,42 +37,51 @@ function crownProfile(source) {
 
 export function createCrownGeometry(source) {
   const profile = crownProfile(source);
-  const positions = [], colors = [], primitive = new THREE.IcosahedronGeometry(1, 1);
-  const shape = primitive.getAttribute('position');
-  // Many small overlapping foliage masses replace the previous 16 giant
-  // polyhedra. Their centres follow the retained prototype's radial profile.
-  // These masses are explicitly illustration: the inventory has no leaves.
-  const lobes = [];
-  for (let level = 0; level < 9; level++) {
-    const y = .055 + level * .111;
+  const positions = [], colors = [];
+  // Thin, directional sprays have real gaps and a broken edge. The former
+  // overlapping solid balls produced rounded plastic highlights at every scale.
+  // This is a leaf-on illustration within the municipal crown envelope, not a
+  // reconstruction of individual leaves (the retained 2026 aerial is leaf-off).
+  function leaf(origin, along, across, length, width, shade) {
+    const base = origin.clone().addScaledVector(along, -length * .45);
+    const tip = origin.clone().addScaledVector(along, length * .55);
+    const left = origin.clone().addScaledVector(across, width * .5);
+    const right = origin.clone().addScaledVector(across, -width * .5);
+    const ridge = origin.clone().add(new THREE.Vector3(0, width * .12, 0));
+    const outline = [base, left, tip, right];
+    for (let edge = 0; edge < 4; edge++) {
+      const triangle = [outline[edge], outline[(edge + 1) % 4], ridge];
+      // Closed two-sided leaf geometry also works with the existing shared
+      // shadow/depth material; no transparency or scene shader special cases.
+      for (const face of [triangle, [...triangle].reverse()]) for (const point of face) {
+        const y = THREE.MathUtils.clamp(point.y, 0, 1);
+        const limit = Math.min(.5, profile.radius(y)), radius = Math.hypot(point.x, point.z);
+        const factor = radius > limit ? limit / radius : 1;
+        positions.push(point.x * factor, y, point.z * factor);
+        colors.push(shade.r, shade.g, shade.b);
+      }
+    }
+  }
+  const sprays = 1150;
+  for (let i = 0; i < sprays; i++) {
+    const y = .035 + .93 * number(i + 1, 1);
+    const angle = i * 2.39996323;
     const envelope = Math.min(.5, profile.radius(y));
-    const count = Math.max(4, Math.round(envelope * 34));
-    for (let i = 0; i < count; i++) {
-      const seed = level * 19 + i + 1;
-      const radius = .070 + number(seed, 2) * .035;
-      const angle = i / count * Math.PI * 2 + level * 2.39996;
-      lobes.push({y: y + (number(seed, 3) - .5) * .035,
-        ring: Math.max(0, envelope - radius * .62), angle,
-        radius, tall: radius * .9, seed});
-    }
-    // A shaded continuous core prevents hollow ring-shaped crowns.
-    lobes.push({y, ring: 0, radius: envelope * .84, tall: .13, seed: level * 19});
-  }
-  for (const lobe of lobes) {
-    const angle = lobe.angle || 0, cx = Math.cos(angle) * lobe.ring, cz = Math.sin(angle) * lobe.ring;
-    const shade = foliage[lobe.seed % foliage.length];
-    for (let i = 0; i < shape.count; i++) {
-      const a = angle + .33, sx = shape.getX(i), sz = shape.getZ(i);
-      let x = cx + (sx * Math.cos(a) - sz * Math.sin(a)) * lobe.radius;
-      let z = cz + (sx * Math.sin(a) + sz * Math.cos(a)) * lobe.radius;
-      const y = THREE.MathUtils.clamp(lobe.y + shape.getY(i) * lobe.tall, 0, 1);
-      const r = Math.hypot(x, z), limit = Math.min(.5, profile.radius(y));
-      if (r > limit && r) { x *= limit / r; z *= limit / r; }
-      positions.push(x, y, z); const shadeFactor = .83 + .17 * y;
-      colors.push(shade.r * shadeFactor, shade.g * shadeFactor, shade.b * shadeFactor);
+    const radial = envelope * (.15 + .80 * Math.sqrt(number(i + 1, 4)));
+    const centre = new THREE.Vector3(Math.cos(angle) * radial, y, Math.sin(angle) * radial);
+    const direction = new THREE.Vector3(Math.cos(angle), -.25 + number(i + 1, 6) * 1.1, Math.sin(angle)).normalize();
+    const across = new THREE.Vector3(-Math.sin(angle), .65 * Math.sin(i), Math.cos(angle)).normalize();
+    // Each spray shares a coherent olive family, with lighter outward tips.
+    const shade = foliage[Math.min(foliage.length - 1, Math.floor((y * .35 + (radial / Math.max(envelope, .01)) * .65) * foliage.length))];
+    for (let j = 0; j < 5; j++) {
+      const side = j % 2 ? 1 : -1, step = Math.floor(j / 2);
+      const anchor = centre.clone().addScaledVector(direction, (step - 1) * .027).addScaledVector(across, side * .018);
+      const axis = direction.clone().multiplyScalar(.6).addScaledVector(across, side * (.4 + number(i + j, 8))).normalize();
+      const cross = new THREE.Vector3(-axis.z, -.5 + number(i + j, 9), axis.x).normalize();
+      const length = (.035 + .020 * number(i + 1, 5)) * (1 - step * .08);
+      leaf(anchor, axis, cross, length, length * .8, shade);
     }
   }
-  primitive.dispose();
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
@@ -84,7 +93,7 @@ export function createCrownGeometry(source) {
     p.setComponent(i, axis, profile.box.min.getComponent(axis) + (p.getComponent(i, axis) - ownBox.min.getComponent(axis)) / ownSize.getComponent(axis) * profile.size.getComponent(axis));
   }
   geometry.computeVertexNormals(); geometry.computeBoundingBox(); geometry.computeBoundingSphere();
-  geometry.userData = { ...source.userData, vegetationInterpretation: 'Fine overlapping foliage masses inside the original inventory envelope; illustrative, not surveyed leaves or branches' };
+  geometry.userData = { ...source.userData, vegetationInterpretation: 'Directional leaf sprays and open gaps inside the original inventory envelope; leaf-on illustration, not surveyed leaves or branches' };
   return geometry;
 }
 

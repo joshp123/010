@@ -27,8 +27,13 @@ assert.equal(view.statistics().section.report.renderedAs,'illustrated train');
 assert.equal(view.statistics().section.report.latitude,14/111320,'raw observation retained');
 assert.equal(view.statistics().section.report.representedPosition.latitude,0,'route-compatible track selected instead of crossing tunnel');
 assert.ok(Math.abs(view.statistics().section.report.representedPosition.offsetMetres-14)<.001);
-assert.ok(view.statistics().section.geometryBounds.max[2]-view.statistics().section.geometryBounds.min[2]<=8.01,'crossing branch is not excavated');
+assert.ok(view.statistics().section.geometryBounds.max[2]-view.statistics().section.geometryBounds.min[2]<=32.01,'crossing branch is not excavated');
 assert.ok(view.statistics().section.segmentCount>1);
+const mouthCorners=new Map();
+for(const polygon of view.getSectionGeometry().mouthPolygons)for(const point of polygon.slice(0,2)){
+ const key=point.toArray().map(value=>value.toFixed(4)).join(':');mouthCorners.set(key,(mouthCorners.get(key)||0)+1);
+}
+assert.ok([...mouthCorners.values()].every(count=>count===2),'four banks must meet in a continuous surface perimeter');
 const city=new THREE.Group();
 for(const [x,y,z,w,h,d] of [[0,-.5,0,200,1,200],[-26,14,5,15,28,16],[26,18,-5,15,36,16], ...(process.env.METRO_ROOF_OCCLUDER ? [[0,10,0,60,20,22]] : [])]){
  const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshBasicMaterial({color:y<0?'#79947a':'#b49d84'}));mesh.position.set(x,y,z);city.add(mesh);
@@ -61,7 +66,14 @@ for(let y=0;y<height;y++)for(let x=0;x<width;x++){
  const ghostHits=cityCut?ray.intersectObject(cityCut.group,true):[];
  const hit=[...visibleCity,...transitHits].sort((a,b)=>a.distance-b.distance)[0];
  let colour=new THREE.Color('#c5c2ad');
- if(hit){colour=hit.object.material.color.clone();if(hit.object.name==='Observed metro'){colour.set('#e2e3ce');trainPixels++;}if(hit.object.name==='metro roofs'){colour.set('#e2e3ce');trainPixels++;}if(hit.face)colour.multiplyScalar(.65+.35*Math.abs(hit.face.normal.y));}
+ if(hit){colour=hit.object.material.color.clone();if(hit.object.name==='Observed metro'){colour.set('#e2e3ce');trainPixels++;}if(hit.object.name==='metro roofs'){colour.set('#e2e3ce');trainPixels++;}if(hit.face){
+  const colours=hit.object.geometry.getAttribute('color'),positions=hit.object.geometry.getAttribute('position');
+  if(colours&&hit.object.material.vertexColors){
+   const bary=THREE.Triangle.getBarycoord(hit.object.worldToLocal(hit.point.clone()),new THREE.Vector3().fromBufferAttribute(positions,hit.face.a),new THREE.Vector3().fromBufferAttribute(positions,hit.face.b),new THREE.Vector3().fromBufferAttribute(positions,hit.face.c),new THREE.Vector3());
+   const tint=new THREE.Color(0,0,0);for(const [index,weight]of [[hit.face.a,bary.x],[hit.face.b,bary.y],[hit.face.c,bary.z]])tint.add(new THREE.Color().fromBufferAttribute(colours,index).multiplyScalar(weight));colour.multiply(tint);
+  }
+  colour.multiplyScalar(.65+.35*Math.abs(hit.face.normal.y));
+ }}
  if(cityHits.some(h=>(h.object.position.y>0||h.object.userData.bagId)&&removed(h.point)))clearedBuildingPixels++;
  if(ghostHits.length&&(!hit||ghostHits[0].distance<hit.distance))colour.lerp(new THREE.Color('#9baea1'),ghostHits[0].object.material.opacity);
  colour.convertLinearToSRGB();

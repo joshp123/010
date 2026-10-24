@@ -1,0 +1,14 @@
+{
+  "source": "schiedamseweg-2026.jpg",
+  "method": "Visual review of source-only candidate contact sheets against full dated orthophoto. The accepted component labels select original pale-paint pixel support only; RGB is replaced with illustrated paint. No components are completed across shadow or actor occlusion.",
+  "acceptedComponents": [222,111,186,25,41,63,52,153,208,171,256,188,233,272,134,136,138,295,336,342,318,319,334,338,353,341,345,347,350,349,321,322,327,317,359,358,370,344,357,351,354],
+  "observations": {
+    "crossings": "Pale observed zebra/bicycle crossing stripes, including shadow-truncated sections. Retain actual worn silhouette; no full-line reconstruction.",
+    "speed": "Observed 30 road paint north carriageway; both disconnected components retained.",
+    "dashes": "Clearly visible pale cycle-lane dashes on north carriageway. No continuation into hidden regions.",
+    "rejected": "All unlisted components: roofs leaning across footprints, vehicles, pale furnishings, uncertain paving or paint. The generative full-ground rehearsal invented hidden lines and removed actual parking recesses; its geography is not used."
+  },
+  "materialInterpretation": "Native image generation produces four flat paint-only material swatches. The compiler applies them inside native BGT features; repeating paving is bounded material illustration, not a survey of individual joints. No photographic RGB reaches runtime.",
+  "sourceFeatureOverrides": {"310": "Rust-toned tram reservation visibly present in 2026 orthophoto, not inferred from imagery shadows. Native BGT class is Onbegroeid terreindeel / gesloten verharding."},
+  "notReconstructed": ["rail alignments", "markings hidden behind cars or shadows", "individual bicycle racks or small street props", "roof projections into ground", "tree crowns"]
+}

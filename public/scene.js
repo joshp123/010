@@ -16,6 +16,7 @@ import { createTreeBatches } from './tree-batches.js';
 import { createVegetationStyle } from './vegetation-style.js';
 import { applyPublicSpaceMaterial, createPublicSpaceStyle } from './public-space-style.js';
 import { applyMiniatureLighting } from './miniature-lighting.js';
+import { createGroundArtwork } from './ground-artwork.js';
 import { setAppearanceSampling } from './appearance-sampling.js';
 import { createBuildingAppearanceReconciliation, createTankAppearanceReconciliation, prepareAppearanceModel, appearanceTextureDiagnostics } from './building-appearance.js';
 import { TilesRenderer } from '3d-tiles-renderer';
@@ -184,6 +185,11 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   for (const material of [...Object.entries(materials).filter(([kind]) => !['bridges', 'bridgeSurfaces'].includes(kind)).map(([, material]) => material), cartographicMaterial, contextLandMaterial, lampGlowMaterial, lampPoolMaterial, lampShaftMaterial]) applyMetroCutaway(material, cutawayUniforms);
   for (const material of [...['ground', 'streets', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain', 'yards'].map(kind => materials[kind]), cartographicMaterial, contextLandMaterial]) applyPublicSpaceMaterial(material);
   const publicSpaceStyle = createPublicSpaceStyle({ material: materials.ground });
+  const groundArtworkEnabled = new URLSearchParams(location.search).get('ground') === 'illustrated';
+  const groundArtwork = createGroundArtwork({ enabled: groundArtworkEnabled, requestRender, anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()) });
+  groundArtwork.apply(materials.ground);
+  let groundArtworkPending = groundArtworkEnabled, groundArtworkFailed = false;
+  groundArtwork.ready.then(() => { groundArtworkPending = false; groundArtworkFailed = Boolean(groundArtwork.diagnostics().error); requestRender(); });
   Object.assign(materials.bridgeSurfaces, { polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
   const seaGeometry = new THREE.PlaneGeometry(180000, 180000, 96, 96);
   const seaVertices = seaGeometry.getAttribute('position');
@@ -331,8 +337,8 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     scheduleDeferredUpdate(121);
   }
   function viewReadiness() {
-    let pending = Number(overviewState === 'loading') + Number(contextState === 'loading') + Number(viewUpdateDeferred);
-    let failed = overviewState === 'error' || contextState === 'error';
+    let pending = Number(groundArtworkPending) + Number(overviewState === 'loading') + Number(contextState === 'loading') + Number(viewUpdateDeferred);
+    let failed = groundArtworkFailed || overviewState === 'error' || contextState === 'error';
     let refused = 0;
     for (const tiles of tilesets) {
       if (!tiles.group.visible) continue;
@@ -403,6 +409,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       if (kind === 'yards') mesh.renderOrder = -11;
     });
     if (['ground', 'streets', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain', 'yards'].includes(kind)) publicSpaceStyle.addModel(model);
+    if (kind === 'ground') groundArtwork.addModel(model);
     if (!['bridges', 'bridgeSurfaces'].includes(kind)) bindCutawayShadows(model);
     if (kind === 'buildings') { buildingAppearance.addModel(model); buildingBatches.addModel(model); }
     if (kind === 'tanks' && tankAppearanceEnabled) tankAppearance.addModel(model);
@@ -447,7 +454,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (kind === 'buildings') tiles.addEventListener('dispose-model', event => { buildingAppearance.removeModel(event.scene); buildingBatches.removeModel(event.scene); });
     if (kind === 'tanks') tiles.addEventListener('dispose-model', event => tankAppearance.removeModel(event.scene));
     if (kind === 'appearanceTanks') tiles.addEventListener('dispose-model', requestRender);
-    if (kind === 'ground') tiles.addEventListener('dispose-model', event => sourceFusion.removeGround(event.scene));
+    if (kind === 'ground') tiles.addEventListener('dispose-model', event => { sourceFusion.removeGround(event.scene); groundArtwork.removeModel(event.scene); });
     if (['ground', 'streets', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain', 'yards'].includes(kind)) tiles.addEventListener('dispose-model', event => publicSpaceStyle.removeModel(event.scene));
     if (kind === 'trees' || kind === 'lights') tiles.addEventListener('dispose-model', event => { if (kind === 'trees') treeBatches.removeModel(event.scene); objectDetail.removeModel(event.scene); if (kind === 'trees') vegetationStyle.removeModel(event.scene); });
     for (const event of ['load-tileset', 'needs-update', 'tile-visibility-change', 'tiles-load-end']) tiles.addEventListener(event, requestRender);
@@ -610,7 +617,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (tankAppearance.setVisibleModels(visibleTankAppearanceModels())) renderer.shadowMap.needsUpdate = true;
     if (tilesets.find(tiles => tiles.kind === 'ground').group.visible) {
       sourceFusion.setVisibleBridges(tilesets.filter(tiles => tiles.kind === 'bridges' && tiles.group.visible).flatMap(tiles => [...tiles.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean)));
-      if (sourceFusion.update()) renderer.shadowMap.needsUpdate = true;
+      if (sourceFusion.update()) { renderer.shadowMap.needsUpdate = true; groundArtwork.refresh(); }
     }
     for (const [kind, query] of surfaceQueries) {
       const layer = tilesets.find(tiles => tiles.kind === kind);
@@ -868,14 +875,14 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     setView, getView: () => ({ ...view }), setLighting, captureCanvas,
     zoom: factor => setView({ span: view.span / factor }), reset: () => setView(DEFAULT_VIEW),
     render: () => { needsRender = true; frame(); }, getCanvas: () => canvas, resize,
-    getDiagnostics: () => ({ publicSpace: publicSpaceStyle.diagnostics(), tankAppearance: { enabled: tankAppearanceEnabled, ...tankAppearance.diagnostics(), textures: appearanceTextureDiagnostics(visibleTankAppearanceModels()) }, vegetation: { mode: vegetationEnabled ? 'clustered' : 'native', ...vegetationStyle.diagnostics() }, shaderErrors: shaderErrors.slice(), buildingAppearance: { edition: appearanceEdition, sampling: appearanceSamplingPreset, ...buildingAppearance.diagnostics(), textures: appearanceTextureDiagnostics([...tilesets.find(layer => layer.kind === 'appearanceBuildings').visibleTiles].map(tile => tile.engineData.scene)) }, fixtureSurfaceLighting: fixtureSurfaceLighting.diagnostics(), readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, cyclists: { ...cyclists.statistics(), state: cyclistsState }, transit: { ...transit.statistics(), metroState, cityCut: metroCityCut.diagnostics() }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count ?? mesh.geometry.getAttribute('position')?.count ?? 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
+    getDiagnostics: () => ({ groundArtwork: groundArtwork.diagnostics(), publicSpace: publicSpaceStyle.diagnostics(), tankAppearance: { enabled: tankAppearanceEnabled, ...tankAppearance.diagnostics(), textures: appearanceTextureDiagnostics(visibleTankAppearanceModels()) }, vegetation: { mode: vegetationEnabled ? 'clustered' : 'native', ...vegetationStyle.diagnostics() }, shaderErrors: shaderErrors.slice(), buildingAppearance: { edition: appearanceEdition, sampling: appearanceSamplingPreset, ...buildingAppearance.diagnostics(), textures: appearanceTextureDiagnostics([...tilesets.find(layer => layer.kind === 'appearanceBuildings').visibleTiles].map(tile => tile.engineData.scene)) }, fixtureSurfaceLighting: fixtureSurfaceLighting.diagnostics(), readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, cyclists: { ...cyclists.statistics(), state: cyclistsState }, transit: { ...transit.statistics(), metroState, cityCut: metroCityCut.diagnostics() }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count ?? mesh.geometry.getAttribute('position')?.count ?? 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
     dispose() {
       disposed = true; clearTimeout(deferredUpdateTimer); if (scheduledFrame) cancelAnimationFrame(scheduledFrame); observer.disconnect();
       for (const [event, handler] of [['pointerdown', pointerDown], ['pointermove', pointerMove], ['pointerup', pointerUp], ['pointercancel', pointerUp], ['wheel', wheel], ['dblclick', doubleClick], ['contextmenu', contextMenu]]) canvas.removeEventListener(event, handler);
       document.removeEventListener('visibilitychange', pauseTraffic); reducedMotion.removeEventListener('change', pauseTraffic);
       buildingBatches.dispose(); for (const layer of simulatedLayers) layer.dispose(); transit.dispose(); metroCityCut.dispose(); emptyCutawayTexture.dispose(); cutawayDepthMaterial.dispose();
       for (const query of surfaceQueries.values()) query.dispose();
-      sourceFusion.dispose(); publicSpaceStyle.dispose(); treeBatches.dispose(); objectDetail.dispose(); vegetationStyle.dispose(); fixtureSurfaceLighting.dispose();
+      sourceFusion.dispose(); publicSpaceStyle.dispose(); groundArtwork.dispose(); treeBatches.dispose(); objectDetail.dispose(); vegetationStyle.dispose(); fixtureSurfaceLighting.dispose();
       for (const tiles of tilesets) tiles.dispose();
       for (const material of Object.values(materials)) material.dispose();
       lampGlowMaterial.dispose(); lampPoolMaterial.dispose(); lampShaftMaterial.dispose(); reflectionTarget.dispose(); cityTarget.dispose(); presentationQuad.geometry.dispose(); presentationMaterial.dispose();

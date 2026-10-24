@@ -1,0 +1,33 @@
+{
+  "records": [
+    {
+      "file": "residential-rehearsal-REJECTED.png",
+      "sha256": "75e7508a5c505fe0ff75b59d252da0dddfdda79e30ef9e1b8897c4517cc037dd",
+      "status": "rejected geography",
+      "tool": "native image_gen.imagegen",
+      "toolOutputName": "exec-495de777-3c5d-4d79-bd09-e3ef6a6a816c.png",
+      "modelVersion": "not exposed",
+      "nativeLibraryId": "not exposed"
+    },
+    {
+      "file": "schiedamseweg-geography-REJECTED.png",
+      "sha256": "77cc59dd3978a84d381d565e18457970db1a132904b0116d9fd217150cfa173e",
+      "status": "rejected geography; invented hidden lines and removed parking",
+      "tool": "native image_gen.imagegen",
+      "toolOutputName": "exec-ab415d53-5f91-463c-a4b7-807b50baf1ac.png",
+      "modelVersion": "not exposed",
+      "nativeLibraryId": "not exposed"
+    },
+    {
+      "file": "material-swatches.png",
+      "sha256": "7ebae654e4cf4e01b0269b4e46d4ce609f043b0f698c15d2a3b6207b60c7efe7",
+      "status": "material-only review candidate; no geographic output used",
+      "tool": "native image_gen.imagegen",
+      "toolOutputName": "exec-13ac4654-08de-4754-b654-e27a6c8ae33d.png",
+      "modelVersion": "not exposed",
+      "nativeLibraryId": "not exposed"
+    }
+  ],
+  "reproducibility": "Retained source, prompts, accepted swatches and deterministic compiler. Generation is stochastic.",
+  "sourceHandoffArchive": "schiedamseweg-ground-2026.zip"
+}

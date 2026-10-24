@@ -34,7 +34,7 @@ assert.equal(stats.visibleMetroObservations,1);
 assert.equal(stats.visibleFreshUndergroundObservations,1);
 assert.equal(stats.underground,1);
 assert.equal(stats.metroFocus.id,'near');
-assert.equal(stats.section.radiusMetres,38);
+assert.equal(stats.section.radiusMetres,32);
 const section=view.group.children.find(child=>child.name==='BRT tunnel plan · depth illustrated');
 assert.ok(section.children.some(child=>child.name==='Cut earth face · depth illustrated'),'section must contain an actual full-depth earth face');
 const sectionPositions=section.children.flatMap(mesh=>Array.from(mesh.geometry.getAttribute('position').array));
@@ -91,7 +91,7 @@ assert.equal(sectionHeights.report.heightDifference,0,'surface refresh moves sec
 const offsetReport={...metro,latitude:.014};
 elevatedEndpointView.update({vehicles:[offsetReport]});
 const offsetStats=elevatedEndpointView.statistics();
-assert.equal(offsetStats.section.widthMetres,14,'uncertain reporting must not widen whole section');
+assert.equal(offsetStats.section.widthMetres,6,'uncertain reporting must not widen whole section');
 assert.match(offsetStats.cutawayMessage,/14 m from mapped track/);
 assert.equal(elevatedEndpointView.group.children.find(child=>child.name==='Reported metro position · track mismatch').count,1);
 assert.equal(elevatedEndpointView.group.children.find(child=>child.name==='Observed metro').count,0,'offset report is not a guessed train on tracks');

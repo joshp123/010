@@ -17,7 +17,7 @@ for(const source of [original,narrow]) {
   for(const endpoint of ['min','max']) for(const axis of ['x','y','z']) assert.ok(Math.abs(a.boundingBox[endpoint][axis]-source.boundingBox[endpoint][axis])<1e-6,'source envelope must be retained');
   assert.ok(a.getAttribute('position').array.every(Number.isFinite));
   const colors=a.getAttribute('color').array;
-  assert.ok(new Set(Array.from(colors)).size>3,'crown lobes must carry distinct flat palette regions');
+  assert.ok(new Set(Array.from(colors)).size>3,'foliage must carry distinct palette regions');
 }
 const model=new THREE.Group();const crownGroup=new THREE.Group();crownGroup.batchTable={getDataFromId:()=>({attributes:{tree_part:'kruin'}})};model.add(crownGroup);
 const trunkGroup=new THREE.Group();trunkGroup.batchTable={getDataFromId:()=>({attributes:{tree_part:'stam'}})};model.add(trunkGroup);
@@ -28,4 +28,4 @@ assert.deepEqual(crownMesh.instanceMatrix.array,matrices,'inventory placement, o
 assert.notEqual(crownMesh.geometry,original);assert.notEqual(trunkMesh.geometry,trunk);
 const c=trunkMesh.geometry.getAttribute('color');assert.ok(c.getX(0)>c.getY(0)&&c.getY(0)>c.getZ(0),'trunk uses brown rather than canopy green');
 style.removeModel(model);assert.equal(crownMesh.geometry,original);assert.equal(trunkMesh.geometry,trunk);assert.equal(style.diagnostics().interpretedPrototypes,0);
-console.log('Vegetation: retained source crown bounds, deterministic clumps, unchanged source/instance transforms, brown trunks, reversible lifecycle passed.');
+console.log('Vegetation: retained source crown bounds, deterministic foliage, unchanged source/instance transforms, brown trunks, reversible lifecycle passed.');

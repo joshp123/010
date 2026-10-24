@@ -76,12 +76,16 @@ export function createMetroCityCut() {
       }
     });}
     for(const [mesh,record]of records)if(!present.has(mesh)){removeRecord(record);records.delete(mesh);changed=true;}
-    const key=section?.enabled?JSON.stringify([section.projection.toArray(),section.segments.map(s=>[s.start.toArray(),s.end.toArray()])]):'off';
+    const key=section?.enabled?JSON.stringify([section.projection.toArray(),section.segments.map(s=>[s.start.toArray(),s.end.toArray()]),section.mouthPolygons?.map(polygon=>polygon.map(point=>point.toArray()))]):'off';
     if(!changed&&key===lastKey)return false;
     lastKey=key;selectedCount=0;
     const projection=section?.projection||new THREE.Vector2();
     const project=p=>({x:p.x-p.y*projection.x,y:p.z-p.y*projection.y});
     const footprints=[],physicalFootprints=[];
+    if(section?.enabled)for(const polygon of section.mouthPolygons||[]){
+      physicalFootprints.push(hull(polygon.map(p=>({x:p.x,y:p.z}))));
+      footprints.push(hull(polygon.map(project)));
+    }
     if(section?.enabled)for(const segment of section.segments){
       const side=new THREE.Vector3(-(segment.end.z-segment.start.z),0,segment.end.x-segment.start.x).normalize().multiplyScalar(section.selectionHalfWidth??section.halfWidth);
       const points=[];
