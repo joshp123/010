@@ -381,6 +381,7 @@ function focusNextMetro() {
   scene.setMetroCutaway(true);
   setViewPanel(false);
   navigateTo({ lat: target.latitude, lon: target.longitude, span: 170, bearing: target.preferredBearing, name: `Metro ${target.label || ''}`.trim() });
+  scene.focusMetroReport(target.id);
   showMetroViewStatus();
 }
 byId('metro-find').addEventListener('click', focusNextMetro);

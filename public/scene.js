@@ -339,6 +339,10 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     transitSnapshot = snapshot;
     if (snapshot.sources?.ndov?.receivedAt !== previous.sources?.ndov?.receivedAt || snapshot.sources?.ns?.receivedAt !== previous.sources?.ns?.receivedAt) transitSurfaceCache.clear();
     transit.update(snapshot);
+    const inspectedReport = transit.inspectionReport();
+    if (inspectedReport && (inspectedReport.latitude !== view.lat || inspectedReport.longitude !== view.lon)) {
+      setView({ lat: inspectedReport.latitude, lon: inspectedReport.longitude }, true, true);
+    }
   }
   function metroSectionView() {
     return transit.getSectionView({ width, height, night: uniforms.night.value > 0.1 });
@@ -346,7 +350,6 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   function setMetroCutaway(enabled) {
     if (metroState !== 'ready') return false;
     transit.setCutaway({ enabled });
-    // The underground inspector has its own view; keep the real street intact.
     cutawayUniforms.enabled.value = enabled ? 1 : 0;
     renderer.shadowMap.needsUpdate = true;
     requestRender();
@@ -805,9 +808,12 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (latestInputTime !== null) { recordTiming(inputRenderTimes, submitted - latestInputTime); latestInputTime = null; }
     if ((needsRender || precipitation || animateTraffic) && !scheduledFrame) scheduledFrame = requestAnimationFrame(frame);
   }
-  function setView(nextView, notify = true) {
-    view.lat = THREE.MathUtils.clamp(Number(nextView.lat ?? view.lat), 51.80, 52.05);
-    view.lon = THREE.MathUtils.clamp(Number(nextView.lon ?? view.lon), 3.88, 4.66);
+  function setView(nextView, notify = true, preserveInspection = false) {
+    const nextLatitude = THREE.MathUtils.clamp(Number(nextView.lat ?? view.lat), 51.80, 52.05);
+    const nextLongitude = THREE.MathUtils.clamp(Number(nextView.lon ?? view.lon), 3.88, 4.66);
+    if (!preserveInspection && (nextLatitude !== view.lat || nextLongitude !== view.lon)) transit.releaseReport();
+    view.lat = nextLatitude;
+    view.lon = nextLongitude;
     view.span = clampViewSpan(nextView.span ?? view.span, view.span);
     view.bearing = Number(nextView.bearing ?? view.bearing);
     target.copy(localPosition(view.lat, view.lon));
@@ -1031,7 +1037,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     reviewAppearanceSampling,
     trafficReady: () => trafficReady, cyclistsReady: () => cyclistsReady,
     inspectTrafficSurfaces: (options = {}) => inspectTrafficSurfaces({ samples: [...traffic.sampleVehicles(options), ...cyclists.sampleVehicles(options)], tilesets, camera, width: canvas.clientWidth, height: canvas.clientHeight }),
-    updateTransit, getTransitReport: id => transit.getReport(id), setMetroCutaway, metroReady: () => metroReady, getTransitStatistics: () => ({ ...transit.statistics(), metroState, sectionEnabled: false }),
+    updateTransit, focusMetroReport: id => transit.focusReport(id), getTransitReport: id => transit.getReport(id), setMetroCutaway, metroReady: () => metroReady, getTransitStatistics: () => ({ ...transit.statistics(), metroState, sectionEnabled: false }),
     setView, getView: () => ({ ...view }), setLighting, captureCanvas,
     zoom: factor => setView({ span: view.span / factor }), reset: () => setView(DEFAULT_VIEW),
     render: () => { needsRender = true; frame(); }, getCanvas: () => canvas, resize,
