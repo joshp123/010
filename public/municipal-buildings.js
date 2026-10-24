@@ -102,27 +102,25 @@ export function createMunicipalBuildingVisibility() {
 // Enter a neighbourhood through its first available source model, then refine
 // that same hierarchy. Leaf-first loading otherwise requests scores of models
 // before their ordinary streets have any source appearance at all.
-export function configureMunicipalBuildingStreaming(tiles, municipalCache) {
-  if (municipalCache) {
-    municipalCache.maxBytesSize = 256 * 1024 * 1024;
-    municipalCache.minBytesSize = municipalCache.maxBytesSize * 0.8;
-    municipalCache.unloadPriorityCallback = tiles.lruCache.unloadPriorityCallback;
-    tiles.lruCache = municipalCache;
-  }
+export function configureMunicipalBuildingStreaming(tiles) {
   const calculateViewError = tiles.calculateTileViewError.bind(tiles);
   const presentedParents = new WeakSet();
+  function hasResidentDescendant(tile) {
+    return tile.children.some(child => (child.internal.hasRenderableContent && child.internal.loadingState === LOADED) || hasResidentDescendant(child));
+  }
   tiles.loadAncestors = false;
   tiles.loadSiblings = false;
   tiles.calculateTileViewError = (tile, result) => {
     calculateViewError(tile, result);
     if (!tile.internal.hasRenderableContent) return;
-    if (tile.internal.loadingState < LOADED) presentedParents.delete(tile);
-    else if (tile.traversal.wasSetVisible) presentedParents.add(tile);
+    if (tile.internal.loadingState < LOADED) {
+      if (!hasResidentDescendant(tile)) presentedParents.delete(tile);
+    } else if (tile.traversal.wasSetVisible) presentedParents.add(tile);
     // Loading is not presentation. Make a ready parent visible for a frame
     // before refining; the renderer can then retain it until children arrive.
+    // Resident children already provide context after their parent is evicted.
     if (tile.internal.loadingState >= UNLOADED && !presentedParents.has(tile)) {
       result.error = Math.min(result.error, tiles.errorTarget);
     }
   };
-  return municipalCache;
 }
