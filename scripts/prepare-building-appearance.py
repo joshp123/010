@@ -213,6 +213,52 @@ def convert(doc,binary,batch,feature,label):
     transform=[1,0,0,0,0,1,0,0,0,0,1,0,*rtc,1]
     return glb,transform,doc['extras']['bagIds'],len(doc.get('images',[]))
 
+def read_glb(raw):
+    size=struct.unpack_from('<I',raw,12)[0]
+    return json.loads(raw[20:20+size]),raw[28+size:]
+
+def texture_lod(glb,limit=None):
+    """Repack image views only; geometry values and accessor layout stay exact."""
+    doc,binary=read_glb(glb);images={};dimensions=[];source_dimensions=[]
+    for im in doc.get('images',[]):
+        v=doc['bufferViews'][im['bufferView']];raw=binary[v.get('byteOffset',0):v.get('byteOffset',0)+v['byteLength']]
+        image=Image.open(io.BytesIO(raw));source_dimensions.append(image.size)
+        if limit and max(image.size)>limit:
+            image.thumbnail((limit,limit),Image.Resampling.BOX)
+            out=io.BytesIO();image.save(out,format='PNG',optimize=True);raw=out.getvalue()
+        images[im['bufferView']]=raw;dimensions.append(image.size)
+    # Physical source sampling: median non-degenerate triangle edge metres per
+    # texel per material, then the largest material footprint within this tile.
+    samples={}
+    for mesh in doc['meshes']:
+        for p in mesh['primitives']:
+            material=doc['materials'][p['material']]['pbrMetallicRoughness']
+            if 'baseColorTexture' not in material:continue
+            ti=material['baseColorTexture']['index'];ii=doc['textures'][ti]['source']
+            idx=accessor(doc,binary,p['indices'])[:,0].reshape(-1,3)
+            pos=accessor(doc,binary,p['attributes']['POSITION'])[idx]
+            uv=accessor(doc,binary,p['attributes']['TEXCOORD_0'])[idx]*dimensions[ii]
+            for a,b in ((0,1),(1,2),(2,0)):
+                meters=np.linalg.norm(pos[:,a]-pos[:,b],axis=1);pixels=np.linalg.norm(uv[:,a]-uv[:,b],axis=1)
+                ok=(meters>0.1)&(pixels>1)
+                samples.setdefault(ii,[]).extend((meters[ok]/pixels[ok]).tolist())
+    spacing=max((float(np.median(s)) for s in samples.values() if s),default=0)
+    decoded=0
+    for w,h in dimensions:
+        while True:
+            decoded+=w*h*4
+            if w==1 and h==1:break
+            w=max(1,w//2);h=max(1,h//2)
+    info={'maxTextureSize':max(max(d) for d in dimensions),'dimensions':[list(d) for d in dimensions],'decodedRgbaBytesIncludingMips':decoded,'samplingMetersPerTexel':spacing,'geometricError':spacing if limit else 0}
+    if not limit:return glb,info
+    new=bytearray()
+    for i,v in enumerate(doc['bufferViews']):
+        raw=images.get(i,binary[v.get('byteOffset',0):v.get('byteOffset',0)+v['byteLength']])
+        new.extend(b'\0'*((-len(new))%4));v['byteOffset']=len(new);v['byteLength']=len(raw);new.extend(raw)
+    doc['buffers']=[{'byteLength':len(new)}];jb=pad(packed_json(doc),fill=b' ');bb=pad(bytes(new))
+    output=struct.pack('<4sII',b'glTF',2,28+len(jb)+len(bb))+struct.pack('<I4s',len(jb),b'JSON')+jb+struct.pack('<I4s',len(bb),b'BIN\0')+bb
+    return output,info
+
 def main():
     global STYLE
     ap=argparse.ArgumentParser();ap.add_argument('--acquire',action='store_true');ap.add_argument('--style',choices=['source','baseline','miniature'],default='miniature');args=ap.parse_args();STYLE=args.style
@@ -228,13 +274,28 @@ def main():
             glb,transform,ids,image_count=result
             name=t['url'].removeprefix(BASE).replace('/','-').replace('.cmpt','').replace('.b3dm','')+f'-{part}.glb'
             (OUTPUT/name).write_bytes(glb)
-            child={'boundingVolume':t['boundingVolume'],'geometricError':0,'transform':transform,'content':{'uri':name},'extras':{'bagIds':ids}}
+            _,native_info=texture_lod(glb)
+            levels=[]
+            for limit in (512,1024):
+                if native_info['maxTextureSize']<=limit:continue
+                lod,lod_info=texture_lod(glb,limit)
+                lod_name=name.replace('.glb',f'-tex{limit}.glb');(OUTPUT/lod_name).write_bytes(lod)
+                levels.append({**lod_info,'output':lod_name,'bytes':len(lod),'sha256':digest(lod)})
+            levels.append({**native_info,'output':name,'bytes':len(glb),'sha256':digest(glb)})
+            child=None
+            for level in reversed(levels):
+                node={'boundingVolume':t['boundingVolume'],'geometricError':level['geometricError'],'refine':'REPLACE','content':{'uri':level['output']},'extras':{'bagIds':ids}}
+                if child:node['children']=[child]
+                child=node
+            # RTC appears only on the outer tile. Descendants inherit it once.
+            child['transform']=transform
             children.append(child);all_ids.update(ids)
-            entries.append({**t,'output':name,'sha256':digest(glb),'bytes':len(glb),'bagIds':ids,'atlases':image_count})
+            entries.append({**t,'output':name,'sha256':digest(glb),'bytes':len(glb),'bagIds':ids,'atlases':image_count,'textureLevels':levels})
             print(f'{name}: {len(ids)} buildings, {len(glb)} bytes',flush=True)
     regions=[c['boundingVolume']['region'] for c in children]
     region=[min(r[0] for r in regions),min(r[1] for r in regions),max(r[2] for r in regions),max(r[3] for r in regions),min(r[4] for r in regions),max(r[5] for r in regions)]
-    tileset={'asset':{'version':'1.0','gltfUpAxis':'Y'},'geometricError':0,'root':{'boundingVolume':{'region':region},'geometricError':0,'refine':'ADD','children':children}}
+    root_error=max(c['geometricError'] for c in children)*2
+    tileset={'asset':{'version':'1.0','gltfUpAxis':'Y'},'geometricError':root_error,'root':{'boundingVolume':{'region':region},'geometricError':root_error,'refine':'ADD','children':children}}
     (OUTPUT/'tileset.json').write_bytes(packed_json(tileset)+b'\n')
     manifest={'sourceRoot':BASE+'tileset.json','areas':AREAS,'pipeline':'Original textured source mesh + UV retained; legacy PBR conversion; 3x3 median, saturation 0.82, selected palette preset with no dithering; explicit ECEF RTC origin; split by source BAG ID','license':'Gemeente Rotterdam public-domain model, attribution retained separately from MIT code','scope':'Review candidate only: older source geometry replaces matching BAG features, never overlays current geometry; no contemporary accuracy claim','style':STYLE,'sourceTiles':len(selected),'outputTiles':len(entries),'buildings':len(all_ids),'entries':entries}
     (OUTPUT/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')

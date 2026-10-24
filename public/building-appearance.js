@@ -6,6 +6,25 @@ export function normalizedBagId(value) {
   return match?.[1] ?? null;
 }
 
+export function appearanceTextureDiagnostics(models) {
+  const textures = new Set(), dimensions = {};
+  let decodedBytes = 0;
+  for (const model of models) model?.traverseVisible(mesh => {
+    if (!mesh.isMesh) return;
+    for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+      for (const value of Object.values(material)) {
+        if (!value?.isTexture || textures.has(value)) continue;
+        textures.add(value);
+        const width = value.image?.width || 0, height = value.image?.height || 0;
+        const key = `${width}x${height}`;
+        dimensions[key] = (dimensions[key] || 0) + 1;
+        decodedBytes += width * height * 4 * (value.generateMipmaps ? 4 / 3 : 1);
+      }
+    }
+  });
+  return { count: textures.size, dimensions, decodedRgbaBytesIncludingMips: Math.round(decodedBytes) };
+}
+
 function batchTableFor(mesh) {
   for (let node = mesh; node; node = node.parent) if (node.batchTable) return node.batchTable;
   return null;
