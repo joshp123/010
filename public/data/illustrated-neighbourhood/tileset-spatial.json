@@ -1,1 +1,77 @@
-{"asset":{"version":"1.0","gltfUpAxis":"Y"},"geometricError":0,"root":{"boundingVolume":{"sphere":[3931045.8183844527,305719.6396652567,4996589.508064847,142.6379929811296]},"geometricError":0,"refine":"ADD","children":[{"boundingVolume":{"sphere":[3930962.391945258,305721.51311384584,4996653.971230226,34.538801979116485]},"geometricError":0,"content":{"uri":"north18-spatial/tileset.json"}},{"boundingVolume":{"sphere":[3931137.3566433266,305766.5882441138,4996514.726021193,15.453969033566713]},"geometricError":0,"content":{"uri":"apartment/tileset.json"}},{"boundingVolume":{"sphere":[3931037.1942079314,305726.247081466,4996597.506528041,44.63467027121929]},"geometricError":0,"content":{"uri":"adjoining32-spatial/tileset.json"}},{"boundingVolume":{"sphere":[3931046.3307412947,305664.2102216013,4996591.828479929,33.01409550597135]},"geometricError":0,"content":{"uri":"west-eight-spatial/tileset.json"}}]}}
+{
+  "asset": {
+    "version": "1.0",
+    "gltfUpAxis": "Y"
+  },
+  "geometricError": 0,
+  "root": {
+    "boundingVolume": {
+      "sphere": [
+        3931045.8183844527,
+        305719.6396652567,
+        4996589.508064847,
+        142.6379929811296
+      ]
+    },
+    "geometricError": 0,
+    "refine": "ADD",
+    "children": [
+      {
+        "boundingVolume": {
+          "sphere": [
+            3931137.3566433266,
+            305766.5882441138,
+            4996514.726021193,
+            15.453969033566713
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "apartment/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3931037.1942079314,
+            305726.247081466,
+            4996597.506528041,
+            44.63467027121929
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "adjoining32-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3931046.3307412947,
+            305664.2102216013,
+            4996591.828479929,
+            33.01409550597135
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "west-eight-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3930962.391945258,
+            305721.51311384584,
+            4996653.971230226,
+            34.538801979116485
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "north18-spatial/tileset.json"
+        }
+      }
+    ]
+  }
+}

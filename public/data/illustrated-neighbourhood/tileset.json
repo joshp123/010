@@ -19,20 +19,6 @@
       {
         "boundingVolume": {
           "sphere": [
-            3930962.391945258,
-            305721.51311384584,
-            4996653.971230226,
-            34.538801979116485
-          ]
-        },
-        "geometricError": 0,
-        "content": {
-          "uri": "north18/tileset.json"
-        }
-      },
-      {
-        "boundingVolume": {
-          "sphere": [
             3931137.3566433266,
             305766.5882441138,
             4996514.726021193,
@@ -70,6 +56,20 @@
         "geometricError": 0,
         "content": {
           "uri": "west-eight/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3930962.391945258,
+            305721.51311384584,
+            4996653.971230226,
+            34.538801979116485
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "north18/tileset.json"
         }
       }
     ]
