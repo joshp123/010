@@ -154,7 +154,8 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   const emptyCutawayTexture = new THREE.DataTexture(new Uint8Array([0]), 1, 1, THREE.RedFormat);
   emptyCutawayTexture.needsUpdate = true;
   const cutawayUniforms = { enabled: { value: 0 }, mask: { value: emptyCutawayTexture }, bounds: { value: new THREE.Vector4(0, 0, 1, 1) } };
-  for (const material of [...Object.values(materials), cartographicMaterial, contextLandMaterial, lampGlowMaterial, lampPoolMaterial, lampShaftMaterial]) applyMetroCutaway(material, cutawayUniforms);
+  // The tunnel section must not cut holes through unrelated overground bridges.
+  for (const material of [...Object.entries(materials).filter(([kind]) => !['bridges', 'bridgeSurfaces'].includes(kind)).map(([, material]) => material), cartographicMaterial, contextLandMaterial, lampGlowMaterial, lampPoolMaterial, lampShaftMaterial]) applyMetroCutaway(material, cutawayUniforms);
   Object.assign(materials.bridgeSurfaces, { polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
   const seaGeometry = new THREE.PlaneGeometry(180000, 180000, 96, 96);
   const seaVertices = seaGeometry.getAttribute('position');
@@ -347,7 +348,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     const tiles = new TilesRenderer(id.startsWith('./') ? id : `${DATA_BASE}${id}/tileset.json`);
     tiles.registerPlugin(createCompressedModelsPlugin());
     tiles.kind = kind;
-    if (kind === 'buildings') tiles.registerPlugin({
+    if (kind === 'buildings' || kind === 'appearanceBuildings') tiles.registerPlugin({
       name: 'Reach the first available building geometry',
       preprocessNode(tile) {
         if (!tile.internal.hasContent && tile.children?.length) tile.geometricError = Infinity;

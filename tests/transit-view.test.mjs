@@ -1,0 +1,47 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import * as THREE from '../public/vendor/three/build/three.module.js';
+const source = (await readFile(new URL('../public/transit-view.js', import.meta.url), 'utf8'))
+  .replace("'three'", JSON.stringify(new URL('../public/vendor/three/build/three.module.js', import.meta.url).href));
+const { createTransitView } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
+const view = createTransitView({ project: (lat, lon, height = 0) => new THREE.Vector3(lon * 1000, height, lat * 1000) });
+view.setMetroData({ source:'synthetic test fixture, never live', segments:[{id:'tunnel',form:'tunnel',coordinates:[[-.1,0],[.1,0]]}] });
+const camera = new THREE.OrthographicCamera(-50,50,50,-50,.1,1000);
+camera.position.set(0,100,100); camera.lookAt(0,0,0); camera.updateMatrixWorld();
+view.setView({camera,span:100,viewportHeight:844});
+const metro = Object.freeze({id:'near',mode:'metro',longitude:0,latitude:0,freshness:'fresh',sourceConnected:true});
+const farMetro = Object.freeze({...metro,id:'far',longitude:1});
+const buses = Array.from({length:100},(_,id)=>Object.freeze({...metro,id:`bus-${id}`,mode:'bus'}));
+const snapshot = Object.freeze({vehicles:Object.freeze([metro,farMetro,...buses])});
+view.update(snapshot);
+view.setCutaway(true);
+const mask = view.getCutaway();
+function coverageAt(x,z) {
+  const {data,width,height}=mask.texture.image, b=mask.bounds;
+  const ix=Math.floor((x-b.x)/b.z*width), iy=Math.floor((z-b.y)/b.w*height);
+  return data[iy*width+ix];
+}
+assert.ok(coverageAt(0,12)>128,'opening follows ray from 12m-deep floor to surface');
+assert.ok(coverageAt(0,-12)<128,'opposite side of tunnel is not blindly excavated');
+const rebuilds=view.statistics().mask.rebuilds;
+camera.position.set(100,100,0); camera.lookAt(0,0,0); camera.updateMatrixWorld();
+view.setView({camera});
+assert.ok(view.statistics().mask.rebuilds>rebuilds,'camera rotation invalidates aperture projection');
+let stats = view.statistics();
+assert.equal(stats.observations,102);
+assert.equal(stats.metroObservations,2);
+assert.equal(stats.visibleMetroObservations,1);
+assert.equal(stats.visibleFreshUndergroundObservations,1);
+assert.equal(stats.underground,1);
+assert.equal(snapshot.vehicles[0].longitude,0,'do not move reported coordinate to the illustrated track');
+view.update({vehicles:buses});
+stats=view.statistics();
+assert.equal(stats.observations,100);
+assert.equal(stats.visibleMetroObservations,0);
+assert.equal(stats.cutawayMessage,'No metro report in this cutaway view','a busy bus feed must not imply a metro in view');
+view.update(snapshot); view.setCutaway(false);
+assert.equal(view.statistics().cutawayMessage,null);
+const metroBatch=view.group.children.find(child=>child.name==='Observed metro');
+assert.equal(metroBatch.count,1,'underground metro is not drawn through accidental ground holes when cutaway is off');
+view.dispose();
+console.log('Transit classification, viewport counts, report integrity and cutaway visibility tests passed.');

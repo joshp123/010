@@ -50,6 +50,7 @@ function showVehicle(report) {
 function showTransit(snapshot) {
   latestTransitSnapshot = snapshot;
   scene?.updateTransit(snapshot);
+  showMetroViewStatus();
   const sources = Object.entries(snapshot.sources), fresh = snapshot.vehicles.filter(vehicle => vehicle.freshness === 'fresh' && vehicle.sourceConnected).length;
   byId('transit-count').textContent = `${fresh} fresh · ${snapshot.vehicles.length} reported`;
   byId('transit-health').textContent = sources.map(([name, source]) => {
@@ -61,6 +62,12 @@ function showTransit(snapshot) {
     if (current) showVehicle({ ...current, presentation: selectedVehicle.presentation });
     else { byId('vehicle-state').textContent = 'No longer in the latest source snapshot'; }
   }
+}
+
+function showMetroViewStatus() {
+  const message = scene?.getTransitStatistics().cutawayMessage;
+  byId('metro-view-status').hidden = !message;
+  byId('metro-view-status').textContent = message || '';
 }
 
 function say(message) {
@@ -90,6 +97,7 @@ function updateView(view) {
     locationLabel = 'Rotterdam';
   }
   updateMinimap(view);
+  showMetroViewStatus();
   clearTimeout(updateUrlTimer);
   updateUrlTimer = setTimeout(() => history.replaceState(null, '', encodeView()), 350);
 }
@@ -295,7 +303,7 @@ byId('transit-toggle').addEventListener('click', () => {
   byId('transit-toggle').setAttribute('aria-expanded', open);
 });
 byId('vehicle-close').addEventListener('click', () => showVehicle(null));
-byId('metro-cutaway').addEventListener('change', event => scene?.setMetroCutaway(event.target.checked));
+byId('metro-cutaway').addEventListener('change', event => { scene?.setMetroCutaway(event.target.checked); showMetroViewStatus(); });
 byId('zoom-in').addEventListener('click', () => scene?.zoom(1.4));
 byId('zoom-out').addEventListener('click', () => scene?.zoom(.7));
 byId('rotate').addEventListener('click', () => scene?.setView({ ...currentView, bearing: currentView.bearing + 45 }));
