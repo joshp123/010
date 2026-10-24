@@ -7,22 +7,42 @@ export function normalizedBagId(value) {
 }
 
 export function appearanceTextureDiagnostics(models) {
-  const textures = new Set(), dimensions = {};
-  let decodedBytes = 0;
+  const textures = new Set(), sources = new Map(), dimensions = {};
   for (const model of models) model?.traverseVisible(mesh => {
     if (!mesh.isMesh) return;
     for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-      for (const value of Object.values(material)) {
-        if (!value?.isTexture || textures.has(value)) continue;
-        textures.add(value);
-        const width = value.image?.width || 0, height = value.image?.height || 0;
-        const key = `${width}x${height}`;
-        dimensions[key] = (dimensions[key] || 0) + 1;
-        decodedBytes += width * height * 4 * (value.generateMipmaps ? 4 / 3 : 1);
+      for (const texture of Object.values(material)) {
+        if (!texture?.isTexture || textures.has(texture)) continue;
+        textures.add(texture);
+        const source = texture.source;
+        if (!sources.has(source)) sources.set(source, { width: texture.image?.width || 0, height: texture.image?.height || 0, mipmaps: false, variants: new Set() });
+        const record = sources.get(source);
+        record.mipmaps ||= texture.generateMipmaps;
+        // Vendored WebGLTextures.getTextureCacheKey: UV offset/repeat/rotation
+        // are uniforms, so KHR_texture_transform clones share image storage.
+        record.variants.add([texture.wrapS, texture.wrapT, texture.wrapR || 0,
+          texture.magFilter, texture.minFilter, texture.anisotropy, texture.internalFormat,
+          texture.format, texture.type, texture.generateMipmaps, texture.premultiplyAlpha,
+          texture.flipY, texture.unpackAlignment, texture.colorSpace].join());
       }
     }
   });
-  return { count: textures.size, dimensions, decodedRgbaBytesIncludingMips: Math.round(decodedBytes) };
+  let decodedRgbaBytes = 0, mipBytes = 0, sourceSamplerVariants = 0;
+  for (const { width, height, mipmaps, variants } of sources.values()) {
+    const key = `${width}x${height}`; dimensions[key] = (dimensions[key] || 0) + 1;
+    decodedRgbaBytes += width * height * 4;
+    sourceSamplerVariants += variants.size;
+    let w = width, h = height;
+    if (w && h) while (true) {
+      mipBytes += w * h * 4;
+      if (!mipmaps || (w === 1 && h === 1)) break;
+      w = Math.max(1, Math.floor(w / 2)); h = Math.max(1, Math.floor(h / 2));
+    }
+  }
+  return { count: textures.size, textureObjects: textures.size, uniqueImageSources: sources.size,
+    sourceSamplerVariants, dimensions, decodedRgbaBytes, decodedRgbaBytesIncludingMips: mipBytes,
+    memoryBasis: 'RGBA8 estimate per unique Texture.Source, not measured GPU allocation; sampler variants may need separate uploads' };
+
 }
 
 function batchTableFor(mesh) {
@@ -32,6 +52,34 @@ function batchTableFor(mesh) {
 
 export function normalizedTankId(value) {
   return /^OST_\d+$/.test(String(value ?? '')) ? String(value) : null;
+}
+
+// An illustrated feature replaces only its exact, currently visible native
+// appearance. Other native features remain useful source-backed city detail.
+export function createAppearancePriorityReconciliation() {
+  const originalVisibility = new WeakMap();
+  return {
+    update(nativeModels, illustratedModels) {
+      const illustrated = new Set();
+      for (const model of illustratedModels) model?.traverseVisible(mesh => {
+        if (!mesh.isMesh) return;
+        const id = normalizedTankId(mesh.userData.featureId);
+        if (id) illustrated.add(id);
+      });
+      let changed = false;
+      // Traverse hidden meshes too: a previously overridden feature must recover
+      // when its illustrated tile unloads or ceases to be visible.
+      for (const model of nativeModels) model?.traverse(mesh => {
+        if (!mesh.isMesh) return;
+        const id = normalizedTankId(mesh.userData.featureId);
+        if (!id) return;
+        if (!originalVisibility.has(mesh)) originalVisibility.set(mesh, mesh.visible);
+        const visible = originalVisibility.get(mesh) && !illustrated.has(id);
+        if (mesh.visible !== visible) { mesh.visible = visible; changed = true; }
+      });
+      return changed;
+    },
+  };
 }
 
 export function createTankAppearanceReconciliation() {

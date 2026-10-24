@@ -18,7 +18,7 @@ import { applyPublicSpaceMaterial, createPublicSpaceStyle } from './public-space
 import { applyMiniatureLighting } from './miniature-lighting.js';
 import { createGroundArtwork } from './ground-artwork.js';
 import { setAppearanceSampling } from './appearance-sampling.js';
-import { createBuildingAppearanceReconciliation, createTankAppearanceReconciliation, prepareAppearanceModel, appearanceTextureDiagnostics } from './building-appearance.js';
+import { createBuildingAppearanceReconciliation, createTankAppearanceReconciliation, createAppearancePriorityReconciliation, prepareAppearanceModel, appearanceTextureDiagnostics } from './building-appearance.js';
 import { TilesRenderer } from '3d-tiles-renderer';
 import { LRUCache, unifiedPriorityCallback, FAILED, LOADED } from './vendor/3d-tiles-renderer/build/index.core.js';
 
@@ -42,6 +42,7 @@ const LAYERS = [
   ['bridgeSurfaces', './data/supplemental-bridge-surfaces/tileset.json'],
   ['tanks', 'c70023a7-2878-41e9-bb81-a7c454bc310a'],
   ['appearanceTanks', './data/current-tank-appearance/tileset.json'],
+  ['appearanceTanks', './data/illustrated-tank/tileset.json'],
   ['trees', 'b9294d5b-79e0-4744-ac88-b61e3e90d5bc'],
   ['lights', '2602863a-3d22-44c2-8c95-bbf88a20bf37'],
 ];
@@ -226,6 +227,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   const buildingBatches = createBuildingBatches();
   const buildingAppearance = createBuildingAppearanceReconciliation(buildingBatches);
   const tankAppearance = createTankAppearanceReconciliation();
+  const tankAppearancePriority = createAppearancePriorityReconciliation();
   let appearanceSamplingPreset = 'anisotropic';
   const appearanceOption = new URLSearchParams(location.search).get('appearance');
   const appearanceEnabled = appearanceOption !== 'off';
@@ -360,9 +362,9 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     const key = `${state}:${loadedTiles}:${pending}`;
     if (key !== lastStatus) { lastStatus = key; onStatus({ state, message, loadedTiles, loadingTiles: pending }); }
   }
-  function visibleTankAppearanceModels() {
-    const layer = tilesets.find(tiles => tiles.kind === 'appearanceTanks');
-    return layer?.group.visible ? [...layer.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean) : [];
+  function visibleTankAppearanceModels(role = null) {
+    return tilesets.filter(layer => layer.kind === 'appearanceTanks' && layer.group.visible && (!role || layer.appearanceRole === role))
+      .flatMap(layer => [...layer.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean));
   }
   function colorModel(model, kind) {
     if (kind === 'appearanceBuildings' || kind === 'appearanceTanks') {
@@ -420,11 +422,12 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   }
 
   for (const [kind, id] of LAYERS) {
-    if (kind === 'appearanceTanks' && !tankAppearanceEnabled) continue;
-    const layerSource = kind === 'appearanceTanks' && tankAppearanceEdition === 'illustrated' ? './data/illustrated-tank/tileset.json' : kind === 'appearanceBuildings' && appearanceEdition === 'illustrated-neighbourhood' ? './data/illustrated-neighbourhood/tileset.json' : kind === 'appearanceBuildings' && appearanceEdition === 'illustrated-row' ? './data/illustrated-row/tileset.json' : kind === 'appearanceBuildings' && appearanceEdition === 'current' ? './data/current-building-appearance/tileset.json' : id;
+    if (kind === 'appearanceTanks' && (!tankAppearanceEnabled || (id.includes('illustrated-tank') && tankAppearanceEdition !== 'illustrated'))) continue;
+    const layerSource = kind === 'appearanceBuildings' && appearanceEdition === 'illustrated-neighbourhood' ? './data/illustrated-neighbourhood/tileset.json' : kind === 'appearanceBuildings' && appearanceEdition === 'illustrated-row' ? './data/illustrated-row/tileset.json' : kind === 'appearanceBuildings' && appearanceEdition === 'current' ? './data/current-building-appearance/tileset.json' : id;
     const tiles = new TilesRenderer(layerSource.startsWith('./') ? layerSource : `${DATA_BASE}${layerSource}/tileset.json`);
     tiles.registerPlugin(createCompressedModelsPlugin());
     tiles.kind = kind;
+    if (kind === 'appearanceTanks') tiles.appearanceRole = id.includes('illustrated-tank') ? 'illustrated' : 'native';
     if (['buildings', 'appearanceBuildings', 'appearanceTanks'].includes(kind)) tiles.registerPlugin({
       name: 'Reach the first available building geometry',
       preprocessNode(tile) {
@@ -615,6 +618,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     }
     const appearanceLayer = tilesets.find(tiles => tiles.kind === 'appearanceBuildings');
     if (buildingAppearance.setVisibleModels(appearanceLayer.group.visible ? [...appearanceLayer.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean) : [])) renderer.shadowMap.needsUpdate = true;
+    if (tankAppearancePriority.update(visibleTankAppearanceModels('native'), visibleTankAppearanceModels('illustrated'))) renderer.shadowMap.needsUpdate = true;
     if (tankAppearance.setVisibleModels(visibleTankAppearanceModels())) renderer.shadowMap.needsUpdate = true;
     if (tilesets.find(tiles => tiles.kind === 'ground').group.visible) {
       sourceFusion.setVisibleBridges(tilesets.filter(tiles => tiles.kind === 'bridges' && tiles.group.visible).flatMap(tiles => [...tiles.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean)));
