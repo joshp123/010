@@ -165,6 +165,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   let sunVector = new THREE.Vector3(-0.65, 0.8, 0.45).normalize();
   let lastStatus = '', lastPresentation = 0, lastCityRender = {};
   let latestInputTime = null;
+  let gestureQuietUntil = 0, deferredUpdateTimer = null, viewUpdateDeferred = false;
   let overviewState = 'loading', contextState = 'loading';
   const loadMilestones = { firstBuildingsSubmittedMs: null, initialDetailSettledMs: null };
   const frameTimes = [], inputRenderTimes = [];
@@ -253,8 +254,16 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   scene.add(overview);
 
   function requestRender() { needsRender = true; if (!scheduledFrame && !disposed) scheduledFrame = requestAnimationFrame(frame); }
+  function scheduleDeferredUpdate(delay) {
+    clearTimeout(deferredUpdateTimer);
+    deferredUpdateTimer = setTimeout(() => { deferredUpdateTimer = null; requestRender(); }, delay);
+  }
+  function markGestureInput() {
+    gestureQuietUntil = performance.now() + 120;
+    scheduleDeferredUpdate(121);
+  }
   function viewReadiness() {
-    let pending = Number(overviewState === 'loading') + Number(contextState === 'loading');
+    let pending = Number(overviewState === 'loading') + Number(contextState === 'loading') + Number(viewUpdateDeferred);
     let failed = overviewState === 'error' || contextState === 'error';
     let refused = 0;
     for (const tiles of tilesets) {
@@ -485,6 +494,9 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     if (needsRender) {
     needsRender = false;
     scene.updateMatrixWorld(true);
+    const deferViewUpdates = !capturingFullDetail && !capturePending && (pointers.size > 0 || now < gestureQuietUntil);
+    viewUpdateDeferred = deferViewUpdates;
+    if (!deferViewUpdates) {
     for (const tiles of tilesets) {
       const visible = tiles.kind === 'streets' ? true : tiles.kind === 'lamps' ? uniforms.night.value > 0.1 : tiles.kind === 'ground' ? view.span < 1400 : tiles.kind === 'greenTerrain' ? view.span >= 1400 && view.span < 12000 : tiles.kind === 'industrialStructures' ? view.span < 18000 : tiles.kind === 'trees' ? view.span < 3500 && (loadedByLayer.buildings || 0) >= 6 : tiles.kind === 'lights' ? view.span < 700 && uniforms.night.value > 0.1 : ['bridges', 'bridgeSurfaces'].includes(tiles.kind) ? view.span < 12000 : tiles.kind === 'tanks' ? view.span < 18000 : true;
       if (!visible && tiles.group.visible) {
@@ -512,6 +524,9 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     if (trafficProjectionDirty && viewReadiness().ready && now - lastTrafficProjection > 1500) {
       trafficProjectionDirty = false; lastTrafficProjection = now;
       traffic.refreshProjection();
+    } else if (trafficProjectionDirty && viewReadiness().ready) {
+      scheduleDeferredUpdate(Math.max(1, 1501 - (now - lastTrafficProjection)));
+    }
     }
     const reflectCity = uniforms.night.value > 0.1 && view.span < 6500;
     if (reflectCity) {
@@ -667,6 +682,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   }
   function pointerDown(event) {
     if (![0, 2].includes(event.button) && event.pointerType !== 'touch') return;
+    markGestureInput();
     pointerStart = pointers.size ? null : { x: event.clientX, y: event.clientY, button: event.button };
     canvas.setPointerCapture(event.pointerId);
     pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
@@ -676,6 +692,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
   function pointerDistance() { const [a, b] = [...pointers.values()]; return Math.hypot(a.x - b.x, a.y - b.y); }
   function pointerMove(event) {
     if (!pointers.has(event.pointerId)) return;
+    markGestureInput();
     latestInputTime = event.timeStamp;
     pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
     if (drag.rotating) { setView({ bearing: drag.bearing + (event.clientX - drag.startX) * 0.25 });
@@ -695,8 +712,9 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
       onTransitSelect(report);
     }
     pointerStart = null;
-    pointers.delete(event.pointerId); drag = null; pointers.clear(); canvas.style.cursor = 'grab'; }
+    pointers.delete(event.pointerId); drag = null; pointers.clear(); canvas.style.cursor = 'grab'; markGestureInput(); }
   function wheel(event) {
+    markGestureInput();
     latestInputTime = event.timeStamp;
     event.preventDefault();
     const anchor = groundAt(event.clientX, event.clientY);
@@ -737,7 +755,7 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     render: () => { needsRender = true; frame(); }, getCanvas: () => canvas, resize,
     getDiagnostics: () => ({ readiness: viewReadiness(), loadMilestones, timings: { frameSubmissionMs: timingSummary(frameTimes), inputToRenderSubmissionMs: timingSummary(inputRenderTimes) }, buildingBatches: buildingBatches.diagnostics(), treeBatches: treeBatches.diagnostics(), objectDetail: objectDetail.diagnostics(), traffic: { ...traffic.statistics(), state: trafficState }, transit: { ...transit.statistics(), metroState }, sourceFusion: sourceFusion.getDiagnostics(), surfaceQueries: Object.fromEntries([...surfaceQueries].map(([kind, query]) => [kind, query.diagnostics()])), loadedTiles, loadErrors, drawingSize: renderer.getDrawingBufferSize(new THREE.Vector2()).toArray(), cacheBytes: Object.values(tileCaches).reduce((sum, cache) => sum + cache.cachedBytes, 0), caches: Object.fromEntries(Object.entries(tileCaches).map(([name, cache]) => [name, { bytes: cache.cachedBytes, full: cache.isFull(), limit: cache.maxBytesSize }])), layers: tilesets.map(tiles => ({ kind: tiles.kind, groundHeightFilter: groundHeightDiagnostics(tiles), geometry: [...tiles.visibleTiles].reduce((counts, tile) => { tile.engineData.scene?.traverseVisible(mesh => { if (mesh.isMesh) { counts.meshes++; counts.triangles += (mesh.geometry.index?.count || mesh.geometry.getAttribute('position')?.count || 0) / 3 * (mesh.isInstancedMesh ? mesh.count : 1); } }); return counts; }, { meshes: 0, triangles: 0 }), visible: tiles.visibleTiles.size, downloading: tiles.stats.downloading, parsing: tiles.stats.parsing, queued: tiles.stats.queued, refused: tiles.stats.refused })), rendering: lastCityRender, memory: renderer.info.memory }),
     dispose() {
-      disposed = true; if (scheduledFrame) cancelAnimationFrame(scheduledFrame); observer.disconnect();
+      disposed = true; clearTimeout(deferredUpdateTimer); if (scheduledFrame) cancelAnimationFrame(scheduledFrame); observer.disconnect();
       for (const [event, handler] of [['pointerdown', pointerDown], ['pointermove', pointerMove], ['pointerup', pointerUp], ['pointercancel', pointerUp], ['wheel', wheel], ['dblclick', doubleClick], ['contextmenu', contextMenu]]) canvas.removeEventListener(event, handler);
       document.removeEventListener('visibilitychange', pauseTraffic); reducedMotion.removeEventListener('change', pauseTraffic);
       buildingBatches.dispose(); traffic.dispose(); transit.dispose(); emptyCutawayTexture.dispose();

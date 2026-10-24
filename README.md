@@ -26,6 +26,7 @@ For a quick map-only preview, `python3 -m http.server 8780 --directory public` s
 - [Product requirements and user steering](requirements/README.md)
 - [Source pipeline and replacement boundaries](docs/pipeline.md)
 - [Actual map views and sharing checks](docs/visual-review.md)
+- [Measured loading and interaction performance](docs/performance.md)
 
 Code is MIT. Geographic data, weather data and vendored libraries retain their own licences and attribution. Night window patterns are an illustration, not measured interior or occupancy information. Building geometry reflects the source survey dates, not a live reconstruction.
 
