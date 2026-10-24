@@ -22,7 +22,7 @@ assert tiles['asset']['gltfUpAxis']=='Y'
 def read(raw):
     assert struct.unpack_from('<4sII',raw)==(b'glTF',2,len(raw))
     size=struct.unpack_from('<I',raw,12)[0]
-    return json.loads(raw[20:20+size]),raw[28+size:]
+    return m.read_glb(raw)
 def image_bytes(doc,binary,image):
     view=doc['bufferViews'][image['bufferView']];start=view.get('byteOffset',0)
     return binary[start:start+view['byteLength']]

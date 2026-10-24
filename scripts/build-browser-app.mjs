@@ -6,6 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { build } from 'vite';
+import { applySocialVideo } from './social-video.mjs';
 
 const projectDirectory = fileURLToPath(new URL('../', import.meta.url));
 const sourceDirectory = path.join(projectDirectory, 'public');
@@ -43,7 +44,9 @@ const result = await build({
 const outputs = (Array.isArray(result) ? result : [result]).flatMap(bundle => bundle.output);
 const entry = outputs.find(output => output.type === 'chunk' && output.isEntry);
 if (!entry) throw new Error('Vite did not produce a browser entry chunk');
-await writeFile(htmlPath, html.replace(entryScript, `<script type="module" src="./${entry.fileName}"></script>`));
+const social = await applySocialVideo({ sourceDirectory: path.join(projectDirectory, 'source-data/social-video'), outputDirectory, html: html.replace(entryScript, `<script type="module" src="./${entry.fileName}"></script>`) });
+await writeFile(htmlPath, social.html);
+console.log(`Social video: ${social.enabled ? social.video : social.reason + '; static poster retained'}`);
 
 for (const output of outputs) {
   if (output.type !== 'chunk') continue;

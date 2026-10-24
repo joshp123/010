@@ -25,7 +25,10 @@ for entry,root in zip(manifest['entries'],tile_roots):
  for leaf in entry['spatialBuildings']:
   raw=(m.OUTPUT/leaf['output']).read_bytes();b,bb=m.read_glb(raw);packing=b['extras']['texturePacking'];bag=leaf['bagId']
   assert m.digest(raw)==leaf['sha256'];assert packing['sourceAssetSha256']==m.digest((m.OUTPUT/entry['output']).read_bytes())
-  atlas=image(b,bb,0)
+  atlas=image(b,bb,0);original_materials=packing.get('layout')=='original-materials'
+  if original_materials:
+   assert len(a['images'])==len(b['images'])
+   for ii in range(len(a['images'])):assert np.array_equal(source_images[ii],image(b,bb,ii))
   if '--current' in sys.argv:assert max(packing['atlasSize'])<=8192
   source_meshes=[(i,x) for i,x in enumerate(a['meshes']) if x['extras']['bagId']==bag]
   assert len(source_meshes)==len(b['meshes']);points=[]
@@ -34,7 +37,7 @@ for entry,root in zip(manifest['entries'],tile_roots):
     ai=m.accessor(a,ab,ap['indices'])[:,0].reshape(-1,3);bi=m.accessor(b,bb,bp['indices'])[:,0].reshape(-1,3);assert ai.shape==bi.shape;triangles+=len(ai)
     for semantic in ap['attributes']:
      av=m.accessor(a,ab,ap['attributes'][semantic])[ai];bv=m.accessor(b,bb,bp['attributes'][semantic])[bi]
-     if semantic!='TEXCOORD_0':assert np.array_equal(av,bv),(bag,semantic)
+     if semantic!='TEXCOORD_0' or original_materials:assert np.array_equal(av,bv),(bag,semantic)
      else:
       islands=[r for r in packing['islands'] if r['sourceMesh']==mi and r['sourcePrimitive']==pi]
       for r in islands:

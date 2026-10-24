@@ -218,3 +218,30 @@ residential observations to RD xy plus ellipsoidal height. Their native triangle
 counts and envelopes agree within3micrometres: improved photographic observation
 must not be misrepresented as increased geometry detail. The tower independently
 changes from1,226 to1,394 triangles. Photography date is still unestablished.
+
+### Deployment asset limit: native tower materials
+
+The current tower's native reference and packed leaf exceeded Wrangler's25MiB
+per-asset limit. Oversized single-BAG sources now retain their original separate
+material textures and exact source UVs instead of creating one large atlas.
+The leaf keeps the same tight spatial bounds and BAG residency semantics.
+Oversized GLBs externalize their PNG image bytes through standard glTF image
+URIs; content-hashed filenames deduplicate the native reference and runtime leaf.
+This changes storage/request boundaries, not image resolution, pixel values,
+geometry, material assignments or LOD sampling. No additional codec is required.
+Offline readers explicitly resolve these generated external image URIs.
+
+Every generated current asset is checked against25×1024×1024 bytes before the
+manifest is completed. An individual source image or geometry payload that
+cannot fit fails explicitly, requesting partitioning rather than downsampling.
+The actual tower leaf is188,356bytes, its native reference186,976bytes, and the23
+external PNGs are each at most2,150,691bytes. The largest asset in the complete
+three-leaf output is17,255,836bytes. All55GLBs validate with their external images;
+all4,324source triangles and42source RGB images remain exact.
+
+Decoded tower texture memory is117.67MiB including mips, compared with105.75MiB
+for the previous packed atlas. This modest increase is an explicit tradeoff for
+original material separation; no cache budget was changed. Verify generated
+limits and references with `python tests/building-appearance-deployment.py`.
+Regenerate using the same current-edition command above; `--reuse-native` also
+supports the generated external image references when rebuilding retained output.

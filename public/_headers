@@ -1,0 +1,18 @@
+# Hashed, reviewed social assets are emitted only by the gated build stage.
+/social/*.mp4
+  Content-Type: video/mp4
+  Content-Disposition: inline
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+  X-Content-Type-Options: nosniff
+
+/social/*.jpg
+  Content-Type: image/jpeg
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+  X-Content-Type-Options: nosniff
+
+/social-preview.jpg
+  Content-Type: image/jpeg
+  Cache-Control: public, max-age=0, must-revalidate
+  Access-Control-Allow-Origin: *

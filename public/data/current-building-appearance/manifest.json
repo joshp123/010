@@ -163,6 +163,7 @@
             801
           ],
           "decodedRgbaBytesIncludingMips": 1326200,
+          "layout": "packed-islands",
           "islands": 26,
           "bagId": "0599100100016753",
           "output": "18-268621-55475-0-bag0599100100016753.glb",
@@ -191,6 +192,7 @@
             2030
           ],
           "decodedRgbaBytesIncludingMips": 3873364,
+          "layout": "packed-islands",
           "islands": 47,
           "bagId": "0599100000670808",
           "output": "18-268621-55475-0-bag0599100000670808.glb",
@@ -219,10 +221,11 @@
             1621
           ],
           "decodedRgbaBytesIncludingMips": 1804204,
+          "layout": "packed-islands",
           "islands": 15,
           "bagId": "0599100000687245",
           "output": "18-268621-55475-0-bag0599100000687245.glb",
-          "sha256": "7745088aa09a85e47806a52f23fb6a3549afecbf6cc85da56077848c9cfd297d",
+          "sha256": "40e375bab4e4218da576ccb920f2cf1e8b10d941a75c03b297dfa00f1e15b49b",
           "bytes": 513208,
           "boundingVolume": {
             "box": [
@@ -247,6 +250,7 @@
             461
           ],
           "decodedRgbaBytesIncludingMips": 3101776,
+          "layout": "packed-islands",
           "islands": 47,
           "bagId": "0599100000670807",
           "output": "18-268621-55475-0-bag0599100000670807.glb",
@@ -275,10 +279,11 @@
             3164
           ],
           "decodedRgbaBytesIncludingMips": 10978140,
+          "layout": "packed-islands",
           "islands": 94,
           "bagId": "0599100000700003",
           "output": "18-268621-55475-0-bag0599100000700003.glb",
-          "sha256": "d659dcec98a090c8094f36957f54bffe56d290d1f722b33e720e9121b6408ede",
+          "sha256": "af7ecde88cec3df2cc72dad56bf957c633acfc5c7b37584098c578cc46109474",
           "bytes": 3583324,
           "boundingVolume": {
             "box": [
@@ -303,10 +308,11 @@
             890
           ],
           "decodedRgbaBytesIncludingMips": 2745956,
+          "layout": "packed-islands",
           "islands": 36,
           "bagId": "0599100000687262",
           "output": "18-268621-55475-0-bag0599100000687262.glb",
-          "sha256": "5323d494201d3b3f6d354558bfa0b6be7023f206fe8353c0720e1184d9afac17",
+          "sha256": "d692ad1674cb095495c08e737a504800d78eed52f896f0a48529ac8fdd399092",
           "bytes": 915920,
           "boundingVolume": {
             "box": [
@@ -331,6 +337,7 @@
             444
           ],
           "decodedRgbaBytesIncludingMips": 1888612,
+          "layout": "packed-islands",
           "islands": 19,
           "bagId": "0599100000760472",
           "output": "18-268621-55475-0-bag0599100000760472.glb",
@@ -359,6 +366,7 @@
             107
           ],
           "decodedRgbaBytesIncludingMips": 96980,
+          "layout": "packed-islands",
           "islands": 6,
           "bagId": "0599100010014580",
           "output": "18-268621-55475-0-bag0599100010014580.glb",
@@ -387,6 +395,7 @@
             470
           ],
           "decodedRgbaBytesIncludingMips": 1445072,
+          "layout": "packed-islands",
           "islands": 25,
           "bagId": "0599100000760471",
           "output": "18-268621-55475-0-bag0599100000760471.glb",
@@ -415,6 +424,7 @@
             744
           ],
           "decodedRgbaBytesIncludingMips": 4184072,
+          "layout": "packed-islands",
           "islands": 36,
           "bagId": "0599100000687256",
           "output": "18-268621-55475-0-bag0599100000687256.glb",
@@ -443,10 +453,11 @@
             813
           ],
           "decodedRgbaBytesIncludingMips": 1484632,
+          "layout": "packed-islands",
           "islands": 15,
           "bagId": "0599100000687252",
           "output": "18-268621-55475-0-bag0599100000687252.glb",
-          "sha256": "d52554aa55baf471dcddb052f7825a7411fdec464b39047c799e3821b61bad18",
+          "sha256": "2cb36dfaf4f6c4ece1839a92cec05a53b1b90d035c655454b760096da55f792a",
           "bytes": 421948,
           "boundingVolume": {
             "box": [
@@ -471,10 +482,11 @@
             1868
           ],
           "decodedRgbaBytesIncludingMips": 2926936,
+          "layout": "packed-islands",
           "islands": 22,
           "bagId": "0599100000670817",
           "output": "18-268621-55475-0-bag0599100000670817.glb",
-          "sha256": "3b05a66b1639370043b34ae5f746614a25a0c460e26bb62c1171f0fc518e781c",
+          "sha256": "7f26820054849b68e956cffeddfed20c45235c414059718b5fc66419064604fd",
           "bytes": 866528,
           "boundingVolume": {
             "box": [
@@ -499,6 +511,7 @@
             358
           ],
           "decodedRgbaBytesIncludingMips": 321952,
+          "layout": "packed-islands",
           "islands": 15,
           "bagId": "0599100010008127",
           "output": "18-268621-55475-0-bag0599100010008127.glb",
@@ -527,10 +540,11 @@
             372
           ],
           "decodedRgbaBytesIncludingMips": 1996460,
+          "layout": "packed-islands",
           "islands": 15,
           "bagId": "0599100000687280",
           "output": "18-268621-55475-0-bag0599100000687280.glb",
-          "sha256": "13b76380369d22a497d0b83e3e4abe2644e3dfd21bf2c26ebc98b338e17c373a",
+          "sha256": "1d4a72018a2b7ba46d5744e827e19fdb1eea58ac7fac46021bcc4098fb6db54a",
           "bytes": 607920,
           "boundingVolume": {
             "box": [
@@ -555,6 +569,7 @@
             359
           ],
           "decodedRgbaBytesIncludingMips": 1372592,
+          "layout": "packed-islands",
           "islands": 13,
           "bagId": "0599100000760469",
           "output": "18-268621-55475-0-bag0599100000760469.glb",
@@ -583,6 +598,7 @@
             156
           ],
           "decodedRgbaBytesIncludingMips": 184384,
+          "layout": "packed-islands",
           "islands": 6,
           "bagId": "0599100010063283",
           "output": "18-268621-55475-0-bag0599100010063283.glb",
@@ -771,6 +787,7 @@
             768
           ],
           "decodedRgbaBytesIncludingMips": 2064136,
+          "layout": "packed-islands",
           "islands": 40,
           "bagId": "0599100000671675",
           "output": "18-268620-55473-0-bag0599100000671675.glb",
@@ -799,6 +816,7 @@
             314
           ],
           "decodedRgbaBytesIncludingMips": 1914640,
+          "layout": "packed-islands",
           "islands": 27,
           "bagId": "0599100000688713",
           "output": "18-268620-55473-0-bag0599100000688713.glb",
@@ -827,6 +845,7 @@
             885
           ],
           "decodedRgbaBytesIncludingMips": 1631672,
+          "layout": "packed-islands",
           "islands": 34,
           "bagId": "0599100000688746",
           "output": "18-268620-55473-0-bag0599100000688746.glb",
@@ -855,6 +874,7 @@
             1297
           ],
           "decodedRgbaBytesIncludingMips": 3435288,
+          "layout": "packed-islands",
           "islands": 65,
           "bagId": "0599100000688733",
           "output": "18-268620-55473-0-bag0599100000688733.glb",
@@ -883,10 +903,11 @@
             1431
           ],
           "decodedRgbaBytesIncludingMips": 2258064,
+          "layout": "packed-islands",
           "islands": 34,
           "bagId": "0599100000670806",
           "output": "18-268620-55473-0-bag0599100000670806.glb",
-          "sha256": "5e9d59d95ed74d159f445c7934cd99c4094eea0edb19926dbf644ebc4824dca4",
+          "sha256": "850e1c208ea4bc7ec7e89e589d8e2e5e84afb3509ccdee3c25897308a3e66060",
           "bytes": 750064,
           "boundingVolume": {
             "box": [
@@ -911,10 +932,11 @@
             718
           ],
           "decodedRgbaBytesIncludingMips": 1801308,
+          "layout": "packed-islands",
           "islands": 34,
           "bagId": "0599100000688727",
           "output": "18-268620-55473-0-bag0599100000688727.glb",
-          "sha256": "749076ee4784670b98a48bb9c8330d58cd9b934fe8c7e7619ca664169b4c267c",
+          "sha256": "114a4af1f4103582b5b222eed89c06c961c9d6ac3798c5efcde8e3909977179e",
           "bytes": 624328,
           "boundingVolume": {
             "box": [
@@ -939,10 +961,11 @@
             489
           ],
           "decodedRgbaBytesIncludingMips": 2613164,
+          "layout": "packed-islands",
           "islands": 37,
           "bagId": "0599100000670815",
           "output": "18-268620-55473-0-bag0599100000670815.glb",
-          "sha256": "ae628a8800f71eeef04d271967064b19a0a02f6f4f589f39daf794df7b7acd01",
+          "sha256": "3e6896516b6fc7ae5de90a98f02fba702a92e25e3010e3bf6a007e0788f5855e",
           "bytes": 830660,
           "boundingVolume": {
             "box": [
@@ -967,6 +990,7 @@
             443
           ],
           "decodedRgbaBytesIncludingMips": 2125952,
+          "layout": "packed-islands",
           "islands": 33,
           "bagId": "0599100000671699",
           "output": "18-268620-55473-0-bag0599100000671699.glb",
@@ -995,10 +1019,11 @@
             671
           ],
           "decodedRgbaBytesIncludingMips": 2159552,
+          "layout": "packed-islands",
           "islands": 31,
           "bagId": "0599100000670776",
           "output": "18-268620-55473-0-bag0599100000670776.glb",
-          "sha256": "0852aa585543ebe77d31785c29cf227ddb60bb0f9fd07760dc007627dccb80c2",
+          "sha256": "6d27eae1963a0b2d8821a96d17add0e123efea1f6cef857a979edfc1d92bb51a",
           "bytes": 689732,
           "boundingVolume": {
             "box": [
@@ -1023,6 +1048,7 @@
             1366
           ],
           "decodedRgbaBytesIncludingMips": 2227904,
+          "layout": "packed-islands",
           "islands": 38,
           "bagId": "0599100000688681",
           "output": "18-268620-55473-0-bag0599100000688681.glb",
@@ -1051,6 +1077,7 @@
             165
           ],
           "decodedRgbaBytesIncludingMips": 101812,
+          "layout": "packed-islands",
           "islands": 6,
           "bagId": "0599100100019950",
           "output": "18-268620-55473-0-bag0599100100019950.glb",
@@ -1079,6 +1106,7 @@
             502
           ],
           "decodedRgbaBytesIncludingMips": 1896568,
+          "layout": "packed-islands",
           "islands": 47,
           "bagId": "0599100000671712",
           "output": "18-268620-55473-0-bag0599100000671712.glb",
@@ -1107,6 +1135,7 @@
             1034
           ],
           "decodedRgbaBytesIncludingMips": 2209580,
+          "layout": "packed-islands",
           "islands": 53,
           "bagId": "0599100000671717",
           "output": "18-268620-55473-0-bag0599100000671717.glb",
@@ -1135,6 +1164,7 @@
             1653
           ],
           "decodedRgbaBytesIncludingMips": 2131724,
+          "layout": "packed-islands",
           "islands": 40,
           "bagId": "0599100000760417",
           "output": "18-268620-55473-0-bag0599100000760417.glb",
@@ -1163,10 +1193,11 @@
             424
           ],
           "decodedRgbaBytesIncludingMips": 1955276,
+          "layout": "packed-islands",
           "islands": 30,
           "bagId": "0599100000760416",
           "output": "18-268620-55473-0-bag0599100000760416.glb",
-          "sha256": "e13273ecbdcabd0dbe6aa39d561e5f2c7d0fb6d870ac2c2ec5d6aac91657b903",
+          "sha256": "0399377156a53c059d56e8ae682419ca2d59e5b5f62c6e71a62b35dc02c87f97",
           "bytes": 682036,
           "boundingVolume": {
             "box": [
@@ -1191,6 +1222,7 @@
             426
           ],
           "decodedRgbaBytesIncludingMips": 1968184,
+          "layout": "packed-islands",
           "islands": 36,
           "bagId": "0599100000671715",
           "output": "18-268620-55473-0-bag0599100000671715.glb",
@@ -1219,10 +1251,11 @@
             1316
           ],
           "decodedRgbaBytesIncludingMips": 1992436,
+          "layout": "packed-islands",
           "islands": 34,
           "bagId": "0599100000671708",
           "output": "18-268620-55473-0-bag0599100000671708.glb",
-          "sha256": "16ef7b5dac7f19a8680dd452873f7911a1fef3ec603aa56056a8ad6451c33448",
+          "sha256": "3dc0796c45d05fcb64ce62ec65875f13585c847a272a471543602f7cc7d38da7",
           "bytes": 724868,
           "boundingVolume": {
             "box": [
@@ -1247,10 +1280,11 @@
             310
           ],
           "decodedRgbaBytesIncludingMips": 1837184,
+          "layout": "packed-islands",
           "islands": 27,
           "bagId": "0599100000670790",
           "output": "18-268620-55473-0-bag0599100000670790.glb",
-          "sha256": "2d2580d78c06b2b563ca09ad68c661529111aa793fdbee17b838020282cd133d",
+          "sha256": "2f55968ff5e763a9aadc278014aed225f31fa0f608bdf4987686404bdcc025a9",
           "bytes": 581360,
           "boundingVolume": {
             "box": [
@@ -1275,6 +1309,7 @@
             938
           ],
           "decodedRgbaBytesIncludingMips": 1944124,
+          "layout": "packed-islands",
           "islands": 26,
           "bagId": "0599100000670788",
           "output": "18-268620-55473-0-bag0599100000670788.glb",
@@ -1303,10 +1338,11 @@
             91
           ],
           "decodedRgbaBytesIncludingMips": 82416,
+          "layout": "packed-islands",
           "islands": 7,
           "bagId": "0599100100019945",
           "output": "18-268620-55473-0-bag0599100100019945.glb",
-          "sha256": "6d3ffe803437480aeef53010f72ce9d58f39b67c2bffd5f35b626d24805be40c",
+          "sha256": "82be0cdb4416b67ac2a005611cd735e33b606beb8d877018465bf18d06de89ca",
           "bytes": 33684,
           "boundingVolume": {
             "box": [
@@ -1331,6 +1367,7 @@
             801
           ],
           "decodedRgbaBytesIncludingMips": 2248616,
+          "layout": "packed-islands",
           "islands": 34,
           "bagId": "0599100000670765",
           "output": "18-268620-55473-0-bag0599100000670765.glb",
@@ -1359,6 +1396,7 @@
             288
           ],
           "decodedRgbaBytesIncludingMips": 83800,
+          "layout": "packed-islands",
           "islands": 6,
           "bagId": "0599100100019952",
           "output": "18-268620-55473-0-bag0599100100019952.glb",
@@ -1387,10 +1425,11 @@
             1144
           ],
           "decodedRgbaBytesIncludingMips": 1573308,
+          "layout": "packed-islands",
           "islands": 21,
           "bagId": "0599100000688758",
           "output": "18-268620-55473-0-bag0599100000688758.glb",
-          "sha256": "313777f3a13553beac43c07992d01f22bd2163d46f82518016cbf51dc3224409",
+          "sha256": "af44c8afe030af6bc66e4930baf57f8a3b1a0694e6f00c656bd3dc44943e4c58",
           "bytes": 557788,
           "boundingVolume": {
             "box": [
@@ -1415,6 +1454,7 @@
             108
           ],
           "decodedRgbaBytesIncludingMips": 104620,
+          "layout": "packed-islands",
           "islands": 6,
           "bagId": "0599100100019949",
           "output": "18-268620-55473-0-bag0599100100019949.glb",
@@ -1443,6 +1483,7 @@
             297
           ],
           "decodedRgbaBytesIncludingMips": 97764,
+          "layout": "packed-islands",
           "islands": 6,
           "bagId": "0599100100019948",
           "output": "18-268620-55473-0-bag0599100100019948.glb",
@@ -1471,6 +1512,7 @@
             603
           ],
           "decodedRgbaBytesIncludingMips": 657712,
+          "layout": "packed-islands",
           "islands": 12,
           "bagId": "0599100100019944",
           "output": "18-268620-55473-0-bag0599100100019944.glb",
@@ -1499,6 +1541,7 @@
             311
           ],
           "decodedRgbaBytesIncludingMips": 97044,
+          "layout": "packed-islands",
           "islands": 6,
           "bagId": "0599100100019946",
           "output": "18-268620-55473-0-bag0599100100019946.glb",
@@ -1527,6 +1570,7 @@
             533
           ],
           "decodedRgbaBytesIncludingMips": 2143748,
+          "layout": "packed-islands",
           "islands": 36,
           "bagId": "0599100000670810",
           "output": "18-268620-55473-0-bag0599100000670810.glb",
@@ -1555,10 +1599,11 @@
             139
           ],
           "decodedRgbaBytesIncludingMips": 230584,
+          "layout": "packed-islands",
           "islands": 9,
           "bagId": "0599100100019937",
           "output": "18-268620-55473-0-bag0599100100019937.glb",
-          "sha256": "090edfce89f3f135f54dfa88fd90a6ff3ce6ab9b0481cc9f9a697b17122cbe4c",
+          "sha256": "024e040e6c8a3317f0f07063e28dae4f4b8e69f102c69c0fd824e337d1d36836",
           "bytes": 74832,
           "boundingVolume": {
             "box": [
@@ -1583,6 +1628,7 @@
             163
           ],
           "decodedRgbaBytesIncludingMips": 91796,
+          "layout": "packed-islands",
           "islands": 6,
           "bagId": "0599100100019953",
           "output": "18-268620-55473-0-bag0599100100019953.glb",
@@ -1611,6 +1657,7 @@
             340
           ],
           "decodedRgbaBytesIncludingMips": 106220,
+          "layout": "packed-islands",
           "islands": 6,
           "bagId": "0599100100019947",
           "output": "18-268620-55473-0-bag0599100100019947.glb",
@@ -1639,6 +1686,7 @@
             339
           ],
           "decodedRgbaBytesIncludingMips": 109536,
+          "layout": "packed-islands",
           "islands": 6,
           "bagId": "0599100100019951",
           "output": "18-268620-55473-0-bag0599100100019951.glb",
@@ -1679,8 +1727,8 @@
         "explicit source tiles"
       ],
       "output": "18-268679-55479-0.glb",
-      "sha256": "1392d41f7a0cf32d4e06181ba1c3d3a73b5138d808030b1007a30795f08de4d3",
-      "bytes": 40560796,
+      "sha256": "556388543d035954302bd839d94ce8ca904dc0a3bea96ba225d481e35af92861",
+      "bytes": 186976,
       "bagIds": [
         "0599100000753300"
       ],
@@ -1889,22 +1937,23 @@
           "samplingMetersPerTexel": 0.30923669472826665,
           "geometricError": 0,
           "output": "18-268679-55479-0.glb",
-          "bytes": 40560796,
-          "sha256": "1392d41f7a0cf32d4e06181ba1c3d3a73b5138d808030b1007a30795f08de4d3"
+          "bytes": 186976,
+          "sha256": "556388543d035954302bd839d94ce8ca904dc0a3bea96ba225d481e35af92861"
         }
       ],
       "spatialBuildings": [
         {
           "atlasSize": [
-            5435,
-            3826
+            1,
+            1
           ],
-          "decodedRgbaBytesIncludingMips": 110889716,
-          "islands": 428,
+          "decodedRgbaBytesIncludingMips": 123382412,
+          "layout": "original-materials",
+          "islands": 0,
           "bagId": "0599100000753300",
           "output": "18-268679-55479-0-bag0599100000753300.glb",
-          "sha256": "5f80ebf33563c93e97de1f0cd9bb24967afcefa130d61113e67cb9809c2a43a3",
-          "bytes": 35900632,
+          "sha256": "c4c44ee6bcd93d01bb6b7a6f5c9278f7eb33bdfec96112700842b551a259a99a",
+          "bytes": 188356,
           "boundingVolume": {
             "box": [
               77.40051095459837,
@@ -1923,6 +1972,125 @@
           }
         }
       ]
+    }
+  ],
+  "assetLimitBytes": 26214400,
+  "largestAssetBytes": 17255836,
+  "externalTextures": [
+    {
+      "uri": "texture-223d1a32cb143abf413162645a65b05ca306e6978a7c6b67e8f3f9719c9dbb39.png",
+      "bytes": 1829542,
+      "sha256": "223d1a32cb143abf413162645a65b05ca306e6978a7c6b67e8f3f9719c9dbb39"
+    },
+    {
+      "uri": "texture-36303098c2fb07606ec12bd9d833439b3fbf0657730464c5ffb6f2dd64af9595.png",
+      "bytes": 2150691,
+      "sha256": "36303098c2fb07606ec12bd9d833439b3fbf0657730464c5ffb6f2dd64af9595"
+    },
+    {
+      "uri": "texture-465c40564bc81006b8a7ad3b8f3ee36a1801d577e756f15d0f5630557dc24e41.png",
+      "bytes": 1998929,
+      "sha256": "465c40564bc81006b8a7ad3b8f3ee36a1801d577e756f15d0f5630557dc24e41"
+    },
+    {
+      "uri": "texture-476ff142e7e1ce4a575178ac573f24a538379b48938ed82eff6ce15c7aad60ca.png",
+      "bytes": 1808960,
+      "sha256": "476ff142e7e1ce4a575178ac573f24a538379b48938ed82eff6ce15c7aad60ca"
+    },
+    {
+      "uri": "texture-51002f634104cb3eba11c175dd86c3fd0059e3d11d23ccfc5968025e994ec4e7.png",
+      "bytes": 1863290,
+      "sha256": "51002f634104cb3eba11c175dd86c3fd0059e3d11d23ccfc5968025e994ec4e7"
+    },
+    {
+      "uri": "texture-62eb3d888338760977856bdf84be513db4a2a5c7a24a39fab775b94d9e7ca896.png",
+      "bytes": 1809981,
+      "sha256": "62eb3d888338760977856bdf84be513db4a2a5c7a24a39fab775b94d9e7ca896"
+    },
+    {
+      "uri": "texture-684e4c3e57b10f1ba74aaa68fc91ea0587edd5382992d9ea738f7492f6848174.png",
+      "bytes": 2061363,
+      "sha256": "684e4c3e57b10f1ba74aaa68fc91ea0587edd5382992d9ea738f7492f6848174"
+    },
+    {
+      "uri": "texture-6cf7000f9ddc30cf80478b81d662311fd63ee038a44daed59edfde34446d5d6d.png",
+      "bytes": 1786271,
+      "sha256": "6cf7000f9ddc30cf80478b81d662311fd63ee038a44daed59edfde34446d5d6d"
+    },
+    {
+      "uri": "texture-76bd9036942955f26fcdf619b794563da41a7e1f4d2ccb6820fb5d00ad546662.png",
+      "bytes": 1753874,
+      "sha256": "76bd9036942955f26fcdf619b794563da41a7e1f4d2ccb6820fb5d00ad546662"
+    },
+    {
+      "uri": "texture-84879f6133530688fa9279f32062a7d8c95a814aec2ac58eaed49d48c270c7c7.png",
+      "bytes": 2016070,
+      "sha256": "84879f6133530688fa9279f32062a7d8c95a814aec2ac58eaed49d48c270c7c7"
+    },
+    {
+      "uri": "texture-888ea01b0d5831e877577c7fccb8b0559a3ec6636f48ddf38b919cba4007fc74.png",
+      "bytes": 1993010,
+      "sha256": "888ea01b0d5831e877577c7fccb8b0559a3ec6636f48ddf38b919cba4007fc74"
+    },
+    {
+      "uri": "texture-b9e156e00534b61143425478dc07896bfcecc274504abd2243d164ba5c03a557.png",
+      "bytes": 1683242,
+      "sha256": "b9e156e00534b61143425478dc07896bfcecc274504abd2243d164ba5c03a557"
+    },
+    {
+      "uri": "texture-c782de5ba8a4223df267eb051dce969313cd67d2472a788389e59049cde88962.png",
+      "bytes": 1782839,
+      "sha256": "c782de5ba8a4223df267eb051dce969313cd67d2472a788389e59049cde88962"
+    },
+    {
+      "uri": "texture-ce7339fa170f28209a0770e68e0f732925e9a0bda04a1397f3b54228ca1513f8.png",
+      "bytes": 1944801,
+      "sha256": "ce7339fa170f28209a0770e68e0f732925e9a0bda04a1397f3b54228ca1513f8"
+    },
+    {
+      "uri": "texture-d8a8d6082a561f2c60a28e290a4de456c32bd05dc396184e376ceb9f2d1da5cb.png",
+      "bytes": 1589392,
+      "sha256": "d8a8d6082a561f2c60a28e290a4de456c32bd05dc396184e376ceb9f2d1da5cb"
+    },
+    {
+      "uri": "texture-d9260f6164a28e0f4f4ca5efb4f7e00c32d52d22a60e19a4f32bc984f4c77e13.png",
+      "bytes": 1772194,
+      "sha256": "d9260f6164a28e0f4f4ca5efb4f7e00c32d52d22a60e19a4f32bc984f4c77e13"
+    },
+    {
+      "uri": "texture-e16862dea73126155272311752f73a6de3d8511970a8ae06ef5b8f75535fe3ab.png",
+      "bytes": 1392276,
+      "sha256": "e16862dea73126155272311752f73a6de3d8511970a8ae06ef5b8f75535fe3ab"
+    },
+    {
+      "uri": "texture-e23937e7ce7f6f5bc2ca5a79faafb72b2b1700059c8f54acac527e9cba8c8f67.png",
+      "bytes": 1879193,
+      "sha256": "e23937e7ce7f6f5bc2ca5a79faafb72b2b1700059c8f54acac527e9cba8c8f67"
+    },
+    {
+      "uri": "texture-e515ca9febffe1eab1fca4d2ae1525b2ac01db02d30adda538a65d18432db397.png",
+      "bytes": 1893211,
+      "sha256": "e515ca9febffe1eab1fca4d2ae1525b2ac01db02d30adda538a65d18432db397"
+    },
+    {
+      "uri": "texture-eb0bd01d827e76c2b418265c185e8e1f4a63ac846981e84195d4c7a12f9673b1.png",
+      "bytes": 1871090,
+      "sha256": "eb0bd01d827e76c2b418265c185e8e1f4a63ac846981e84195d4c7a12f9673b1"
+    },
+    {
+      "uri": "texture-ec228d39fafe685e42ac64a92844b280e42c06d427f0300a480fd2683860e7af.png",
+      "bytes": 1877695,
+      "sha256": "ec228d39fafe685e42ac64a92844b280e42c06d427f0300a480fd2683860e7af"
+    },
+    {
+      "uri": "texture-f8b7ba4b14514015269562383b5984fa4a85ed02dc6f1bd1236531258149b056.png",
+      "bytes": 1556208,
+      "sha256": "f8b7ba4b14514015269562383b5984fa4a85ed02dc6f1bd1236531258149b056"
+    },
+    {
+      "uri": "texture-faef81ccab4df7014e1d138bf95c4934e9dec8f3f44c008f9716c980fa3b39f8.png",
+      "bytes": 61360,
+      "sha256": "faef81ccab4df7014e1d138bf95c4934e9dec8f3f44c008f9716c980fa3b39f8"
     }
   ]
 }

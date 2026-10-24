@@ -19,6 +19,7 @@ AREAS={'delfshaven':[4.446,51.9085,4.450,51.911], 'centre':[4.483,51.9055,4.490,
 STYLE='miniature'
 EDITION='legacy'
 REQUESTED_TILES=[]
+MAX_ASSET_BYTES=25*1024*1024
 DTYPES={5120:'i1',5121:'u1',5122:'<i2',5123:'<u2',5125:'<u4',5126:'<f4'}
 SIZES={'SCALAR':1,'VEC2':2,'VEC3':3,'VEC4':4,'MAT4':16}
 
@@ -233,7 +234,33 @@ def convert(doc,binary,batch,feature,label):
 
 def read_glb(raw):
     size=struct.unpack_from('<I',raw,12)[0]
-    return json.loads(raw[20:20+size]),raw[28+size:]
+    doc=json.loads(raw[20:20+size]);binary=bytearray(raw[28+size:])
+    # Offline readers resolve our standard external PNGs back into image views.
+    for im in doc.get('images',[]):
+        if 'uri' not in im:continue
+        path=OUTPUT/im.pop('uri');data=path.read_bytes();vi=im.get('extras',{}).pop('externalBufferView');binary.extend(b'\0'*((-len(binary))%4));doc['bufferViews'][vi]={'buffer':0,'byteOffset':len(binary),'byteLength':len(data)};binary.extend(data);im['bufferView']=vi
+        if not im.get('extras'):im.pop('extras',None)
+    doc['buffers']=[{'byteLength':len(binary)}]
+    return doc,bytes(binary)
+
+def pack_glb(doc,binary):
+    doc['buffers']=[{'byteLength':len(binary)}];jb=pad(packed_json(doc),fill=b' ');bb=pad(bytes(binary))
+    return struct.pack('<4sII',b'glTF',2,28+len(jb)+len(bb))+struct.pack('<I4s',len(jb),b'JSON')+jb+struct.pack('<I4s',len(bb),b'BIN\0')+bb
+
+def deployable(glb):
+    if EDITION!='current' or len(glb)<=MAX_ASSET_BYTES:return glb
+    doc,binary=read_glb(glb);image_views={}
+    for im in doc.get('images',[]):
+        vi=im.pop('bufferView');v=doc['bufferViews'][vi];data=binary[v.get('byteOffset',0):v.get('byteOffset',0)+v['byteLength']]
+        if len(data)>MAX_ASSET_BYTES:raise ValueError('Single native image exceeds25MiB: requires separate source-material textures, never downsampling')
+        uri='texture-'+digest(data)+'.png';(OUTPUT/uri).write_bytes(data);im['uri']=uri;im.setdefault('extras',{})['externalBufferView']=vi;image_views[vi]=data
+    payload=bytearray()
+    for i,v in enumerate(doc['bufferViews']):
+        data=b'\0'*4 if i in image_views else binary[v.get('byteOffset',0):v.get('byteOffset',0)+v['byteLength']]
+        payload.extend(b'\0'*((-len(payload))%4));v['byteOffset']=len(payload);v['byteLength']=len(data);payload.extend(data)
+    result=pack_glb(doc,payload)
+    if len(result)>MAX_ASSET_BYTES:raise ValueError('Geometry exceeds25MiB asset limit; explicit spatial split required')
+    return result
 
 def texture_lod(glb,limit=None):
     """Repack image views only; geometry values and accessor layout stay exact."""
@@ -365,8 +392,10 @@ def spatial_buildings(glb,label):
     for mi,mesh in enumerate(src['meshes']):grouped.setdefault(mesh['extras']['bagId'],[]).append(mi)
     for bag,mesh_ids in grouped.items():
         rectangles=[];plans={};provenance=[]
+        separate_materials=EDITION=='current' and len(grouped)==1 and len(binary)>MAX_ASSET_BYTES
         for mi in mesh_ids:
             for pi,p in enumerate(src['meshes'][mi]['primitives']):
+                if separate_materials:continue
                 tex=src['materials'][p['material']]['pbrMetallicRoughness'].get('baseColorTexture')
                 if tex is None:continue
                 ii=src['textures'][tex['index']]['source'];image=atlases[ii]
@@ -394,7 +423,11 @@ def spatial_buildings(glb,label):
             if 'min' in template:a['min']=values.min(axis=0).tolist()
             if 'max' in template:a['max']=values.max(axis=0).tolist()
             doc['accessors'].append(a);return len(doc['accessors'])-1
-        if rectangles:
+        if separate_materials:
+            doc['images']=copy.deepcopy(src['images']);doc['textures']=copy.deepcopy(src['textures']);doc['samplers']=copy.deepcopy(src['samplers'])
+            for im in doc['images']:
+                v=src['bufferViews'][im['bufferView']];im['bufferView']=view(binary[v.get('byteOffset',0):v.get('byteOffset',0)+v['byteLength']])
+        elif rectangles:
             png=io.BytesIO();atlas.save(png,format='PNG',optimize=True)
             doc['images']=[{'bufferView':view(png.getvalue()),'mimeType':'image/png'}]
             doc['samplers']=copy.deepcopy(src['samplers']);doc['textures']=[{'source':0,'sampler':0}]
@@ -404,7 +437,7 @@ def spatial_buildings(glb,label):
             for pi,p in enumerate(src['meshes'][mi]['primitives']):
                 if p['material'] not in material_map:
                     material=copy.deepcopy(src['materials'][p['material']]);tex=material['pbrMetallicRoughness'].get('baseColorTexture')
-                    if tex is not None:tex['index']=0
+                    if tex is not None and not separate_materials:tex['index']=0
                     material_map[p['material']]=len(doc['materials']);doc['materials'].append(material)
                 triangles=accessor(src,binary,p['indices'])[:,0].reshape(-1,3)
                 vertex_ids=[];new_indices=np.empty_like(triangles);new_uv=[]
@@ -442,10 +475,11 @@ def spatial_buildings(glb,label):
         centre=((low+high)/2)@frame.T;half=(high-low)/2+.001
         box=[*centre,*(frame*half).flatten(order='F')]
         provenance={'bagId':bag,'sourceAsset':label,'sourceAssetSha256':digest(glb),'atlasSize':[width,height],'paddingPixels':2,'mapping':'originalUV = (packedUV * atlasSize - packedOrigin + sourceCrop.xy) / sourceSize','islands':rectangles}
+        if separate_materials:provenance.update(layout='original-materials',sourceImageSizes=[list(a.size) for a in atlases])
         doc['extras']['texturePacking']=provenance
         doc['buffers']=[{'byteLength':len(payload)}];jb=pad(packed_json(doc),fill=b' ');bb=pad(bytes(payload))
         packed=struct.pack('<4sII',b'glTF',2,28+len(jb)+len(bb))+struct.pack('<I4s',len(jb),b'JSON')+jb+struct.pack('<I4s',len(bb),b'BIN\0')+bb
-        yield bag,packed,{'box':box},{'atlasSize':[width,height],'decodedRgbaBytesIncludingMips':rgba_mip_bytes(width,height) if rectangles else 0,'islands':len(rectangles)}
+        yield bag,packed,{'box':box},{'atlasSize':[width,height],'decodedRgbaBytesIncludingMips':sum(rgba_mip_bytes(*a.size) for a in atlases) if separate_materials else (rgba_mip_bytes(width,height) if rectangles else 0),'layout':'original-materials' if separate_materials else 'packed-islands','islands':len(rectangles)}
 
 def main():
     global STYLE,EDITION,SOURCE,OUTPUT,BASE,REQUESTED_TILES
@@ -471,17 +505,18 @@ def main():
             if not result:continue
             glb,transform,ids,image_count=result
             name=t['url'].removeprefix(BASE).replace('/','-').replace('.cmpt','').replace('.b3dm','')+f'-{part}.glb'
-            (OUTPUT/name).write_bytes(glb)
+            stored_native=deployable(glb);(OUTPUT/name).write_bytes(stored_native)
             _,native_info=texture_lod(glb)
             levels=[]
             for limit in (512,1024):
                 if native_info['maxTextureSize']<=limit:continue
                 lod,lod_info=texture_lod(glb,limit)
-                lod_name=name.replace('.glb',f'-tex{limit}.glb');(OUTPUT/lod_name).write_bytes(lod)
+                lod=deployable(lod);lod_name=name.replace('.glb',f'-tex{limit}.glb');(OUTPUT/lod_name).write_bytes(lod)
                 levels.append({**lod_info,'output':lod_name,'bytes':len(lod),'sha256':digest(lod)})
-            levels.append({**native_info,'output':name,'bytes':len(glb),'sha256':digest(glb)})
+            levels.append({**native_info,'output':name,'bytes':len(stored_native),'sha256':digest(stored_native)})
             spatial=[];spatial_nodes=[]
             for bag,packed,bounds,info in spatial_buildings(glb,name):
+                pd,pb=read_glb(packed);pd['extras']['texturePacking']['sourceAssetSha256']=digest(stored_native);packed=deployable(pack_glb(pd,pb))
                 packed_name=name.replace('.glb',f'-bag{bag}.glb');(OUTPUT/packed_name).write_bytes(packed)
                 spatial.append({**info,'bagId':bag,'output':packed_name,'sha256':digest(packed),'bytes':len(packed),'boundingVolume':bounds})
                 spatial_nodes.append({'boundingVolume':bounds,'geometricError':0,'content':{'uri':packed_name},'extras':{'bagIds':[bag]}})
@@ -493,7 +528,7 @@ def main():
             # RTC appears only on the outer tile. Descendants inherit it once.
             child['transform']=transform
             children.append(child);all_ids.update(ids)
-            entries.append({**t,'output':name,'sha256':digest(glb),'bytes':len(glb),'bagIds':ids,'atlases':image_count,'textureLevels':levels,'spatialBuildings':spatial})
+            entries.append({**t,'output':name,'sha256':digest(stored_native),'bytes':len(stored_native),'bagIds':ids,'atlases':image_count,'textureLevels':levels,'spatialBuildings':spatial})
             print(f'{name}: {len(ids)} buildings, {len(glb)} bytes',flush=True)
     regions=[c['boundingVolume']['region'] for c in children]
     region=[min(r[0] for r in regions),min(r[1] for r in regions),max(r[2] for r in regions),max(r[3] for r in regions),min(r[4] for r in regions),max(r[5] for r in regions)]
@@ -501,6 +536,12 @@ def main():
     tileset={'asset':{'version':'1.0','gltfUpAxis':'Y'},'geometricError':root_error,'root':{'boundingVolume':{'region':region},'geometricError':root_error,'refine':'ADD','children':children}}
     (OUTPUT/'tileset.json').write_bytes(packed_json(tileset)+b'\n')
     manifest={'sourceRoot':BASE+'tileset.json','areas':AREAS,'edition':EDITION,'pipeline':'Original source geometry and UV retained; native PBR preserved or legacy technique converted; explicit ECEF RTC; per-BAG native source-pixel residency; selected style recorded separately','license':('Gemeente Rotterdam — 3D Rotterdam, CC BY 4.0' if EDITION=='current' else 'Gemeente Rotterdam public-domain model'),'scope':'Bounded review candidate; photographic capture date not established','style':STYLE,'sourceTiles':len(selected),'outputTiles':len(entries),'buildings':len(all_ids),'entries':entries}
+    if EDITION=='current':
+        files=[p for p in OUTPUT.rglob('*') if p.is_file() and p.suffix in ('.glb','.png','.jpg')]
+        oversized=[str(p) for p in files if p.stat().st_size>MAX_ASSET_BYTES]
+        if oversized:raise ValueError('Deployable files exceed25MiB: '+str(oversized))
+        manifest['assetLimitBytes']=MAX_ASSET_BYTES;manifest['largestAssetBytes']=max(p.stat().st_size for p in files)
+        manifest['externalTextures']=[{'uri':p.name,'bytes':p.stat().st_size,'sha256':digest(p.read_bytes())} for p in sorted(OUTPUT.glob('texture-*.png'))]
     (OUTPUT/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     provenance={k:v for k,v in manifest.items() if k!='entries'}
     provenance['sourceEvidence']=[json.loads(p.read_text()) for p in sorted((SOURCE/'raw').glob('*.json'))]
