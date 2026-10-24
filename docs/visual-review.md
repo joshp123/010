@@ -27,9 +27,9 @@ The image-sharing path produced and downloaded landscape (3840 × 2016), square 
 
 Known interpretation limits: building colours and windows are illustrative; source geometry has acquisition dates and omissions; industrial scans retain some rough thin structures and transient objects. Metro depth is not surveyed. Current transport markers retain actual reported coordinates and timestamps, but upstream feed completeness is not guaranteed. Physical-device performance and public-hosting measurements must be distinguished from local browser checks.
 
-## Current local candidate
+## Terminal and shoreline release
 
-Reviewed by GPT-6 Astra on 2026-10-24; these checks do not establish published-release acceptance.
+Reviewed by GPT-6 Astra on 2026-10-24. Sites version 6 deployed successfully at 04:55 UTC from source `99a89513bed8d6aafea68aebb43a850c445680a1`. The public `010.jjpcodes.com` shore/day, terminal/night and whole-municipality/day views were inspected after deployment and settled with no pending/refused tiles or failed readiness; live transport and weather also returned. Captures are `work/visual-qa/published-v6-shore-day.jpg` , `published-v6-port-night.jpg` and `published-v6-municipality-day.jpg`. These checks do not establish complete source coverage or physical-device performance.
 
 - **Municipality and coast:** `work/visual-qa/whole-city-day-context-candidate.jpg`, `coast-day-context-candidate.jpg`, `whole-municipality-subdued-context-night.jpg` and `west-city-integrated-night.jpg`. Surrounding land uses 0.72 linear reflectance in daylight and 0.45 at night. The city-to-port chain reads more clearly; the municipal detail boundary remains explicit. No zoom-dependent tint.
 - **Port reconstruction:** `port-district-final-day.jpg`, `terminal-integrated-west-day.jpg` and `terminal-integrated-waalhaven-day.jpg`. The district settled with no pending/refused tiles or failed readiness. Closed storage forms and measured crane members remain distinguishable; thin members still become skeletal marks at district scale.
