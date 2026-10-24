@@ -96,3 +96,22 @@ export function createMunicipalBuildingVisibility() {
     },
   };
 }
+
+// The municipal source already supplies real coarser models (levels15–17).
+// Enter a neighbourhood through its first available source model, then refine
+// that same hierarchy. Leaf-first loading otherwise requests scores of models
+// before their ordinary streets have any source appearance at all.
+export function configureMunicipalBuildingStreaming(tiles) {
+  const calculateViewError = tiles.calculateTileViewError.bind(tiles);
+  tiles.loadAncestors = false;
+  tiles.loadSiblings = false;
+  tiles.calculateTileViewError = (tile, result) => {
+    calculateViewError(tile, result);
+    // An unloaded renderable parent is the next useful source view. Once it is
+    // resident, its original screen-space error selects finer source children.
+    // The renderer keeps the visible parent until those children are ready.
+    if (tile.internal.hasRenderableContent && tile.internal.loadingState >= 0 && tile.internal.loadingState < 4) {
+      result.error = Math.min(result.error, tiles.errorTarget);
+    }
+  };
+}
