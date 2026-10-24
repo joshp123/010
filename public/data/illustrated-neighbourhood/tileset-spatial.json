@@ -55,7 +55,7 @@
         },
         "geometricError": 0,
         "content": {
-          "uri": "shared-centres-18_268619_55472-spatial/tileset.json"
+          "uri": "shared-centres-night-18_268619_55472-spatial/tileset.json"
         }
       },
       {
@@ -69,7 +69,7 @@
         },
         "geometricError": 0,
         "content": {
-          "uri": "shared-centres-18_268619_55473-spatial/tileset.json"
+          "uri": "shared-centres-night-18_268619_55473-spatial/tileset.json"
         }
       },
       {
@@ -83,7 +83,7 @@
         },
         "geometricError": 0,
         "content": {
-          "uri": "shared-centres-18_268620_55473-spatial/tileset.json"
+          "uri": "shared-centres-night-18_268620_55473-spatial/tileset.json"
         }
       },
       {
@@ -97,7 +97,7 @@
         },
         "geometricError": 0,
         "content": {
-          "uri": "shared-centres-18_268621_55472-spatial/tileset.json"
+          "uri": "shared-centres-night-18_268621_55472-spatial/tileset.json"
         }
       },
       {
@@ -111,7 +111,7 @@
         },
         "geometricError": 0,
         "content": {
-          "uri": "shared-centres-18_268621_55473-spatial/tileset.json"
+          "uri": "shared-centres-night-18_268621_55473-spatial/tileset.json"
         }
       }
     ]

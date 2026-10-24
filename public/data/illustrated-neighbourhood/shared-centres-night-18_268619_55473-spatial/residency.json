@@ -1,0 +1,677 @@
+{
+  "nativeTexels": true,
+  "source": "/Users/josh/code/010-rescue-metro/public/data/illustrated-neighbourhood/shared-centres-night-18_268619_55473",
+  "sourceGLBSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+  "buildings": [
+    {
+      "bagId": "0599100000688699",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000688699.glb",
+      "atlasSize": [
+        502,
+        556
+      ],
+      "decodedRgbaBytesIncludingMips": 1487692,
+      "layout": "packed-islands",
+      "islands": 32,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000688735",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000688735.glb",
+      "atlasSize": [
+        434,
+        659
+      ],
+      "decodedRgbaBytesIncludingMips": 1523936,
+      "layout": "packed-islands",
+      "islands": 19,
+      "emissionCrops": [
+        {
+          "material": 3,
+          "sourceTexture": 8,
+          "sourceSize": [
+            830,
+            559
+          ],
+          "sourceCrop": [
+            22,
+            318,
+            102,
+            378
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000760393",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000760393.glb",
+      "atlasSize": [
+        289,
+        1886
+      ],
+      "decodedRgbaBytesIncludingMips": 2904004,
+      "layout": "packed-islands",
+      "islands": 15,
+      "emissionCrops": [
+        {
+          "material": 2,
+          "sourceTexture": 2,
+          "sourceSize": [
+            511,
+            719
+          ],
+          "sourceCrop": [
+            0,
+            543,
+            76,
+            719
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000688730",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000688730.glb",
+      "atlasSize": [
+        1121,
+        295
+      ],
+      "decodedRgbaBytesIncludingMips": 1760644,
+      "layout": "packed-islands",
+      "islands": 23,
+      "emissionCrops": [
+        {
+          "material": 1,
+          "sourceTexture": 1,
+          "sourceSize": [
+            856,
+            454
+          ],
+          "sourceCrop": [
+            438,
+            343,
+            525,
+            454
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000688766",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000688766.glb",
+      "atlasSize": [
+        292,
+        902
+      ],
+      "decodedRgbaBytesIncludingMips": 1404084,
+      "layout": "packed-islands",
+      "islands": 20,
+      "emissionCrops": [
+        {
+          "material": 1,
+          "sourceTexture": 1,
+          "sourceSize": [
+            856,
+            454
+          ],
+          "sourceCrop": [
+            0,
+            44,
+            74,
+            101
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100010038677",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100010038677.glb",
+      "atlasSize": [
+        88,
+        277
+      ],
+      "decodedRgbaBytesIncludingMips": 129792,
+      "layout": "packed-islands",
+      "islands": 6,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000688759",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000688759.glb",
+      "atlasSize": [
+        592,
+        418
+      ],
+      "decodedRgbaBytesIncludingMips": 1319300,
+      "layout": "packed-islands",
+      "islands": 16,
+      "emissionCrops": [
+        {
+          "material": 4,
+          "sourceTexture": 7,
+          "sourceSize": [
+            74,
+            59
+          ],
+          "sourceCrop": [
+            0,
+            0,
+            74,
+            59
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000675868",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000675868.glb",
+      "atlasSize": [
+        828,
+        451
+      ],
+      "decodedRgbaBytesIncludingMips": 1989656,
+      "layout": "packed-islands",
+      "islands": 14,
+      "emissionCrops": [
+        {
+          "material": 4,
+          "sourceTexture": 8,
+          "sourceSize": [
+            830,
+            559
+          ],
+          "sourceCrop": [
+            688,
+            263,
+            830,
+            339
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000688753",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000688753.glb",
+      "atlasSize": [
+        237,
+        1255
+      ],
+      "decodedRgbaBytesIncludingMips": 1583400,
+      "layout": "packed-islands",
+      "islands": 32,
+      "emissionCrops": [
+        {
+          "material": 2,
+          "sourceTexture": 4,
+          "sourceSize": [
+            705,
+            583
+          ],
+          "sourceCrop": [
+            0,
+            0,
+            83,
+            70
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000688723",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000688723.glb",
+      "atlasSize": [
+        582,
+        639
+      ],
+      "decodedRgbaBytesIncludingMips": 1981272,
+      "layout": "packed-islands",
+      "islands": 31,
+      "emissionCrops": [
+        {
+          "material": 1,
+          "sourceTexture": 1,
+          "sourceSize": [
+            856,
+            454
+          ],
+          "sourceCrop": [
+            463,
+            198,
+            550,
+            298
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100010013248",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100010013248.glb",
+      "atlasSize": [
+        113,
+        192
+      ],
+      "decodedRgbaBytesIncludingMips": 115432,
+      "layout": "packed-islands",
+      "islands": 6,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671721",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000671721.glb",
+      "atlasSize": [
+        892,
+        446
+      ],
+      "decodedRgbaBytesIncludingMips": 2120336,
+      "layout": "packed-islands",
+      "islands": 14,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100010060435",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100010060435.glb",
+      "atlasSize": [
+        197,
+        165
+      ],
+      "decodedRgbaBytesIncludingMips": 172748,
+      "layout": "packed-islands",
+      "islands": 7,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000675880",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000675880.glb",
+      "atlasSize": [
+        636,
+        555
+      ],
+      "decodedRgbaBytesIncludingMips": 1880804,
+      "layout": "packed-islands",
+      "islands": 12,
+      "emissionCrops": [
+        {
+          "material": 3,
+          "sourceTexture": 6,
+          "sourceSize": [
+            575,
+            190
+          ],
+          "sourceCrop": [
+            0,
+            32,
+            76,
+            190
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000688717",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000688717.glb",
+      "atlasSize": [
+        317,
+        833
+      ],
+      "decodedRgbaBytesIncludingMips": 1406268,
+      "layout": "packed-islands",
+      "islands": 29,
+      "emissionCrops": [
+        {
+          "material": 0,
+          "sourceTexture": 1,
+          "sourceSize": [
+            856,
+            454
+          ],
+          "sourceCrop": [
+            798,
+            0,
+            856,
+            80
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000688731",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000688731.glb",
+      "atlasSize": [
+        1083,
+        300
+      ],
+      "decodedRgbaBytesIncludingMips": 1731540,
+      "layout": "packed-islands",
+      "islands": 32,
+      "emissionCrops": [
+        {
+          "material": 3,
+          "sourceTexture": 4,
+          "sourceSize": [
+            705,
+            583
+          ],
+          "sourceCrop": [
+            635,
+            501,
+            705,
+            583
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000671719",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000671719.glb",
+      "atlasSize": [
+        301,
+        1984
+      ],
+      "decodedRgbaBytesIncludingMips": 3181260,
+      "layout": "packed-islands",
+      "islands": 32,
+      "emissionCrops": [
+        {
+          "material": 3,
+          "sourceTexture": 3,
+          "sourceSize": [
+            361,
+            107
+          ],
+          "sourceCrop": [
+            0,
+            0,
+            361,
+            107
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000688683",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000688683.glb",
+      "atlasSize": [
+        944,
+        265
+      ],
+      "decodedRgbaBytesIncludingMips": 1332736,
+      "layout": "packed-islands",
+      "islands": 17,
+      "emissionCrops": [
+        {
+          "material": 2,
+          "sourceTexture": 2,
+          "sourceSize": [
+            511,
+            719
+          ],
+          "sourceCrop": [
+            453,
+            612,
+            511,
+            693
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000675848",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000675848.glb",
+      "atlasSize": [
+        602,
+        669
+      ],
+      "decodedRgbaBytesIncludingMips": 2146156,
+      "layout": "packed-islands",
+      "islands": 22,
+      "emissionCrops": [
+        {
+          "material": 2,
+          "sourceTexture": 5,
+          "sourceSize": [
+            74,
+            144
+          ],
+          "sourceCrop": [
+            0,
+            0,
+            74,
+            144
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000688734",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000688734.glb",
+      "atlasSize": [
+        860,
+        372
+      ],
+      "decodedRgbaBytesIncludingMips": 1705612,
+      "layout": "packed-islands",
+      "islands": 9,
+      "emissionCrops": [
+        {
+          "material": 2,
+          "sourceTexture": 8,
+          "sourceSize": [
+            830,
+            559
+          ],
+          "sourceCrop": [
+            0,
+            482,
+            87,
+            559
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000760394",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000760394.glb",
+      "atlasSize": [
+        1026,
+        292
+      ],
+      "decodedRgbaBytesIncludingMips": 1597252,
+      "layout": "packed-islands",
+      "islands": 8,
+      "emissionCrops": [
+        {
+          "material": 1,
+          "sourceTexture": 6,
+          "sourceSize": [
+            575,
+            190
+          ],
+          "sourceCrop": [
+            513,
+            0,
+            575,
+            8
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000688707",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000688707.glb",
+      "atlasSize": [
+        213,
+        1321
+      ],
+      "decodedRgbaBytesIncludingMips": 1498012,
+      "layout": "packed-islands",
+      "islands": 23,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100010058557",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100010058557.glb",
+      "atlasSize": [
+        353,
+        389
+      ],
+      "decodedRgbaBytesIncludingMips": 731224,
+      "layout": "packed-islands",
+      "islands": 31,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671744",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000671744.glb",
+      "atlasSize": [
+        657,
+        1002
+      ],
+      "decodedRgbaBytesIncludingMips": 3508984,
+      "layout": "packed-islands",
+      "islands": 24,
+      "emissionCrops": [
+        {
+          "material": 1,
+          "sourceTexture": 2,
+          "sourceSize": [
+            511,
+            719
+          ],
+          "sourceCrop": [
+            25,
+            0,
+            98,
+            201
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000760398",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000760398.glb",
+      "atlasSize": [
+        1156,
+        344
+      ],
+      "decodedRgbaBytesIncludingMips": 2120452,
+      "layout": "packed-islands",
+      "islands": 13,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000760396",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000760396.glb",
+      "atlasSize": [
+        804,
+        456
+      ],
+      "decodedRgbaBytesIncludingMips": 1955000,
+      "layout": "packed-islands",
+      "islands": 8,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000688737",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000688737.glb",
+      "atlasSize": [
+        1030,
+        356
+      ],
+      "decodedRgbaBytesIncludingMips": 1954872,
+      "layout": "packed-islands",
+      "islands": 9,
+      "emissionCrops": [
+        {
+          "material": 1,
+          "sourceTexture": 8,
+          "sourceSize": [
+            830,
+            559
+          ],
+          "sourceCrop": [
+            291,
+            0,
+            383,
+            62
+          ],
+          "paddingPixels": 2,
+          "texCoord": "TEXCOORD_1"
+        }
+      ]
+    },
+    {
+      "bagId": "0599100000760397",
+      "sourceSha256": "d98da05082eef2c9e203c9808da1530817a8504be2ef9e3aadd22fe28002d7dd",
+      "output": "bag0599100000760397.glb",
+      "atlasSize": [
+        323,
+        1083
+      ],
+      "decodedRgbaBytesIncludingMips": 1862732,
+      "layout": "packed-islands",
+      "islands": 10,
+      "emissionCrops": []
+    }
+  ]
+}
