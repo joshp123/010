@@ -446,7 +446,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
         applyLighting: material => fixtureSurfaceLighting.apply(material),
         applyCutaway: material => applyMetroCutaway(material, cutawayUniforms),
       });
-      setAppearanceSampling([model], { renderer, preset: appearanceSamplingPreset });
+      setAppearanceSampling([model], { renderer, preset: model.userData.appearanceRole === 'painted' ? 'baseline' : appearanceSamplingPreset });
       bindCutawayShadows(model);
       return;
     }
@@ -563,7 +563,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (tiles.appearanceRole === 'municipal') {
       configureMunicipalBuildingStreaming(tiles);
     }
-    tiles.addEventListener('load-model', event => { if (municipalSource) event.scene.userData.municipalSource = true; colorModel(event.scene, kind); if (['ground', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) transitSurfaceDirty = true; if (kind === 'ground') sourceFusion.addGround(event.scene); loadedTiles++; renderer.shadowMap.needsUpdate = true; requestRender(); });
+    tiles.addEventListener('load-model', event => { event.scene.userData.appearanceRole = tiles.appearanceRole; if (municipalSource) event.scene.userData.municipalSource = true; colorModel(event.scene, kind); if (['ground', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) transitSurfaceDirty = true; if (kind === 'ground') sourceFusion.addGround(event.scene); loadedTiles++; renderer.shadowMap.needsUpdate = true; requestRender(); });
     if (['ground', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) tiles.addEventListener('dispose-model', () => { transitSurfaceDirty = true; });
     if (kind === 'buildings') tiles.addEventListener('dispose-model', event => { buildingAppearance.removeModel(event.scene); buildingBatches.removeModel(event.scene); });
     if (kind === 'tanks') tiles.addEventListener('dispose-model', event => tankAppearance.removeModel(event.scene));
