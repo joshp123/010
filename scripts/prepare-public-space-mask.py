@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
 """Derive exact BGT eligible-feature and highest-surface masks on the dated ortho grid."""
 import gzip,hashlib,importlib.util,json,argparse
+from ground_area import resolve_area
 from pathlib import Path
 import numpy as np
 from PIL import Image,ImageDraw
 from pyproj import Transformer
 ROOT=Path(__file__).resolve().parents[1];SRC=ROOT/'source-data/public-space-pilot';OUT=ROOT/'work/public-space-pilot';OUT.mkdir(exist_ok=True)
-parser=argparse.ArgumentParser();parser.add_argument('--year',default='2026');args=parser.parse_args();year=args.year
+parser=argparse.ArgumentParser();parser.add_argument('--year',default='2026');parser.add_argument('--area');args=parser.parse_args();area=resolve_area(args.area);year=area['year'] if area else args.year
+if area:SRC=area['sourceDirectory'];OUT=area['workDirectory']
 s=importlib.util.spec_from_file_location('source',ROOT/'scripts/prepare-building-appearance.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
-meta=json.loads((SRC/('schiedamseweg-'+year+'.json')).read_text());bounds=meta['boundsRD'];width,height=meta['imageSize'];pixel=meta['pixelMetres']
-raw=gzip.decompress((SRC/'33577-6934.b3dm.gz').read_bytes());doc,buf,batch,ft=next(m.b3dm_parts(raw));assert hashlib.sha256(raw).hexdigest()==json.loads((SRC/'33577-6934.b3dm.json').read_text())['decodedSha256']
+imageName=area['imageName'] if area else 'schiedamseweg-'+year+'.jpg'
+metaPath=SRC/Path(imageName).with_suffix('.json')
+meta=json.loads(metaPath.read_text()) if metaPath.exists() else {**{k:area[k] for k in ['boundsRD','imageSize','pixelMetres']},'decodedSha256':None}
+if area:assert meta['boundsRD']==area['boundsRD'] and meta['imageSize']==area['imageSize']
+bounds=meta['boundsRD'];width,height=meta['imageSize'];pixel=meta['pixelMetres']
+raw=gzip.decompress((area['nativeTile'] if area else SRC/'33577-6934.b3dm.gz').read_bytes());doc,buf,batch,ft=next(m.b3dm_parts(raw));assert hashlib.sha256(raw).hexdigest()==json.loads((area['nativeMetadata'] if area else SRC/'33577-6934.b3dm.json').read_text())['decodedSha256']
 rd=Transformer.from_crs(4978,28992,always_xy=True);geo=Transformer.from_crs(4978,4979,always_xy=True)
 yz=np.array([[1,0,0,0],[0,0,-1,0],[0,1,0,0],[0,0,0,1]]);rtc=np.eye(4);rtc[:3,3]=ft['RTC_CENTER'];idmap=np.full((height,width),-1,np.int32);zbuf=np.full((height,width),-np.inf);surface=np.zeros((height,width),np.uint8);triangles=[]
 # Actual source physical class, not a content-generating guess.
@@ -36,7 +42,7 @@ def visit(i,parent):
  for child in n.get('children',[]):visit(child,mat)
 for i in doc['scenes'][doc.get('scene',0)]['nodes']:visit(i,np.eye(4))
 palette=np.array([[42,46,48],[135,139,136],[171,122,102],[191,187,173],[111,135,91],[63,87,91]],np.uint8);Image.fromarray(palette[surface]).save(OUT/'source-semantic-mask.png');eligible=surface>0;Image.fromarray((eligible*255).astype('uint8')).save(OUT/'eligible-ground.png');np.savez_compressed(OUT/'source-mask.npz',feature=idmap,surface=surface,height=zbuf)
-source=Image.open(SRC/('schiedamseweg-'+year+'.jpg')).convert('RGB');overlay=np.array(source);edge=np.zeros_like(eligible);edge[:,1:]|=idmap[:,1:]!=idmap[:,:-1];edge[1:,:]|=idmap[1:,:]!=idmap[:-1,:];overlay[edge]=[245,212,109];Image.fromarray(overlay).save(OUT/'source-with-bgt-edges.png')
+source=Image.open(SRC/imageName).convert('RGB') if (SRC/imageName).exists() else Image.fromarray(palette[surface]);overlay=np.array(source);edge=np.zeros_like(eligible);edge[:,1:]|=idmap[:,1:]!=idmap[:,:-1];edge[1:,:]|=idmap[1:,:]!=idmap[:-1,:];overlay[edge]=[245,212,109];Image.fromarray(overlay).save(OUT/'source-with-bgt-edges.png')
 # Fit metre-exact local-world to RD image projection, verifying independent points.
 ll=Transformer.from_crs(28992,4326,always_xy=True);earth=Transformer.from_crs(4979,4978,always_xy=True);origin=np.array(earth.transform(4.49,51.915,0));lon,lat=np.radians([4.49,51.915]);basis=np.array([[-np.sin(lon),np.cos(lon),0],[np.cos(lat)*np.cos(lon),np.cos(lat)*np.sin(lon),np.sin(lat)],[np.sin(lat)*np.cos(lon),np.sin(lat)*np.sin(lon),-np.cos(lat)]])
 points=[];uv=[]
@@ -45,5 +51,5 @@ for x in np.linspace(bounds[0],bounds[2],5):
   for z in [0,30]:
    l,o=ll.transform(x,y);p=(np.array(earth.transform(l,o,z))-origin)@basis.T;points.append([*p,1]);uv.append([(x-bounds[0])/(width*pixel),(bounds[3]-y)/(height*pixel)])
 projection=np.linalg.lstsq(np.array(points),np.array(uv),rcond=None)[0].T;errors=np.linalg.norm((np.array(points)@projection.T-np.array(uv))*[width,height],axis=1)
-ids=sorted(set(idmap[eligible].tolist()));report={'boundsRD':bounds,'imageSize':[width,height],'worldToImageUV':projection.tolist(),'projectionMaximumErrorPixels':float(errors.max()),'sourceFeatureIds':[str(batch['attributes'][i].get('DGDT_ID',batch['id'][i])) for i in ids],'features':[{'batchId':i,'id':batch['id'][i],'attributes':batch['attributes'][i]} for i in ids],'sourceDecodedSha256':hashlib.sha256(raw).hexdigest(),'orthophotoSha256':meta['decodedSha256'],'eligiblePixels':int(eligible.sum()),'sourcePixelCount':width*height}
+ids=sorted(set(idmap[eligible].tolist()));report={'boundsRD':bounds,'imageSize':[width,height],'worldToImageUV':projection.tolist(),'projectionMaximumErrorPixels':float(errors.max()),'sourceFeatureIds':[str(batch['attributes'][i].get('DGDT_ID',batch['id'][i])) for i in ids],'features':[{'batchId':i,'id':batch['id'][i],'attributes':batch['attributes'][i]} for i in ids],'sourceDecodedSha256':hashlib.sha256(raw).hexdigest(),'orthophotoSha256':meta['decodedSha256'],'orthophotoAvailable':(SRC/imageName).exists(),'areaId':area['id'] if area else 'schiedamseweg','eligiblePixels':int(eligible.sum()),'sourcePixelCount':width*height}
 (OUT/'source-mask.json').write_text(json.dumps(report,indent=2)+'\n');(OUT/'source-triangles.json').write_text(json.dumps(triangles,separators=(',',':')));print(json.dumps({k:report[k] for k in ['eligiblePixels','sourcePixelCount','projectionMaximumErrorPixels']}))

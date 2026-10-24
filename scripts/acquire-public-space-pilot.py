@@ -3,11 +3,15 @@
 import urllib.request,urllib.parse,json,gzip,hashlib,datetime,argparse
 from pathlib import Path
 from pyproj import Transformer
+from ground_area import resolve_area
 ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'source-data/public-space-pilot';OUT.mkdir(exist_ok=True)
-parser=argparse.ArgumentParser();parser.add_argument('--acquire',action='store_true');parser.add_argument('--year',default='2026',choices=['2025','2026']);args=parser.parse_args();year=args.year
+parser=argparse.ArgumentParser();parser.add_argument('--acquire',action='store_true');parser.add_argument('--year',default='2026',choices=['2025','2026']);parser.add_argument('--area');args=parser.parse_args();area=resolve_area(args.area);year=area['year'] if area else args.year
+if area:OUT=area['sourceDirectory']
 x,y=Transformer.from_crs(4326,28992,always_xy=True).transform(4.44711,51.90963);x,y=round(x),round(y);span=128;bounds=[x-64,y-64,x+64,y+64];size=1600
+if area:bounds=area['boundsRD'];size=area['imageSize'][0];assert area['imageSize'][1]==size
 q={'SERVICE':'WMS','VERSION':'1.3.0','REQUEST':'GetMap','LAYERS':year+'_orthoHR','STYLES':'','CRS':'EPSG:28992','BBOX':','.join(map(str,bounds)),'WIDTH':size,'HEIGHT':size,'FORMAT':'image/jpeg'}
 records=[('schiedamseweg-'+year+'.jpg','https://service.pdok.nl/hwh/luchtfotorgb/wms/v1_0?'+urllib.parse.urlencode(q)),('33577-6934.b3dm.gz','https://www.3drotterdam.nl/datasource-data/0025cb58-e0f5-4169-bb4c-5339a3bc2a7e/15/33577/6934.b3dm')]
+if area:records=[(area['imageName'],'https://service.pdok.nl/hwh/luchtfotorgb/wms/v1_0?'+urllib.parse.urlencode(q))]
 for name,url in records:
  p=OUT/name;meta=p.with_suffix('.json')
  if p.exists():
