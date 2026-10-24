@@ -46,3 +46,49 @@ export function routeFollowingGap(car, occupants, range = followingDistance(car.
   }
   return nearest;
 }
+
+// Reservations belong to queue heads, never whichever vehicle happens to be
+// first in the instance array. Keep the winner until its rear clears the node.
+// This is illustrative unsignalled yielding, not a sourced traffic-light model.
+export function createJunctionArbitrator() {
+  const reservations=new Map(), waiting=new Map();
+  return {
+    clear() { reservations.clear(); waiting.clear(); },
+    update(cars,occupants,delta) {
+      const active=new Set(cars), heads=new Map();
+      for(const [junction,claim] of reservations) {
+        const car=claim.car;
+        let travelled=(car.direction===1?car.distance:car.road.length-car.distance)-claim.progress;
+        for(let i=claim.step;i<car.journeyIndex;i++)travelled+=car.journey.path[i].road.length;
+        if(!active.has(car)||travelled>=claim.clearance)reservations.delete(junction);
+      }
+      for(const car of waiting.keys())if(!active.has(car))waiting.delete(car);
+      for(const car of cars) {
+        const remaining=car.direction===1?car.road.length-car.distance:car.distance;
+        if(car.ending||!car.next||remaining>=10) { waiting.delete(car); continue; }
+        // Every same-lane vehicle ahead counts, even if it is too far away for
+        // normal braking. A follower cannot reserve on its leader's behalf.
+        const leader=(occupants.get(car.road)||[]).some(other=>other.vehicle!==car&&other!==car&&other.direction===car.direction&&
+          (other.distance-car.distance)*car.direction>0);
+        if(leader) { waiting.delete(car); continue; }
+        const junction=car.direction===1?car.road.end:car.road.start;
+        if(!junction)continue;
+        waiting.set(car,(waiting.get(car)||0)+delta);
+        // Leave enough downstream room to clear the crossing. A blocked exit
+        // cannot monopolise the junction against another usable exit.
+        if(routeFollowingGap(car,occupants,remaining+5.5)<remaining+5.5)continue;
+        if(!heads.has(junction))heads.set(junction,[]);
+        heads.get(junction).push({car,remaining});
+      }
+      for(const [junction,candidates] of heads) {
+        if(reservations.has(junction))continue;
+        candidates.sort((a,b)=>(a.remaining<3?0:1)-(b.remaining<3?0:1)||
+          waiting.get(b.car)-waiting.get(a.car)||a.remaining-b.remaining||a.car.vehicleId-b.car.vehicleId);
+        const {car,remaining}=candidates[0];
+        reservations.set(junction,{car,step:car.journeyIndex,progress:car.road.length-remaining,clearance:remaining+5.5});
+        waiting.delete(car);
+      }
+      return new Map([...reservations].map(([junction,claim])=>[junction,claim.car]));
+    },
+  };
+}

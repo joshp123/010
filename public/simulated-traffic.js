@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { rightHandOffset, safeStep, routeFollowingGap, speedForRoadClass } from './traffic-motion.js';
+import { rightHandOffset, safeStep, routeFollowingGap, speedForRoadClass, createJunctionArbitrator } from './traffic-motion.js';
 import { createJourneyPlanner } from './traffic-journeys.js';
 import { createCarGeometries, createBicycleGeometries } from './traffic-models.js';
 
@@ -81,6 +81,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
   const frustum = new THREE.Frustum(), cameraMatrix = new THREE.Matrix4();
   let restrictionStatus=bicycles?'not-applicable':'not-loaded';
   let sourceNetwork = null, roads = [], planner = null, candidates = [], cars = [];
+  const junctionArbitrator=createJunctionArbitrator();
   let span = 1700, viewportHeight = 900, hasView = false, enabled = true, paused = false, lastTime = null, elapsed = 0, sequence = 1, nextVehicleId = 1;
   let desiredCount = 0, seeded = false, plannedJourneys = 0, completedJourneys = 0;
   const unroutableOrigins = new Set();
@@ -109,6 +110,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
   }
 
   function setRoads(network, preserveCars = false) {
+    junctionArbitrator.clear();
     const previousCars = preserveCars ? cars : [];
     sourceNetwork = network; roads = []; cars = []; lastTime = null; unroutableOrigins.clear();
     for (const source of network.roads) {
@@ -274,23 +276,23 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
       const delta = safeStep(lastTime === null ? 0 : timeSeconds - lastTime); lastTime = timeSeconds;
       if (paused || !group.visible || !roads.length || !cars.length) return false;
       elapsed += delta;
-      const junctionReservations = new Map(), occupants=new Map();
+      const occupants=new Map();
       for(const vehicle of cars) {
         if(!occupants.has(vehicle.road))occupants.set(vehicle.road,[]);
         occupants.get(vehicle.road).push({vehicle,direction:vehicle.direction,distance:vehicle.distance});
       }
+      const junctionReservations=junctionArbitrator.update(cars,occupants,delta);
       cars = cars.filter(car => {
         car.age += delta;
         let endDistance = car.direction === 1 ? car.road.length - car.distance : car.distance;
         let targetSpeed = car.cruise;
-        // Brake into the planned turn. Trip demand is illustrative; legal turn restrictions are not in this source.
+        // Brake into the planned turn. Trip demand remains illustrative.
         if (car.next && car.next.weight < 5) targetSpeed = Math.min(targetSpeed, 3.5 + endDistance * .25);
         const gap=routeFollowingGap(car,occupants);
         if(Number.isFinite(gap))targetSpeed=Math.min(targetSpeed,Math.max(0,(gap-5.5)/1.4));
         const junction = car.direction === 1 ? car.road.end : car.road.start;
         if (junction && endDistance < 10 && !car.ending) {
-          if (junctionReservations.has(junction)) targetSpeed = Math.min(targetSpeed, Math.max(0, (endDistance - 3) * .6));
-          else junctionReservations.set(junction, car);
+          if (junctionReservations.get(junction)!==car) targetSpeed = Math.min(targetSpeed, Math.max(0, (endDistance - 3) * .6));
         }
         car.speed += THREE.MathUtils.clamp(targetSpeed - car.speed, -6 * delta, 2 * delta);
         let remaining = delta * car.speed;
