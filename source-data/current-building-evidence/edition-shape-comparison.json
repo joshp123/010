@@ -1,0 +1,99 @@
+{
+  "note": "Native geometry compared in RD xy and ellipsoidal height; no matching topology or UV assumed. These deltas do not establish which survey is more accurate.",
+  "buildings": [
+    {
+      "bagId": "0599100000670808",
+      "legacy": {
+        "sourceSha256": "e4793a311f3442c400dcd965f562ac7ee58080ee90b1fd740779383c85d70c95",
+        "triangles": 158,
+        "boundsRDandEllipsoidalHeight": [
+          [
+            90332.53014020648,
+            435926.754525276,
+            3.314699782989919
+          ],
+          [
+            90349.27014056244,
+            435950.7045255863,
+            17.598704246804118
+          ]
+        ]
+      },
+      "current": {
+        "sourceSha256": "7b2b20dc9b402c1adcdd7c87858557d3979adc681d5819aa4b9db41a1711b1c1",
+        "triangles": 158,
+        "boundsRDandEllipsoidalHeight": [
+          [
+            90332.53014085512,
+            435926.7545245862,
+            3.3146998630836606
+          ],
+          [
+            90349.27014013313,
+            435950.7045272107,
+            17.59870397672057
+          ]
+        ]
+      },
+      "boundsDeltaMeters": [
+        [
+          6.48637069389224e-07,
+          -6.898189894855022e-07,
+          8.009374141693115e-08
+        ],
+        [
+          -4.2931060306727886e-07,
+          1.624401193112135e-06,
+          -2.7008354663848877e-07
+        ]
+      ]
+    },
+    {
+      "bagId": "0599100000671675",
+      "legacy": {
+        "sourceSha256": "f47a18e1f4b98773b57cc7e9bf6b21cae290928bc87833c43d46ed5bfc724bff",
+        "triangles": 78,
+        "boundsRDandEllipsoidalHeight": [
+          [
+            90324.7901402447,
+            436092.1525266174,
+            3.2352198511362076
+          ],
+          [
+            90330.84014011615,
+            436108.17352536647,
+            18.48767526820302
+          ]
+        ]
+      },
+      "current": {
+        "sourceSha256": "c51f35cc165e106b2d77a00f8614fecd1e22d977f35a0406f2efb8acfacf4425",
+        "triangles": 78,
+        "boundsRDandEllipsoidalHeight": [
+          [
+            90324.79013982815,
+            436092.1525257019,
+            3.235219905152917
+          ],
+          [
+            90330.8401408819,
+            436108.1735278681,
+            18.487675012089312
+          ]
+        ]
+      },
+      "boundsDeltaMeters": [
+        [
+          -4.1654857341200113e-07,
+          -9.154900908470154e-07,
+          5.4016709327697754e-08
+        ],
+        [
+          7.657508831471205e-07,
+          2.5016488507390022e-06,
+          -2.561137080192566e-07
+        ]
+      ]
+    }
+  ]
+}

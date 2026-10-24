@@ -1,0 +1,85 @@
+{
+  "observedAt": "2026-10-24",
+  "appConfig": "https://www.3drotterdam.nl/app.config.json",
+  "module": "https://www.3drotterdam.nl/configs/cb3219f4-7a7e-4f79-a1a9-7c8db2e56d78.json",
+  "moduleSha256": "e696e87eb0643c58871f8eed35531227cfd3e20e96c85a9b06e8942e81690a55",
+  "layers": [
+    {
+      "type": "CesiumTilesetLayer",
+      "name": "Gebouwen LOD2 - Actueel",
+      "properties": {
+        "featureInfo": "Gebouwen",
+        "exportWorkbench": "https://warehouse.virtualcitymap.de/fi-rotterdam/MultiExporter.fmw",
+        "infoUrl": "https://hub.clearly.app/datasets/65ef2475fe2ac522c6ac7b63/information",
+        "availableStyles": [
+          "Pand status",
+          "Bouwjaar",
+          "Negatieve bouwlaag"
+        ]
+      },
+      "activeOnStartup": true,
+      "url": "./datasource-data/d0c755ef-ba1b-43fc-bc44-24fc7bb152ce/tileset.json",
+      "extent": {
+        "coordinates": [
+          3.9550780989387944,
+          51.84448240731943,
+          4.603271440514481,
+          51.9982909793658
+        ],
+        "projection": {
+          "type": "Projection",
+          "epsg": "EPSG:4326"
+        },
+        "type": "Extent"
+      },
+      "exclusiveGroups": [
+        "gebouwen"
+      ],
+      "datasourceId": "d0c755ef-ba1b-43fc-bc44-24fc7bb152ce",
+      "tilesetOptions": {
+        "useSRGBColorFactors": true
+      },
+      "zIndex": 0
+    },
+    {
+      "type": "CesiumTilesetLayer",
+      "name": "Gebouwen LOD2 texture - Actueel",
+      "properties": {
+        "featureInfo": "Gebouwen",
+        "infoUrl": "https://hub.clearly.app/datasets/65ef2475fe2ac522c6ac7b63/information"
+      },
+      "url": "./datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/tileset.json",
+      "extent": {
+        "coordinates": [
+          3.960571274503831,
+          51.84448240731943,
+          4.603271440514481,
+          51.9982909793658
+        ],
+        "projection": {
+          "type": "Projection",
+          "epsg": "EPSG:4326"
+        },
+        "type": "Extent"
+      },
+      "exclusiveGroups": [
+        "gebouwen"
+      ],
+      "datasourceId": "3adbe5af-d05c-475a-b34c-59e69ba8dadc",
+      "tilesetOptions": {
+        "useSRGBColorFactors": true
+      },
+      "zIndex": 0
+    }
+  ],
+  "licenseEvidence": {
+    "url": "https://hub.clearly.app/datasets/65ef2475fe2ac522c6ac7b63/information",
+    "observedVia": "Public browser rendered dataset information and resource table",
+    "title": "3D Rotterdam - Gebouwen / Buildings",
+    "license": "Creative Commons Attribution 4.0",
+    "maintainer": "Gemeente Rotterdam",
+    "resourceAccessibility": "Open",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "note": "This resource-specific current license supersedes any assumption from older government public-domain metadata."
+  }
+}

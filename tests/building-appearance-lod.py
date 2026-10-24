@@ -5,6 +5,9 @@ from pathlib import Path
 import numpy as np
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('m',ROOT/'scripts/prepare-building-appearance.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+import sys
+if '--current' in sys.argv:
+    m.SOURCE=ROOT/'source-data/current-building-appearance';m.OUTPUT=ROOT/'public/data/current-building-appearance';m.BASE='https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/'
 manifest=json.loads((m.OUTPUT/'manifest.json').read_text());tiles=json.loads((m.OUTPUT/'tileset.json').read_text())['root']['children'];totals={};checked=0
 for entry,tile in zip(manifest['entries'],tiles):
  native,nb=m.read_glb((m.OUTPUT/entry['output']).read_bytes());levels=entry['textureLevels']

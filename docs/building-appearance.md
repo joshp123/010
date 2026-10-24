@@ -163,3 +163,58 @@ LOD and spatial tests pass: 36,840 triangle attribute matches, every crop pixel
 matches the native reference, and inverse UV maximum error is below 1.5e-7.
 Leaf centers also independently fall within their original geographic source-tile
 envelopes after one RTC translation and correct source/up-axis rotation.
+
+## Explicit current-edition source candidate
+
+The current official textured UUID `3adbe5af-d05c-475a-b34c-59e69ba8dadc`
+uses native glTF2 PBR and substantially clearer photographic observations in the
+reviewed Schans and Schiedamseweg pilots. The resource-specific catalog now
+states **CC BY 4.0**, attribution **Gemeente Rotterdam — 3D Rotterdam**;
+see `source-data/current-building-evidence/catalog-evidence.json`. Model
+creationDate2024-11-01 is not a verified photographic capture date.
+
+This path is deliberately explicit and writes separate source and output
+folders. Legacy archives and their geometry/UV relationships remain unchanged.
+Native current PBR values survive conversion; only the legacy material extension
+is translated. Current geometry always carries its own current UVs and images.
+Source-style RGB pixels remain exact. Finest spatial leaves retain native pixels;
+coarser texture levels are temporary view-dependent sampling levels.
+
+```sh
+python scripts/prepare-building-appearance.py --edition current --acquire \
+  --tile 18/268620/55473.b3dm --tile 18/268621/55475.b3dm \
+  --tile 18/268679/55479.b3dm
+python tests/building-appearance-compaction.py --current
+python tests/building-appearance-spatial.py --current
+python tests/building-appearance-lod.py --current
+```
+
+The first leaf contains all eight BAGs in the artist's Schiedamseweg row, the
+second contains the modern Schans66–80 pilot, and the third contains the centre
+tower pilot. Explicit leaf selection verifies those leaves exist in the native
+hierarchy and retains their bounds. No guessed replacement bounds or mixed-edition
+UVs are used. Without `--tile`, current edition uses the existing bounded two-area
+selection; it is not a whole-city acquisition command.
+
+Select this candidate in the app with `?appearance=current` (append the usual location, span, bearing and lighting parameters). The separate source index is `/data/current-building-appearance/tileset.json`; the default remains the previously reviewed legacy evidence until visual review.
+Generated GLBs and duplicate acquisition gzip archives are ignored in this path;
+pinned hashes, URLs, manifests and code are committed. Original complete evidence
+archives remain retained under the evidence folders. Reacquisition fails if the
+upstream bytes no longer match committed provenance, requiring explicit review.
+This is stronger photographic source evidence, **not** a claim of finished pixel
+art or resolved night appearance.
+
+Verified three-leaf candidate:49BAGs,4,324 unchanged source triangles,42 exact
+source RGB atlases,1,698 exact native pixel rectangles. Packed UV inverse error
+is at most0.000162 source pixels (float32 rounding), with all current atlas edges
+≤8192 pixels and no native resampling. All55 GLBs pass Khronos validation with
+zero errors/warnings. A separate network reacquisition of the9,644,080-byte row
+source matches the pinned SHA256. All49 finest contents together decode to
+187.41MiB including mips; that is an all-content total, not a measured view's
+residency. Browser scene completeness and rendering remain manager review.
+
+`python scripts/compare-building-editions.py` independently transforms the two
+residential observations to RD xy plus ellipsoidal height. Their native triangle
+counts and envelopes agree within3micrometres: improved photographic observation
+must not be misrepresented as increased geometry detail. The tower independently
+changes from1,226 to1,394 triangles. Photography date is still unestablished.

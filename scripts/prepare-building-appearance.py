@@ -17,6 +17,8 @@ BASE='https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f
 # Explicit bounded review windows, not claims of citywide appearance coverage.
 AREAS={'delfshaven':[4.446,51.9085,4.450,51.911], 'centre':[4.483,51.9055,4.490,51.909]}
 STYLE='miniature'
+EDITION='legacy'
+REQUESTED_TILES=[]
 DTYPES={5120:'i1',5121:'u1',5122:'<i2',5123:'<u2',5125:'<u4',5126:'<f4'}
 SIZES={'SCALAR':1,'VEC2':2,'VEC3':3,'VEC4':4,'MAT4':16}
 
@@ -52,15 +54,23 @@ def select_tiles(acquire):
     def walk(node,base,ancestry):
         region=node['boundingVolume'].get('region')
         areas=[name for name,box in AREAS.items() if region and overlaps(region,box)]
+        if REQUESTED_TILES:areas=['explicit source tiles']
         if not areas:return
         # These source indexes use regional bounds and no node transforms.
         # Fail instead of silently flattening a future transformed edition.
         if node.get('transform'):raise ValueError('Source node transform requires explicit composition')
         content=node.get('content',{});uri=content.get('uri',content.get('url',''))
         if uri.endswith('.json'):
-            u=urljoin(base,uri);walk(json.loads(fetch(u,acquire))['root'],u,ancestry+[u])
+            u=urljoin(base,uri)
+            if REQUESTED_TILES and u!=BASE+'tileset.json':
+                parts=u.removeprefix(BASE).removesuffix('.json').split('/')
+                if len(parts)==3 and all(v.isdigit() for v in parts):
+                    level,x,y=map(int,parts)
+                    if not any(int(t.split('/')[1])//2**(int(t.split('/')[0])-level)==x and int(t.split('/')[2].split('.')[0])//2**(int(t.split('/')[0])-level)==y for t in REQUESTED_TILES):return
+            walk(json.loads(fetch(u,acquire))['root'],u,ancestry+[u])
         elif not node.get('children') and uri:
-            tiles.append({'url':urljoin(base,uri),'boundingVolume':node['boundingVolume'],'areas':areas})
+            u=urljoin(base,uri)
+            if not REQUESTED_TILES or u.removeprefix(BASE) in REQUESTED_TILES:tiles.append({'url':u,'boundingVolume':node['boundingVolume'],'areas':areas})
         for c in node.get('children',[]):walk(c,base,ancestry)
     url=BASE+'tileset.json';walk(json.loads(fetch(url,acquire))['root'],url,[])
     return tiles
@@ -110,6 +120,10 @@ def convert(doc,binary,batch,feature,label):
     if not ids:raise ValueError('No source BAG identity')
     textured_materials=set()
     for i,m in enumerate(doc.get('materials',[])):
+        legacy=m.get('extensions',{}).get('KHR_techniques_webgl')
+        if legacy is None and 'pbrMetallicRoughness' in m:
+            if 'baseColorTexture' in m['pbrMetallicRoughness']:textured_materials.add(i)
+            continue
         values=m.pop('extensions',{}).get('KHR_techniques_webgl',{}).get('values',{})
         pbr={'baseColorFactor':values.get('u_diffuse_mat',[0.65,0.65,0.62,1]),'roughnessFactor':1,'metallicFactor':0}
         if 'u_diffuse_tex' in values:
@@ -188,7 +202,7 @@ def convert(doc,binary,batch,feature,label):
         mesh_map[mi]=[]
         for bid,primitives in split.items():
             mesh_map[mi].append(len(doc['meshes']))
-            doc['meshes'].append({'name':f'BAG_{ids[bid]}','primitives':primitives,'extras':{'bagId':ids[bid],'sourceEdition':'2019 municipal textured mesh','appearance':f'source atlas, {STYLE} preset'}})
+            doc['meshes'].append({'name':f'BAG_{ids[bid]}','primitives':primitives,'extras':{'bagId':ids[bid],'sourceEdition':('current municipal textured mesh (3adbe5af)' if EDITION=='current' else '2019 municipal textured mesh'),'appearance':f'source atlas, {STYLE} preset'}})
     for node in list(doc['nodes']):
         # Legacy exporter wrote both matrix and bogus TRS. glTF permits one only.
         if 'matrix' in node:
@@ -200,9 +214,13 @@ def convert(doc,binary,batch,feature,label):
             doc['nodes'].append({'mesh':new_mi,'name':f'BAG_{bag}','extras':{'bagId':bag}})
     rtc=doc.get('extensions',{}).get('CESIUM_RTC',{}).get('center',feature.get('RTC_CENTER'))
     if not rtc:raise ValueError('Expected source RTC origin')
-    doc.pop('extensions',None);doc.pop('extensionsUsed',None);doc.pop('extensionsRequired',None)
+    for key in ('extensionsUsed','extensionsRequired'):
+        doc[key]=[x for x in doc.get(key,[]) if x not in ('CESIUM_RTC','KHR_techniques_webgl')]
+        if not doc[key]:doc.pop(key)
+    for key in ('CESIUM_RTC','KHR_techniques_webgl'):doc.get('extensions',{}).pop(key,None)
+    if not doc.get('extensions'):doc.pop('extensions',None)
     doc['buffers']=[{'byteLength':len(new_binary)}]
-    doc['extras']={'bagIds':[ids[i] for i in sorted(selected)],'source':'Gemeente Rotterdam / Rotterdam 3D','sourceLicense':'Public domain; see docs/data-sources.md','interpretation':'Bounded older-source appearance review candidate, not contemporary surveyed facades'}
+    doc['extras']={'bagIds':[ids[i] for i in sorted(selected)],'source':'Gemeente Rotterdam / Rotterdam 3D','sourceLicense':('CC BY 4.0; Gemeente Rotterdam — 3D Rotterdam' if EDITION=='current' else 'Public domain; see docs/data-sources.md'),'interpretation':'Bounded source appearance review candidate; photographic capture date not established'}
     for key in ('animations','cameras','skins'):
         if not doc.get(key):doc.pop(key,None)
     doc.pop('samplerRepeat',None)
@@ -298,6 +316,7 @@ def pack_rectangles(rectangles):
             placements.append((i,x,y));x+=r['width'];row=max(row,r['height']);used_width=max(used_width,x)
         height=y+row
         score=used_width*height
+        if EDITION=='current' and max(used_width,height)>8192:score=float('inf')
         if best is None or score<best[0]:best=(score,used_width,height,placements)
     # MaxRects complements shelf packing for mixed long facade/roof patches.
     # Rectangles may overlap in the free list, never in occupied source patches.
@@ -305,7 +324,7 @@ def pack_rectangles(rectangles):
     for width in candidates:
         for factor in (1.02,1.1,1.25,1.5):
             height=max(max(r['height'] for r in rectangles),int(np.ceil(area/width*factor)))
-            if width*height>=best[0]*1.5:continue
+            if width*height>=best[0]*1.5 or (EDITION=='current' and max(width,height)>8192):continue
             free=[(0,0,width,height)];placements=[];used_w=used_h=0
             for i in area_order:
                 rw,rh=rectangles[i]['width'],rectangles[i]['height']
@@ -324,6 +343,7 @@ def pack_rectangles(rectangles):
             if len(placements)==len(rectangles):
                 if used_w*used_h<best[0]:best=(used_w*used_h,used_w,used_h,placements)
                 break
+    if not np.isfinite(best[0]):raise ValueError('Native atlas requires multiple atlases to fit8192 edge without resampling')
     for i,x,y in best[3]:rectangles[i]['packedOrigin']=[x,y]
     return best[1],best[2]
 
@@ -428,11 +448,15 @@ def spatial_buildings(glb,label):
         yield bag,packed,{'box':box},{'atlasSize':[width,height],'decodedRgbaBytesIncludingMips':rgba_mip_bytes(width,height) if rectangles else 0,'islands':len(rectangles)}
 
 def main():
-    global STYLE
-    ap=argparse.ArgumentParser();ap.add_argument('--acquire',action='store_true');ap.add_argument('--reuse-native',action='store_true',help='Rebuild residency from existing native files of the selected style');ap.add_argument('--style',choices=['source','baseline','miniature'],default='source');args=ap.parse_args();STYLE=args.style
+    global STYLE,EDITION,SOURCE,OUTPUT,BASE,REQUESTED_TILES
+    ap=argparse.ArgumentParser();ap.add_argument('--acquire',action='store_true');ap.add_argument('--reuse-native',action='store_true',help='Rebuild residency from existing native files of the selected style');ap.add_argument('--style',choices=['source','baseline','miniature'],default='source');ap.add_argument('--edition',choices=['legacy','current'],default='legacy');ap.add_argument('--tile',action='append',default=[],help='Explicit native leaf path, e.g.18/268620/55473.b3dm');args=ap.parse_args();STYLE=args.style;EDITION=args.edition;REQUESTED_TILES=args.tile
+    if EDITION=='current':
+        SOURCE=ROOT/'source-data/current-building-appearance';OUTPUT=ROOT/'public/data/current-building-appearance';BASE='https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/'
+        if STYLE!='source':raise ValueError('Current edition first review requires unchanged source style')
     SOURCE.mkdir(parents=True,exist_ok=True);OUTPUT.mkdir(parents=True,exist_ok=True)
     if args.reuse_native and json.loads((OUTPUT/'manifest.json').read_text())['style']!=STYLE:raise ValueError('Existing native style differs from --style')
     selected=select_tiles(args.acquire)
+    if REQUESTED_TILES and set(REQUESTED_TILES)!={t['url'].removeprefix(BASE) for t in selected}:raise ValueError('Requested source leaf missing from retained hierarchy')
     print(f'Selected {len(selected)} source tiles',flush=True)
     with ThreadPoolExecutor(max_workers=5) as pool:list(pool.map(lambda t:fetch(t['url'],args.acquire),selected))
     children=[];entries=[];all_ids=set()
@@ -476,7 +500,7 @@ def main():
     root_error=max(c['geometricError'] for c in children)*2
     tileset={'asset':{'version':'1.0','gltfUpAxis':'Y'},'geometricError':root_error,'root':{'boundingVolume':{'region':region},'geometricError':root_error,'refine':'ADD','children':children}}
     (OUTPUT/'tileset.json').write_bytes(packed_json(tileset)+b'\n')
-    manifest={'sourceRoot':BASE+'tileset.json','areas':AREAS,'pipeline':'Original textured source mesh + UV retained; legacy PBR conversion; 3x3 median, saturation 0.82, selected palette preset with no dithering; explicit ECEF RTC origin; split by source BAG ID','license':'Gemeente Rotterdam public-domain model, attribution retained separately from MIT code','scope':'Review candidate only: older source geometry replaces matching BAG features, never overlays current geometry; no contemporary accuracy claim','style':STYLE,'sourceTiles':len(selected),'outputTiles':len(entries),'buildings':len(all_ids),'entries':entries}
+    manifest={'sourceRoot':BASE+'tileset.json','areas':AREAS,'edition':EDITION,'pipeline':'Original source geometry and UV retained; native PBR preserved or legacy technique converted; explicit ECEF RTC; per-BAG native source-pixel residency; selected style recorded separately','license':('Gemeente Rotterdam — 3D Rotterdam, CC BY 4.0' if EDITION=='current' else 'Gemeente Rotterdam public-domain model'),'scope':'Bounded review candidate; photographic capture date not established','style':STYLE,'sourceTiles':len(selected),'outputTiles':len(entries),'buildings':len(all_ids),'entries':entries}
     (OUTPUT/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     provenance={k:v for k,v in manifest.items() if k!='entries'}
     provenance['sourceEvidence']=[json.loads(p.read_text()) for p in sorted((SOURCE/'raw').glob('*.json'))]

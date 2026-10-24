@@ -9,7 +9,10 @@ from PIL import Image
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('appearance',ROOT/'scripts/prepare-building-appearance.py')
 m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
-OUT=ROOT/'public/data/building-appearance'
+import sys
+if '--current' in sys.argv:
+    m.SOURCE=ROOT/'source-data/current-building-appearance';m.OUTPUT=ROOT/'public/data/current-building-appearance';m.BASE='https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/'
+OUT=m.OUTPUT
 manifest=json.loads((OUT/'manifest.json').read_text())
 tiles=json.loads((OUT/'tileset.json').read_text())
 # Native reference assets remain offline; runtime roots now replace with BAG leaves.
@@ -39,6 +42,9 @@ for entry in manifest['entries']:
     ids=[str(attrs.get('gebouwnummer') or attrs.get('GEBOUWNUMMER') or batch.get('id',[''])[i]).removeprefix('ID_').removeprefix('BAG_') for i,attrs in enumerate(batch['attributes'])]
     materials=copy.deepcopy(a['materials']);textured=set()
     for i,material in enumerate(materials):
+        if 'pbrMetallicRoughness' in material and 'KHR_techniques_webgl' not in material.get('extensions',{}):
+            if 'baseColorTexture' in material['pbrMetallicRoughness']:textured.add(i)
+            continue
         values=material.pop('extensions',{}).get('KHR_techniques_webgl',{}).get('values',{})
         pbr={'baseColorFactor':values.get('u_diffuse_mat',[.65,.65,.62,1]),'roughnessFactor':1,'metallicFactor':0}
         if 'u_diffuse_tex' in values:pbr['baseColorTexture']=values['u_diffuse_tex'];textured.add(i)

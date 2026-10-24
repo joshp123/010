@@ -6,10 +6,13 @@ import numpy as np
 from PIL import Image
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('m',ROOT/'scripts/prepare-building-appearance.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+import sys
+if '--current' in sys.argv:
+    m.SOURCE=ROOT/'source-data/current-building-appearance';m.OUTPUT=ROOT/'public/data/current-building-appearance';m.BASE='https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/'
 manifest=json.loads((m.OUTPUT/'manifest.json').read_text());tile_roots=json.loads((m.OUTPUT/'tileset.json').read_text())['root']['children']
 def image(doc,binary,ii):
  v=doc['bufferViews'][doc['images'][ii]['bufferView']];return np.asarray(Image.open(io.BytesIO(binary[v['byteOffset']:v['byteOffset']+v['byteLength']])).convert('RGB'))
-count=triangles=crops=total=0;max_uv_error=0
+count=triangles=crops=total=0;max_uv_error=max_source_pixel_error=0
 for entry,root in zip(manifest['entries'],tile_roots):
  a,ab=m.read_glb((m.OUTPUT/entry['output']).read_bytes());source_images=[image(a,ab,i) for i in range(len(a['images']))]
  nodes={}
@@ -22,7 +25,9 @@ for entry,root in zip(manifest['entries'],tile_roots):
  for leaf in entry['spatialBuildings']:
   raw=(m.OUTPUT/leaf['output']).read_bytes();b,bb=m.read_glb(raw);packing=b['extras']['texturePacking'];bag=leaf['bagId']
   assert m.digest(raw)==leaf['sha256'];assert packing['sourceAssetSha256']==m.digest((m.OUTPUT/entry['output']).read_bytes())
-  atlas=image(b,bb,0);source_meshes=[(i,x) for i,x in enumerate(a['meshes']) if x['extras']['bagId']==bag]
+  atlas=image(b,bb,0)
+  if '--current' in sys.argv:assert max(packing['atlasSize'])<=8192
+  source_meshes=[(i,x) for i,x in enumerate(a['meshes']) if x['extras']['bagId']==bag]
   assert len(source_meshes)==len(b['meshes']);points=[]
   for (mi,am),bm in zip(source_meshes,b['meshes']):
    for pi,(ap,bp) in enumerate(zip(am['primitives'],bm['primitives'])):
@@ -34,7 +39,11 @@ for entry,root in zip(manifest['entries'],tile_roots):
       islands=[r for r in packing['islands'] if r['sourceMesh']==mi and r['sourcePrimitive']==pi]
       for r in islands:
        rows=r['sourceTriangles'];restored=(bv[rows]*packing['atlasSize']-r['packedOrigin']+r['sourceCrop'][:2])/r['sourceSize']
-       error=float(np.max(abs(restored-av[rows])));max_uv_error=max(max_uv_error,error);assert error<3e-7
+       error=float(np.max(abs(restored-av[rows])));max_uv_error=max(max_uv_error,error)
+       pixel_error=float(np.max(abs(restored-av[rows])*r['sourceSize']));max_source_pixel_error=max(max_source_pixel_error,pixel_error)
+       # Float32 UV rounding is bounded in packed pixels, not normalized source UV.
+       assert pixel_error<=max(packing['atlasSize'])*np.finfo(np.float32).eps/2+1e-9
+       assert pixel_error<.001
   for r in packing['islands']:
    x,y=r['packedOrigin'];x0,y0,x1,y1=r['sourceCrop'];source=source_images[r['sourceImage']][y0:y1,x0:x1]
    assert np.array_equal(atlas[y:y+len(source),x:x+source.shape[1]],source);crops+=1
@@ -55,4 +64,4 @@ for entry,root in zip(manifest['entries'],tile_roots):
   west,south,east,north=entry['boundingVolume']['region'][:4]
   assert west-2e-6<=longitude<=east+2e-6 and south-2e-6<=latitude<=north+2e-6, (bag,latitude,longitude)
   count+=1;total+=leaf['decodedRgbaBytesIncludingMips']
-print(json.dumps({'buildingContents':count,'exactTriangles':triangles,'exactSourcePixelRectangles':crops,'maxInverseUvError':max_uv_error,'allBuildingNativeDecodedMiB':total/1048576},indent=2))
+print(json.dumps({'buildingContents':count,'exactTriangles':triangles,'exactSourcePixelRectangles':crops,'maxInverseUvError':max_uv_error,'maxInverseSourcePixelError':max_source_pixel_error,'allBuildingNativeDecodedMiB':total/1048576},indent=2))
