@@ -39,39 +39,39 @@
   "sourceReferencedImages": [
     {
       "uri": "painted-atlas-0.png",
-      "sha256": "6b99ca4b9a226310b86af21bf79097e84d0553641218ee8a7d5358738fdbb2f7"
+      "sha256": "6771e76d9b0fa6fda95518ead98f7e674452c6494ad6c5197ef4e0e4a5e71189"
     },
     {
       "uri": "painted-atlas-1.png",
-      "sha256": "53ee186c4b924ee9e4bdd3386c36f4adcac815ea4e69d83ab616ace50f32ae00"
+      "sha256": "ac2ebe1fbd4dda585739d78fb59cf12947f6c311ae033bf3d13e3e577c2417ec"
     },
     {
       "uri": "painted-atlas-2.png",
-      "sha256": "20d9ca06697ea16c37819662580de1cd70a242b4a2f907583f669af8c6fbc4c5"
+      "sha256": "40c8833f94e4d51a718e69bab88f34d8172c13ebad010699cab2b17e6457a0fa"
     },
     {
       "uri": "painted-atlas-3.png",
-      "sha256": "2613b15ad07eb6a1263513efe27e1553692b21b6c3800c6b506c2244656c2a60"
+      "sha256": "ee7c5755e4cf75f18edc72f22d62fe4a98c6e6d4749f30d7fbb764cf23ce24f1"
     },
     {
       "uri": "painted-atlas-4.png",
-      "sha256": "44f21888ea8ee4bd49b1d0df6b4766755d49a0a813b9a10c9f44fbbcb6b3cb6b"
+      "sha256": "aa7400fdf404bd0afa463ad8fab5a2356fad88a5df49ce4932c130d29ade17ab"
     },
     {
       "uri": "painted-atlas-5.png",
-      "sha256": "99d1b0bf0a977fc94ae1201cead3fc5184eaa8c54e2e7fa309d92e3e70d2633d"
+      "sha256": "67867b09f55265c4177308fa183a8e0388eab241faa1aa3e491b2b189e8ff852"
     },
     {
       "uri": "painted-atlas-6.png",
-      "sha256": "397381263e7b4a208351ca2a4fb1fb7e7c35a41cc629b059fb1f8caab4fa4026"
+      "sha256": "8f319ac9b97b36fb91cfbd78311f08351bbebe4bbefd395d9b9aa8158c7697b5"
     },
     {
       "uri": "painted-atlas-7.png",
-      "sha256": "a0bb4a9dbda81d3adfdbccd1627a823278bc4d17cca3cfc8bee9d79b66e1bbd9"
+      "sha256": "1749b2203f5164739b024599626dffd820df6b53e061a0c9e5de7da50deff4c9"
     },
     {
       "uri": "painted-atlas-8.png",
-      "sha256": "3ede6c62565bbf6da224ab162ca08c4052a91f7dcedc8ca6f7be9756f469cfec"
+      "sha256": "283721396176ebe857a87cb30e7404d3ab8d28111e387161bde502f0a7e34ad1"
     }
   ],
   "emission": false,
