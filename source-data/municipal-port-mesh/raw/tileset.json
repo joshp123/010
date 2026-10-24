@@ -1,0 +1,49 @@
+{
+"properties":{
+"Latitude":{"minimum":0.905839,"maximum":0.907722},
+"Longitude":{"minimum":0.068783,"maximum":0.072042},
+"Height":{"minimum":-458.908308,"maximum":414.499119}
+},
+"geometricError":6987.259277,"refine":"REPLACE",
+"geometricError":2595.639648,
+"root":
+{
+
+"boundingVolume": { "region": [0.06878290435905981548, 0.90583875670792124435, 0.072041821249027290786, 0.9077224119091205079, -458.90830768417924901, 414.49911925503170096]},
+"refine":"REPLACE",
+"geometricError":1297.819824
+,"children":[
+{
+
+"boundingVolume":{"region": [0.068957083280787673241, 0.90593550171681491712, 0.071884589898680906206, 0.90764503570586341219, -458.93137864956747762, 383.4618435614009968] },
+"refine":"REPLACE",
+"geometricError":1297.819824
+,"content":{"uri":"1/tileset.json", "boundingVolume":{"region": [0.068957083280787673241, 0.90593550171681491712, 0.071884589898680906206, 0.90764503570586341219, -458.93137864956747762, 383.4618435614009968] }}}
+,{
+
+"boundingVolume":{"region": [0.068957083280787673241, 0.90593550171681491712, 0.071884589898680906206, 0.90764503570586341219, -458.93137864956747762, 383.4618435614009968] },
+"refine":"REPLACE",
+"geometricError":1297.819824
+,"content":{"uri":"2/tileset.json", "boundingVolume":{"region": [0.068957083280787673241, 0.90593550171681491712, 0.071884589898680906206, 0.90764503570586341219, -458.93137864956747762, 383.4618435614009968] }}}
+]
+}
+,"asset":{"version": "1.1" }
+,"extensions" : {
+"SKYLINE_o3dml_Header" : {
+"GUID":"61ad81ca-a8f7-4708-8fe7-e02b0c1f086f" 
+,"Tags": {"Creator":"SLMeshConverter", "DateTime" : "2026-02-11T20:38:25Z", "CreatorVersion" : "8,1,0,60126"}
+,"version": 1.0
+,"MaxScreenError": 256.000000
+, "nodeCount" : 427774
+,"wkt":"GEOCCS[\"WGS 84\", DATUM[\"WGS_1984\", SPHEROID[\"WGS 84\", 6378137, 298.257223563, AUTHORITY[\"EPSG\", \"7030\"]], AUTHORITY[\"EPSG\", \"6326\"]], PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]], UNIT[\"metre\", 1, AUTHORITY[\"EPSG\", \"9001\"]], AXIS[\"Geocentric X\", OTHER], AXIS[\"Geocentric Y\", OTHER], AXIS[\"Geocentric Z\", NORTH], AUTHORITY[\"EPSG\", \"4978\"]]" 
+,"original_wkt":"COMPD_CS[\"Amersfoort / RD New (GSB) + nap height (GTX)\",PROJCS[\"Amersfoort / RD New\",GEOGCS[\"Amersfoort\",DATUM[\"Amersfoort\",SPHEROID[\"Bessel 1841\",6377397.155,299.1528128,AUTHORITY[\"EPSG\",\"7004\"]],EXTENSION[\"PROJ4_GRIDS\",\"nl_nsgi_rdtrans2018.tif\"],AUTHORITY[\"EPSG\",\"6289\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4289\"]],PROJECTION[\"Oblique_Stereographic\"],PARAMETER[\"latitude_of_origin\",52.1561605555556],PARAMETER[\"central_meridian\",5.38763888888889],PARAMETER[\"scale_factor\",0.9999079],PARAMETER[\"false_easting\",155000],PARAMETER[\"false_northing\",463000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH],AUTHORITY[\"EPSG\",\"28992\"]],VERT_CS[\"NAP height\",VERT_DATUM[\"Normaal Amsterdams Peil\",2005,EXTENSION[\"PROJ4_GRIDS\",\"naptrans2018.gtx\"],AUTHORITY[\"EPSG\",\"5109\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Up\",UP],AUTHORITY[\"EPSG\",\"5709\"]]]" 
+}
+,"SKYLINE_o3dml_Floor" : {
+"version" : "2.0"}
+}
+,"extensionsUsed" : [
+"SKYLINE_o3dml_Header"
+,"SKYLINE_o3dml_Floor"
+]
+}
+ 

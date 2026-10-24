@@ -1,0 +1,44 @@
+{
+  "writtenBy": "AI, gpt-6-astra, 2026-10-24",
+  "location": [
+    3.9884597488,
+    51.9531925023
+  ],
+  "selectedGeometricErrorMetres": 2.700057,
+  "sourceRole": "Observed textured surface including ground; no BAG/object identities. Offline interpretation input, not an automatic building replacement.",
+  "photographyCaptureDate": "Not established",
+  "license": "Mesh-specific terms not established; do not infer from the older building catalogue.",
+  "inaccessibleFinerSources": [],
+  "sourceEvidence": [
+    {
+      "url": "https://www.3drotterdam.nl/3dmesh/datasource-data/Rotterdam_West/tileset.json",
+      "file": "raw/tileset.json",
+      "sha256": "ba2009f76dc7b01eb62f2346854b8a2b27e2d5245a0ef3531438b7ffe2e3b07c"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/3dmesh/datasource-data/Rotterdam_West/1/tileset.json",
+      "file": "raw/1_tileset.json",
+      "sha256": "91ac2f5897226ebff5acf05155a396cc98c0ef9ef732c04b116062b7fa2ceab7"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/3dmesh/datasource-data/Rotterdam_West/2/tileset.json",
+      "file": "raw/2_tileset.json",
+      "sha256": "afaadde07b954e909a20bf6f888dfc13db5161b777d972c00fb68929337c6721"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/3dmesh/datasource-data/Rotterdam_West/2/3/tileset.json",
+      "file": "raw/2_3_tileset.json",
+      "sha256": "4c405978cc8af5a10471a5f0a83b77dce1aac2ce96da7fac14fe28bc199f10ac"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/3dmesh/datasource-data/Rotterdam_West/2/4/tileset.json",
+      "file": "raw/2_4_tileset.json",
+      "sha256": "314222d431fd8597b454f3a3861ad7f56196f4525fa539f74c9cbb92f244a57b"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/3dmesh/datasource-data/Rotterdam_West/2/4/mesh_44804.glb",
+      "file": "raw/2_4_mesh_44804.glb",
+      "sha256": "cad6bdde74ed94afc63c563d38961d6787e01536c4b255089bada10970b3940f"
+    }
+  ]
+}

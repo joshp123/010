@@ -1,0 +1,34 @@
+{
+  "writtenBy": "AI, gpt-6-astra, 2026-10-24",
+  "sourceRole": "Observed photographic terminal geometry; separate from BAG buildings, includes ground, without object identities. Not approved for runtime replacement.",
+  "location": [
+    3.9884597488,
+    51.9531925023
+  ],
+  "selectedGeometricErrorMetres": 2.700057,
+  "finerSourceStatus": "Referenced 4580/tileset.json and neighbouring children returned HTTP403 on2026-10-24.",
+  "photographyCaptureDate": "Not established",
+  "licenseStatus": "Rotterdam public page permits free 3D model/service use; mesh-specific licence not established by layer metadata.",
+  "sourceEvidence": [
+    {
+      "url": "https://www.3drotterdam.nl/3dmesh/datasource-data/Rotterdam_West/tileset.json",
+      "retained": "source-data/municipal-port-mesh/raw/tileset.json",
+      "sha256": "ba2009f76dc7b01eb62f2346854b8a2b27e2d5245a0ef3531438b7ffe2e3b07c"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/3dmesh/datasource-data/Rotterdam_West/2/tileset.json",
+      "retained": "source-data/municipal-port-mesh/raw/2_tileset.json",
+      "sha256": "afaadde07b954e909a20bf6f888dfc13db5161b777d972c00fb68929337c6721"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/3dmesh/datasource-data/Rotterdam_West/2/4/tileset.json",
+      "retained": "source-data/municipal-port-mesh/raw/2_4_tileset.json",
+      "sha256": "314222d431fd8597b454f3a3861ad7f56196f4525fa539f74c9cbb92f244a57b"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/3dmesh/datasource-data/Rotterdam_West/2/4/mesh_44804.glb",
+      "retained": "source-data/municipal-port-mesh/raw/2_4_mesh_44804.glb",
+      "sha256": "cad6bdde74ed94afc63c563d38961d6787e01536c4b255089bada10970b3940f"
+    }
+  ]
+}
