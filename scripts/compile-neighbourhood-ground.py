@@ -17,7 +17,9 @@ across=(-columns*np.sin(angle)+rows*np.cos(angle))*pixel
 rgb=np.zeros((height,width,3),float);eligible=surface['surface']>0;material=np.zeros((height,width),np.uint8)
 colours={1:[107,113,114],2:[157,110,95],3:[179,177,163],4:[112,133,76],5:[68,97,102],6:[143,132,117],7:[160,118,99]}
 pavingPath=source/'drawing/pavement-material.png'
-paving=np.array(Image.open(pavingPath).convert('RGB'),float)
+pavingImage=Image.open(pavingPath).convert('RGB')
+pavingResolution=round(2.7/pixel)
+paving=np.array(pavingImage.resize((pavingResolution,pavingResolution),Image.Resampling.BOX),float)
 # Nine drawn units span2.7m; the source-bound atlas therefore keeps .30m units.
 pavingCoordinates=[np.mod(across,2.7)/2.7*(paving.shape[0]-1),np.mod(along,2.7)/2.7*(paving.shape[1]-1)]
 pavingField=np.stack([ndimage.map_coordinates(paving[:,:,channel],pavingCoordinates,order=1,mode='wrap') for channel in range(3)],axis=-1)
