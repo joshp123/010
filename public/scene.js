@@ -551,7 +551,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (kind === 'trees' || kind === 'lights') tiles.addEventListener('dispose-model', event => { if (kind === 'trees') treeBatches.removeModel(event.scene); objectDetail.removeModel(event.scene); if (kind === 'trees') vegetationStyle.removeModel(event.scene); });
     for (const event of ['load-tileset', 'needs-update', 'tile-visibility-change', 'tiles-load-end']) tiles.addEventListener(event, requestRender);
     tiles.addEventListener('load-error', event => {
-      loadErrors++; console.warn(`010: ${kind} tile could not load`, event.error);
+      loadErrors++; console.warn(`010: ${kind} tile could not load ${event.url}`, event.error);
       const attempts = failedTileRetries.get(event.url) || 0;
       if (attempts < 2) {
         failedTileRetries.set(event.url, attempts + 1);
