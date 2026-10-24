@@ -32,6 +32,6 @@ Code is MIT. Geographic data, weather data and vendored libraries retain their o
 
 ## Hosting
 
-Deployment targets ChatGPT Sites at [010.jjpcodes.com](https://010.jjpcodes.com). Its source identity is retained in `.openai/hosting.json`. The public source repository is [joshp123/010](https://github.com/joshp123/010).
+Published on ChatGPT Sites at [010.jjpcodes.com](https://010.jjpcodes.com). Its source identity is retained in `.openai/hosting.json`. The public source repository is [joshp123/010](https://github.com/joshp123/010).
 
 The coordinate-based viewer can be linked from other experiences. This public project contains public city data only.

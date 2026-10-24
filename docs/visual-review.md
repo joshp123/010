@@ -6,7 +6,7 @@ These captures come from the running map in the Codex in-app browser. The requir
 
 Public release verification on 2026-10-24 used `https://010.jjpcodes.com`: centre/night, coast/day, the whole municipality, Kralingen search and phone-sized pan/zoom. Both transit providers returned reports through the hosted Worker; current observations were mostly late-night buses, so this does not prove every mode's coverage. Landscape export produced a 3840 × 2016 PNG; clipboard contained the PNG, exact public view link and `@jjpcodes`. Public captures and the downloaded image are retained in `work/visual-qa/published-*` on the SSD.
 
-| View | Reproduce with URL parameters | What the capture establishes |
+| View | Reproduce | What the capture establishes |
 | --- | --- | --- |
 | [Entire municipality](images/whole-municipality.jpg) | `lat=51.925&lon=4.265&span=30000&bearing=0&light=day` | City, harbour chain, Maasvlakte and Hoek share one continuous geographic model; surrounding municipalities remain quiet context. |
 | [Wide city centre](images/wide-central.jpg) | `lat=51.925&lon=4.480&span=3400&bearing=35&light=day` | Continuous city fabric across both riverbanks, with every requested visible tree tile loaded. |
@@ -16,6 +16,8 @@ Public release verification on 2026-10-24 used `https://010.jjpcodes.com`: centr
 | [Waalhaven](images/waalhaven-day.jpg) | `lat=51.87823&lon=4.40691&span=1000&bearing=35&light=day` | A different industrial district, source-aligned roads and dated laser-survey objects. These are not live ship positions. |
 | [Metro cutaway](images/metro-cutaway.jpg) | `lat=51.91600&lon=4.48400&span=650&bearing=35&light=day`, then Transport → Metro cutaway | Source tunnel plan, illustrated cut depth and track details. Surface routes remain above ground. |
 | [Eastern neighbourhoods](images/east-neighbourhood.jpg) | `lat=51.945&lon=4.546&span=1800&bearing=35&light=day` | Ordinary housing, waterways, trees and motorway infrastructure share the same style. All visible requested detail settled; no cache refusals. |
+| [Hoogvliet](images/hoogvliet-day.jpg) | Search `Hoogvliet`, then Day | Public-site check of ordinary housing, canals, roads and green space in the southwest. |
+| [Nesselande](images/nesselande-day.jpg) | Search `Nesselande Rotterdam`, then Day | Public-site check at the municipality's eastern edge, including lakefront housing and waterways. Detail took seconds to arrive. |
 | [Mobile neighbourhood](images/mobile-delfshaven.jpg) | `lat=51.90720&lon=4.44900&span=700&bearing=35&light=day`, 390 × 844 viewport | Quiet controls and usable neighbourhood exploration at a phone-sized viewport. This is not a physical-phone performance measurement. |
 
 The image-sharing path produced and downloaded landscape (3840 × 2016), square (2160 × 2160) and story (2160 × 3840) PNGs. All were opened and inspected. Copy image + caption placed both PNG bytes and the coordinate/lighting link with `@jjpcodes` on the browser clipboard. Full-resolution files and rejected diagnostic captures remain on the SSD in ignored `work/visual-qa/`; rejected images are not style targets.
