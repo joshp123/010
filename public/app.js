@@ -380,7 +380,7 @@ function focusNextMetro() {
   byId('metro-cutaway').checked = true;
   scene.setMetroCutaway(true);
   setViewPanel(false);
-  navigateTo({ lat: target.latitude, lon: target.longitude, span: 220, name: `Metro ${target.label || ''}`.trim() });
+  navigateTo({ lat: target.latitude, lon: target.longitude, span: 170, name: `Metro ${target.label || ''}`.trim() });
   showMetroViewStatus();
 }
 byId('metro-find').addEventListener('click', focusNextMetro);
