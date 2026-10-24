@@ -132,7 +132,7 @@ function encodeView(base = location.href) {
   result.searchParams.set('light', lightingMode);
   // These modes are read once when the scene starts. Keep the active rendition
   // in copied links and history without propagating unrelated URL parameters.
-  for (const [key, allowed] of Object.entries({ appearance: ['current', 'illustrated-row', 'off'], vegetation: ['native'], tanks: ['current'], ground: ['illustrated'] })) {
+  for (const [key, allowed] of Object.entries({ appearance: ['current', 'illustrated-row', 'illustrated-neighbourhood', 'off'], vegetation: ['native'], tanks: ['current', 'illustrated'], ground: ['illustrated'] })) {
     const value = url.searchParams.get(key);
     if (allowed.includes(value)) result.searchParams.set(key, value);
   }

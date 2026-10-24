@@ -1,0 +1,21 @@
+// Real vendored GLTFLoader + HTTP/PNG decoding; no GPU art acceptance claim.
+import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';import {createServer} from 'node:http';import {registerHooks} from 'node:module';import sharp from 'sharp';
+registerHooks({resolve(s,c,next){return next(s==='three'?new URL('../public/vendor/three/build/three.module.js',import.meta.url).href:s,c);}});
+globalThis.self=globalThis;globalThis.ProgressEvent=class{constructor(type,init){Object.assign(this,{type},init);}};
+globalThis.createImageBitmap=async blob=>{const{data,info}=await sharp(Buffer.from(await blob.arrayBuffer())).raw().toBuffer({resolveWithObject:true});return{width:info.width,height:info.height,data,close(){}};};
+const requests=[];const server=createServer(async(req,res)=>{try{assert.match(req.url,/^\/data\/illustrated-(neighbourhood|tank)\//);const data=await readFile(new URL('../public'+req.url,import.meta.url));requests.push(req.url);res.writeHead(200,{'Content-Type':req.url.endsWith('.png')?'image/png':'model/gltf-binary'});res.end(data);}catch{res.writeHead(404);res.end();}});await new Promise(r=>server.listen(0,'127.0.0.1',r));
+try {
+ const{GLTFLoader}=await import('../public/vendor/three/examples/jsm/loaders/GLTFLoader.js');const{prepareAppearanceModel}=await import('../public/building-appearance.js');
+ for(const [folder,key,expectedIds,expectedTriangles] of [['illustrated-neighbourhood/row','bagId',8,678],['illustrated-neighbourhood/apartment','bagId',1,158],['illustrated-tank','featureId',1,214]]) {
+  const bytes=await readFile(new URL(`../public/data/${folder}/model.glb`,import.meta.url));const doc=JSON.parse(bytes.subarray(20,20+bytes.readUInt32LE(12)));const gltf=await new GLTFLoader().loadAsync(`http://127.0.0.1:${server.address().port}/data/${folder}/model.glb`);const ids=new Set(),materials=new Set(),images=new Set();let triangles=0;
+  gltf.scene.traverse(mesh=>{if(!mesh.isMesh)return;assert.match(mesh.userData[key],key==='bagId'?/^\d{16}$/:/^OST_\d+$/);ids.add(mesh.userData[key]);triangles+=mesh.geometry.index.count/3;materials.add(mesh.material);const materialIndex=gltf.parser.associations.get(mesh.material).materials;const original=doc.materials[materialIndex];
+   for(const [property,definition] of [['map',original.pbrMetallicRoughness?.baseColorTexture],['emissiveMap',original.emissiveTexture]]) {
+    const texture=mesh.material[property];if(!definition){assert.ok(!texture);continue;}assert.ok(texture.image.data.length);images.add(texture.source);assert.equal(texture.channel,0);assert.equal(texture.flipY,false);assert.equal(texture.colorSpace,'srgb');const tr=definition.extensions.KHR_texture_transform;assert.deepEqual(texture.offset.toArray(),tr.offset);assert.deepEqual(texture.repeat.toArray(),tr.scale);
+   }
+  });assert.equal(ids.size,expectedIds);assert.equal(triangles,expectedTriangles);
+  const night={value:0};prepareAppearanceModel(gltf.scene,{night,applyLighting(){},applyCutaway(){}});
+  for(const mat of materials){const shader={uniforms:{},vertexShader:'#include <begin_vertex>',fragmentShader:'#include <emissivemap_fragment>'};mat.onBeforeCompile(shader,{});assert.equal(shader.uniforms.appearanceSourceNight,night);if(mat.emissiveMap){assert.equal(mat.emissive.getHex(),0xffffff);assert.equal(mat.userData.emissionCropGuard,true);assert.match(shader.fragmentShader,/vEmissiveMapUv/);assert.match(shader.fragmentShader,/totalEmissiveRadiance \*= clamp\(appearanceSourceNight/);}else assert.equal(mat.emissive.getHex(),0);night.value=1;assert.equal(shader.uniforms.appearanceSourceNight.value,1);night.value=0;}
+  console.log(JSON.stringify({folder,identities:[...ids],triangles,materials:materials.size,decodedImageSources:images.size,scope:'HTTP GLTFLoader + PNG decode + actual UV transforms/night hook; GPU visual review pending'}));
+ }
+ assert.ok(requests.every(x=>!x.includes('.writing.')));
+}finally{server.closeAllConnections();await new Promise(r=>server.close(r));}

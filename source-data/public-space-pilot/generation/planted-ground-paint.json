@@ -1,0 +1,8 @@
+{
+  "tool": "native image_gen.imagegen",
+  "toolOutputName": "exec-cf02fd81-a77a-46bd-9e2d-b8b32771f42d.png",
+  "modelVersion": "not exposed",
+  "sha256": "d2928c9ef37f5a294bc0ad88356ad7900680d49f89de5f4c608c01a7030e8088",
+  "input": "source-data/public-space-pilot/schiedamseweg-2026.jpg",
+  "use": "Paint material only in actual BGT groenvoorziening footprints; no generated geometry or source RGB."
+}

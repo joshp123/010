@@ -1,0 +1,898 @@
+{
+  "boundsRD": [
+    90249,
+    435908,
+    90377,
+    436036
+  ],
+  "imageSize": [
+    1600,
+    1600
+  ],
+  "worldToImageUV": [
+    [
+      0.007811423455551449,
+      3.6164556037401874e-06,
+      -9.642832577444576e-05,
+      23.614042106753043
+    ],
+    [
+      9.642872466121823e-05,
+      -8.42949829735944e-07,
+      0.007811424333260192,
+      -4.873105336466967
+    ]
+  ],
+  "projectionMaximumErrorPixels": 0.0026996521715631225,
+  "sourceFeatureIds": [
+    "15217013",
+    "15996128",
+    "13957225",
+    "15996129",
+    "15560366",
+    "15216984",
+    "13957226",
+    "15560370",
+    "9545472",
+    "9545453",
+    "9545507",
+    "15559785",
+    "9545410",
+    "9545426",
+    "16340756",
+    "9545429",
+    "15445526",
+    "9545417",
+    "15216997",
+    "15567835",
+    "9545451",
+    "9545427",
+    "9545421",
+    "9545424",
+    "15558301",
+    "9545455",
+    "16422590",
+    "15216841",
+    "9545418",
+    "9545409",
+    "15216989",
+    "9545446",
+    "9545460",
+    "15558094",
+    "15445527",
+    "15373321",
+    "15218989",
+    "9675152",
+    "15218985",
+    "9545489",
+    "9545454",
+    "15999555",
+    "15925387",
+    "15217014",
+    "9545456",
+    "9545413",
+    "15373319",
+    "15217060",
+    "9545461",
+    "9545447",
+    "15999551",
+    "15437815",
+    "15445528",
+    "16340757",
+    "16422594",
+    "15445525",
+    "15558300",
+    "15218803",
+    "9545471",
+    "15559786",
+    "15216990"
+  ],
+  "features": [
+    {
+      "batchId": 100,
+      "id": "15217013",
+      "attributes": {
+        "FYSIEKVK": "gesloten verharding",
+        "DGDT_ID": "15217013",
+        "FUNCTIE": "",
+        "KLASSE_IMG": "Onbegroeid terreindeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Gesloten Verharding",
+        "INWIN": "20150806"
+      }
+    },
+    {
+      "batchId": 122,
+      "id": "15996128",
+      "attributes": {
+        "FYSIEKVK": "gesloten verharding",
+        "DGDT_ID": "15996128",
+        "FUNCTIE": "",
+        "KLASSE_IMG": "Onbegroeid terreindeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Gesloten Verharding",
+        "INWIN": "20170316"
+      }
+    },
+    {
+      "batchId": 183,
+      "id": "13957225",
+      "attributes": {
+        "FYSIEKVK": "gesloten verharding",
+        "DGDT_ID": "13957225",
+        "FUNCTIE": "",
+        "KLASSE_IMG": "Onbegroeid terreindeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Valdempende Ondergrond Kunstgras",
+        "INWIN": "20140626"
+      }
+    },
+    {
+      "batchId": 189,
+      "id": "15996129",
+      "attributes": {
+        "FYSIEKVK": "gesloten verharding",
+        "DGDT_ID": "15996129",
+        "FUNCTIE": "",
+        "KLASSE_IMG": "Onbegroeid terreindeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Gesloten Verharding",
+        "INWIN": "20170316"
+      }
+    },
+    {
+      "batchId": 215,
+      "id": "15560366",
+      "attributes": {
+        "FYSIEKVK": "gesloten verharding",
+        "DGDT_ID": "15560366",
+        "FUNCTIE": "",
+        "KLASSE_IMG": "Onbegroeid terreindeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Gesloten Verharding",
+        "INWIN": "20151201"
+      }
+    },
+    {
+      "batchId": 333,
+      "id": "15216984",
+      "attributes": {
+        "FYSIEKVK": "gesloten verharding",
+        "DGDT_ID": "15216984",
+        "FUNCTIE": "",
+        "KLASSE_IMG": "Onbegroeid terreindeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Gesloten Verharding",
+        "INWIN": "20150806"
+      }
+    },
+    {
+      "batchId": 352,
+      "id": "13957226",
+      "attributes": {
+        "FYSIEKVK": "gesloten verharding",
+        "DGDT_ID": "13957226",
+        "FUNCTIE": "",
+        "KLASSE_IMG": "Onbegroeid terreindeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Valdempende Ondergrond Kunstgras",
+        "INWIN": "20140626"
+      }
+    },
+    {
+      "batchId": 365,
+      "id": "15560370",
+      "attributes": {
+        "FYSIEKVK": "gesloten verharding",
+        "DGDT_ID": "15560370",
+        "FUNCTIE": "",
+        "KLASSE_IMG": "Onbegroeid terreindeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Gesloten Verharding",
+        "INWIN": "20151201"
+      }
+    },
+    {
+      "batchId": 447,
+      "id": "9545472",
+      "attributes": {
+        "FYSIEKVK": "struiken",
+        "DGDT_ID": "9545472",
+        "FUNCTIE": "",
+        "KLASSE_IMG": "Begroeid terreindeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Struik",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 515,
+      "id": "9545453",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545453",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 525,
+      "id": "9545507",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545507",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 531,
+      "id": "15559785",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15559785",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20151201"
+      }
+    },
+    {
+      "batchId": 544,
+      "id": "9545410",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545410",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 545,
+      "id": "9545426",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545426",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 562,
+      "id": "16340756",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "16340756",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20180927"
+      }
+    },
+    {
+      "batchId": 566,
+      "id": "9545429",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545429",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 574,
+      "id": "15445526",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15445526",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20151020"
+      }
+    },
+    {
+      "batchId": 584,
+      "id": "9545417",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545417",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 602,
+      "id": "15216997",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15216997",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20150806"
+      }
+    },
+    {
+      "batchId": 613,
+      "id": "15567835",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15567835",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20151204"
+      }
+    },
+    {
+      "batchId": 618,
+      "id": "9545451",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545451",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 620,
+      "id": "9545427",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545427",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 622,
+      "id": "9545421",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545421",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 626,
+      "id": "9545424",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545424",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 635,
+      "id": "15558301",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15558301",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20151201"
+      }
+    },
+    {
+      "batchId": 641,
+      "id": "9545455",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545455",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 648,
+      "id": "16422590",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "16422590",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20190130"
+      }
+    },
+    {
+      "batchId": 651,
+      "id": "15216841",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15216841",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20150806"
+      }
+    },
+    {
+      "batchId": 667,
+      "id": "9545418",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545418",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 669,
+      "id": "9545409",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545409",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 678,
+      "id": "15216989",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15216989",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20150806"
+      }
+    },
+    {
+      "batchId": 684,
+      "id": "9545446",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545446",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 690,
+      "id": "9545460",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545460",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 699,
+      "id": "15558094",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15558094",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20151201"
+      }
+    },
+    {
+      "batchId": 710,
+      "id": "15445527",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15445527",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20151020"
+      }
+    },
+    {
+      "batchId": 716,
+      "id": "15373321",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15373321",
+        "FUNCTIE": "rijbaan lokale weg",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Rijbaan",
+        "INWIN": "20150918"
+      }
+    },
+    {
+      "batchId": 722,
+      "id": "15218989",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15218989",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20150806"
+      }
+    },
+    {
+      "batchId": 725,
+      "id": "9675152",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9675152",
+        "FUNCTIE": "rijbaan lokale weg",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Rijbaan",
+        "INWIN": "20090310"
+      }
+    },
+    {
+      "batchId": 726,
+      "id": "15218985",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15218985",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20150806"
+      }
+    },
+    {
+      "batchId": 735,
+      "id": "9545489",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545489",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 739,
+      "id": "9545454",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545454",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 745,
+      "id": "15999555",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15999555",
+        "FUNCTIE": "rijbaan lokale weg",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Rijbaan",
+        "INWIN": "20170320"
+      }
+    },
+    {
+      "batchId": 749,
+      "id": "15925387",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15925387",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20170109"
+      }
+    },
+    {
+      "batchId": 759,
+      "id": "15217014",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15217014",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20150806"
+      }
+    },
+    {
+      "batchId": 760,
+      "id": "9545456",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545456",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 763,
+      "id": "9545413",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545413",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 768,
+      "id": "15373319",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15373319",
+        "FUNCTIE": "rijbaan lokale weg",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Rijbaan",
+        "INWIN": "20150918"
+      }
+    },
+    {
+      "batchId": 774,
+      "id": "15217060",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15217060",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20150806"
+      }
+    },
+    {
+      "batchId": 790,
+      "id": "9545461",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545461",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 805,
+      "id": "9545447",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545447",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 819,
+      "id": "15999551",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15999551",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20170320"
+      }
+    },
+    {
+      "batchId": 840,
+      "id": "15437815",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15437815",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20151014"
+      }
+    },
+    {
+      "batchId": 844,
+      "id": "15445528",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15445528",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20151020"
+      }
+    },
+    {
+      "batchId": 939,
+      "id": "16340757",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "16340757",
+        "FUNCTIE": "rijbaan lokale weg",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Rijbaan",
+        "INWIN": "20180927"
+      }
+    },
+    {
+      "batchId": 953,
+      "id": "16422594",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "16422594",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20190130"
+      }
+    },
+    {
+      "batchId": 957,
+      "id": "15445525",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15445525",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20151020"
+      }
+    },
+    {
+      "batchId": 987,
+      "id": "15558300",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15558300",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20151201"
+      }
+    },
+    {
+      "batchId": 1017,
+      "id": "15218803",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15218803",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20150806"
+      }
+    },
+    {
+      "batchId": 1020,
+      "id": "9545471",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "9545471",
+        "FUNCTIE": "parkeervlak",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Parkeerplaats",
+        "INWIN": "20090212"
+      }
+    },
+    {
+      "batchId": 1031,
+      "id": "15559786",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15559786",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20151201"
+      }
+    },
+    {
+      "batchId": 1035,
+      "id": "15216990",
+      "attributes": {
+        "FYSIEKVK": "open verharding",
+        "DGDT_ID": "15216990",
+        "FUNCTIE": "voetpad",
+        "KLASSE_IMG": "Wegdeel",
+        "BRONHOUDER": "Rotterdam (G)",
+        "KLASSE": "Voetpad",
+        "INWIN": "20150806"
+      }
+    }
+  ],
+  "sourceDecodedSha256": "2c625dbdfbea8fae4627b725c90e2caf95d43a526e76fb4fc937f67453dcdeb1",
+  "orthophotoSha256": null,
+  "orthophotoAvailable": false,
+  "areaId": "schiedamseweg-south",
+  "eligiblePixels": 949471,
+  "sourcePixelCount": 2560000,
+  "coverageProof": {
+    "nativePixels": 2560000,
+    "nativeEligiblePixels": 949471,
+    "compiledEligiblePixels": 932546,
+    "adjacency": "north edge436036 exactly equals current crop south edge436036",
+    "zeroInventedPaintPixels": true
+  }
+}

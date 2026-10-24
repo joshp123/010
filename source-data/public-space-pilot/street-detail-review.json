@@ -1,0 +1,84 @@
+{
+  "sourceSha256": "ee869533880c4c7cc42ef9c8df8bbc88a878b13fa8614e75295482399af8f848",
+  "regions": [
+    [
+      "north crossing west",
+      [
+        0,
+        230,
+        55,
+        295
+      ]
+    ],
+    [
+      "tram crossing west",
+      [
+        0,
+        320,
+        35,
+        420
+      ]
+    ],
+    [
+      "north crossing middle",
+      [
+        323,
+        295,
+        365,
+        341
+      ]
+    ],
+    [
+      "north crossing east",
+      [
+        702,
+        363,
+        753,
+        419
+      ]
+    ],
+    [
+      "south speed30",
+      [
+        57,
+        421,
+        93,
+        470
+      ]
+    ],
+    [
+      "north speed30",
+      [
+        1160,
+        447,
+        1193,
+        487
+      ]
+    ]
+  ],
+  "northCycleDashBand": {
+    "xRange": [
+      755,
+      1245
+    ],
+    "sourcePixelY": ".149*x+275",
+    "halfWidth": 6
+  },
+  "southCycleDashBand": {
+    "xRanges": [
+      [
+        575,
+        650
+      ],
+      [
+        900,
+        1230
+      ]
+    ],
+    "sourcePixelY": ".15*x+461",
+    "halfWidth": 7
+  },
+  "method": "Review regions constrain original-image local-contrast support. They are not generated stroke geometry. Dash components reject isolated glints and steep pole-edge fragments without filling any gap. Thresholds retain only actual visibly pale pixels, recoloured ivory.",
+  "paintDetailPixels": 4905,
+  "rails": "Not added: overhead-wire shadows make some apparent linear detail ambiguous. No continuous rail tracing inferred."
+}

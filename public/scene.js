@@ -187,7 +187,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   for (const material of [...['ground', 'streets', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain', 'yards'].map(kind => materials[kind]), cartographicMaterial, contextLandMaterial]) applyPublicSpaceMaterial(material);
   const publicSpaceStyle = createPublicSpaceStyle({ material: materials.ground });
   const groundArtworkEnabled = new URLSearchParams(location.search).get('ground') === 'illustrated';
-  const groundArtwork = createGroundArtwork({ enabled: groundArtworkEnabled, requestRender, anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()) });
+  const groundArtwork = createGroundArtwork({ baseUrl: new URLSearchParams(location.search).get('appearance') === 'illustrated-neighbourhood' ? './data/ground-artwork-neighbourhood/' : './data/ground-artwork/', enabled: groundArtworkEnabled, requestRender, anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()) });
   groundArtwork.apply(materials.ground);
   let groundArtworkPending = groundArtworkEnabled, groundArtworkFailed = false;
   groundArtwork.ready.then(() => { groundArtworkPending = false; groundArtworkFailed = Boolean(groundArtwork.diagnostics().error); requestRender(); });
@@ -229,8 +229,9 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   let appearanceSamplingPreset = 'anisotropic';
   const appearanceOption = new URLSearchParams(location.search).get('appearance');
   const appearanceEnabled = appearanceOption !== 'off';
-  const appearanceEdition = ['current', 'illustrated-row'].includes(appearanceOption) ? appearanceOption : 'legacy';
-  const tankAppearanceEnabled = appearanceEdition === 'current' && new URLSearchParams(location.search).get('tanks') === 'current';
+  const appearanceEdition = ['current', 'illustrated-row', 'illustrated-neighbourhood'].includes(appearanceOption) ? appearanceOption : 'legacy';
+  const tankAppearanceEdition = new URLSearchParams(location.search).get('tanks');
+  const tankAppearanceEnabled = tankAppearanceEdition === 'illustrated' || (appearanceEdition === 'current' && tankAppearanceEdition === 'current');
   let capturingFullDetail = false;
   let transitSnapshot = { vehicles: [] }, transitSurfaceDirty = false;
   const transitSurfaceCache = new Map();
@@ -318,7 +319,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     requestRender();
     return true;
   }
-  const tileCaches = Object.fromEntries([['city', appearanceEdition === 'illustrated-row' ? 384 : 224], ['trees', 128], ['lights', 24]].map(([name, megabytes]) => {
+  const tileCaches = Object.fromEntries([['city', appearanceEdition.startsWith('illustrated-') ? 384 : 224], ['trees', 128], ['lights', 24]].map(([name, megabytes]) => {
     const cache = new LRUCache();
     cache.maxBytesSize = megabytes * 1024 * 1024;
     cache.minBytesSize = name === 'trees' ? 24 * 1024 * 1024 : cache.maxBytesSize * 0.8;
@@ -420,7 +421,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
 
   for (const [kind, id] of LAYERS) {
     if (kind === 'appearanceTanks' && !tankAppearanceEnabled) continue;
-    const layerSource = kind === 'appearanceBuildings' && appearanceEdition === 'illustrated-row' ? './data/illustrated-row/tileset.json' : kind === 'appearanceBuildings' && appearanceEdition === 'current' ? './data/current-building-appearance/tileset.json' : id;
+    const layerSource = kind === 'appearanceTanks' && tankAppearanceEdition === 'illustrated' ? './data/illustrated-tank/tileset.json' : kind === 'appearanceBuildings' && appearanceEdition === 'illustrated-neighbourhood' ? './data/illustrated-neighbourhood/tileset.json' : kind === 'appearanceBuildings' && appearanceEdition === 'illustrated-row' ? './data/illustrated-row/tileset.json' : kind === 'appearanceBuildings' && appearanceEdition === 'current' ? './data/current-building-appearance/tileset.json' : id;
     const tiles = new TilesRenderer(layerSource.startsWith('./') ? layerSource : `${DATA_BASE}${layerSource}/tileset.json`);
     tiles.registerPlugin(createCompressedModelsPlugin());
     tiles.kind = kind;
