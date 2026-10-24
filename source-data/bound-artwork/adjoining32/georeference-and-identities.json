@@ -1,0 +1,1314 @@
+{
+  "status": "Review candidate, not accepted production art",
+  "dataset": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/tileset.json",
+  "tile": "18/268620/55473.b3dm",
+  "geometry_asset": "area-review.glb",
+  "identity_namespace": "BAG",
+  "source_decoded_sha256": "c51f35cc165e106b2d77a00f8614fecd1e22d977f35a0406f2efb8acfacf4425",
+  "license": "CC BY 4.0 Gemeente Rotterdam",
+  "rtc_ecef_m": [
+    3931031.386085533,
+    305724.43749486655,
+    4996588.717016839
+  ],
+  "root_node_matrix_column_major": [
+    -0.07753792694928999,
+    0.0,
+    -0.9969894030953421,
+    0.0,
+    0.6150499078934276,
+    0.7870359252754812,
+    -0.04783370282607464,
+    0.0,
+    0.7846664773549923,
+    -0.6169071666999558,
+    -0.06102513408047711,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "gltf_y_up_to_ecef_z_up_row_major": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      0,
+      1,
+      0
+    ]
+  ],
+  "coordinate_chain": "ECEF = RTC + glTF_Yup_to_Zup @ root_node_matrix @ source_POSITION. Root matrix retained in GLB; apply it only once. CESIUM_RTC extension repeats external B3DM RTC for convenience; apply RTC only once. All mesh child matrices in this source are identity. Source positions/UVs/normals remain unchanged. Diagnostic renders used geographic alignment into legacy local Y-up; do NOT apply that diagnostic alignment.json to these assets.",
+  "batch_identity": [
+    {
+      "batchId": 0,
+      "sourceId": "BAG_0599100100019945",
+      "bagId": "BAG_0599100100019945",
+      "attributes": {
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 2.22,
+        "BEGINGELDIGHEID": "2019-02-05",
+        "AANTAL_BOUWLAGEN": "1",
+        "yearOfConstruction": "2019",
+        "WIJK": "Delfshaven",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "0"
+      }
+    },
+    {
+      "batchId": 1,
+      "sourceId": "BAG_0599100000760417",
+      "bagId": "BAG_0599100000760417",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "3-3",
+          "Country": "Nederland",
+          "PostalCode": "3025VA",
+          "Street": "Schans",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2022-07-18",
+        "yearOfConstruction": "1910",
+        "creationDate": "2025-11-27",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": 3,
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": -1,
+        "measuredHeight": 15.26,
+        "AANTAL_BOUWLAGEN": 6,
+        "AANTAL_ADRESSEN": 2,
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 2,
+      "sourceId": "BAG_0599100000760416",
+      "bagId": "BAG_0599100000760416",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "24-24",
+          "Country": "Nederland",
+          "PostalCode": "3025AB",
+          "Street": "Schiedamseweg",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2015-10-15",
+        "yearOfConstruction": "1910",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3",
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "-1",
+        "measuredHeight": 15.18,
+        "AANTAL_BOUWLAGEN": "6",
+        "AANTAL_ADRESSEN": "3",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 3,
+      "sourceId": "BAG_0599100000670765",
+      "bagId": "BAG_0599100000670765",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "11-11",
+          "Country": "Nederland",
+          "PostalCode": "3025VB",
+          "Street": "Schans",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2015-11-24",
+        "yearOfConstruction": "1912",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3",
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 13.03,
+        "AANTAL_BOUWLAGEN": "4",
+        "AANTAL_ADRESSEN": "10",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 4,
+      "sourceId": "BAG_0599100100019952",
+      "bagId": "BAG_0599100100019952",
+      "attributes": {
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 2.54,
+        "BEGINGELDIGHEID": "2019-02-05",
+        "AANTAL_BOUWLAGEN": "1",
+        "yearOfConstruction": "2019",
+        "WIJK": "Delfshaven",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "0"
+      }
+    },
+    {
+      "batchId": 5,
+      "sourceId": "BAG_0599100000671675",
+      "bagId": "BAG_0599100000671675",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "22-22",
+          "Country": "Nederland",
+          "PostalCode": "3025AB",
+          "Street": "Schiedamseweg",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2015-10-08",
+        "yearOfConstruction": "1910",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3",
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 15.25,
+        "AANTAL_BOUWLAGEN": "5",
+        "AANTAL_ADRESSEN": "3",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 6,
+      "sourceId": "BAG_0599100000688713",
+      "bagId": "BAG_0599100000688713",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "16-18",
+          "Country": "Nederland",
+          "PostalCode": "3025HS",
+          "Street": "Watergeusstraat",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2019-02-05",
+        "yearOfConstruction": "1910",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3",
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 12.81,
+        "AANTAL_BOUWLAGEN": "4",
+        "AANTAL_ADRESSEN": "4",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 7,
+      "sourceId": "BAG_0599100000688746",
+      "bagId": "BAG_0599100000688746",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "4-4",
+          "Country": "Nederland",
+          "PostalCode": "3025HS",
+          "Street": "Watergeusstraat",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2019-02-05",
+        "yearOfConstruction": "1910",
+        "creationDate": "2025-11-27",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": 3,
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": -1,
+        "measuredHeight": 14.21,
+        "AANTAL_BOUWLAGEN": 5,
+        "AANTAL_ADRESSEN": 3,
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 8,
+      "sourceId": "BAG_0599100000688733",
+      "bagId": "BAG_0599100000688733",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "24-26",
+          "Country": "Nederland",
+          "PostalCode": "3025HS",
+          "Street": "Watergeusstraat",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2019-02-05",
+        "yearOfConstruction": "1910",
+        "creationDate": "2025-11-27",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": 3,
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": 0,
+        "measuredHeight": 12.89,
+        "AANTAL_BOUWLAGEN": 4,
+        "AANTAL_ADRESSEN": 4,
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 9,
+      "sourceId": "BAG_0599100000688758",
+      "bagId": "BAG_0599100000688758",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "6-8",
+          "Country": "Nederland",
+          "PostalCode": "3025HS",
+          "Street": "Watergeusstraat",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2015-10-15",
+        "yearOfConstruction": "1910",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3",
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 12.82,
+        "AANTAL_BOUWLAGEN": "4",
+        "AANTAL_ADRESSEN": "4",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 10,
+      "sourceId": "BAG_0599100000670806",
+      "bagId": "BAG_0599100000670806",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "5-5",
+          "Country": "Nederland",
+          "PostalCode": "3025VA",
+          "Street": "Schans",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2015-11-24",
+        "yearOfConstruction": "1910",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3",
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 13.08,
+        "AANTAL_BOUWLAGEN": "4",
+        "AANTAL_ADRESSEN": "10",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 11,
+      "sourceId": "BAG_0599100000688727",
+      "bagId": "BAG_0599100000688727",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "20-22",
+          "Country": "Nederland",
+          "PostalCode": "3025HS",
+          "Street": "Watergeusstraat",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2019-02-05",
+        "yearOfConstruction": "1910",
+        "creationDate": "2025-11-27",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": 3,
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": 0,
+        "measuredHeight": 12.93,
+        "AANTAL_BOUWLAGEN": 4,
+        "AANTAL_ADRESSEN": 4,
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 12,
+      "sourceId": "BAG_0599100100019949",
+      "bagId": "BAG_0599100100019949",
+      "attributes": {
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 2.59,
+        "BEGINGELDIGHEID": "2019-02-05",
+        "AANTAL_BOUWLAGEN": "1",
+        "yearOfConstruction": "2019",
+        "WIJK": "Delfshaven",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "0"
+      }
+    },
+    {
+      "batchId": 13,
+      "sourceId": "BAG_0599100100019947",
+      "bagId": "BAG_0599100100019947",
+      "attributes": {
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 2.67,
+        "BEGINGELDIGHEID": "2019-02-05",
+        "AANTAL_BOUWLAGEN": "1",
+        "yearOfConstruction": "2019",
+        "WIJK": "Delfshaven",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "0"
+      }
+    },
+    {
+      "batchId": 14,
+      "sourceId": "BAG_0599100000670815",
+      "bagId": "BAG_0599100000670815",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "9-9",
+          "Country": "Nederland",
+          "PostalCode": "3025VA",
+          "Street": "Schans",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2015-11-24",
+        "yearOfConstruction": "1910",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3",
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 13.06,
+        "AANTAL_BOUWLAGEN": "4",
+        "AANTAL_ADRESSEN": "10",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 15,
+      "sourceId": "BAG_0599100100019951",
+      "bagId": "BAG_0599100100019951",
+      "attributes": {
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 2.68,
+        "BEGINGELDIGHEID": "2019-02-05",
+        "AANTAL_BOUWLAGEN": "1",
+        "yearOfConstruction": "2019",
+        "WIJK": "Delfshaven",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "0"
+      }
+    },
+    {
+      "batchId": 16,
+      "sourceId": "BAG_0599100000671699",
+      "bagId": "BAG_0599100000671699",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "26-26",
+          "Country": "Nederland",
+          "PostalCode": "3025AB",
+          "Street": "Schiedamseweg",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2022-07-18",
+        "yearOfConstruction": "1910",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "2",
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "-0.5",
+        "measuredHeight": 15.42,
+        "AANTAL_BOUWLAGEN": "5",
+        "AANTAL_ADRESSEN": "9",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 17,
+      "sourceId": "BAG_0599100100019948",
+      "bagId": "BAG_0599100100019948",
+      "attributes": {
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 2.6,
+        "BEGINGELDIGHEID": "2019-02-05",
+        "AANTAL_BOUWLAGEN": "1",
+        "yearOfConstruction": "2019",
+        "WIJK": "Delfshaven",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "0"
+      }
+    },
+    {
+      "batchId": 18,
+      "sourceId": "BAG_0599100000671715",
+      "bagId": "BAG_0599100000671715",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "32-32",
+          "Country": "Nederland",
+          "PostalCode": "3025AB",
+          "Street": "Schiedamseweg",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2015-10-15",
+        "yearOfConstruction": "1910",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3",
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 15.6,
+        "AANTAL_BOUWLAGEN": "5",
+        "AANTAL_ADRESSEN": "2",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 19,
+      "sourceId": "BAG_0599100000670776",
+      "bagId": "BAG_0599100000670776",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "13-13",
+          "Country": "Nederland",
+          "PostalCode": "3025VB",
+          "Street": "Schans",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2015-11-24",
+        "yearOfConstruction": "1912",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3",
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 13.01,
+        "AANTAL_BOUWLAGEN": "4",
+        "AANTAL_ADRESSEN": "8",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 20,
+      "sourceId": "BAG_0599100000670788",
+      "bagId": "BAG_0599100000670788",
+      "attributes": {
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "Address": {
+          "HouseNumber": "21-21",
+          "Country": "Nederland",
+          "PostalCode": "3025VB",
+          "Street": "Schans",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2022-03-09",
+        "AANTAL_BOUWLAGEN": "4",
+        "AANTAL_ADRESSEN": "3",
+        "yearOfConstruction": "1910",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3"
+      }
+    },
+    {
+      "batchId": 21,
+      "sourceId": "BAG_0599100000688681",
+      "bagId": "BAG_0599100000688681",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "10-14",
+          "Country": "Nederland",
+          "PostalCode": "3025HS",
+          "Street": "Watergeusstraat",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2015-10-15",
+        "yearOfConstruction": "1910",
+        "creationDate": "2025-11-27",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": 3,
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": 0,
+        "measuredHeight": 12.84,
+        "AANTAL_BOUWLAGEN": 4,
+        "AANTAL_ADRESSEN": 7,
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 22,
+      "sourceId": "BAG_0599100000671708",
+      "bagId": "BAG_0599100000671708",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "28-28",
+          "Country": "Nederland",
+          "PostalCode": "3025AB",
+          "Street": "Schiedamseweg",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2019-02-05",
+        "yearOfConstruction": "1910",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3",
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 15.59,
+        "AANTAL_BOUWLAGEN": "5",
+        "AANTAL_ADRESSEN": "3",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 23,
+      "sourceId": "BAG_0599100100019944",
+      "bagId": "BAG_0599100100019944",
+      "attributes": {
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 9.94,
+        "BEGINGELDIGHEID": "2019-02-05",
+        "AANTAL_BOUWLAGEN": "1",
+        "yearOfConstruction": "2019",
+        "WIJK": "Delfshaven",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "0"
+      }
+    },
+    {
+      "batchId": 24,
+      "sourceId": "BAG_0599100100019946",
+      "bagId": "BAG_0599100100019946",
+      "attributes": {
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 2.69,
+        "BEGINGELDIGHEID": "2019-02-05",
+        "AANTAL_BOUWLAGEN": "1",
+        "yearOfConstruction": "2019",
+        "WIJK": "Delfshaven",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "0"
+      }
+    },
+    {
+      "batchId": 25,
+      "sourceId": "BAG_0599100000670810",
+      "bagId": "BAG_0599100000670810",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "7-7",
+          "Country": "Nederland",
+          "PostalCode": "3025VA",
+          "Street": "Schans",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2015-11-24",
+        "yearOfConstruction": "1910",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3",
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 13.11,
+        "AANTAL_BOUWLAGEN": "4",
+        "AANTAL_ADRESSEN": "10",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 26,
+      "sourceId": "BAG_0599100100019937",
+      "bagId": "BAG_0599100100019937",
+      "attributes": {
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 2.57,
+        "BEGINGELDIGHEID": "2019-02-05",
+        "AANTAL_BOUWLAGEN": "1",
+        "yearOfConstruction": "2019",
+        "WIJK": "Delfshaven",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "0"
+      }
+    },
+    {
+      "batchId": 27,
+      "sourceId": "BAG_0599100100019950",
+      "bagId": "BAG_0599100100019950",
+      "attributes": {
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 2.7,
+        "BEGINGELDIGHEID": "2019-02-05",
+        "AANTAL_BOUWLAGEN": "1",
+        "yearOfConstruction": "2019",
+        "WIJK": "Delfshaven",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "0"
+      }
+    },
+    {
+      "batchId": 28,
+      "sourceId": "BAG_0599100000671712",
+      "bagId": "BAG_0599100000671712",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "30-30",
+          "Country": "Nederland",
+          "PostalCode": "3025AB",
+          "Street": "Schiedamseweg",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2019-02-05",
+        "yearOfConstruction": "1910",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3",
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 15.49,
+        "AANTAL_BOUWLAGEN": "5",
+        "AANTAL_ADRESSEN": "3",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 29,
+      "sourceId": "BAG_0599100000670790",
+      "bagId": "BAG_0599100000670790",
+      "attributes": {
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "Address": {
+          "HouseNumber": "23-23",
+          "Country": "Nederland",
+          "PostalCode": "3025VB",
+          "Street": "Schans",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2022-03-09",
+        "AANTAL_BOUWLAGEN": "4",
+        "AANTAL_ADRESSEN": "4",
+        "yearOfConstruction": "1912",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3"
+      }
+    },
+    {
+      "batchId": 30,
+      "sourceId": "BAG_0599100000671717",
+      "bagId": "BAG_0599100000671717",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "34-34",
+          "Country": "Nederland",
+          "PostalCode": "3025AB",
+          "Street": "Schiedamseweg",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2015-10-15",
+        "yearOfConstruction": "1910",
+        "creationDate": "2025-11-27",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": 3,
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": 0,
+        "measuredHeight": 15.3,
+        "AANTAL_BOUWLAGEN": 5,
+        "AANTAL_ADRESSEN": 3,
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    },
+    {
+      "batchId": 31,
+      "sourceId": "BAG_0599100100019953",
+      "bagId": "BAG_0599100100019953",
+      "attributes": {
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 2.52,
+        "BEGINGELDIGHEID": "2019-02-05",
+        "AANTAL_BOUWLAGEN": "1",
+        "yearOfConstruction": "2019",
+        "WIJK": "Delfshaven",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "0"
+      }
+    }
+  ],
+  "triangles": 1858,
+  "preserved_geometry_buffer_views": [
+    {
+      "source_buffer_view": 1,
+      "sha256": "cde98928b1d4ee0c02c776633de52b7e57ad94660fc3f2288ac6f0c3abbac11d",
+      "bytes": 10224
+    },
+    {
+      "source_buffer_view": 2,
+      "sha256": "a484645bdf491905d42f838bfe0716f1dd4e235906cfb77fe62c4c5503772218",
+      "bytes": 3408
+    },
+    {
+      "source_buffer_view": 3,
+      "sha256": "19a4e83e0e2887e2bdcba6ff550dd2ede085c3121b94ec7428e7a6db13876239",
+      "bytes": 1704
+    },
+    {
+      "source_buffer_view": 4,
+      "sha256": "eb3277f58d6cb0c45d5c4648a91c09db06152bd63a1fd03d5ff7ccd854857592",
+      "bytes": 1704
+    },
+    {
+      "source_buffer_view": 6,
+      "sha256": "a269dad137dbb0851a8d3be6e8e8d16f0e2132b3f0bbdb68f59da0ba37df43e2",
+      "bytes": 10224
+    },
+    {
+      "source_buffer_view": 7,
+      "sha256": "dc137edbde187f2644f511f7223b4d94edf602f50bdfda037eda570d44fc0218",
+      "bytes": 3408
+    },
+    {
+      "source_buffer_view": 8,
+      "sha256": "cff017b561659de948d2814567003179c26a41582f2dae6db3a08d2f23956522",
+      "bytes": 1704
+    },
+    {
+      "source_buffer_view": 9,
+      "sha256": "eb3277f58d6cb0c45d5c4648a91c09db06152bd63a1fd03d5ff7ccd854857592",
+      "bytes": 1704
+    },
+    {
+      "source_buffer_view": 11,
+      "sha256": "e5262e20d2e734dff842cf74ced6064719b0a690b0be5284c7131d160eb804da",
+      "bytes": 8928
+    },
+    {
+      "source_buffer_view": 12,
+      "sha256": "f9dd4797cd68bf8f4861f5484b1143af1b6f0add9cb4fa02d2a7fe3f6d1ce1b4",
+      "bytes": 2976
+    },
+    {
+      "source_buffer_view": 13,
+      "sha256": "e114f9975941512dab60be05838b531148eda1c368d8e8707ee98cb2e58dc18d",
+      "bytes": 1488
+    },
+    {
+      "source_buffer_view": 14,
+      "sha256": "df5885c8ee11be2c3efb2e3ea31bc7a0a4ddcc917dbdbdf2a2c40f2dd7cde6d5",
+      "bytes": 1488
+    },
+    {
+      "source_buffer_view": 16,
+      "sha256": "0a362ead12e1651ec305f2b33f02335fd33a615a8570e352fe6d0408db9ca105",
+      "bytes": 21456
+    },
+    {
+      "source_buffer_view": 17,
+      "sha256": "a15601ec58958bec389af93c11440252550266b336e1be8be854a096b50eb4f0",
+      "bytes": 7152
+    },
+    {
+      "source_buffer_view": 18,
+      "sha256": "12e4c39017f485511dd9a47d623f013c222073645d1c16caf9cebbefe099d7d4",
+      "bytes": 3576
+    },
+    {
+      "source_buffer_view": 19,
+      "sha256": "98eafa081d27e67722edcfcef8e7dcd0fc1ca15ab5f538a1925b74da9ee81cc5",
+      "bytes": 3576
+    },
+    {
+      "source_buffer_view": 21,
+      "sha256": "5c2bcb37ed4a16128248940ae7858da5bf0f14591df7ac2d6dc28cbe6c73df32",
+      "bytes": 15480
+    },
+    {
+      "source_buffer_view": 22,
+      "sha256": "76cb610b99a77313b997dbb88e34b4eb6e63d3d138b7d31443362880a9773541",
+      "bytes": 5160
+    },
+    {
+      "source_buffer_view": 23,
+      "sha256": "e9775d0cf16bbc6077e5df96fbdfb6f1092913d6ee3a32824d0fee7ec4713a5a",
+      "bytes": 2580
+    },
+    {
+      "source_buffer_view": 24,
+      "sha256": "c4d13f750f2ac5d89f66bde0237e01dfab89877bea82adcbf8d0f3b939bb15e2",
+      "bytes": 2580
+    },
+    {
+      "source_buffer_view": 26,
+      "sha256": "21dc7e1a0a82848a88dd967dbda10e8662f61575890f58d1f321bc4984f35c19",
+      "bytes": 20160
+    },
+    {
+      "source_buffer_view": 27,
+      "sha256": "54f7e66c63250abce48a87be179fc7d6d9972f35f424bd463c61f5cfa2086253",
+      "bytes": 6720
+    },
+    {
+      "source_buffer_view": 28,
+      "sha256": "59dbc2e6d3953ff83d924d9d6ae85714eabffcce8787b36135c75c16f9c60059",
+      "bytes": 3360
+    },
+    {
+      "source_buffer_view": 29,
+      "sha256": "6b638f2f388200a33b94cce38bed4c9ba988e837952e4124563dad0d1b3bbb46",
+      "bytes": 3360
+    },
+    {
+      "source_buffer_view": 31,
+      "sha256": "754ab9533c6c51a15991ecf7fc7d1e37da22d19ebe6e9c2106f6f05df8ef7e1f",
+      "bytes": 14256
+    },
+    {
+      "source_buffer_view": 32,
+      "sha256": "87998c41797264f1a166bb8739ac6860850c30a6479af2b5aed2e4a9941a9fe1",
+      "bytes": 4752
+    },
+    {
+      "source_buffer_view": 33,
+      "sha256": "09e987f812673c4af6e58ff410539080a32f49e00d16964ecfcce8f404a0f940",
+      "bytes": 2376
+    },
+    {
+      "source_buffer_view": 34,
+      "sha256": "8c233ed01a52148a9b56872edff6f81109b460a1c6efab27e6035f0279e4f180",
+      "bytes": 2376
+    },
+    {
+      "source_buffer_view": 36,
+      "sha256": "abd920acd71a25a8d35da3a1231a3e39cf013b9111579bef70564a893a27c824",
+      "bytes": 10224
+    },
+    {
+      "source_buffer_view": 37,
+      "sha256": "e4569f5802f491148c5c57de2a8286290f9d50028b6ebf04a1001eb4e4101f76",
+      "bytes": 3408
+    },
+    {
+      "source_buffer_view": 38,
+      "sha256": "505b06e0ed40f15306d4c2ecd938b4e0082be52f5803f4cfb1552a39e3356336",
+      "bytes": 1704
+    },
+    {
+      "source_buffer_view": 39,
+      "sha256": "eb3277f58d6cb0c45d5c4648a91c09db06152bd63a1fd03d5ff7ccd854857592",
+      "bytes": 1704
+    },
+    {
+      "source_buffer_view": 41,
+      "sha256": "f3bada8ccd84df2df696b046382bf1b3a2777c948b5dfb17d02cbd826b55ae8a",
+      "bytes": 11808
+    },
+    {
+      "source_buffer_view": 42,
+      "sha256": "e5e23113aec5d137ef05ee3a2d0712f553ef17797706e466bd300c11b4c78d93",
+      "bytes": 3936
+    },
+    {
+      "source_buffer_view": 43,
+      "sha256": "b5ea0e638d38b823779889cb179e25ed045da5f38818ee7554a274ed3b8ac67a",
+      "bytes": 1968
+    },
+    {
+      "source_buffer_view": 44,
+      "sha256": "22e1a808ab7f9778ebccfad0e24d8270eced06738ac52db1010cf042caa1450f",
+      "bytes": 1968
+    },
+    {
+      "source_buffer_view": 45,
+      "sha256": "b57b783741fd7ccb3dead2be95bf5879c43bfead1314a35a51c63a455250bf38",
+      "bytes": 1152
+    },
+    {
+      "source_buffer_view": 46,
+      "sha256": "94f1b1f526f304fb2332ddf1b3c31811c0b4ec707182206697de52426049ce9e",
+      "bytes": 192
+    },
+    {
+      "source_buffer_view": 47,
+      "sha256": "80fc1615f9fb52112da4a5b41f0221f733d159c4a413f5f31a6d87f9d2f62d56",
+      "bytes": 192
+    },
+    {
+      "source_buffer_view": 49,
+      "sha256": "4a4cc94f5e4d77cb49a710e078b68dec1688b42b7d9e4b3d024f785c7c737d58",
+      "bytes": 9864
+    },
+    {
+      "source_buffer_view": 50,
+      "sha256": "5654d063c775606f843e988fe63a1adf96632fd27b67d30896e4aa2ceefd02be",
+      "bytes": 3288
+    },
+    {
+      "source_buffer_view": 51,
+      "sha256": "77193fafb9f07cbbe446a4c70f5523de232d74a702a4ced393bfbb6d02ba1941",
+      "bytes": 1644
+    },
+    {
+      "source_buffer_view": 52,
+      "sha256": "a9eab3f4478e946bcff9df4663a1f92372cc8dc687c511e38a8ec25b7457e2d7",
+      "bytes": 1644
+    }
+  ],
+  "textures": [
+    {
+      "uri": "textures/atlas-00.png",
+      "image_index": 0,
+      "bytes": 2121462,
+      "sha256": "d62c5f0565553d73bd3f87c01b9f5ac4534d3447545439f655ab53c41af597a8",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-01.png",
+      "image_index": 1,
+      "bytes": 2012194,
+      "sha256": "84276de8f069a1663d93c983ecbd9b71dcfc230aca71ea8e9b48f1651851cc68",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-02.png",
+      "image_index": 2,
+      "bytes": 2435682,
+      "sha256": "9ea3c81b0f96bacd58f67866ca414c281201d80287a26d95db0b2784402664c8",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-03.png",
+      "image_index": 3,
+      "bytes": 1802380,
+      "sha256": "b7cd07b4c320e9233f8941789fc35699815d4bd365799bec58d99ef6f70460b5",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-04.png",
+      "image_index": 4,
+      "bytes": 2870608,
+      "sha256": "a33ffac6d61bac0f673d003faf16a1fcba75ac909291aa41e677db641ecaf6b2",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-05.png",
+      "image_index": 5,
+      "bytes": 2405973,
+      "sha256": "0a06448d9ad69757e43602954a861e672b43a0e5a2e0321297c4003f6cf8216c",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-06.png",
+      "image_index": 6,
+      "bytes": 2470560,
+      "sha256": "c0bf97614db02dbbbc17eed6aefd1ffea55b72ad00a3cd7273352859f72c1b7f",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-07.png",
+      "image_index": 7,
+      "bytes": 2056855,
+      "sha256": "9b3f899dca65880d08d018c648ccb81e80e2e2cd425b0ac5c493e3098e32d0bc",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-08.png",
+      "image_index": 8,
+      "bytes": 2308198,
+      "sha256": "a83db38317f72fecb6bd24afbf20e886008458b8540b17d60aa1035244c4426c",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-09.png",
+      "image_index": 9,
+      "bytes": 2399695,
+      "sha256": "58c0eb9b7ec470265ef92388d0795504d2d557b5338091d4b8079d321c8b47f7",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    }
+  ],
+  "geometry_asset_bytes": 269776,
+  "known_rejections": [
+    "Some painted opening/frame proportions drift from source; not certified",
+    "Some photographic recess remnants and material joins",
+    "Roof microfittings unverified",
+    "Tree occlusion becomes continuous material, not asserted blank real wall",
+    "New24buildings have no observed-glazing inventory; no generic emission permitted"
+  ],
+  "external_images": [
+    {
+      "uri": "textures/atlas-00.png",
+      "image_index": 0,
+      "bytes": 2121462,
+      "sha256": "d62c5f0565553d73bd3f87c01b9f5ac4534d3447545439f655ab53c41af597a8",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-01.png",
+      "image_index": 1,
+      "bytes": 2012194,
+      "sha256": "84276de8f069a1663d93c983ecbd9b71dcfc230aca71ea8e9b48f1651851cc68",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-02.png",
+      "image_index": 2,
+      "bytes": 2435682,
+      "sha256": "9ea3c81b0f96bacd58f67866ca414c281201d80287a26d95db0b2784402664c8",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-03.png",
+      "image_index": 3,
+      "bytes": 1802380,
+      "sha256": "b7cd07b4c320e9233f8941789fc35699815d4bd365799bec58d99ef6f70460b5",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-04.png",
+      "image_index": 4,
+      "bytes": 2870608,
+      "sha256": "a33ffac6d61bac0f673d003faf16a1fcba75ac909291aa41e677db641ecaf6b2",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-05.png",
+      "image_index": 5,
+      "bytes": 2405973,
+      "sha256": "0a06448d9ad69757e43602954a861e672b43a0e5a2e0321297c4003f6cf8216c",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-06.png",
+      "image_index": 6,
+      "bytes": 2470560,
+      "sha256": "c0bf97614db02dbbbc17eed6aefd1ffea55b72ad00a3cd7273352859f72c1b7f",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-07.png",
+      "image_index": 7,
+      "bytes": 2056855,
+      "sha256": "9b3f899dca65880d08d018c648ccb81e80e2e2cd425b0ac5c493e3098e32d0bc",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-08.png",
+      "image_index": 8,
+      "bytes": 2308198,
+      "sha256": "a83db38317f72fecb6bd24afbf20e886008458b8540b17d60aa1035244c4426c",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-09.png",
+      "image_index": 9,
+      "bytes": 2399695,
+      "sha256": "58c0eb9b7ec470265ef92388d0795504d2d557b5338091d4b8079d321c8b47f7",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-00.png",
+      "image_index": 10,
+      "bytes": 12373,
+      "sha256": "307283c21965dd9267d2c4fb5e45d095c1d660b775366e97b053d9d0ef149870",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-01.png",
+      "image_index": 11,
+      "bytes": 14472,
+      "sha256": "ce6cd0a93c570ebefc756c8588bc312ba1531539c5043f42ff29c3f835306726",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-02.png",
+      "image_index": 12,
+      "bytes": 15295,
+      "sha256": "78bf73d7dc8f5f01e26207f6d26eebd79c3a565a801a12b5bfe6b877a20a456e",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-03.png",
+      "image_index": 13,
+      "bytes": 12510,
+      "sha256": "2bed894c8aee9bc6ceb763c6a238409d72a91dede9671b9be0353e5fcc03565c",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-04.png",
+      "image_index": 14,
+      "bytes": 15763,
+      "sha256": "33ebd5697c9afc48a7e51dcdda504f8c82f41a2c27c87c102fa3ff605f3a5bfa",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-05.png",
+      "image_index": 15,
+      "bytes": 13192,
+      "sha256": "274fb9b0f0fafac988e23d2ef4ee9243de90c528ac4a13291cccb77752aa3b9c",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-06.png",
+      "image_index": 16,
+      "bytes": 14765,
+      "sha256": "a84c21830d6699fa04758fdf14a0222097f9474c5b3e4803b0bda6fd936be4db",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-07.png",
+      "image_index": 17,
+      "bytes": 12286,
+      "sha256": "f57ca1fb2a21ab3c7da1b0ac1ed3859b816a4ed6eb7b09700419e86f0b0e1c8e",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-08.png",
+      "image_index": 18,
+      "bytes": 14094,
+      "sha256": "7131dc447e86b56b175223890c876d8b7ca3491aada174b309912cfad9f4d10b",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-09.png",
+      "image_index": 19,
+      "bytes": 12398,
+      "sha256": "0e0a96d0d1747421f2bf13b861efd3dff73a583810970d3f887f8668d701b849",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    }
+  ],
+  "geometry_asset_sha256": "7b171f1145562166157b595aba530cf568a9944aa917d402ab4f0de2a6272fec"
+}

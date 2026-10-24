@@ -1,0 +1,545 @@
+{
+  "status": "Review candidate, not accepted production art",
+  "dataset": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/tileset.json",
+  "tile": "18/268621/55475.b3dm",
+  "geometry_asset": "apartment-review.glb",
+  "identity_namespace": "BAG",
+  "source_decoded_sha256": "7b2b20dc9b402c1adcdd7c87858557d3979adc681d5819aa4b9db41a1711b1c1",
+  "license": "CC BY 4.0 Gemeente Rotterdam",
+  "rtc_ecef_m": [
+    3931147.617789631,
+    305780.87383139244,
+    4996494.452115663
+  ],
+  "root_node_matrix_column_major": [
+    -0.07754987508896807,
+    0.0,
+    -0.9969884737917915,
+    0.0,
+    0.6150681416442612,
+    0.7870211387409694,
+    -0.0478425366085801,
+    0.0,
+    0.7846510039552366,
+    -0.6169260305538,
+    -0.06103339100173957,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "gltf_y_up_to_ecef_z_up_row_major": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      0,
+      1,
+      0
+    ]
+  ],
+  "coordinate_chain": "ECEF = RTC + glTF_Yup_to_Zup @ root_node_matrix @ source_POSITION. Root matrix retained in GLB; apply it only once. CESIUM_RTC extension repeats external B3DM RTC for convenience; apply RTC only once. All mesh child matrices in this source are identity. Source positions/UVs/normals remain unchanged. Diagnostic renders used geographic alignment into legacy local Y-up; do NOT apply that diagnostic alignment.json to these assets.",
+  "batch_identity": [
+    {
+      "batchId": 3,
+      "sourceId": "BAG_0599100000670808",
+      "bagId": "BAG_0599100000670808",
+      "attributes": {
+        "Address": {
+          "HouseNumber": "66-80",
+          "Country": "Nederland",
+          "PostalCode": "3025VK",
+          "Street": "Schans",
+          "City": "Rotterdam"
+        },
+        "BEGINGELDIGHEID": "2015-10-08",
+        "yearOfConstruction": "1983",
+        "creationDate": "2024-11-01",
+        "BUURT": "Bospolder",
+        "HOOGSTE_BOUWLAAG": "3",
+        "STATUS": "Pand in gebruik",
+        "LAAGSTE_BOUWLAAG": "0",
+        "measuredHeight": 14.28,
+        "AANTAL_BOUWLAGEN": "4",
+        "AANTAL_ADRESSEN": "8",
+        "WIJK": "Delfshaven",
+        "PANDSOORT": "Tussenpand"
+      }
+    }
+  ],
+  "triangles": 158,
+  "preserved_geometry_buffer_views": [
+    {
+      "source_buffer_view": 1,
+      "sha256": "420b06c1ec11278febeaa774ba798a90a36481bdba336a1e964a07335d1c9a5f",
+      "bytes": 12456
+    },
+    {
+      "source_buffer_view": 2,
+      "sha256": "10651c00484873a36581919eabe4a2336faf2e9df95101b81b0920d4254a1211",
+      "bytes": 4152
+    },
+    {
+      "source_buffer_view": 3,
+      "sha256": "3452663ae56b3157dab4e316fcd2900f581d43c0abb808ce6a708de7308054eb",
+      "bytes": 2076
+    },
+    {
+      "source_buffer_view": 4,
+      "sha256": "ced0ca6084791e89a99d13c16b20737c4bc27e72bc0268aa95f72911cdfad623",
+      "bytes": 2076
+    },
+    {
+      "source_buffer_view": 6,
+      "sha256": "5250dcaea8352943e73f01ef5539a8d80e15931965a1ec2340a17855af2d71a6",
+      "bytes": 6408
+    },
+    {
+      "source_buffer_view": 7,
+      "sha256": "f3e85611a1a28e7f3d51e3e70e2e4c0cac2630ada194c2e4457b7983c6d90c0c",
+      "bytes": 2136
+    },
+    {
+      "source_buffer_view": 8,
+      "sha256": "36d8ce2f7223c32d3f6527f4bfa5c39e9cb688659c2b3bc3f94300ba9799fcd8",
+      "bytes": 1068
+    },
+    {
+      "source_buffer_view": 9,
+      "sha256": "f98586fba23ae1b18be8c2306189ca98ac8834c7cf3a01e72a8eb812afd7b04c",
+      "bytes": 1068
+    },
+    {
+      "source_buffer_view": 11,
+      "sha256": "82677cf579951403616161742402c46d1169961ec79f711a15f7ed4fed0d3716",
+      "bytes": 7416
+    },
+    {
+      "source_buffer_view": 12,
+      "sha256": "5b7500eb67e3bfb8c02778346204c16892de682c922b95dc3c1ebfaf8f31bb0f",
+      "bytes": 2472
+    },
+    {
+      "source_buffer_view": 13,
+      "sha256": "01007d3abaa680f7e390d71f36ffe977f363bd6a3849c0b73529ce31fd79cd64",
+      "bytes": 1236
+    },
+    {
+      "source_buffer_view": 14,
+      "sha256": "d24b73b67824687a0b0721c9e7e83e8f0876a0cf89e3d07b57417720446d5ced",
+      "bytes": 1236
+    },
+    {
+      "source_buffer_view": 16,
+      "sha256": "8352bc4f186a320d83b0a1261213272f3e4cb92afa3ced4871701862fd931b62",
+      "bytes": 11592
+    },
+    {
+      "source_buffer_view": 17,
+      "sha256": "8a430a43bd9c04c2a299787ae9f5408d89e9499dacfa0a8c8631e8df0f7b9933",
+      "bytes": 3864
+    },
+    {
+      "source_buffer_view": 18,
+      "sha256": "d44789f1becec7c5b9e5e929fbad335e260d30b6bb5c23729181a897dc4397dd",
+      "bytes": 1932
+    },
+    {
+      "source_buffer_view": 19,
+      "sha256": "6632d6d68b6ff68bdd67ee5fc681b5672799a02afd47980c31380696f1292960",
+      "bytes": 1932
+    },
+    {
+      "source_buffer_view": 21,
+      "sha256": "c915f512fab8fba7ab8a2e6923de42ed87d1bd7d11702af8fec71cd6bb9ec44c",
+      "bytes": 7632
+    },
+    {
+      "source_buffer_view": 22,
+      "sha256": "b96768a68d01e560a04862a92eb772cb01c78944f7eac013943c2b9634f93f98",
+      "bytes": 2544
+    },
+    {
+      "source_buffer_view": 23,
+      "sha256": "1effebfa9606031ab4cd8eb82db23fe355db527180866c978a41c8ac6cfe70ae",
+      "bytes": 1272
+    },
+    {
+      "source_buffer_view": 24,
+      "sha256": "eb65ee16c17130733e9a844612b2d2b45784ac1d7a44a8276725e64576ff00c2",
+      "bytes": 1272
+    },
+    {
+      "source_buffer_view": 26,
+      "sha256": "8cc4eab9f30db6dce3b37d20259498e9dd2f2e6edfc22318cb9c3867ccb4ad0a",
+      "bytes": 9864
+    },
+    {
+      "source_buffer_view": 27,
+      "sha256": "b0413f47f54edefaba4f1444aa272334e900bff5a1c87428c744a529ccdc5bd5",
+      "bytes": 3288
+    },
+    {
+      "source_buffer_view": 28,
+      "sha256": "b761613ef2c0dfd8cd0f014b6abf0d5f2f8becede0c44e85be1a6f68c33ecf24",
+      "bytes": 1644
+    },
+    {
+      "source_buffer_view": 29,
+      "sha256": "a9eab3f4478e946bcff9df4663a1f92372cc8dc687c511e38a8ec25b7457e2d7",
+      "bytes": 1644
+    },
+    {
+      "source_buffer_view": 31,
+      "sha256": "113762e49ee93c0817f775b333d3c4ad23c31e5390631b30afd3555423bf749e",
+      "bytes": 12744
+    },
+    {
+      "source_buffer_view": 32,
+      "sha256": "4a0bf11908c91f1995f06f87854a40bb35826741aac59205563cc36d07231619",
+      "bytes": 4248
+    },
+    {
+      "source_buffer_view": 33,
+      "sha256": "685fb17b88b0ba3836dac4c05b5ab2de1fe7b9c199a99bb5c4b64d34effbcf48",
+      "bytes": 2124
+    },
+    {
+      "source_buffer_view": 34,
+      "sha256": "8bea587938bbcbd10de4473f0e4e75d01c6743e1530b8fa7f99c250526e9a983",
+      "bytes": 2124
+    },
+    {
+      "source_buffer_view": 36,
+      "sha256": "ff9af359301b75a37c3fac4b40f3eea7438b937c5bf56e72ae437aaef92dd54e",
+      "bytes": 3096
+    },
+    {
+      "source_buffer_view": 37,
+      "sha256": "7910efbd620491e29a20c5029553ae677db3692e2187085462e607a601556d43",
+      "bytes": 1032
+    },
+    {
+      "source_buffer_view": 38,
+      "sha256": "06ee1e84b74da83cf23c6d224f2d7a96470c27dc8d0ea75c0e8bd159b643c4ab",
+      "bytes": 516
+    },
+    {
+      "source_buffer_view": 39,
+      "sha256": "d0f29e3c65cc44e8a60df9ccef3dc96c10ee5da1b0783d0a6daa8b540be4ea16",
+      "bytes": 516
+    },
+    {
+      "source_buffer_view": 41,
+      "sha256": "c6f77932a6aaf9e81f77b69ee6aab519a14b8beaa339ec77a14e69a40639c931",
+      "bytes": 5976
+    },
+    {
+      "source_buffer_view": 42,
+      "sha256": "3bb45319b3349ae0e3e9179f7ff19f759c5b228c3d1f70c5c777c7e3df670ab8",
+      "bytes": 1992
+    },
+    {
+      "source_buffer_view": 43,
+      "sha256": "b2cbeae3cad205e4cb5385a32f1e8579aa1828fced0b4896c48d6536b78af24c",
+      "bytes": 996
+    },
+    {
+      "source_buffer_view": 44,
+      "sha256": "3c5d3cca05f43a5df607907a01a4f411a7ccbd345adf36710d48392ba3fb3252",
+      "bytes": 996
+    }
+  ],
+  "textures": [
+    {
+      "uri": "textures/atlas-00.png",
+      "image_index": 0,
+      "bytes": 3848413,
+      "sha256": "3c75ff7186d6cbfe07124552f8eb992f1cc56879429880fe6f3d7d5bb791e8d9",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-01.png",
+      "image_index": 1,
+      "bytes": 69,
+      "sha256": "e5dd92acd7d1f9550a1848c765289b33b408f0f6c002fd935696ac778965182d",
+      "dimensions": [
+        1,
+        1
+      ]
+    },
+    {
+      "uri": "textures/atlas-02.png",
+      "image_index": 2,
+      "bytes": 2102271,
+      "sha256": "c1fe5f7a01bdb308cb35683aa0345e102fd9799c8ec1b6446ac7e42f3cceadef",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-03.png",
+      "image_index": 3,
+      "bytes": 2402728,
+      "sha256": "92ca0b03567f87f21d29eb57340cf2666340857af276371d07da327996ad7987",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-04.png",
+      "image_index": 4,
+      "bytes": 2194656,
+      "sha256": "9569427e8e08f7ffbb84a250def88ddd1f7d554b110562509cdda327bbedb241",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-05.png",
+      "image_index": 5,
+      "bytes": 2187859,
+      "sha256": "9665f6fa76e400ea8179af24d9b64419bb159fc4f7ea7d964faae18f3ac9e9eb",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-06.png",
+      "image_index": 6,
+      "bytes": 2404777,
+      "sha256": "db5ad55f322f9584215228fae34eccb5189b8af0ada0f87725ac590825aab16d",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-07.png",
+      "image_index": 7,
+      "bytes": 69,
+      "sha256": "e5dd92acd7d1f9550a1848c765289b33b408f0f6c002fd935696ac778965182d",
+      "dimensions": [
+        1,
+        1
+      ]
+    },
+    {
+      "uri": "textures/atlas-08.png",
+      "image_index": 8,
+      "bytes": 2094939,
+      "sha256": "aa9d1e1e68c01703f3ce4c3d835bfb8f36ebb032a326847533e094ec24172694",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    }
+  ],
+  "geometry_asset_bytes": 150568,
+  "known_rejections": [
+    "Representative art review; exact source binding is not painted-feature accuracy certification",
+    "Occluded rear regions represented by restrained continuous material, not asserted truly blank walls",
+    "Generated lettering not reliable transcription",
+    "Some source/model texture seams and minor detail drift",
+    "Source-observed glazing channels attached separately; inventory does not include every real window; occupancy illustrative",
+    "Five invalid party-plane textures replaced with restrained continuous material; explicit replaceable interpretation"
+  ],
+  "external_images": [
+    {
+      "uri": "textures/atlas-00.png",
+      "image_index": 0,
+      "bytes": 3848413,
+      "sha256": "3c75ff7186d6cbfe07124552f8eb992f1cc56879429880fe6f3d7d5bb791e8d9",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-01.png",
+      "image_index": 1,
+      "bytes": 69,
+      "sha256": "e5dd92acd7d1f9550a1848c765289b33b408f0f6c002fd935696ac778965182d",
+      "dimensions": [
+        1,
+        1
+      ]
+    },
+    {
+      "uri": "textures/atlas-02.png",
+      "image_index": 2,
+      "bytes": 2102271,
+      "sha256": "c1fe5f7a01bdb308cb35683aa0345e102fd9799c8ec1b6446ac7e42f3cceadef",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-03.png",
+      "image_index": 3,
+      "bytes": 2402728,
+      "sha256": "92ca0b03567f87f21d29eb57340cf2666340857af276371d07da327996ad7987",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-04.png",
+      "image_index": 4,
+      "bytes": 2194656,
+      "sha256": "9569427e8e08f7ffbb84a250def88ddd1f7d554b110562509cdda327bbedb241",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-05.png",
+      "image_index": 5,
+      "bytes": 2187859,
+      "sha256": "9665f6fa76e400ea8179af24d9b64419bb159fc4f7ea7d964faae18f3ac9e9eb",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-06.png",
+      "image_index": 6,
+      "bytes": 2404777,
+      "sha256": "db5ad55f322f9584215228fae34eccb5189b8af0ada0f87725ac590825aab16d",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "textures/atlas-07.png",
+      "image_index": 7,
+      "bytes": 69,
+      "sha256": "e5dd92acd7d1f9550a1848c765289b33b408f0f6c002fd935696ac778965182d",
+      "dimensions": [
+        1,
+        1
+      ]
+    },
+    {
+      "uri": "textures/atlas-08.png",
+      "image_index": 8,
+      "bytes": 2094939,
+      "sha256": "aa9d1e1e68c01703f3ce4c3d835bfb8f36ebb032a326847533e094ec24172694",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-00.png",
+      "image_index": 9,
+      "bytes": 15229,
+      "sha256": "77b61aac4347d9ec4ff9e02497556d0d1955a281f9a760790d32490c733087ea",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-01.png",
+      "image_index": 10,
+      "bytes": 12286,
+      "sha256": "f57ca1fb2a21ab3c7da1b0ac1ed3859b816a4ed6eb7b09700419e86f0b0e1c8e",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-02.png",
+      "image_index": 11,
+      "bytes": 12286,
+      "sha256": "f57ca1fb2a21ab3c7da1b0ac1ed3859b816a4ed6eb7b09700419e86f0b0e1c8e",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-03.png",
+      "image_index": 12,
+      "bytes": 12286,
+      "sha256": "f57ca1fb2a21ab3c7da1b0ac1ed3859b816a4ed6eb7b09700419e86f0b0e1c8e",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-04.png",
+      "image_index": 13,
+      "bytes": 12851,
+      "sha256": "0767c641b0ebff2863c6d5e1fb237d3a9122d43be9d089b7d3a48b2395778576",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-05.png",
+      "image_index": 14,
+      "bytes": 12286,
+      "sha256": "f57ca1fb2a21ab3c7da1b0ac1ed3859b816a4ed6eb7b09700419e86f0b0e1c8e",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-06.png",
+      "image_index": 15,
+      "bytes": 12629,
+      "sha256": "d763073b76a302261794962d6040d27ed25b1f5c8608929f0b460aa7410fb548",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "uri": "masks/emission-07.png",
+      "image_index": 16,
+      "bytes": 3129,
+      "sha256": "79238174f0b3e2441720c46339b8cce2c8be2c19a1507831e726b51b8bbe3b82",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "masks/emission-08.png",
+      "image_index": 17,
+      "bytes": 12286,
+      "sha256": "f57ca1fb2a21ab3c7da1b0ac1ed3859b816a4ed6eb7b09700419e86f0b0e1c8e",
+      "dimensions": [
+        2048,
+        2048
+      ]
+    }
+  ],
+  "geometry_asset_sha256": "ed9602c941cb1f5a2eae2cd294f907389ddda745e536422f7a047429f255ad75"
+}

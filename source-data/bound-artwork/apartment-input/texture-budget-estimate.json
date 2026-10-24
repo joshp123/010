@@ -1,0 +1,9 @@
+{
+  "base_images": 9,
+  "base_png_bytes": 17235781,
+  "base_pixels": 29360130,
+  "RGBA8_MiB_estimate": 112.00000762939453,
+  "RGBA8_with_mips_MiB_estimate": 149.33334350585938,
+  "not_measured_runtime_allocation": true,
+  "shared_source_atlas_warning": "Original atlas image dependencies include texels for other source features; do not multiply separate atlas copies per building."
+}

@@ -1,0 +1,121 @@
+{
+  "status": "context review only",
+  "namespace": "BAG",
+  "bagIds": [
+    "0599100000671717",
+    "0599100000671715",
+    "0599100000671712",
+    "0599100000671708",
+    "0599100000671699",
+    "0599100000760416",
+    "0599100000671675",
+    "0599100000760417"
+  ],
+  "sourceGLBSha256": "a8212b2db5e33cc3bd53353ec2fc0111482a7c8afb36d1683bad09911472cdd4",
+  "sourceMunicipalSha256": "c51f35cc165e106b2d77a00f8614fecd1e22d977f35a0406f2efb8acfacf4425",
+  "outputGLBSha256": "02ddb44b900f5efce42e47ecf56a43eb3d241548156ababeaec741df21c9286f",
+  "triangles": 678,
+  "draws": 315,
+  "originalUVsAndGeometryRetained": true,
+  "rtcAppliedOnce": true,
+  "atlasSize": [
+    2127,
+    5542
+  ],
+  "decodedRgbaBytesIncludingMips": 95106784,
+  "sourceReferencedImages": [
+    {
+      "uri": "textures/atlas-00.png",
+      "sha256": "4039e8a502742541379c70642f1452b335292f002f7befca2f99b4cadd544366"
+    },
+    {
+      "uri": "masks/emission-00.png",
+      "sha256": "307283c21965dd9267d2c4fb5e45d095c1d660b775366e97b053d9d0ef149870"
+    },
+    {
+      "uri": "textures/atlas-01.png",
+      "sha256": "bb6b9e0d045b97cc20dbac0fec0ca462f6f65ce36ebbb1b314cbca52dd33a95c"
+    },
+    {
+      "uri": "masks/emission-01.png",
+      "sha256": "ce6cd0a93c570ebefc756c8588bc312ba1531539c5043f42ff29c3f835306726"
+    },
+    {
+      "uri": "textures/atlas-02.png",
+      "sha256": "ac33807851ea2c38205a4b125157c88898d6437e96ab6a4993c9f0159fb2fdb8"
+    },
+    {
+      "uri": "masks/emission-02.png",
+      "sha256": "78bf73d7dc8f5f01e26207f6d26eebd79c3a565a801a12b5bfe6b877a20a456e"
+    },
+    {
+      "uri": "textures/atlas-03.png",
+      "sha256": "80a2d32dad3203f1f81019cf16f58ecd0c88fe7dded2915afd6a4f6cbee75c95"
+    },
+    {
+      "uri": "masks/emission-03.png",
+      "sha256": "2bed894c8aee9bc6ceb763c6a238409d72a91dede9671b9be0353e5fcc03565c"
+    },
+    {
+      "uri": "textures/atlas-04.png",
+      "sha256": "a8c45c01e39e647e5b40909f0d4d9eb7bfc6bd27a0b40f4534546b77989c69c1"
+    },
+    {
+      "uri": "masks/emission-04.png",
+      "sha256": "33ebd5697c9afc48a7e51dcdda504f8c82f41a2c27c87c102fa3ff605f3a5bfa"
+    },
+    {
+      "uri": "textures/atlas-05.png",
+      "sha256": "45f00c1cdd2d5bb64a22152b0070ae3223a027f7c34a0cc517b92f9dbf015d80"
+    },
+    {
+      "uri": "masks/emission-05.png",
+      "sha256": "274fb9b0f0fafac988e23d2ef4ee9243de90c528ac4a13291cccb77752aa3b9c"
+    },
+    {
+      "uri": "textures/atlas-06.png",
+      "sha256": "b25970887585ee4f57db4c270f592ff286aaf4bb3cd18f824954e05d799ecd7e"
+    },
+    {
+      "uri": "masks/emission-06.png",
+      "sha256": "a84c21830d6699fa04758fdf14a0222097f9474c5b3e4803b0bda6fd936be4db"
+    },
+    {
+      "uri": "textures/atlas-07.png",
+      "sha256": "657b3cb4cfe27c6dad2783f0c7b400467fe67be1fad5927996f027f3a4e1daf2"
+    },
+    {
+      "uri": "masks/emission-07.png",
+      "sha256": "f57ca1fb2a21ab3c7da1b0ac1ed3859b816a4ed6eb7b09700419e86f0b0e1c8e"
+    },
+    {
+      "uri": "textures/atlas-08.png",
+      "sha256": "f43c26675b02d4b73b646ccbfcc5d0908210b04ef1457cb84ebe2c8010d28c4d"
+    },
+    {
+      "uri": "masks/emission-08.png",
+      "sha256": "7131dc447e86b56b175223890c876d8b7ca3491aada174b309912cfad9f4d10b"
+    },
+    {
+      "uri": "textures/atlas-09.png",
+      "sha256": "e136393dfc871cd350f4d8c822efd4398b80e439efd38c4a7d20d2b863158ff2"
+    },
+    {
+      "uri": "masks/emission-09.png",
+      "sha256": "0e0a96d0d1747421f2bf13b861efd3dff73a583810970d3f887f8668d701b849"
+    }
+  ],
+  "emission": true,
+  "boundsLonLatHeight": [
+    [
+      4.446845802012474,
+      51.90951845951065,
+      2.4438599478453398
+    ],
+    [
+      4.447366393871849,
+      51.909741892351164,
+      18.487675012089312
+    ]
+  ]
+}

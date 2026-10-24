@@ -152,7 +152,8 @@ export function createTransitView({ project, localPosition, requestRender = () =
       sectionCamera.lookAt(target);sectionCamera.updateProjectionMatrix();sectionCamera.updateMatrixWorld(true);
       sectionScene.background.set(night?'#25353b':'#d9ded6');sectionAmbient.intensity=night?1.1:2;sectionSun.intensity=night?.8:2.2;
     }
-    return {enabled,scene:sectionScene,camera:sectionCamera,viewportHeight,streetAnchor:inspectorAnchor?.clone()||null,report:presentReport(inspectorRecord),label:'Illustrated underground section · depth not surveyed'};
+    const sourceTrack = inspectorAnchor && inspectorRecord?.rail?.id ? tunnelSegments.filter(segment => segment.id === inspectorRecord.rail.id).flatMap(segment => clipToSection(segment, inspectorAnchor, 70) || []) : sectionSegments;
+    return {enabled,scene:sectionScene,camera:sectionCamera,viewportHeight,streetAnchor:inspectorAnchor?.clone()||null,sourceTrack,report:presentReport(inspectorRecord),label:'Illustrated underground section · depth not surveyed'};
   }
   const batches = new Map();
   const transform = new THREE.Object3D(), color = new THREE.Color();

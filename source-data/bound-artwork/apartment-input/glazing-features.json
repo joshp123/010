@@ -1,0 +1,832 @@
+{
+  "region_count": 59,
+  "regions": [
+    {
+      "id": 1,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        185,
+        422,
+        209,
+        455
+      ],
+      "phase": 196,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 2,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        225,
+        422,
+        247,
+        455
+      ],
+      "phase": 91,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 3,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        414,
+        424,
+        436,
+        455
+      ],
+      "phase": 78,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 4,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        451,
+        423,
+        472,
+        455
+      ],
+      "phase": 23,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 5,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        693,
+        423,
+        714,
+        455
+      ],
+      "phase": 250,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 6,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        735,
+        424,
+        753,
+        455
+      ],
+      "phase": 49,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 7,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        922,
+        425,
+        944,
+        455
+      ],
+      "phase": 87,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 8,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        961,
+        425,
+        980,
+        455
+      ],
+      "phase": 58,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 9,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        187,
+        562,
+        208,
+        595
+      ],
+      "phase": 196,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 10,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        227,
+        563,
+        247,
+        595
+      ],
+      "phase": 238,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 11,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        414,
+        562,
+        435,
+        598
+      ],
+      "phase": 46,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 12,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        455,
+        561,
+        475,
+        598
+      ],
+      "phase": 24,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 13,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        692,
+        561,
+        713,
+        596
+      ],
+      "phase": 34,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 14,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        736,
+        562,
+        754,
+        596
+      ],
+      "phase": 56,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 15,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        920,
+        562,
+        942,
+        596
+      ],
+      "phase": 173,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 16,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        961,
+        563,
+        980,
+        597
+      ],
+      "phase": 253,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 17,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        186,
+        696,
+        205,
+        726
+      ],
+      "phase": 33,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 18,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        227,
+        699,
+        244,
+        725
+      ],
+      "phase": 73,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 19,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        414,
+        696,
+        434,
+        729
+      ],
+      "phase": 40,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 20,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        455,
+        696,
+        474,
+        729
+      ],
+      "phase": 30,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 21,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        694,
+        695,
+        713,
+        725
+      ],
+      "phase": 116,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 22,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        734,
+        695,
+        753,
+        725
+      ],
+      "phase": 64,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 23,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        922,
+        696,
+        942,
+        726
+      ],
+      "phase": 33,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 24,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        695,
+        828,
+        713,
+        855
+      ],
+      "phase": 1,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 25,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        735,
+        827,
+        753,
+        856
+      ],
+      "phase": 212,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 26,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        538,
+        532,
+        559,
+        563
+      ],
+      "phase": 20,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 27,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        611,
+        535,
+        630,
+        563
+      ],
+      "phase": 214,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 28,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        540,
+        606,
+        557,
+        638
+      ],
+      "phase": 43,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 29,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        611,
+        606,
+        629,
+        637
+      ],
+      "phase": 3,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 30,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        538,
+        670,
+        557,
+        699
+      ],
+      "phase": 128,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 31,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        611,
+        672,
+        630,
+        699
+      ],
+      "phase": 79,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 32,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        538,
+        739,
+        557,
+        766
+      ],
+      "phase": 214,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 33,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 90,
+      "source_bounds": [
+        610,
+        741,
+        630,
+        767
+      ],
+      "phase": 54,
+      "source": "plane-90.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 34,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        324,
+        426,
+        346,
+        461
+      ],
+      "phase": 1,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 35,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        364,
+        427,
+        386,
+        461
+      ],
+      "phase": 102,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 36,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        426,
+        427,
+        449,
+        462
+      ],
+      "phase": 84,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 37,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        468,
+        426,
+        488,
+        461
+      ],
+      "phase": 210,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 38,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        547,
+        429,
+        570,
+        462
+      ],
+      "phase": 152,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 39,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        590,
+        427,
+        610,
+        460
+      ],
+      "phase": 254,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 40,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        678,
+        426,
+        698,
+        459
+      ],
+      "phase": 56,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 41,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        719,
+        428,
+        739,
+        460
+      ],
+      "phase": 167,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 42,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        777,
+        428,
+        798,
+        462
+      ],
+      "phase": 220,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 43,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        819,
+        428,
+        839,
+        461
+      ],
+      "phase": 109,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 44,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        324,
+        563,
+        346,
+        610
+      ],
+      "phase": 56,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 45,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        365,
+        565,
+        384,
+        609
+      ],
+      "phase": 92,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 46,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        427,
+        566,
+        449,
+        611
+      ],
+      "phase": 114,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 47,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        468,
+        565,
+        487,
+        608
+      ],
+      "phase": 224,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 48,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        548,
+        565,
+        569,
+        598
+      ],
+      "phase": 22,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 49,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        590,
+        563,
+        610,
+        596
+      ],
+      "phase": 31,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 50,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        679,
+        563,
+        699,
+        592
+      ],
+      "phase": 6,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 51,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        720,
+        561,
+        740,
+        593
+      ],
+      "phase": 197,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 52,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        779,
+        565,
+        799,
+        592
+      ],
+      "phase": 64,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 53,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        822,
+        565,
+        841,
+        591
+      ],
+      "phase": 39,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 54,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        548,
+        696,
+        568,
+        748
+      ],
+      "phase": 135,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 55,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        590,
+        694,
+        610,
+        746
+      ],
+      "phase": 205,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 56,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        324,
+        742,
+        345,
+        767
+      ],
+      "phase": 181,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 57,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        365,
+        741,
+        384,
+        769
+      ],
+      "phase": 84,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 58,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        428,
+        741,
+        448,
+        771
+      ],
+      "phase": 171,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    },
+    {
+      "id": 59,
+      "sourceId": "BAG0599100000670808",
+      "view_angle": 270,
+      "source_bounds": [
+        468,
+        740,
+        487,
+        768
+      ],
+      "phase": 161,
+      "source": "plane-270.png",
+      "status": "conservative observed pane interior; partial manual diagnostic inventory"
+    }
+  ],
+  "contract": "Partial source-observed pane interiors only. Occluded windows/shutters excluded. Source depth/normal projection to original UV. Warm occupancy is illustrative, not observed. No generic fallback grid."
+}

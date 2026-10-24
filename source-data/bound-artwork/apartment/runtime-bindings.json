@@ -1,0 +1,3024 @@
+{
+  "sourceGLBSha256": "ed9602c941cb1f5a2eae2cd294f907389ddda745e536422f7a047429f255ad75",
+  "atlasSize": [
+    2001,
+    1414
+  ],
+  "rectangles": [
+    {
+      "sourceImage": 0,
+      "emissionImage": 9,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        79,
+        891,
+        427,
+        1165
+      ],
+      "width": 348,
+      "height": 274,
+      "sourceMesh": 0,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        0,
+        1119
+      ]
+    },
+    {
+      "sourceImage": 0,
+      "emissionImage": 9,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        84,
+        696,
+        427,
+        894
+      ],
+      "width": 343,
+      "height": 198,
+      "sourceMesh": 0,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        348,
+        1119
+      ]
+    },
+    {
+      "sourceImage": 0,
+      "emissionImage": 9,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        87,
+        607,
+        427,
+        698
+      ],
+      "width": 340,
+      "height": 91,
+      "sourceMesh": 0,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        348,
+        1317
+      ]
+    },
+    {
+      "sourceImage": 0,
+      "emissionImage": 9,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        0,
+        1517,
+        427,
+        1767
+      ],
+      "width": 427,
+      "height": 250,
+      "sourceMesh": 0,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1030,
+        437
+      ]
+    },
+    {
+      "sourceImage": 0,
+      "emissionImage": 9,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        5,
+        1373,
+        427,
+        1519
+      ],
+      "width": 422,
+      "height": 146,
+      "sourceMesh": 0,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1457,
+        437
+      ]
+    },
+    {
+      "sourceImage": 0,
+      "emissionImage": 9,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        557,
+        0,
+        1006,
+        693
+      ],
+      "width": 449,
+      "height": 693,
+      "sourceMesh": 0,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        581,
+        0
+      ]
+    },
+    {
+      "sourceImage": 0,
+      "emissionImage": 9,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        5,
+        1236,
+        427,
+        1375
+      ],
+      "width": 422,
+      "height": 139,
+      "sourceMesh": 0,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1457,
+        583
+      ]
+    },
+    {
+      "sourceImage": 0,
+      "emissionImage": 9,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        13,
+        1163,
+        427,
+        1237
+      ],
+      "width": 414,
+      "height": 74,
+      "sourceMesh": 0,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        963,
+        1289
+      ]
+    },
+    {
+      "sourceImage": 0,
+      "emissionImage": 9,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1127,
+        906,
+        1716,
+        1332
+      ],
+      "width": 589,
+      "height": 426,
+      "sourceMesh": 0,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        581,
+        693
+      ]
+    },
+    {
+      "sourceImage": 0,
+      "emissionImage": 9,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1004,
+        1330,
+        1716,
+        1767
+      ],
+      "width": 712,
+      "height": 437,
+      "sourceMesh": 0,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1030,
+        0
+      ]
+    },
+    {
+      "sourceImage": 0,
+      "emissionImage": 9,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        425,
+        690,
+        1006,
+        1767
+      ],
+      "width": 581,
+      "height": 1077,
+      "sourceMesh": 0,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        0,
+        0
+      ]
+    },
+    {
+      "sourceImage": 2,
+      "emissionImage": 11,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1870,
+        1796,
+        1982,
+        1906
+      ],
+      "width": 112,
+      "height": 110,
+      "sourceMesh": 1,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1878,
+        964
+      ]
+    },
+    {
+      "sourceImage": 2,
+      "emissionImage": 11,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1870,
+        1903,
+        1983,
+        2045
+      ],
+      "width": 113,
+      "height": 142,
+      "sourceMesh": 1,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1688,
+        864
+      ]
+    },
+    {
+      "sourceImage": 3,
+      "emissionImage": 12,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        533,
+        1936,
+        636,
+        2014
+      ],
+      "width": 103,
+      "height": 78,
+      "sourceMesh": 2,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1742,
+        337
+      ]
+    },
+    {
+      "sourceImage": 3,
+      "emissionImage": 12,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        209,
+        1937,
+        313,
+        2014
+      ],
+      "width": 104,
+      "height": 77,
+      "sourceMesh": 2,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1170,
+        1042
+      ]
+    },
+    {
+      "sourceImage": 3,
+      "emissionImage": 12,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1931,
+        1344,
+        2019,
+        1448
+      ],
+      "width": 88,
+      "height": 104,
+      "sourceMesh": 2,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1878,
+        1074
+      ]
+    },
+    {
+      "sourceImage": 3,
+      "emissionImage": 12,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1747,
+        1346,
+        1847,
+        1446
+      ],
+      "width": 100,
+      "height": 100,
+      "sourceMesh": 2,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1742,
+        237
+      ]
+    },
+    {
+      "sourceImage": 3,
+      "emissionImage": 12,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1670,
+        1344,
+        1749,
+        1443
+      ],
+      "width": 79,
+      "height": 99,
+      "sourceMesh": 2,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1377,
+        1248
+      ]
+    },
+    {
+      "sourceImage": 3,
+      "emissionImage": 12,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1846,
+        1344,
+        1932,
+        1446
+      ],
+      "width": 86,
+      "height": 102,
+      "sourceMesh": 2,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1761,
+        1109
+      ]
+    },
+    {
+      "sourceImage": 3,
+      "emissionImage": 12,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        310,
+        1936,
+        535,
+        2014
+      ],
+      "width": 225,
+      "height": 78,
+      "sourceMesh": 2,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1463,
+        864
+      ]
+    },
+    {
+      "sourceImage": 3,
+      "emissionImage": 12,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        634,
+        1936,
+        856,
+        2014
+      ],
+      "width": 222,
+      "height": 78,
+      "sourceMesh": 2,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1463,
+        942
+      ]
+    },
+    {
+      "sourceImage": 3,
+      "emissionImage": 12,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        -1,
+        1938,
+        210,
+        2014
+      ],
+      "width": 211,
+      "height": 76,
+      "sourceMesh": 2,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1275,
+        1162
+      ]
+    },
+    {
+      "sourceImage": 4,
+      "emissionImage": 13,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        -1,
+        1378,
+        75,
+        1642
+      ],
+      "width": 76,
+      "height": 264,
+      "sourceMesh": 3,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1802,
+        722
+      ]
+    },
+    {
+      "sourceImage": 4,
+      "emissionImage": 13,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        74,
+        1381,
+        170,
+        1629
+      ],
+      "width": 96,
+      "height": 248,
+      "sourceMesh": 3,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1879,
+        468
+      ]
+    },
+    {
+      "sourceImage": 4,
+      "emissionImage": 13,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        378,
+        1427,
+        538,
+        1650
+      ],
+      "width": 160,
+      "height": 223,
+      "sourceMesh": 3,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1275,
+        687
+      ]
+    },
+    {
+      "sourceImage": 4,
+      "emissionImage": 13,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        75,
+        1626,
+        171,
+        1874
+      ],
+      "width": 96,
+      "height": 248,
+      "sourceMesh": 3,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1879,
+        716
+      ]
+    },
+    {
+      "sourceImage": 4,
+      "emissionImage": 13,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        416,
+        1040,
+        538,
+        1271
+      ],
+      "width": 122,
+      "height": 231,
+      "sourceMesh": 3,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1879,
+        237
+      ]
+    },
+    {
+      "sourceImage": 4,
+      "emissionImage": 13,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        173,
+        1616,
+        377,
+        1748
+      ],
+      "width": 204,
+      "height": 132,
+      "sourceMesh": 3,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1259,
+        910
+      ]
+    },
+    {
+      "sourceImage": 4,
+      "emissionImage": 13,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        171,
+        1745,
+        378,
+        1873
+      ],
+      "width": 207,
+      "height": 128,
+      "sourceMesh": 3,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1435,
+        722
+      ]
+    },
+    {
+      "sourceImage": 4,
+      "emissionImage": 13,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        384,
+        1268,
+        538,
+        1291
+      ],
+      "width": 154,
+      "height": 23,
+      "sourceMesh": 3,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1847,
+        1178
+      ]
+    },
+    {
+      "sourceImage": 4,
+      "emissionImage": 13,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        80,
+        1040,
+        169,
+        1383
+      ],
+      "width": 89,
+      "height": 343,
+      "sourceMesh": 3,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1170,
+        687
+      ]
+    },
+    {
+      "sourceImage": 4,
+      "emissionImage": 13,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        -1,
+        1639,
+        76,
+        1762
+      ],
+      "width": 77,
+      "height": 123,
+      "sourceMesh": 3,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1801,
+        986
+      ]
+    },
+    {
+      "sourceImage": 4,
+      "emissionImage": 13,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        378,
+        1288,
+        538,
+        1430
+      ],
+      "width": 160,
+      "height": 142,
+      "sourceMesh": 3,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1642,
+        722
+      ]
+    },
+    {
+      "sourceImage": 5,
+      "emissionImage": 14,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1932,
+        1614,
+        2007,
+        1705
+      ],
+      "width": 75,
+      "height": 91,
+      "sourceMesh": 4,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1486,
+        1154
+      ]
+    },
+    {
+      "sourceImage": 5,
+      "emissionImage": 14,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1932,
+        1702,
+        2008,
+        1825
+      ],
+      "width": 76,
+      "height": 123,
+      "sourceMesh": 4,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1685,
+        1006
+      ]
+    },
+    {
+      "sourceImage": 5,
+      "emissionImage": 14,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1934,
+        1496,
+        2006,
+        1615
+      ],
+      "width": 72,
+      "height": 119,
+      "sourceMesh": 4,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1651,
+        1129
+      ]
+    },
+    {
+      "sourceImage": 5,
+      "emissionImage": 14,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        2001,
+        1492,
+        2006,
+        1496
+      ],
+      "width": 5,
+      "height": 4,
+      "sourceMesh": 4,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1646,
+        1139
+      ]
+    },
+    {
+      "sourceImage": 5,
+      "emissionImage": 14,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1934,
+        954,
+        2042,
+        1014
+      ],
+      "width": 108,
+      "height": 60,
+      "sourceMesh": 4,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        688,
+        1354
+      ]
+    },
+    {
+      "sourceImage": 5,
+      "emissionImage": 14,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1932,
+        1822,
+        2010,
+        1941
+      ],
+      "width": 78,
+      "height": 119,
+      "sourceMesh": 4,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1573,
+        1020
+      ]
+    },
+    {
+      "sourceImage": 6,
+      "emissionImage": 15,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1019,
+        1722,
+        1217,
+        1959
+      ],
+      "width": 198,
+      "height": 237,
+      "sourceMesh": 5,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1742,
+        0
+      ]
+    },
+    {
+      "sourceImage": 6,
+      "emissionImage": 15,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1291,
+        1136,
+        1563,
+        1371
+      ],
+      "width": 272,
+      "height": 235,
+      "sourceMesh": 5,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        691,
+        1119
+      ]
+    },
+    {
+      "sourceImage": 6,
+      "emissionImage": 15,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1262,
+        1367,
+        1574,
+        1537
+      ],
+      "width": 312,
+      "height": 170,
+      "sourceMesh": 5,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        963,
+        1119
+      ]
+    },
+    {
+      "sourceImage": 6,
+      "emissionImage": 15,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        980,
+        1975,
+        1237,
+        1984
+      ],
+      "width": 257,
+      "height": 9,
+      "sourceMesh": 5,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        0,
+        1393
+      ]
+    },
+    {
+      "sourceImage": 6,
+      "emissionImage": 15,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        810,
+        1878,
+        952,
+        1889
+      ],
+      "width": 142,
+      "height": 11,
+      "sourceMesh": 5,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        0,
+        1402
+      ]
+    },
+    {
+      "sourceImage": 6,
+      "emissionImage": 15,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        811,
+        1897,
+        954,
+        2017
+      ],
+      "width": 143,
+      "height": 120,
+      "sourceMesh": 5,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1275,
+        1042
+      ]
+    },
+    {
+      "sourceImage": 8,
+      "emissionImage": 17,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1920,
+        1042,
+        2030,
+        1176
+      ],
+      "width": 110,
+      "height": 134,
+      "sourceMesh": 6,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1463,
+        1020
+      ]
+    },
+    {
+      "sourceImage": 8,
+      "emissionImage": 17,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "sourceCrop": [
+        1942,
+        1932,
+        2015,
+        2039
+      ],
+      "width": 73,
+      "height": 107,
+      "sourceMesh": 6,
+      "sourcePrimitive": 0,
+      "sourceBatchId": 3,
+      "packedOrigin": [
+        1573,
+        1139
+      ]
+    }
+  ],
+  "emissionCrops": {
+    "9": {
+      "box": [
+        129,
+        37,
+        929,
+        1709
+      ],
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "texture": 1
+    },
+    "13": {
+      "box": [
+        382,
+        1462,
+        508,
+        1616
+      ],
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "texture": 2
+    },
+    "15": {
+      "box": [
+        1290,
+        1423,
+        1528,
+        1487
+      ],
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "texture": 3
+    }
+  },
+  "meshes": [
+    {
+      "runtimeMesh": 0,
+      "bagId": "0599100000670808",
+      "identityNamespace": "BAG",
+      "sourceMesh": 0,
+      "sourceBatchId": 3,
+      "parts": [
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59
+          ],
+          "sourceTriangles": [
+            [
+              48,
+              49,
+              50
+            ],
+            [
+              51,
+              52,
+              53
+            ],
+            [
+              54,
+              55,
+              56
+            ],
+            [
+              57,
+              58,
+              59
+            ]
+          ],
+          "vertexStart": 0,
+          "vertexCount": 12,
+          "indexStart": 0,
+          "indexCount": 12,
+          "rectangle": 0
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            60,
+            61,
+            62,
+            63,
+            64,
+            65
+          ],
+          "sourceTriangles": [
+            [
+              60,
+              61,
+              62
+            ],
+            [
+              63,
+              64,
+              65
+            ]
+          ],
+          "vertexStart": 12,
+          "vertexCount": 6,
+          "indexStart": 12,
+          "indexCount": 6,
+          "rectangle": 1
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            66,
+            67,
+            68,
+            69,
+            70,
+            71
+          ],
+          "sourceTriangles": [
+            [
+              66,
+              67,
+              68
+            ],
+            [
+              69,
+              70,
+              71
+            ]
+          ],
+          "vertexStart": 18,
+          "vertexCount": 6,
+          "indexStart": 18,
+          "indexCount": 6,
+          "rectangle": 2
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80
+          ],
+          "sourceTriangles": [
+            [
+              72,
+              73,
+              74
+            ],
+            [
+              75,
+              76,
+              77
+            ],
+            [
+              78,
+              79,
+              80
+            ]
+          ],
+          "vertexStart": 24,
+          "vertexCount": 9,
+          "indexStart": 24,
+          "indexCount": 9,
+          "rectangle": 3
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89
+          ],
+          "sourceTriangles": [
+            [
+              81,
+              82,
+              83
+            ],
+            [
+              84,
+              85,
+              86
+            ],
+            [
+              87,
+              88,
+              89
+            ]
+          ],
+          "vertexStart": 33,
+          "vertexCount": 9,
+          "indexStart": 33,
+          "indexCount": 9,
+          "rectangle": 4
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            102,
+            103,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            110
+          ],
+          "sourceTriangles": [
+            [
+              90,
+              91,
+              92
+            ],
+            [
+              93,
+              94,
+              95
+            ],
+            [
+              96,
+              97,
+              98
+            ],
+            [
+              99,
+              100,
+              101
+            ],
+            [
+              102,
+              103,
+              104
+            ],
+            [
+              105,
+              106,
+              107
+            ],
+            [
+              108,
+              109,
+              110
+            ]
+          ],
+          "vertexStart": 42,
+          "vertexCount": 21,
+          "indexStart": 42,
+          "indexCount": 21,
+          "rectangle": 5
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            111,
+            112,
+            113,
+            114,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128
+          ],
+          "sourceTriangles": [
+            [
+              111,
+              112,
+              113
+            ],
+            [
+              114,
+              115,
+              116
+            ],
+            [
+              117,
+              118,
+              119
+            ],
+            [
+              120,
+              121,
+              122
+            ],
+            [
+              123,
+              124,
+              125
+            ],
+            [
+              126,
+              127,
+              128
+            ]
+          ],
+          "vertexStart": 63,
+          "vertexCount": 18,
+          "indexStart": 63,
+          "indexCount": 18,
+          "rectangle": 6
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            129,
+            130,
+            131,
+            132,
+            133,
+            134
+          ],
+          "sourceTriangles": [
+            [
+              129,
+              130,
+              131
+            ],
+            [
+              132,
+              133,
+              134
+            ]
+          ],
+          "vertexStart": 81,
+          "vertexCount": 6,
+          "indexStart": 81,
+          "indexCount": 6,
+          "rectangle": 7
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143,
+            144,
+            145,
+            146
+          ],
+          "sourceTriangles": [
+            [
+              135,
+              136,
+              137
+            ],
+            [
+              138,
+              139,
+              140
+            ],
+            [
+              141,
+              142,
+              143
+            ],
+            [
+              144,
+              145,
+              146
+            ]
+          ],
+          "vertexStart": 87,
+          "vertexCount": 12,
+          "indexStart": 87,
+          "indexCount": 12,
+          "rectangle": 8
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            168,
+            169,
+            170
+          ],
+          "sourceTriangles": [
+            [
+              147,
+              148,
+              149
+            ],
+            [
+              150,
+              151,
+              152
+            ],
+            [
+              153,
+              154,
+              155
+            ],
+            [
+              156,
+              157,
+              158
+            ],
+            [
+              159,
+              160,
+              161
+            ],
+            [
+              162,
+              163,
+              164
+            ],
+            [
+              165,
+              166,
+              167
+            ],
+            [
+              168,
+              169,
+              170
+            ]
+          ],
+          "vertexStart": 99,
+          "vertexCount": 24,
+          "indexStart": 99,
+          "indexCount": 24,
+          "rectangle": 9
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            188,
+            189,
+            190,
+            191,
+            192,
+            193,
+            194,
+            195,
+            196,
+            197,
+            198,
+            199,
+            200,
+            201,
+            202,
+            203,
+            204,
+            205,
+            206,
+            207,
+            208,
+            209,
+            210,
+            211,
+            212,
+            213,
+            214,
+            215,
+            216,
+            217,
+            218,
+            219,
+            220,
+            221,
+            222,
+            223,
+            224,
+            225,
+            226,
+            227,
+            228,
+            229,
+            230,
+            231,
+            232,
+            233,
+            234,
+            235,
+            236,
+            237,
+            238,
+            239,
+            240,
+            241,
+            242,
+            243,
+            244,
+            245,
+            246,
+            247,
+            248,
+            249,
+            250,
+            251
+          ],
+          "sourceTriangles": [
+            [
+              171,
+              172,
+              173
+            ],
+            [
+              174,
+              175,
+              176
+            ],
+            [
+              177,
+              178,
+              179
+            ],
+            [
+              180,
+              181,
+              182
+            ],
+            [
+              183,
+              184,
+              185
+            ],
+            [
+              186,
+              187,
+              188
+            ],
+            [
+              189,
+              190,
+              191
+            ],
+            [
+              192,
+              193,
+              194
+            ],
+            [
+              195,
+              196,
+              197
+            ],
+            [
+              198,
+              199,
+              200
+            ],
+            [
+              201,
+              202,
+              203
+            ],
+            [
+              204,
+              205,
+              206
+            ],
+            [
+              207,
+              208,
+              209
+            ],
+            [
+              210,
+              211,
+              212
+            ],
+            [
+              213,
+              214,
+              215
+            ],
+            [
+              216,
+              217,
+              218
+            ],
+            [
+              219,
+              220,
+              221
+            ],
+            [
+              222,
+              223,
+              224
+            ],
+            [
+              225,
+              226,
+              227
+            ],
+            [
+              228,
+              229,
+              230
+            ],
+            [
+              231,
+              232,
+              233
+            ],
+            [
+              234,
+              235,
+              236
+            ],
+            [
+              237,
+              238,
+              239
+            ],
+            [
+              240,
+              241,
+              242
+            ],
+            [
+              243,
+              244,
+              245
+            ],
+            [
+              246,
+              247,
+              248
+            ],
+            [
+              249,
+              250,
+              251
+            ]
+          ],
+          "vertexStart": 123,
+          "vertexCount": 81,
+          "indexStart": 123,
+          "indexCount": 81,
+          "rectangle": 10
+        }
+      ]
+    },
+    {
+      "runtimeMesh": 1,
+      "bagId": "0599100000670808",
+      "identityNamespace": "BAG",
+      "sourceMesh": 1,
+      "sourceBatchId": 3,
+      "parts": [
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            57,
+            58,
+            59,
+            60,
+            61,
+            62
+          ],
+          "sourceTriangles": [
+            [
+              57,
+              58,
+              59
+            ],
+            [
+              60,
+              61,
+              62
+            ]
+          ],
+          "vertexStart": 0,
+          "vertexCount": 6,
+          "indexStart": 0,
+          "indexCount": 6,
+          "rectangle": 11
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            63,
+            64,
+            65,
+            66,
+            67,
+            68
+          ],
+          "sourceTriangles": [
+            [
+              63,
+              64,
+              65
+            ],
+            [
+              66,
+              67,
+              68
+            ]
+          ],
+          "vertexStart": 6,
+          "vertexCount": 6,
+          "indexStart": 6,
+          "indexCount": 6,
+          "rectangle": 12
+        }
+      ]
+    },
+    {
+      "runtimeMesh": 2,
+      "bagId": "0599100000670808",
+      "identityNamespace": "BAG",
+      "sourceMesh": 2,
+      "sourceBatchId": 3,
+      "parts": [
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            81,
+            82,
+            83,
+            84,
+            85,
+            86
+          ],
+          "sourceTriangles": [
+            [
+              81,
+              82,
+              83
+            ],
+            [
+              84,
+              85,
+              86
+            ]
+          ],
+          "vertexStart": 0,
+          "vertexCount": 6,
+          "indexStart": 0,
+          "indexCount": 6,
+          "rectangle": 13
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            87,
+            88,
+            89,
+            90,
+            91,
+            92
+          ],
+          "sourceTriangles": [
+            [
+              87,
+              88,
+              89
+            ],
+            [
+              90,
+              91,
+              92
+            ]
+          ],
+          "vertexStart": 6,
+          "vertexCount": 6,
+          "indexStart": 6,
+          "indexCount": 6,
+          "rectangle": 14
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            93,
+            94,
+            95,
+            96,
+            97,
+            98
+          ],
+          "sourceTriangles": [
+            [
+              93,
+              94,
+              95
+            ],
+            [
+              96,
+              97,
+              98
+            ]
+          ],
+          "vertexStart": 12,
+          "vertexCount": 6,
+          "indexStart": 12,
+          "indexCount": 6,
+          "rectangle": 15
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            99,
+            100,
+            101,
+            102,
+            103,
+            104
+          ],
+          "sourceTriangles": [
+            [
+              99,
+              100,
+              101
+            ],
+            [
+              102,
+              103,
+              104
+            ]
+          ],
+          "vertexStart": 18,
+          "vertexCount": 6,
+          "indexStart": 18,
+          "indexCount": 6,
+          "rectangle": 16
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            105,
+            106,
+            107,
+            108,
+            109,
+            110
+          ],
+          "sourceTriangles": [
+            [
+              105,
+              106,
+              107
+            ],
+            [
+              108,
+              109,
+              110
+            ]
+          ],
+          "vertexStart": 24,
+          "vertexCount": 6,
+          "indexStart": 24,
+          "indexCount": 6,
+          "rectangle": 17
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            111,
+            112,
+            113,
+            114,
+            115,
+            116
+          ],
+          "sourceTriangles": [
+            [
+              111,
+              112,
+              113
+            ],
+            [
+              114,
+              115,
+              116
+            ]
+          ],
+          "vertexStart": 30,
+          "vertexCount": 6,
+          "indexStart": 30,
+          "indexCount": 6,
+          "rectangle": 18
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            117,
+            118,
+            119,
+            120,
+            121,
+            122
+          ],
+          "sourceTriangles": [
+            [
+              117,
+              118,
+              119
+            ],
+            [
+              120,
+              121,
+              122
+            ]
+          ],
+          "vertexStart": 36,
+          "vertexCount": 6,
+          "indexStart": 36,
+          "indexCount": 6,
+          "rectangle": 19
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131
+          ],
+          "sourceTriangles": [
+            [
+              123,
+              124,
+              125
+            ],
+            [
+              126,
+              127,
+              128
+            ],
+            [
+              129,
+              130,
+              131
+            ]
+          ],
+          "vertexStart": 42,
+          "vertexCount": 9,
+          "indexStart": 42,
+          "indexCount": 9,
+          "rectangle": 20
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138,
+            139,
+            140,
+            141,
+            142,
+            143
+          ],
+          "sourceTriangles": [
+            [
+              132,
+              133,
+              134
+            ],
+            [
+              135,
+              136,
+              137
+            ],
+            [
+              138,
+              139,
+              140
+            ],
+            [
+              141,
+              142,
+              143
+            ]
+          ],
+          "vertexStart": 51,
+          "vertexCount": 12,
+          "indexStart": 51,
+          "indexCount": 12,
+          "rectangle": 21
+        }
+      ]
+    },
+    {
+      "runtimeMesh": 3,
+      "bagId": "0599100000670808",
+      "identityNamespace": "BAG",
+      "sourceMesh": 3,
+      "sourceBatchId": 3,
+      "parts": [
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            78,
+            79,
+            80,
+            81,
+            82,
+            83
+          ],
+          "sourceTriangles": [
+            [
+              78,
+              79,
+              80
+            ],
+            [
+              81,
+              82,
+              83
+            ]
+          ],
+          "vertexStart": 0,
+          "vertexCount": 6,
+          "indexStart": 0,
+          "indexCount": 6,
+          "rectangle": 22
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            84,
+            85,
+            86,
+            87,
+            88,
+            89
+          ],
+          "sourceTriangles": [
+            [
+              84,
+              85,
+              86
+            ],
+            [
+              87,
+              88,
+              89
+            ]
+          ],
+          "vertexStart": 6,
+          "vertexCount": 6,
+          "indexStart": 6,
+          "indexCount": 6,
+          "rectangle": 23
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98
+          ],
+          "sourceTriangles": [
+            [
+              90,
+              91,
+              92
+            ],
+            [
+              93,
+              94,
+              95
+            ],
+            [
+              96,
+              97,
+              98
+            ]
+          ],
+          "vertexStart": 12,
+          "vertexCount": 9,
+          "indexStart": 12,
+          "indexCount": 9,
+          "rectangle": 24
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            99,
+            100,
+            101,
+            102,
+            103,
+            104
+          ],
+          "sourceTriangles": [
+            [
+              99,
+              100,
+              101
+            ],
+            [
+              102,
+              103,
+              104
+            ]
+          ],
+          "vertexStart": 21,
+          "vertexCount": 6,
+          "indexStart": 21,
+          "indexCount": 6,
+          "rectangle": 25
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            105,
+            106,
+            107,
+            108,
+            109,
+            110
+          ],
+          "sourceTriangles": [
+            [
+              105,
+              106,
+              107
+            ],
+            [
+              108,
+              109,
+              110
+            ]
+          ],
+          "vertexStart": 27,
+          "vertexCount": 6,
+          "indexStart": 27,
+          "indexCount": 6,
+          "rectangle": 26
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            111,
+            112,
+            113,
+            114,
+            115,
+            116
+          ],
+          "sourceTriangles": [
+            [
+              111,
+              112,
+              113
+            ],
+            [
+              114,
+              115,
+              116
+            ]
+          ],
+          "vertexStart": 33,
+          "vertexCount": 6,
+          "indexStart": 33,
+          "indexCount": 6,
+          "rectangle": 27
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            117,
+            118,
+            119,
+            120,
+            121,
+            122
+          ],
+          "sourceTriangles": [
+            [
+              117,
+              118,
+              119
+            ],
+            [
+              120,
+              121,
+              122
+            ]
+          ],
+          "vertexStart": 39,
+          "vertexCount": 6,
+          "indexStart": 39,
+          "indexCount": 6,
+          "rectangle": 28
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            123,
+            124,
+            125,
+            126,
+            127,
+            128
+          ],
+          "sourceTriangles": [
+            [
+              123,
+              124,
+              125
+            ],
+            [
+              126,
+              127,
+              128
+            ]
+          ],
+          "vertexStart": 45,
+          "vertexCount": 6,
+          "indexStart": 45,
+          "indexCount": 6,
+          "rectangle": 29
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            129,
+            130,
+            131,
+            132,
+            133,
+            134
+          ],
+          "sourceTriangles": [
+            [
+              129,
+              130,
+              131
+            ],
+            [
+              132,
+              133,
+              134
+            ]
+          ],
+          "vertexStart": 51,
+          "vertexCount": 6,
+          "indexStart": 51,
+          "indexCount": 6,
+          "rectangle": 30
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            135,
+            136,
+            137,
+            138,
+            139,
+            140
+          ],
+          "sourceTriangles": [
+            [
+              135,
+              136,
+              137
+            ],
+            [
+              138,
+              139,
+              140
+            ]
+          ],
+          "vertexStart": 57,
+          "vertexCount": 6,
+          "indexStart": 57,
+          "indexCount": 6,
+          "rectangle": 31
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            141,
+            142,
+            143,
+            144,
+            145,
+            146
+          ],
+          "sourceTriangles": [
+            [
+              141,
+              142,
+              143
+            ],
+            [
+              144,
+              145,
+              146
+            ]
+          ],
+          "vertexStart": 63,
+          "vertexCount": 6,
+          "indexStart": 63,
+          "indexCount": 6,
+          "rectangle": 32
+        }
+      ]
+    },
+    {
+      "runtimeMesh": 4,
+      "bagId": "0599100000670808",
+      "identityNamespace": "BAG",
+      "sourceMesh": 4,
+      "sourceBatchId": 3,
+      "parts": [
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            129,
+            130,
+            131,
+            132,
+            133,
+            134
+          ],
+          "sourceTriangles": [
+            [
+              129,
+              130,
+              131
+            ],
+            [
+              132,
+              133,
+              134
+            ]
+          ],
+          "vertexStart": 0,
+          "vertexCount": 6,
+          "indexStart": 0,
+          "indexCount": 6,
+          "rectangle": 33
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            135,
+            136,
+            137,
+            138,
+            139,
+            140
+          ],
+          "sourceTriangles": [
+            [
+              135,
+              136,
+              137
+            ],
+            [
+              138,
+              139,
+              140
+            ]
+          ],
+          "vertexStart": 6,
+          "vertexCount": 6,
+          "indexStart": 6,
+          "indexCount": 6,
+          "rectangle": 34
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            141,
+            142,
+            143,
+            144,
+            145,
+            146
+          ],
+          "sourceTriangles": [
+            [
+              141,
+              142,
+              143
+            ],
+            [
+              144,
+              145,
+              146
+            ]
+          ],
+          "vertexStart": 12,
+          "vertexCount": 6,
+          "indexStart": 12,
+          "indexCount": 6,
+          "rectangle": 35
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            155,
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164,
+            165,
+            166,
+            167,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            188
+          ],
+          "sourceTriangles": [
+            [
+              147,
+              148,
+              149
+            ],
+            [
+              150,
+              151,
+              152
+            ],
+            [
+              153,
+              154,
+              155
+            ],
+            [
+              156,
+              157,
+              158
+            ],
+            [
+              159,
+              160,
+              161
+            ],
+            [
+              162,
+              163,
+              164
+            ],
+            [
+              165,
+              166,
+              167
+            ],
+            [
+              168,
+              169,
+              170
+            ],
+            [
+              171,
+              172,
+              173
+            ],
+            [
+              174,
+              175,
+              176
+            ],
+            [
+              177,
+              178,
+              179
+            ],
+            [
+              180,
+              181,
+              182
+            ],
+            [
+              183,
+              184,
+              185
+            ],
+            [
+              186,
+              187,
+              188
+            ]
+          ],
+          "vertexStart": 18,
+          "vertexCount": 42,
+          "indexStart": 18,
+          "indexCount": 42,
+          "rectangle": 36
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            189,
+            190,
+            191,
+            192,
+            193,
+            194
+          ],
+          "sourceTriangles": [
+            [
+              189,
+              190,
+              191
+            ],
+            [
+              192,
+              193,
+              194
+            ]
+          ],
+          "vertexStart": 60,
+          "vertexCount": 6,
+          "indexStart": 60,
+          "indexCount": 6,
+          "rectangle": 37
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            195,
+            196,
+            197,
+            198,
+            199,
+            200
+          ],
+          "sourceTriangles": [
+            [
+              195,
+              196,
+              197
+            ],
+            [
+              198,
+              199,
+              200
+            ]
+          ],
+          "vertexStart": 66,
+          "vertexCount": 6,
+          "indexStart": 66,
+          "indexCount": 6,
+          "rectangle": 38
+        }
+      ]
+    },
+    {
+      "runtimeMesh": 5,
+      "bagId": "0599100000670808",
+      "identityNamespace": "BAG",
+      "sourceMesh": 5,
+      "sourceBatchId": 3,
+      "parts": [
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            156,
+            157,
+            158,
+            159,
+            160,
+            161,
+            162,
+            163,
+            164
+          ],
+          "sourceTriangles": [
+            [
+              156,
+              157,
+              158
+            ],
+            [
+              159,
+              160,
+              161
+            ],
+            [
+              162,
+              163,
+              164
+            ]
+          ],
+          "vertexStart": 0,
+          "vertexCount": 9,
+          "indexStart": 0,
+          "indexCount": 9,
+          "rectangle": 39
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            165,
+            166,
+            167,
+            168,
+            169,
+            170
+          ],
+          "sourceTriangles": [
+            [
+              165,
+              166,
+              167
+            ],
+            [
+              168,
+              169,
+              170
+            ]
+          ],
+          "vertexStart": 9,
+          "vertexCount": 6,
+          "indexStart": 9,
+          "indexCount": 6,
+          "rectangle": 40
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179
+          ],
+          "sourceTriangles": [
+            [
+              171,
+              172,
+              173
+            ],
+            [
+              174,
+              175,
+              176
+            ],
+            [
+              177,
+              178,
+              179
+            ]
+          ],
+          "vertexStart": 15,
+          "vertexCount": 9,
+          "indexStart": 15,
+          "indexCount": 9,
+          "rectangle": 41
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            180,
+            181,
+            182,
+            183,
+            184,
+            185
+          ],
+          "sourceTriangles": [
+            [
+              180,
+              181,
+              182
+            ],
+            [
+              183,
+              184,
+              185
+            ]
+          ],
+          "vertexStart": 24,
+          "vertexCount": 6,
+          "indexStart": 24,
+          "indexCount": 6,
+          "rectangle": 42
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            186,
+            187,
+            188,
+            189,
+            190,
+            191
+          ],
+          "sourceTriangles": [
+            [
+              186,
+              187,
+              188
+            ],
+            [
+              189,
+              190,
+              191
+            ]
+          ],
+          "vertexStart": 30,
+          "vertexCount": 6,
+          "indexStart": 30,
+          "indexCount": 6,
+          "rectangle": 43
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            192,
+            193,
+            194,
+            195,
+            196,
+            197
+          ],
+          "sourceTriangles": [
+            [
+              192,
+              193,
+              194
+            ],
+            [
+              195,
+              196,
+              197
+            ]
+          ],
+          "vertexStart": 36,
+          "vertexCount": 6,
+          "indexStart": 36,
+          "indexCount": 6,
+          "rectangle": 44
+        }
+      ]
+    },
+    {
+      "runtimeMesh": 6,
+      "bagId": "0599100000670808",
+      "identityNamespace": "BAG",
+      "sourceMesh": 6,
+      "sourceBatchId": 3,
+      "parts": [
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "sourceTriangles": [
+            [
+              0,
+              1,
+              2
+            ],
+            [
+              3,
+              4,
+              5
+            ]
+          ],
+          "vertexStart": 0,
+          "vertexCount": 6,
+          "indexStart": 0,
+          "indexCount": 6,
+          "rectangle": 45
+        },
+        {
+          "sourcePrimitive": 0,
+          "sourceVertices": [
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "sourceTriangles": [
+            [
+              6,
+              7,
+              8
+            ],
+            [
+              9,
+              10,
+              11
+            ]
+          ],
+          "vertexStart": 6,
+          "vertexCount": 6,
+          "indexStart": 6,
+          "indexCount": 6,
+          "rectangle": 46
+        }
+      ]
+    }
+  ]
+}

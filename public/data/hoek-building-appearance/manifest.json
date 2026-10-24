@@ -1,0 +1,1045 @@
+{
+  "sourceRoot": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/tileset.json",
+  "areas": {
+    "hoek-street": [
+      4.1226,
+      51.9793,
+      4.1243,
+      51.9804
+    ]
+  },
+  "edition": "current",
+  "pipeline": "Original source geometry and UV retained; native PBR preserved or legacy technique converted; explicit ECEF RTC; per-BAG native source-pixel residency; selected style recorded separately",
+  "license": "Gemeente Rotterdam \u2014 3D Rotterdam, CC BY 4.0",
+  "scope": "Bounded review candidate; photographic capture date not established",
+  "style": "source",
+  "sourceTiles": 6,
+  "outputTiles": 6,
+  "buildings": 22,
+  "entries": [
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268147/55371.b3dm",
+      "boundingVolume": {
+        "region": [
+          0.071941302,
+          0.907205825,
+          0.071953286,
+          0.907217809,
+          7.3,
+          13.1
+        ]
+      },
+      "areas": [
+        "hoek-street"
+      ],
+      "output": "18-268147-55371-0.glb",
+      "sha256": "3e3bf63a9346fef7e112566cc1d0cd6deae6a7eac39be011962ef223a415f2ec",
+      "bytes": 672800,
+      "bagIds": [
+        "0599100000677319",
+        "0599100110026388",
+        "0599100100006630"
+      ],
+      "atlases": 1,
+      "textureLevels": [
+        {
+          "maxTextureSize": 512,
+          "dimensions": [
+            [
+              512,
+              256
+            ]
+          ],
+          "decodedRgbaBytesIncludingMips": 699052,
+          "samplingMetersPerTexel": 0.09698107447968082,
+          "geometricError": 0.09698107447968082,
+          "output": "18-268147-55371-0-tex512.glb",
+          "bytes": 196992,
+          "sha256": "c887522655527481783296025ac350a44a54c8ff789017151e1a14af974c3b10"
+        },
+        {
+          "maxTextureSize": 1024,
+          "dimensions": [
+            [
+              1024,
+              512
+            ]
+          ],
+          "decodedRgbaBytesIncludingMips": 2796204,
+          "samplingMetersPerTexel": 0.04849053723984041,
+          "geometricError": 0,
+          "output": "18-268147-55371-0.glb",
+          "bytes": 672800,
+          "sha256": "3e3bf63a9346fef7e112566cc1d0cd6deae6a7eac39be011962ef223a415f2ec"
+        }
+      ],
+      "spatialBuildings": [
+        {
+          "atlasSize": [
+            410,
+            636
+          ],
+          "decodedRgbaBytesIncludingMips": 1389876,
+          "layout": "packed-islands",
+          "islands": 7,
+          "bagId": "0599100000677319",
+          "output": "18-268147-55371-0-bag0599100000677319.glb",
+          "sha256": "df58ef9ee1d3d671bc4c3cece251ef16c25a3c726534d8f31a3c9ca1731ffd1c",
+          "bytes": 442624,
+          "boundingVolume": {
+            "box": [
+              15.168963687277046,
+              6.866173221067275,
+              0.8335396632754648,
+              -0.525142494338844,
+              7.2863902545171255,
+              0.0,
+              1.7830741900774496,
+              0.12850917876488896,
+              2.286456283915816,
+              5.656679992706664,
+              0.4076865137994826,
+              -4.43422934736413
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            239,
+            381
+          ],
+          "decodedRgbaBytesIncludingMips": 484216,
+          "layout": "packed-islands",
+          "islands": 8,
+          "bagId": "0599100110026388",
+          "output": "18-268147-55371-0-bag0599100110026388.glb",
+          "sha256": "f611516e3698bdbc91616c463e04af12e92b8edd071737dc60276e0cb793a61c",
+          "bytes": 148700,
+          "boundingVolume": {
+            "box": [
+              6.483772352771472,
+              -1.6600584030377117,
+              6.188186469090796,
+              -0.32707951783019173,
+              4.538252068461079,
+              0.0,
+              0.8390814994518471,
+              0.060474025708759094,
+              1.0759637360102485,
+              2.9317932539974794,
+              0.21129930850678316,
+              -2.2982109124153083
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            245,
+            177
+          ],
+          "decodedRgbaBytesIncludingMips": 230608,
+          "layout": "packed-islands",
+          "islands": 6,
+          "bagId": "0599100100006630",
+          "output": "18-268147-55371-0-bag0599100100006630.glb",
+          "sha256": "b313b0ff1951703a61fb66ae438d29f5e4cf0157ac99fdfeeb8a94aad5d10a37",
+          "bytes": 72024,
+          "boundingVolume": {
+            "box": [
+              -0.9315239315229231,
+              4.71599783212504,
+              11.533737484554868,
+              -0.15686842421703878,
+              2.176560780699219,
+              0.0,
+              0.7296619797498648,
+              0.052587975483816086,
+              0.9356538432430941,
+              1.4420364801907049,
+              0.10393001303567138,
+              -1.1304016647000883
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268147/55370.b3dm",
+      "boundingVolume": {
+        "region": [
+          0.071941302,
+          0.907217545,
+          0.071954764,
+          0.907229793,
+          7.4,
+          17.6
+        ]
+      },
+      "areas": [
+        "hoek-street"
+      ],
+      "output": "18-268147-55370-0.glb",
+      "sha256": "01edfc2aa9c9d4d41508e00cca0809ffdb2d5ecee22dd825869d90e2cd8b0743",
+      "bytes": 3153044,
+      "bagIds": [
+        "0599100110017015",
+        "0599100000753166",
+        "0599100000754115"
+      ],
+      "atlases": 2,
+      "textureLevels": [
+        {
+          "maxTextureSize": 512,
+          "dimensions": [
+            [
+              512,
+              512
+            ],
+            [
+              512,
+              512
+            ]
+          ],
+          "decodedRgbaBytesIncludingMips": 2796200,
+          "samplingMetersPerTexel": 0.09873902472650187,
+          "geometricError": 0.09873902472650187,
+          "output": "18-268147-55370-0-tex512.glb",
+          "bytes": 901120,
+          "sha256": "0a6a423809411a0aff68989a3f504b12ed4a97a7d0209df48404dc85f1eed2ff"
+        },
+        {
+          "maxTextureSize": 1024,
+          "dimensions": [
+            [
+              1024,
+              1024
+            ],
+            [
+              1024,
+              1024
+            ]
+          ],
+          "decodedRgbaBytesIncludingMips": 11184808,
+          "samplingMetersPerTexel": 0.049369512363250934,
+          "geometricError": 0,
+          "output": "18-268147-55370-0.glb",
+          "bytes": 3153044,
+          "sha256": "01edfc2aa9c9d4d41508e00cca0809ffdb2d5ecee22dd825869d90e2cd8b0743"
+        }
+      ],
+      "spatialBuildings": [
+        {
+          "atlasSize": [
+            933,
+            456
+          ],
+          "decodedRgbaBytesIncludingMips": 2268092,
+          "layout": "packed-islands",
+          "islands": 38,
+          "bagId": "0599100110017015",
+          "output": "18-268147-55370-0-bag0599100110017015.glb",
+          "sha256": "9ed2f05f496c2a8e0a4a2b4111e92bdbfa949948c0ea31723a2200abb4c1b702",
+          "bytes": 769716,
+          "boundingVolume": {
+            "box": [
+              24.66952631190157,
+              2.6171146385882587,
+              -3.470805181360703,
+              -0.5319359882714162,
+              7.38065047630079,
+              0.0,
+              3.113098269643311,
+              0.22436626825319175,
+              3.9920598600698183,
+              5.61508124762274,
+              0.40468842174132136,
+              -4.4015116914015975
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            294,
+            1859
+          ],
+          "decodedRgbaBytesIncludingMips": 2912392,
+          "layout": "packed-islands",
+          "islands": 23,
+          "bagId": "0599100000753166",
+          "output": "18-268147-55370-0-bag0599100000753166.glb",
+          "sha256": "c3fac25620b8277dd1769f3e4c8baab932ba3ec8ec4d390d57d993ca730604c2",
+          "bytes": 965672,
+          "boundingVolume": {
+            "box": [
+              30.016092280950463,
+              20.438786375578186,
+              -9.189102801741992,
+              -0.7941182383104854,
+              11.018448240119529,
+              0.0,
+              2.847530885038129,
+              0.20522637677123998,
+              3.651511376083946,
+              6.918154328185482,
+              0.49860310705594574,
+              -5.422955753546886
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            1425,
+            389
+          ],
+          "decodedRgbaBytesIncludingMips": 2953464,
+          "layout": "packed-islands",
+          "islands": 25,
+          "bagId": "0599100000754115",
+          "output": "18-268147-55370-0-bag0599100000754115.glb",
+          "sha256": "170225d769b599865efd672e40eb5803a36c61585d6a0ec9b83f82a93388eeee",
+          "bytes": 889692,
+          "boundingVolume": {
+            "box": [
+              15.696124125212567,
+              -7.563644726954056,
+              3.365723807052997,
+              -0.6378664392753016,
+              8.850443178609284,
+              0.0,
+              2.784272188920635,
+              0.2006672153336311,
+              3.570392028187506,
+              7.135703022103122,
+              0.5142822101198041,
+              -5.593486343844762
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268148/55371.b3dm",
+      "boundingVolume": {
+        "region": [
+          0.071953286,
+          0.90720515,
+          0.07196527,
+          0.907219244,
+          6.0,
+          17.2
+        ]
+      },
+      "areas": [
+        "hoek-street"
+      ],
+      "output": "18-268148-55371-0.glb",
+      "sha256": "28b4df282872ad74bf89f63a23c609664740a2e8a44b239350c56d7e3550544f",
+      "bytes": 6728916,
+      "bagIds": [
+        "0599100110019660",
+        "0599100000766661",
+        "0599100110013880",
+        "0599100100006686",
+        "0599100110026415",
+        "0599100100006688",
+        "0599100110020000",
+        "0599100000767130",
+        "0599100100006689"
+      ],
+      "atlases": 5,
+      "textureLevels": [
+        {
+          "maxTextureSize": 512,
+          "dimensions": [
+            [
+              512,
+              512
+            ],
+            [
+              512,
+              512
+            ],
+            [
+              512,
+              512
+            ],
+            [
+              512,
+              512
+            ],
+            [
+              512,
+              512
+            ]
+          ],
+          "decodedRgbaBytesIncludingMips": 6990500,
+          "samplingMetersPerTexel": 0.09897491037320261,
+          "geometricError": 0.09897491037320261,
+          "output": "18-268148-55371-0-tex512.glb",
+          "bytes": 2093012,
+          "sha256": "01e9154cbd8d6989e670e0e2f69ee1ae76762352722a5e8ec2d663c7fec20e56"
+        },
+        {
+          "maxTextureSize": 1024,
+          "dimensions": [
+            [
+              1024,
+              1024
+            ],
+            [
+              1024,
+              1024
+            ],
+            [
+              512,
+              512
+            ],
+            [
+              1024,
+              1024
+            ],
+            [
+              1024,
+              1024
+            ]
+          ],
+          "decodedRgbaBytesIncludingMips": 23767716,
+          "samplingMetersPerTexel": 0.050906605470728165,
+          "geometricError": 0,
+          "output": "18-268148-55371-0.glb",
+          "bytes": 6728916,
+          "sha256": "28b4df282872ad74bf89f63a23c609664740a2e8a44b239350c56d7e3550544f"
+        }
+      ],
+      "spatialBuildings": [
+        {
+          "atlasSize": [
+            307,
+            855
+          ],
+          "decodedRgbaBytesIncludingMips": 1397364,
+          "layout": "packed-islands",
+          "islands": 12,
+          "bagId": "0599100110019660",
+          "output": "18-268148-55371-0-bag0599100110019660.glb",
+          "sha256": "38d42a717e133aaa505ec49065fa257be2b8929c42e27919391633b6d49450e0",
+          "bytes": 443360,
+          "boundingVolume": {
+            "box": [
+              -5.690152475056459,
+              6.253042106303574,
+              15.693369401539954,
+              -0.4795650846134176,
+              6.652888381158519,
+              0.0,
+              1.8708693506581922,
+              0.134859262180017,
+              2.3990390876772176,
+              6.406152736425215,
+              0.4617794562420202,
+              -5.021739791091165
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            532,
+            928
+          ],
+          "decodedRgbaBytesIncludingMips": 2632628,
+          "layout": "packed-islands",
+          "islands": 15,
+          "bagId": "0599100000766661",
+          "output": "18-268148-55371-0-bag0599100000766661.glb",
+          "sha256": "951e50e22ecaac4f553c38b9b2da68ca990ca5d0a1278e214090b469d7854741",
+          "bytes": 779932,
+          "boundingVolume": {
+            "box": [
+              -19.80359437732224,
+              -16.822436225720896,
+              30.06320653953965,
+              -0.5215765326359034,
+              7.235702859092722,
+              0.0,
+              1.8745502070560898,
+              0.13512459208017086,
+              2.4037590957160346,
+              9.218469621401038,
+              0.6645017788835307,
+              -7.22629597129886
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            705,
+            498
+          ],
+          "decodedRgbaBytesIncludingMips": 1871228,
+          "layout": "packed-islands",
+          "islands": 36,
+          "bagId": "0599100100006686",
+          "output": "18-268148-55371-0-bag0599100100006686.glb",
+          "sha256": "367d6939e14ad6b1554a796d843234d83a52abacb01ec9528594e25aaabeddb7",
+          "bytes": 654532,
+          "boundingVolume": {
+            "box": [
+              26.80033018120278,
+              -8.90301142725868,
+              -5.837131462884267,
+              -0.5179646976835626,
+              7.185596761797377,
+              0.0,
+              2.4306567160409607,
+              0.17521082977967684,
+              3.1168614037404128,
+              6.439395973802114,
+              0.4641757531633132,
+              -5.047798939973309
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            717,
+            353
+          ],
+          "decodedRgbaBytesIncludingMips": 1348220,
+          "layout": "packed-islands",
+          "islands": 13,
+          "bagId": "0599100100006688",
+          "output": "18-268148-55371-0-bag0599100100006688.glb",
+          "sha256": "f2f7915a2882682d083d6033602eb8d6ad8358b0fbd4ccd0aa88f8745ddac443",
+          "bytes": 464956,
+          "boundingVolume": {
+            "box": [
+              30.85228019527218,
+              -2.4600471443257454,
+              -9.369503093667268,
+              -0.5335608007248585,
+              7.401957660544684,
+              0.0,
+              2.4356426432906413,
+              0.17557023406941977,
+              3.1232549203994413,
+              5.791689473393543,
+              0.41748664538378266,
+              -4.540066196175951
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            1537,
+            529
+          ],
+          "decodedRgbaBytesIncludingMips": 4333508,
+          "layout": "packed-islands",
+          "islands": 91,
+          "bagId": "0599100110020000",
+          "output": "18-268148-55371-0-bag0599100110020000.glb",
+          "sha256": "41b1c5ce1e26843b03237e2eb34e30d3537b7f10da95f50b49221bb0489239a0",
+          "bytes": 1227932,
+          "boundingVolume": {
+            "box": [
+              4.339329882191575,
+              15.32784033725452,
+              11.457543650677247,
+              -0.546877144598007,
+              7.586692021480482,
+              0.0,
+              2.9791416698404647,
+              0.21474767726730015,
+              3.8201904965522213,
+              6.148720018153569,
+              0.4432227427895835,
+              -4.819940024825386
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            948,
+            670
+          ],
+          "decodedRgbaBytesIncludingMips": 3386016,
+          "layout": "packed-islands",
+          "islands": 35,
+          "bagId": "0599100000767130",
+          "output": "18-268148-55371-0-bag0599100000767130.glb",
+          "sha256": "2dca1d1807f2303d4e8de5910a741611b495e5eeccabb67976470e6785df11d4",
+          "bytes": 1037264,
+          "boundingVolume": {
+            "box": [
+              -11.721649849671532,
+              -6.6996738711518855,
+              23.016436423501126,
+              -0.7240745930719815,
+              10.044908609691326,
+              0.0,
+              2.3080421603551926,
+              0.16637231387449306,
+              2.959631230663472,
+              8.056636169111082,
+              0.5807524769364106,
+              -6.315542588100407
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            303,
+            180
+          ],
+          "decodedRgbaBytesIncludingMips": 290292,
+          "layout": "packed-islands",
+          "islands": 7,
+          "bagId": "0599100110013880",
+          "output": "18-268148-55371-0-bag0599100110013880.glb",
+          "sha256": "f8cee679878c1b0aacd6abee43c12661c0db244be43673bbd28280f4f4ac0300",
+          "bytes": 97748,
+          "boundingVolume": {
+            "box": [
+              36.817853084077214,
+              -16.553236132136977,
+              -15.870843257105598,
+              -0.18500481310878875,
+              2.566526236125046,
+              0.0,
+              1.2620511617951924,
+              0.09097336938747483,
+              1.6183439355238405,
+              1.8586213263693834,
+              0.13397637876639404,
+              -1.4569606837704112
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            146,
+            414
+          ],
+          "decodedRgbaBytesIncludingMips": 321880,
+          "layout": "packed-islands",
+          "islands": 6,
+          "bagId": "0599100110026415",
+          "output": "18-268148-55371-0-bag0599100110026415.glb",
+          "sha256": "a607d08ef43bce8a3ad95a3c87e08237abdb6c3cf9d74c5516b873754f05296d",
+          "bytes": 104256,
+          "boundingVolume": {
+            "box": [
+              22.54751346760774,
+              -15.717370573450296,
+              -5.617952687073739,
+              -0.20131078518077575,
+              2.792734973211621,
+              0.0,
+              0.859891308493342,
+              0.06198418258208356,
+              1.1026493429397841,
+              2.641522974423417,
+              0.19041085858666668,
+              -2.070671989182976
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            403,
+            1063
+          ],
+          "decodedRgbaBytesIncludingMips": 2281572,
+          "layout": "packed-islands",
+          "islands": 28,
+          "bagId": "0599100100006689",
+          "output": "18-268148-55371-0-bag0599100100006689.glb",
+          "sha256": "1e563dea29c4260e6e02bc6a3561afdf38aadfbba7f0d0bd7df6c6200a78b819",
+          "bytes": 773876,
+          "boundingVolume": {
+            "box": [
+              34.02036407765937,
+              3.1222792514019684,
+              -12.13792559221577,
+              -0.5093845680311951,
+              7.066566734999065,
+              0.0,
+              2.427895121670648,
+              0.17501176372565772,
+              3.1133201768576497,
+              6.100040353162185,
+              0.439713730414348,
+              -4.78178036476698
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268149/55371.b3dm",
+      "boundingVolume": {
+        "region": [
+          0.071963652,
+          0.907205825,
+          0.071977254,
+          0.907217809,
+          7.2,
+          16.8
+        ]
+      },
+      "areas": [
+        "hoek-street"
+      ],
+      "output": "18-268149-55371-0.glb",
+      "sha256": "e8dab133b58ccd55bf9da8e9ec26cbbc4407394a84fa3344780fb5c405bb45f5",
+      "bytes": 1173252,
+      "bagIds": [
+        "0599100110016925"
+      ],
+      "atlases": 1,
+      "textureLevels": [
+        {
+          "maxTextureSize": 512,
+          "dimensions": [
+            [
+              512,
+              512
+            ]
+          ],
+          "decodedRgbaBytesIncludingMips": 1398100,
+          "samplingMetersPerTexel": 0.08505716239537713,
+          "geometricError": 0.08505716239537713,
+          "output": "18-268149-55371-0-tex512.glb",
+          "bytes": 340784,
+          "sha256": "992bdb81eb9d00fdfda04b53d95568bf8ec39420cfcf3918f4053bd22b2c88ce"
+        },
+        {
+          "maxTextureSize": 1024,
+          "dimensions": [
+            [
+              1024,
+              1024
+            ]
+          ],
+          "decodedRgbaBytesIncludingMips": 5592404,
+          "samplingMetersPerTexel": 0.04252858119768856,
+          "geometricError": 0,
+          "output": "18-268149-55371-0.glb",
+          "bytes": 1173252,
+          "sha256": "e8dab133b58ccd55bf9da8e9ec26cbbc4407394a84fa3344780fb5c405bb45f5"
+        }
+      ],
+      "spatialBuildings": [
+        {
+          "atlasSize": [
+            415,
+            1822
+          ],
+          "decodedRgbaBytesIncludingMips": 4027468,
+          "layout": "packed-islands",
+          "islands": 13,
+          "bagId": "0599100110016925",
+          "output": "18-268149-55371-0-bag0599100110016925.glb",
+          "sha256": "da065b6dddf885ce32eab6bda116d10d5a024630dd16335f24e4254973d92ac2",
+          "bytes": 1119008,
+          "boundingVolume": {
+            "box": [
+              13.658674498757591,
+              -20.850502436765833,
+              5.795981358977259,
+              -0.5696676088687891,
+              7.901538031852244,
+              0.0,
+              2.9518211012052027,
+              0.21281386759810614,
+              3.7851602610055495,
+              8.146275961185887,
+              0.5873121826772015,
+              -6.385816131634797
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268148/55370.b3dm",
+      "boundingVolume": {
+        "region": [
+          0.071953286,
+          0.907217408,
+          0.07196527,
+          0.907229793,
+          6.5,
+          9.7
+        ]
+      },
+      "areas": [
+        "hoek-street"
+      ],
+      "output": "18-268148-55370-0.glb",
+      "sha256": "7f261f1f014a1b37df23d9701f6fb0d6765746c67a95819f2b0e06362ca22d85",
+      "bytes": 358728,
+      "bagIds": [
+        "0599100110023742",
+        "0599100110026308"
+      ],
+      "atlases": 1,
+      "textureLevels": [
+        {
+          "maxTextureSize": 512,
+          "dimensions": [
+            [
+              512,
+              512
+            ]
+          ],
+          "decodedRgbaBytesIncludingMips": 1398100,
+          "samplingMetersPerTexel": 0.04661421851799527,
+          "geometricError": 0,
+          "output": "18-268148-55370-0.glb",
+          "bytes": 358728,
+          "sha256": "7f261f1f014a1b37df23d9701f6fb0d6765746c67a95819f2b0e06362ca22d85"
+        }
+      ],
+      "spatialBuildings": [
+        {
+          "atlasSize": [
+            370,
+            266
+          ],
+          "decodedRgbaBytesIncludingMips": 524384,
+          "layout": "packed-islands",
+          "islands": 6,
+          "bagId": "0599100110023742",
+          "output": "18-268148-55370-0-bag0599100110023742.glb",
+          "sha256": "0ae1c16e715d1c60a40ffdb1b2c5f1bb95e143b0d73dc9abd6913f159ddb87fd",
+          "bytes": 131760,
+          "boundingVolume": {
+            "box": [
+              31.95956563026665,
+              14.828788240295726,
+              -15.672740396824606,
+              -0.35273247295166155,
+              4.89337077750167,
+              0.0,
+              0.7886660001027367,
+              0.056849995881808835,
+              1.0113412198675968,
+              3.595217993972018,
+              0.25915676360447815,
+              -2.8181974587371137
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            209,
+            389
+          ],
+          "decodedRgbaBytesIncludingMips": 432700,
+          "layout": "packed-islands",
+          "islands": 9,
+          "bagId": "0599100110026308",
+          "output": "18-268148-55370-0-bag0599100110026308.glb",
+          "sha256": "50fcb375d8151f447702a13d540717e52e661f8044ea5369149fdf93cec41dc8",
+          "bytes": 155532,
+          "boundingVolume": {
+            "box": [
+              15.568226588199014,
+              -14.769371652906344,
+              -0.9265380877422116,
+              -0.25201794435586916,
+              3.4961829116483196,
+              0.0,
+              0.9837274536966589,
+              0.07091075522996074,
+              1.2614771308883912,
+              2.6820639738413328,
+              0.19333320549860805,
+              -2.1023998789289653
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268150/55371.b3dm",
+      "boundingVolume": {
+        "region": [
+          0.071976665,
+          0.907205825,
+          0.071989239,
+          0.907217809,
+          6.3,
+          12.7
+        ]
+      },
+      "areas": [
+        "hoek-street"
+      ],
+      "output": "18-268150-55371-0.glb",
+      "sha256": "d6ea2bb9253806756b22cd21bc202ca2e9820cfab9720079404038f4d93b151a",
+      "bytes": 678428,
+      "bagIds": [
+        "0599100010075309",
+        "0599100010003465",
+        "0599100010009821",
+        "0599100110028451"
+      ],
+      "atlases": 1,
+      "textureLevels": [
+        {
+          "maxTextureSize": 512,
+          "dimensions": [
+            [
+              512,
+              256
+            ]
+          ],
+          "decodedRgbaBytesIncludingMips": 699052,
+          "samplingMetersPerTexel": 0.0989441618063526,
+          "geometricError": 0.0989441618063526,
+          "output": "18-268150-55371-0-tex512.glb",
+          "bytes": 200860,
+          "sha256": "d1164a605389608f44aff6a4c531d9aba64d86b85fc302bff90472e23edf2259"
+        },
+        {
+          "maxTextureSize": 1024,
+          "dimensions": [
+            [
+              1024,
+              512
+            ]
+          ],
+          "decodedRgbaBytesIncludingMips": 2796204,
+          "samplingMetersPerTexel": 0.0494720809031763,
+          "geometricError": 0,
+          "output": "18-268150-55371-0.glb",
+          "bytes": 678428,
+          "sha256": "d6ea2bb9253806756b22cd21bc202ca2e9820cfab9720079404038f4d93b151a"
+        }
+      ],
+      "spatialBuildings": [
+        {
+          "atlasSize": [
+            525,
+            258
+          ],
+          "decodedRgbaBytesIncludingMips": 721580,
+          "layout": "packed-islands",
+          "islands": 14,
+          "bagId": "0599100010075309",
+          "output": "18-268150-55371-0-bag0599100010075309.glb",
+          "sha256": "dfb8e9f718f341e40a044e598457ec3d05cb948cf228dc4120c7c13be9526337",
+          "bytes": 254736,
+          "boundingVolume": {
+            "box": [
+              29.328703957188935,
+              2.109356558542682,
+              -10.501513547310998,
+              -0.3231028009821864,
+              4.480827973927616,
+              0.0,
+              1.7733196370116975,
+              0.1278702385115152,
+              2.2739538034102855,
+              3.5332256705776777,
+              0.2547732511286659,
+              -2.769676486203021
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            272,
+            225
+          ],
+          "decodedRgbaBytesIncludingMips": 326004,
+          "layout": "packed-islands",
+          "islands": 6,
+          "bagId": "0599100010003465",
+          "output": "18-268150-55371-0-bag0599100010003465.glb",
+          "sha256": "d0d100bbec4fe04cbb13e39b65d604890b160b01391d632ffff57f405719973f",
+          "bytes": 103444,
+          "boundingVolume": {
+            "box": [
+              30.90683604935357,
+              -20.24768455221378,
+              -12.383954743285258,
+              -0.2362576130639949,
+              3.2764486053739907,
+              0.0,
+              0.8289557420890747,
+              0.05977420327620318,
+              1.0629821174025678,
+              2.6310897205370702,
+              0.18972218154490086,
+              -2.0624969960864523
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            263,
+            236
+          ],
+          "decodedRgbaBytesIncludingMips": 330336,
+          "layout": "packed-islands",
+          "islands": 6,
+          "bagId": "0599100010009821",
+          "output": "18-268150-55371-0-bag0599100010009821.glb",
+          "sha256": "2107f47bd3dbc13d3c348f805b2e0644604b619869261894d80a8b158150b4dc",
+          "bytes": 109620,
+          "boundingVolume": {
+            "box": [
+              22.86935755416332,
+              -4.228419950609311,
+              -7.679697148339558,
+              -0.2539387611328673,
+              3.521652864319823,
+              0.0,
+              0.9023030872472855,
+              0.06506312148576619,
+              1.1570364948602174,
+              2.658243878275028,
+              0.19168020905108873,
+              -2.083782993416244
+            ]
+          }
+        },
+        {
+          "atlasSize": [
+            179,
+            366
+          ],
+          "decodedRgbaBytesIncludingMips": 348420,
+          "layout": "packed-islands",
+          "islands": 6,
+          "bagId": "0599100110028451",
+          "output": "18-268150-55371-0-bag0599100110028451.glb",
+          "sha256": "b4fd1e0113b81bd492f7408376d47b794f605365a211ad9f0e35457415b56601",
+          "bytes": 119020,
+          "boundingVolume": {
+            "box": [
+              29.00865471204775,
+              -6.720451219865529,
+              -12.14178326752274,
+              -0.25852665683233667,
+              3.585278346145274,
+              0.0,
+              0.733145544528575,
+              0.05286553742815468,
+              0.9401232945479762,
+              2.993512338026448,
+              0.21585569158623172,
+              -2.3465981250031236
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "assetLimitBytes": 26214400,
+  "largestAssetBytes": 6728916,
+  "externalTextures": []
+}

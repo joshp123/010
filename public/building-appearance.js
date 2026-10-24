@@ -56,14 +56,14 @@ export function normalizedTankId(value) {
 
 // An illustrated feature replaces only its exact, currently visible native
 // appearance. Other native features remain useful source-backed city detail.
-export function createAppearancePriorityReconciliation() {
+export function createAppearancePriorityReconciliation({ normalize = normalizedTankId, identityField = 'featureId' } = {}) {
   const originalVisibility = new WeakMap();
   return {
     update(nativeModels, illustratedModels) {
       const illustrated = new Set();
       for (const model of illustratedModels) model?.traverseVisible(mesh => {
         if (!mesh.isMesh) return;
-        const id = normalizedTankId(mesh.userData.featureId);
+        const id = normalize(mesh.userData[identityField]);
         if (id) illustrated.add(id);
       });
       let changed = false;
@@ -71,7 +71,7 @@ export function createAppearancePriorityReconciliation() {
       // when its illustrated tile unloads or ceases to be visible.
       for (const model of nativeModels) model?.traverse(mesh => {
         if (!mesh.isMesh) return;
-        const id = normalizedTankId(mesh.userData.featureId);
+        const id = normalize(mesh.userData[identityField]);
         if (!id) return;
         if (!originalVisibility.has(mesh)) originalVisibility.set(mesh, mesh.visible);
         const visible = originalVisibility.get(mesh) && !illustrated.has(id);
@@ -131,8 +131,8 @@ export function createBuildingAppearanceReconciliation(batches, { tanks = false 
       const entry = { model, meshes }; models.set(model, entry); apply(entry);
     },
     removeModel(model) { models.delete(model); },
-    setVisibleModels(visibleModels) {
-      const next = new Set();
+    setVisibleModels(visibleModels, additionalIds = []) {
+      const next = new Set(additionalIds);
       for (const model of visibleModels) model.traverseVisible(mesh => {
         const id = normalize(tanks ? mesh.userData.featureId : mesh.userData.bagId);
         if (mesh.isMesh && id) next.add(id);

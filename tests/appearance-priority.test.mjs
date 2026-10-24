@@ -7,3 +7,10 @@ assert.equal(reconcile.update([native],[art]),true);assert.equal(target.visible,
 assert.equal(reconcile.update([native],[]),true);assert.equal(target.visible,true);assert.equal(originalHidden.visible,false,'Unloading art must not expose originally hidden native geometry');
 art.visible=false;assert.equal(reconcile.update([native],[art]),false);assert.equal(target.visible,true);art.visible=true;reconcile.update([native],[art]);replacement.visible=false;assert.equal(reconcile.update([native],[art]),true);assert.equal(target.visible,true);
 console.log('Exact OST override only; neighbouring/unknown identities preserved; hidden/unloaded illustration restores original visibility.');
+const {normalizedBagId}=await import('../public/building-appearance.js');
+const sourceBuilding=new THREE.Group(),paintedBuilding=new THREE.Group();
+const sourceTarget=make(null),sourceNeighbour=make(null),paintedTarget=make(null);
+sourceTarget.userData.bagId='0599100000688733';sourceNeighbour.userData.bagId='0599100000688734';paintedTarget.userData.bagId='BAG_0599100000688733';sourceBuilding.add(sourceTarget,sourceNeighbour);paintedBuilding.add(paintedTarget);
+const buildingPriority=createAppearancePriorityReconciliation({normalize:normalizedBagId,identityField:'bagId'});
+buildingPriority.update([sourceBuilding],[paintedBuilding]);assert.equal(sourceTarget.visible,false);assert.equal(sourceNeighbour.visible,true);
+buildingPriority.update([sourceBuilding],[]);assert.equal(sourceTarget.visible,true,'Visible municipal building recovers when exact artwork leaves the view');

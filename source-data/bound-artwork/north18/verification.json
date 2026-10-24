@@ -1,0 +1,30 @@
+{
+  "original_position_normal_uv_identity_arrays_exact": true,
+  "rtc_and_root_matrix_exact": true,
+  "texture_hashes_verified": 9,
+  "render_max_channel_difference": 0,
+  "render_changed_pixels": 0,
+  "reference_render": "northern-tile/completed-120.png",
+  "identity_namespace": "BAG",
+  "source_ids": [
+    "BAG_0599100000656926",
+    "BAG_0599100000671705",
+    "BAG_0599100000671718",
+    "BAG_0599100000671720",
+    "BAG_0599100000760369",
+    "BAG_0599100000656917",
+    "BAG_0599100000671694",
+    "BAG_0599100000656923",
+    "BAG_0599100000656921",
+    "BAG_0599100000760381",
+    "BAG_0599100000671716",
+    "BAG_0599100000760368",
+    "BAG_0599100010059655",
+    "BAG_0599100000760370",
+    "BAG_0599100000700986",
+    "BAG_0599100010057617",
+    "BAG_0599100000656925",
+    "BAG_0599100000656924"
+  ],
+  "triangles": 1010
+}

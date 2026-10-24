@@ -1,0 +1,80 @@
+{
+  "sourceRoot": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/tileset.json",
+  "areas": {
+    "hoek-street": [
+      4.1226,
+      51.9793,
+      4.1243,
+      51.9804
+    ]
+  },
+  "edition": "current",
+  "pipeline": "Original source geometry and UV retained; native PBR preserved or legacy technique converted; explicit ECEF RTC; per-BAG native source-pixel residency; selected style recorded separately",
+  "license": "Gemeente Rotterdam \u2014 3D Rotterdam, CC BY 4.0",
+  "scope": "Bounded review candidate; photographic capture date not established",
+  "style": "source",
+  "sourceTiles": 6,
+  "outputTiles": 6,
+  "buildings": 22,
+  "assetLimitBytes": 26214400,
+  "largestAssetBytes": 6728916,
+  "externalTextures": [],
+  "sourceEvidence": [
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/12/4189/865.json",
+      "acquiredAt": "2026-10-24T14:55:36.945471+00:00",
+      "sha256": "2985a0633b740ed7349653f42262de1221d3de1f92a2d097e938813677c9de58",
+      "decodedBytes": 736391,
+      "lastModified": "Tue, 16 Dec 2025 11:34:11 GMT"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268147/55370.b3dm",
+      "acquiredAt": "2026-10-24T14:55:38.170762+00:00",
+      "sha256": "fabe6923da326455aec87f166764c847cbbf8e8b3baabf14d01faa2c082caca2",
+      "decodedBytes": 1685624,
+      "lastModified": "Tue, 16 Dec 2025 11:25:19 GMT"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268147/55371.b3dm",
+      "acquiredAt": "2026-10-24T14:55:37.885226+00:00",
+      "sha256": "19d553c823023984b0c66ab5b97a802cf9cb55604cbda30e04d872ed079918c4",
+      "decodedBytes": 351792,
+      "lastModified": "Tue, 16 Dec 2025 11:25:19 GMT"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268148/55370.b3dm",
+      "acquiredAt": "2026-10-24T14:55:37.725531+00:00",
+      "sha256": "2cce1b1288cd8f9bf2d8b2b9e4434446dcc77c98cb39adacb16f4c39a5d86d1d",
+      "decodedBytes": 193728,
+      "lastModified": "Tue, 16 Dec 2025 11:25:18 GMT"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268148/55371.b3dm",
+      "acquiredAt": "2026-10-24T14:55:39.099585+00:00",
+      "sha256": "a30436471264e9fd2c5569cc7969d700b7ea3f730a41065ad15a107719a5fac2",
+      "decodedBytes": 3669712,
+      "lastModified": "Tue, 16 Dec 2025 11:25:18 GMT"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268149/55371.b3dm",
+      "acquiredAt": "2026-10-24T14:55:37.999325+00:00",
+      "sha256": "e1da9edd57b93e13cd7042f8323719478762f490e0d46fb4d41db49e910b909c",
+      "decodedBytes": 602952,
+      "lastModified": "Tue, 16 Dec 2025 11:25:16 GMT"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/18/268150/55371.b3dm",
+      "acquiredAt": "2026-10-24T14:55:38.593071+00:00",
+      "sha256": "875f44db978ab04596736d9355a6a992f8cbf8df9f3676524b3e033bcd830ecb",
+      "decodedBytes": 369608,
+      "lastModified": "Tue, 16 Dec 2025 11:25:15 GMT"
+    },
+    {
+      "url": "https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/tileset.json",
+      "acquiredAt": "2026-10-24T14:55:36.468040+00:00",
+      "sha256": "df401fdb7c4a6df3f07d3b5ead2198591bd5567433bc1ead32adfa82e303ba7a",
+      "decodedBytes": 21949,
+      "lastModified": "Tue, 16 Dec 2025 10:53:18 GMT"
+    }
+  ]
+}

@@ -1,0 +1,2154 @@
+{
+  "regions": [
+    {
+      "id": 0,
+      "source_bounds": [
+        101,
+        396,
+        138,
+        421
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [
+        [
+          121,
+          127
+        ],
+        [
+          134,
+          137
+        ]
+      ],
+      "proposal_bounds": [
+        91,
+        396,
+        139,
+        425
+      ],
+      "source": "row-plane-0.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 1,
+      "view_angle": 0,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 23,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 1,
+      "source_bounds": [
+        276,
+        387,
+        292,
+        420
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        275,
+        386,
+        294,
+        425
+      ],
+      "source": "row-plane-0.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 2,
+      "view_angle": 0,
+      "batch_id": 18,
+      "bag_id": "BAG_0599100000671715",
+      "stable_phase": 172,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 2,
+      "source_bounds": [
+        423,
+        387,
+        445,
+        419
+      ],
+      "source_transom_bands": [
+        [
+          389,
+          392
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        420,
+        386,
+        445,
+        425
+      ],
+      "source": "row-plane-0.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 3,
+      "view_angle": 0,
+      "batch_id": 28,
+      "bag_id": "BAG_0599100000671712",
+      "stable_phase": 212,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 3,
+      "source_bounds": [
+        580,
+        387,
+        595,
+        424
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        576,
+        386,
+        602,
+        425
+      ],
+      "source": "row-plane-0.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 4,
+      "view_angle": 0,
+      "batch_id": 22,
+      "bag_id": "BAG_0599100000671708",
+      "stable_phase": 253,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 4,
+      "source_bounds": [
+        78,
+        483,
+        121,
+        534
+      ],
+      "source_transom_bands": [
+        [
+          486,
+          490
+        ],
+        [
+          513,
+          515
+        ]
+      ],
+      "source_mullion_bands": [
+        [
+          87,
+          90
+        ],
+        [
+          93,
+          96
+        ],
+        [
+          114,
+          118
+        ]
+      ],
+      "proposal_bounds": [
+        77,
+        480,
+        122,
+        535
+      ],
+      "source": "row-plane-0.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 5,
+      "view_angle": 0,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 255,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 5,
+      "source_bounds": [
+        158,
+        488,
+        177,
+        523
+      ],
+      "source_transom_bands": [
+        [
+          521,
+          522
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        157,
+        486,
+        177,
+        524
+      ],
+      "source": "row-plane-0.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 6,
+      "view_angle": 0,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 209,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 6,
+      "source_bounds": [
+        227,
+        501,
+        242,
+        528
+      ],
+      "source_transom_bands": [
+        [
+          525,
+          527
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        225,
+        500,
+        242,
+        532
+      ],
+      "source": "row-plane-0.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 7,
+      "view_angle": 0,
+      "batch_id": 18,
+      "bag_id": "BAG_0599100000671715",
+      "stable_phase": 135,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 7,
+      "source_bounds": [
+        288,
+        502,
+        305,
+        537
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [
+        [
+          297,
+          302
+        ]
+      ],
+      "proposal_bounds": [
+        288,
+        501,
+        310,
+        541
+      ],
+      "source": "row-plane-0.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 8,
+      "view_angle": 0,
+      "batch_id": 18,
+      "bag_id": "BAG_0599100000671715",
+      "stable_phase": 128,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 8,
+      "source_bounds": [
+        320,
+        502,
+        327,
+        538
+      ],
+      "source_transom_bands": [
+        [
+          504,
+          510
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        320,
+        501,
+        336,
+        539
+      ],
+      "source": "row-plane-0.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 9,
+      "view_angle": 0,
+      "batch_id": 18,
+      "bag_id": "BAG_0599100000671715",
+      "stable_phase": 94,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 9,
+      "source_bounds": [
+        384,
+        490,
+        420,
+        515
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [
+        [
+          386,
+          387
+        ],
+        [
+          388,
+          392
+        ],
+        [
+          398,
+          399
+        ]
+      ],
+      "proposal_bounds": [
+        380,
+        490,
+        420,
+        538
+      ],
+      "source": "row-plane-0.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 10,
+      "view_angle": 0,
+      "batch_id": 28,
+      "bag_id": "BAG_0599100000671712",
+      "stable_phase": 158,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 10,
+      "source_bounds": [
+        431,
+        493,
+        446,
+        531
+      ],
+      "source_transom_bands": [
+        [
+          524,
+          530
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        430,
+        492,
+        446,
+        532
+      ],
+      "source": "row-plane-0.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 11,
+      "view_angle": 0,
+      "batch_id": 28,
+      "bag_id": "BAG_0599100000671712",
+      "stable_phase": 186,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 11,
+      "source_bounds": [
+        924,
+        547,
+        970,
+        589
+      ],
+      "source_transom_bands": [
+        [
+          572,
+          580
+        ]
+      ],
+      "source_mullion_bands": [
+        [
+          937,
+          940
+        ],
+        [
+          957,
+          960
+        ]
+      ],
+      "proposal_bounds": [
+        923,
+        544,
+        971,
+        590
+      ],
+      "source": "row-plane-0.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 12,
+      "view_angle": 0,
+      "batch_id": 1,
+      "bag_id": "BAG_0599100000760417",
+      "stable_phase": 35,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 0,
+      "source_bounds": [
+        502,
+        403,
+        546,
+        481
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        500,
+        400,
+        552,
+        493
+      ],
+      "source": "row-plane-90.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 13,
+      "view_angle": 90,
+      "batch_id": 5,
+      "bag_id": "BAG_0599100000671675",
+      "stable_phase": 209,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 1,
+      "source_bounds": [
+        609,
+        403,
+        653,
+        481
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        604,
+        400,
+        655,
+        493
+      ],
+      "source": "row-plane-90.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 14,
+      "view_angle": 90,
+      "batch_id": 5,
+      "bag_id": "BAG_0599100000671675",
+      "stable_phase": 209,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 2,
+      "source_bounds": [
+        706,
+        403,
+        751,
+        482
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        704,
+        400,
+        755,
+        493
+      ],
+      "source": "row-plane-90.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 15,
+      "view_angle": 90,
+      "batch_id": 5,
+      "bag_id": "BAG_0599100000671675",
+      "stable_phase": 182,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 3,
+      "source_bounds": [
+        503,
+        556,
+        546,
+        635
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        500,
+        553,
+        550,
+        645
+      ],
+      "source": "row-plane-90.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 16,
+      "view_angle": 90,
+      "batch_id": 5,
+      "bag_id": "BAG_0599100000671675",
+      "stable_phase": 28,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 4,
+      "source_bounds": [
+        609,
+        556,
+        652,
+        636
+      ],
+      "source_transom_bands": [
+        [
+          570,
+          578
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        604,
+        553,
+        655,
+        645
+      ],
+      "source": "row-plane-90.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 17,
+      "view_angle": 90,
+      "batch_id": 5,
+      "bag_id": "BAG_0599100000671675",
+      "stable_phase": 51,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 5,
+      "source_bounds": [
+        706,
+        556,
+        750,
+        636
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        704,
+        553,
+        754,
+        645
+      ],
+      "source": "row-plane-90.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 18,
+      "view_angle": 90,
+      "batch_id": 5,
+      "bag_id": "BAG_0599100000671675",
+      "stable_phase": 125,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 6,
+      "source_bounds": [
+        505,
+        708,
+        546,
+        788
+      ],
+      "source_transom_bands": [
+        [
+          785,
+          787
+        ]
+      ],
+      "source_mullion_bands": [
+        [
+          544,
+          545
+        ]
+      ],
+      "proposal_bounds": [
+        500,
+        705,
+        551,
+        797
+      ],
+      "source": "row-plane-90.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 19,
+      "view_angle": 90,
+      "batch_id": 5,
+      "bag_id": "BAG_0599100000671675",
+      "stable_phase": 41,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 7,
+      "source_bounds": [
+        96,
+        414,
+        143,
+        494
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        95,
+        410,
+        149,
+        502
+      ],
+      "source": "row-plane-90.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 20,
+      "view_angle": 90,
+      "batch_id": 1,
+      "bag_id": "BAG_0599100000760417",
+      "stable_phase": 188,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 8,
+      "source_bounds": [
+        187,
+        413,
+        238,
+        494
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        185,
+        410,
+        239,
+        502
+      ],
+      "source": "row-plane-90.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 21,
+      "view_angle": 90,
+      "batch_id": 1,
+      "bag_id": "BAG_0599100000760417",
+      "stable_phase": 185,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 9,
+      "source_bounds": [
+        96,
+        560,
+        143,
+        644
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        95,
+        557,
+        147,
+        648
+      ],
+      "source": "row-plane-90.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 22,
+      "view_angle": 90,
+      "batch_id": 1,
+      "bag_id": "BAG_0599100000760417",
+      "stable_phase": 131,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 10,
+      "source_bounds": [
+        186,
+        560,
+        237,
+        643
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        185,
+        557,
+        239,
+        648
+      ],
+      "source": "row-plane-90.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 23,
+      "view_angle": 90,
+      "batch_id": 1,
+      "bag_id": "BAG_0599100000760417",
+      "stable_phase": 195,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 11,
+      "source_bounds": [
+        92,
+        709,
+        145,
+        761
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        90,
+        707,
+        150,
+        763
+      ],
+      "source": "row-plane-90.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 24,
+      "view_angle": 90,
+      "batch_id": 1,
+      "bag_id": "BAG_0599100000760417",
+      "stable_phase": 64,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 12,
+      "source_bounds": [
+        182,
+        709,
+        238,
+        761
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [
+        [
+          200,
+          202
+        ]
+      ],
+      "proposal_bounds": [
+        180,
+        707,
+        240,
+        763
+      ],
+      "source": "row-plane-90.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 25,
+      "view_angle": 90,
+      "batch_id": 1,
+      "bag_id": "BAG_0599100000760417",
+      "stable_phase": 7,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 0,
+      "source_bounds": [
+        90,
+        462,
+        125,
+        542
+      ],
+      "source_transom_bands": [
+        [
+          465,
+          467
+        ],
+        [
+          486,
+          490
+        ],
+        [
+          535,
+          538
+        ]
+      ],
+      "proposal_bounds": [
+        88,
+        463,
+        130,
+        546
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 26,
+      "view_angle": 180,
+      "batch_id": 5,
+      "bag_id": "BAG_0599100000671675",
+      "stable_phase": 141,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 1,
+      "source_bounds": [
+        148,
+        463,
+        184,
+        544
+      ],
+      "source_transom_bands": [
+        [
+          488,
+          490
+        ]
+      ],
+      "proposal_bounds": [
+        145,
+        463,
+        190,
+        546
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 27,
+      "view_angle": 180,
+      "batch_id": 5,
+      "bag_id": "BAG_0599100000671675",
+      "stable_phase": 6,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 2,
+      "source_bounds": [
+        224,
+        476,
+        253,
+        545
+      ],
+      "source_transom_bands": [
+        [
+          488,
+          493
+        ],
+        [
+          536,
+          541
+        ]
+      ],
+      "proposal_bounds": [
+        219,
+        471,
+        261,
+        548
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 28,
+      "view_angle": 180,
+      "batch_id": 2,
+      "bag_id": "BAG_0599100000760416",
+      "stable_phase": 185,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 3,
+      "source_bounds": [
+        289,
+        476,
+        316,
+        534
+      ],
+      "source_transom_bands": [
+        [
+          489,
+          494
+        ]
+      ],
+      "proposal_bounds": [
+        285,
+        474,
+        320,
+        537
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 29,
+      "view_angle": 180,
+      "batch_id": 2,
+      "bag_id": "BAG_0599100000760416",
+      "stable_phase": 109,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 4,
+      "source_bounds": [
+        380,
+        473,
+        406,
+        530
+      ],
+      "source_transom_bands": [
+        [
+          487,
+          492
+        ],
+        [
+          525,
+          528
+        ]
+      ],
+      "proposal_bounds": [
+        376,
+        469,
+        410,
+        532
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 30,
+      "view_angle": 180,
+      "batch_id": 16,
+      "bag_id": "BAG_0599100000671699",
+      "stable_phase": 173,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 5,
+      "source_bounds": [
+        446,
+        473,
+        473,
+        534
+      ],
+      "source_transom_bands": [
+        [
+          488,
+          492
+        ],
+        [
+          526,
+          529
+        ]
+      ],
+      "proposal_bounds": [
+        444,
+        470,
+        480,
+        533
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 31,
+      "view_angle": 180,
+      "batch_id": 16,
+      "bag_id": "BAG_0599100000671699",
+      "stable_phase": 150,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 6,
+      "source_bounds": [
+        539,
+        475,
+        565,
+        534
+      ],
+      "source_transom_bands": [
+        [
+          489,
+          492
+        ]
+      ],
+      "proposal_bounds": [
+        536,
+        470,
+        571,
+        537
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 32,
+      "view_angle": 180,
+      "batch_id": 22,
+      "bag_id": "BAG_0599100000671708",
+      "stable_phase": 127,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 7,
+      "source_bounds": [
+        605,
+        476,
+        634,
+        546
+      ],
+      "source_transom_bands": [
+        [
+          490,
+          493
+        ],
+        [
+          536,
+          541
+        ]
+      ],
+      "proposal_bounds": [
+        600,
+        474,
+        640,
+        548
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 33,
+      "view_angle": 180,
+      "batch_id": 22,
+      "bag_id": "BAG_0599100000671708",
+      "stable_phase": 180,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 8,
+      "source_bounds": [
+        691,
+        477,
+        721,
+        550
+      ],
+      "source_transom_bands": [
+        [
+          543,
+          547
+        ]
+      ],
+      "proposal_bounds": [
+        687,
+        472,
+        728,
+        554
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 34,
+      "view_angle": 180,
+      "batch_id": 28,
+      "bag_id": "BAG_0599100000671712",
+      "stable_phase": 16,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 9,
+      "source_bounds": [
+        759,
+        479,
+        789,
+        553
+      ],
+      "source_transom_bands": [
+        [
+          546,
+          549
+        ]
+      ],
+      "proposal_bounds": [
+        754,
+        475,
+        795,
+        555
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 35,
+      "view_angle": 180,
+      "batch_id": 28,
+      "bag_id": "BAG_0599100000671712",
+      "stable_phase": 87,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 10,
+      "source_bounds": [
+        841,
+        484,
+        875,
+        560
+      ],
+      "source_transom_bands": [
+        [
+          502,
+          504
+        ],
+        [
+          544,
+          546
+        ]
+      ],
+      "proposal_bounds": [
+        838,
+        477,
+        879,
+        560
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 36,
+      "view_angle": 180,
+      "batch_id": 18,
+      "bag_id": "BAG_0599100000671715",
+      "stable_phase": 206,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 11,
+      "source_bounds": [
+        906,
+        487,
+        942,
+        560
+      ],
+      "source_transom_bands": [
+        [
+          503,
+          506
+        ],
+        [
+          546,
+          547
+        ]
+      ],
+      "proposal_bounds": [
+        905,
+        479,
+        947,
+        559
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 37,
+      "view_angle": 180,
+      "batch_id": 18,
+      "bag_id": "BAG_0599100000671715",
+      "stable_phase": 178,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 12,
+      "source_bounds": [
+        986,
+        487,
+        1013,
+        546
+      ],
+      "source_transom_bands": [
+        [
+          500,
+          504
+        ]
+      ],
+      "proposal_bounds": [
+        981,
+        485,
+        1017,
+        546
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 38,
+      "view_angle": 180,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 72,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 13,
+      "source_bounds": [
+        1046,
+        492,
+        1074,
+        547
+      ],
+      "source_transom_bands": [
+        [
+          499,
+          503
+        ],
+        [
+          544,
+          545
+        ]
+      ],
+      "proposal_bounds": [
+        1046,
+        480,
+        1079,
+        546
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 39,
+      "view_angle": 180,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 111,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 14,
+      "source_bounds": [
+        90,
+        573,
+        124,
+        649
+      ],
+      "source_transom_bands": [
+        [
+          592,
+          596
+        ],
+        [
+          640,
+          646
+        ]
+      ],
+      "proposal_bounds": [
+        87,
+        571,
+        129,
+        652
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 40,
+      "view_angle": 180,
+      "batch_id": 5,
+      "bag_id": "BAG_0599100000671675",
+      "stable_phase": 105,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 15,
+      "source_bounds": [
+        147,
+        573,
+        183,
+        650
+      ],
+      "source_transom_bands": [
+        [
+          593,
+          597
+        ],
+        [
+          641,
+          646
+        ]
+      ],
+      "proposal_bounds": [
+        144,
+        573,
+        187,
+        653
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 41,
+      "view_angle": 180,
+      "batch_id": 5,
+      "bag_id": "BAG_0599100000671675",
+      "stable_phase": 16,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 16,
+      "source_bounds": [
+        223,
+        580,
+        251,
+        641
+      ],
+      "source_transom_bands": [
+        [
+          595,
+          599
+        ]
+      ],
+      "proposal_bounds": [
+        223,
+        579,
+        255,
+        642
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 42,
+      "view_angle": 180,
+      "batch_id": 2,
+      "bag_id": "BAG_0599100000760416",
+      "stable_phase": 137,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 17,
+      "source_bounds": [
+        287,
+        596,
+        315,
+        652
+      ],
+      "source_transom_bands": [
+        [
+          599,
+          600
+        ],
+        [
+          642,
+          648
+        ]
+      ],
+      "proposal_bounds": [
+        280,
+        599,
+        323,
+        654
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 43,
+      "view_angle": 180,
+      "batch_id": 2,
+      "bag_id": "BAG_0599100000760416",
+      "stable_phase": 140,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 18,
+      "source_bounds": [
+        378,
+        578,
+        405,
+        639
+      ],
+      "source_transom_bands": [
+        [
+          593,
+          598
+        ],
+        [
+          631,
+          635
+        ],
+        [
+          636,
+          637
+        ]
+      ],
+      "proposal_bounds": [
+        373,
+        575,
+        408,
+        638
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 44,
+      "view_angle": 180,
+      "batch_id": 16,
+      "bag_id": "BAG_0599100000671699",
+      "stable_phase": 45,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 19,
+      "source_bounds": [
+        441,
+        578,
+        472,
+        639
+      ],
+      "source_transom_bands": [
+        [
+          594,
+          598
+        ],
+        [
+          632,
+          635
+        ],
+        [
+          636,
+          637
+        ]
+      ],
+      "proposal_bounds": [
+        441,
+        578,
+        475,
+        638
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 45,
+      "view_angle": 180,
+      "batch_id": 16,
+      "bag_id": "BAG_0599100000671699",
+      "stable_phase": 228,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 20,
+      "source_bounds": [
+        537,
+        576,
+        564,
+        638
+      ],
+      "source_transom_bands": [
+        [
+          594,
+          598
+        ]
+      ],
+      "proposal_bounds": [
+        534,
+        576,
+        568,
+        641
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 46,
+      "view_angle": 180,
+      "batch_id": 22,
+      "bag_id": "BAG_0599100000671708",
+      "stable_phase": 116,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 21,
+      "source_bounds": [
+        604,
+        580,
+        631,
+        643
+      ],
+      "source_transom_bands": [
+        [
+          595,
+          598
+        ]
+      ],
+      "proposal_bounds": [
+        604,
+        578,
+        637,
+        643
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 47,
+      "view_angle": 180,
+      "batch_id": 22,
+      "bag_id": "BAG_0599100000671708",
+      "stable_phase": 98,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 22,
+      "source_bounds": [
+        690,
+        580,
+        721,
+        655
+      ],
+      "source_transom_bands": [
+        [
+          648,
+          651
+        ]
+      ],
+      "proposal_bounds": [
+        686,
+        577,
+        727,
+        655
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 48,
+      "view_angle": 180,
+      "batch_id": 28,
+      "bag_id": "BAG_0599100000671712",
+      "stable_phase": 52,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 23,
+      "source_bounds": [
+        757,
+        582,
+        788,
+        656
+      ],
+      "source_transom_bands": [
+        [
+          650,
+          653
+        ]
+      ],
+      "proposal_bounds": [
+        754,
+        579,
+        794,
+        655
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 49,
+      "view_angle": 180,
+      "batch_id": 28,
+      "bag_id": "BAG_0599100000671712",
+      "stable_phase": 164,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 24,
+      "source_bounds": [
+        832,
+        584,
+        883,
+        656
+      ],
+      "source_transom_bands": [
+        [
+          587,
+          588
+        ],
+        [
+          605,
+          609
+        ],
+        [
+          648,
+          651
+        ],
+        [
+          653,
+          654
+        ]
+      ],
+      "proposal_bounds": [
+        835,
+        583,
+        882,
+        655
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 50,
+      "view_angle": 180,
+      "batch_id": 18,
+      "bag_id": "BAG_0599100000671715",
+      "stable_phase": 21,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 25,
+      "source_bounds": [
+        902,
+        587,
+        952,
+        657
+      ],
+      "source_transom_bands": [
+        [
+          607,
+          611
+        ],
+        [
+          650,
+          652
+        ]
+      ],
+      "proposal_bounds": [
+        904,
+        584,
+        950,
+        655
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 51,
+      "view_angle": 180,
+      "batch_id": 18,
+      "bag_id": "BAG_0599100000671715",
+      "stable_phase": 80,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 26,
+      "source_bounds": [
+        983,
+        588,
+        1012,
+        652
+      ],
+      "source_transom_bands": [
+        [
+          591,
+          598
+        ],
+        [
+          604,
+          610
+        ]
+      ],
+      "proposal_bounds": [
+        981,
+        585,
+        1018,
+        651
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 52,
+      "view_angle": 180,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 148,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 27,
+      "source_bounds": [
+        1044,
+        586,
+        1072,
+        655
+      ],
+      "source_transom_bands": [
+        [
+          605,
+          609
+        ],
+        [
+          650,
+          653
+        ]
+      ],
+      "proposal_bounds": [
+        1042,
+        585,
+        1075,
+        654
+      ],
+      "source": "row-plane-180.png",
+      "confidence": "observed opening; source-fitted extent, rectified drawing approximation",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 53,
+      "view_angle": 180,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 155,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 0,
+      "source_bounds": [
+        111,
+        444,
+        133,
+        523
+      ],
+      "source_transom_bands": [
+        [
+          460,
+          465
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        110,
+        440,
+        133,
+        526
+      ],
+      "source": "row-plane-270.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 54,
+      "view_angle": 270,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 14,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 1,
+      "source_bounds": [
+        290,
+        442,
+        316,
+        505
+      ],
+      "source_transom_bands": [
+        [
+          454,
+          459
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        289,
+        440,
+        317,
+        507
+      ],
+      "source": "row-plane-270.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 55,
+      "view_angle": 270,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 166,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 2,
+      "source_bounds": [
+        382,
+        442,
+        408,
+        504
+      ],
+      "source_transom_bands": [
+        [
+          453,
+          458
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        381,
+        440,
+        409,
+        507
+      ],
+      "source": "row-plane-270.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 56,
+      "view_angle": 270,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 90,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 3,
+      "source_bounds": [
+        461,
+        448,
+        499,
+        518
+      ],
+      "source_transom_bands": [
+        [
+          458,
+          463
+        ]
+      ],
+      "source_mullion_bands": [
+        [
+          485,
+          492
+        ]
+      ],
+      "proposal_bounds": [
+        460,
+        446,
+        500,
+        520
+      ],
+      "source": "row-plane-270.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 57,
+      "view_angle": 270,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 247,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 4,
+      "source_bounds": [
+        532,
+        449,
+        571,
+        517
+      ],
+      "source_transom_bands": [
+        [
+          457,
+          462
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        531,
+        446,
+        572,
+        520
+      ],
+      "source": "row-plane-270.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 58,
+      "view_angle": 270,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 56,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 5,
+      "source_bounds": [
+        113,
+        591,
+        135,
+        676
+      ],
+      "source_transom_bands": [
+        [
+          609,
+          614
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        112,
+        588,
+        135,
+        679
+      ],
+      "source": "row-plane-270.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 59,
+      "view_angle": 270,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 17,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 6,
+      "source_bounds": [
+        291,
+        591,
+        316,
+        672
+      ],
+      "source_transom_bands": [
+        [
+          603,
+          608
+        ],
+        [
+          657,
+          664
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        290,
+        588,
+        317,
+        675
+      ],
+      "source": "row-plane-270.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 60,
+      "view_angle": 270,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 111,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 7,
+      "source_bounds": [
+        383,
+        590,
+        409,
+        671
+      ],
+      "source_transom_bands": [
+        [
+          604,
+          607
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        382,
+        587,
+        410,
+        674
+      ],
+      "source": "row-plane-270.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 61,
+      "view_angle": 270,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 142,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 8,
+      "source_bounds": [
+        462,
+        594,
+        503,
+        671
+      ],
+      "source_transom_bands": [
+        [
+          609,
+          611
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        459,
+        591,
+        504,
+        674
+      ],
+      "source": "row-plane-270.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 62,
+      "view_angle": 270,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 157,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 9,
+      "source_bounds": [
+        533,
+        594,
+        574,
+        671
+      ],
+      "source_transom_bands": [
+        [
+          606,
+          611
+        ]
+      ],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        532,
+        591,
+        575,
+        674
+      ],
+      "source": "row-plane-270.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 63,
+      "view_angle": 270,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 117,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 10,
+      "source_bounds": [
+        426,
+        738,
+        468,
+        808
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        425,
+        735,
+        471,
+        810
+      ],
+      "source": "row-plane-270.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 64,
+      "view_angle": 270,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 152,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 11,
+      "source_bounds": [
+        545,
+        734,
+        583,
+        808
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        542,
+        731,
+        584,
+        811
+      ],
+      "source": "row-plane-270.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 65,
+      "view_angle": 270,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 47,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 12,
+      "source_bounds": [
+        679,
+        734,
+        710,
+        808
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        678,
+        731,
+        712,
+        811
+      ],
+      "source": "row-plane-270.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 66,
+      "view_angle": 270,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 106,
+      "binding": "original UVs; surface depth and normal gated projection"
+    },
+    {
+      "id": 13,
+      "source_bounds": [
+        737,
+        733,
+        766,
+        808
+      ],
+      "source_transom_bands": [],
+      "source_mullion_bands": [],
+      "proposal_bounds": [
+        736,
+        730,
+        767,
+        811
+      ],
+      "source": "row-plane-270.png",
+      "confidence": "observed opening; bounded source-fitted extent; uncertain hidden openings excluded",
+      "proposal_method": "independent visible-source review for this diagnostic; replaceable by model proposals with same evidence checks",
+      "emission_state": "illustrative, not observed occupancy",
+      "global_glazing_region_id": 67,
+      "view_angle": 270,
+      "batch_id": 30,
+      "bag_id": "BAG_0599100000671717",
+      "stable_phase": 153,
+      "binding": "original UVs; surface depth and normal gated projection"
+    }
+  ],
+  "region_count": 67,
+  "contract": "Source-observed glazing only. Unobserved/occluded openings excluded. Phase represents illustrative occupancy, never real observation. R=glazing, G=phase, B=region ID in the phase PNGs. Separate emission maps; no albedo brightness-based night grid. Partial facade inventory, not a claim that every real window is identified."
+}

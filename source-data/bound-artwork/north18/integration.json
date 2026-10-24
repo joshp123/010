@@ -1,0 +1,90 @@
+{
+  "status": "context review only",
+  "namespace": "BAG",
+  "bagIds": [
+    "0599100000656926",
+    "0599100000671705",
+    "0599100000671718",
+    "0599100000671720",
+    "0599100000760369",
+    "0599100000656917",
+    "0599100000671694",
+    "0599100000656923",
+    "0599100000656921",
+    "0599100000760381",
+    "0599100000671716",
+    "0599100000760368",
+    "0599100010059655",
+    "0599100000760370",
+    "0599100000700986",
+    "0599100010057617",
+    "0599100000656925",
+    "0599100000656924"
+  ],
+  "sourceGLBSha256": "206200bcf553709067f2b4ee9911d57d7996bee78c0255cfe882f587791bd9da",
+  "sourceMunicipalSha256": "d898d44dc9d6440779d5c5b9784da9e9361a771b344e630ca523749c6c6ad596",
+  "outputGLBSha256": "d38ba6ea7fa8f8681ac53d9a4cbcc5dd1c3bb7ee288e66107f7d77798d28e992",
+  "triangles": 1010,
+  "draws": 95,
+  "sourceIslandDraws": 429,
+  "originalGeometryRetained": true,
+  "originalUVsRetainedInSource": true,
+  "runtimeUVsAffineEquivalent": true,
+  "rtcAppliedOnce": true,
+  "atlasSize": [
+    7482,
+    3660
+  ],
+  "decodedRgbaBytesIncludingMips": 146041192,
+  "sourceReferencedImages": [
+    {
+      "uri": "textures/atlas-00.png",
+      "sha256": "ef52b0429c2dfa26c6d79e6ccfeb855cd1134fb25d9ef3ad06cf143cdfe6ee8d"
+    },
+    {
+      "uri": "textures/atlas-01.png",
+      "sha256": "9c20cbc7366fd91558c67c66110f08db9297fa6e818dac3f844aed91292d8c68"
+    },
+    {
+      "uri": "textures/atlas-02.png",
+      "sha256": "a9fababdb8410480955b06557edf9f283a3e350734aa7e7fbf905ec23ded4387"
+    },
+    {
+      "uri": "textures/atlas-03.png",
+      "sha256": "4ece4b5e951e24a11b809dbbe14151aca125be1c713147c91d38045ec70d38c6"
+    },
+    {
+      "uri": "textures/atlas-04.png",
+      "sha256": "4ccdc7c328736a17c06b78a8c63c9810c27f50f73b3f49c6d4d6c211e6493f8c"
+    },
+    {
+      "uri": "textures/atlas-05.png",
+      "sha256": "3b3f28055eddb8cda8c9f1f58edce83c7289e77b9fdec82aae26d9ff1ad17808"
+    },
+    {
+      "uri": "textures/atlas-06.png",
+      "sha256": "6bca5e8693710fcdc8cdd96bd84d781813ee8ed889130d79623a5197c0ece187"
+    },
+    {
+      "uri": "textures/atlas-07.png",
+      "sha256": "da57e6b3c371f3a03d56e4b6b0cdb6f7f6e1db01aac4a17b9b0a1912a03c7801"
+    },
+    {
+      "uri": "textures/atlas-08.png",
+      "sha256": "8b0a48a1407ff1d120be8b556104ef8cad70433f9bfb3cbb32c50b902f48fd06"
+    }
+  ],
+  "emission": false,
+  "boundsLonLatHeight": [
+    [
+      4.446711232946884,
+      51.90997207604591,
+      2.353799946606159
+    ],
+    [
+      4.447493770749381,
+      51.91046149741068,
+      18.333813476376235
+    ]
+  ]
+}

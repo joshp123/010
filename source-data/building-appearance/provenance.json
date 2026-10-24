@@ -17,140 +17,140 @@
   "pipeline": "Original textured source mesh + UV retained; legacy PBR conversion; 3x3 median, saturation 0.82, selected palette preset with no dithering; explicit ECEF RTC origin; split by source BAG ID",
   "license": "Gemeente Rotterdam public-domain model, attribution retained separately from MIT code",
   "scope": "Review candidate only: older source geometry replaces matching BAG features, never overlays current geometry; no contemporary accuracy claim",
-  "style": "miniature",
+  "style": "source",
   "sourceTiles": 16,
   "outputTiles": 15,
   "buildings": 550,
   "sourceEvidence": [
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/11/2098/433.json",
-      "acquiredAt": "2026-10-24T06:38:43.554651+00:00",
+      "acquiredAt": "2026-10-24T06:46:35.945803+00:00",
       "sha256": "c5e28270cededabceb90442c413a9cc1099fa66ab928bd1b376183448c1e4edb",
       "decodedBytes": 2496709,
       "lastModified": "Fri, 22 Nov 2019 07:55:09 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/11/2099/433.json",
-      "acquiredAt": "2026-10-24T06:38:48.726074+00:00",
+      "acquiredAt": "2026-10-24T06:46:36.850637+00:00",
       "sha256": "52f952c1b5925bde6d9382ae482129f3f8c099a2323a8f0d1a8de584571ce7bf",
       "decodedBytes": 2654618,
       "lastModified": "Fri, 22 Nov 2019 07:55:09 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134309/27735.cmpt",
-      "acquiredAt": "2026-10-24T06:38:53.875317+00:00",
+      "acquiredAt": "2026-10-24T06:46:38.022385+00:00",
       "sha256": "8981c2d310f19a0d1820219969427178f9162f6c40de29d3ba9f59e157fca494",
       "decodedBytes": 967548,
       "lastModified": "Fri, 22 Nov 2019 07:50:30 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134309/27736.cmpt",
-      "acquiredAt": "2026-10-24T06:38:53.681783+00:00",
+      "acquiredAt": "2026-10-24T06:46:38.224131+00:00",
       "sha256": "3eef781644168d19a43c99f9f2e336876a48b04642565edf18f18b0939b84933",
       "decodedBytes": 1223060,
       "lastModified": "Fri, 22 Nov 2019 07:50:30 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134309/27737.cmpt",
-      "acquiredAt": "2026-10-24T06:38:53.683497+00:00",
+      "acquiredAt": "2026-10-24T06:46:38.214016+00:00",
       "sha256": "9b6ed4f29eaf625ebce0e54999c63fe6b9b2c61a7c1d9cb6524071f57ed7299d",
       "decodedBytes": 1298456,
       "lastModified": "Fri, 22 Nov 2019 07:50:30 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134310/27735.cmpt",
-      "acquiredAt": "2026-10-24T06:38:53.868572+00:00",
+      "acquiredAt": "2026-10-24T06:46:38.381781+00:00",
       "sha256": "c597f16a5babe227babd2c1ce22aecbd3d06821ae3926b1b2075318666a1283f",
       "decodedBytes": 1120716,
       "lastModified": "Fri, 22 Nov 2019 07:50:31 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134310/27736.cmpt",
-      "acquiredAt": "2026-10-24T06:38:58.537242+00:00",
+      "acquiredAt": "2026-10-24T06:46:40.456884+00:00",
       "sha256": "f47a18e1f4b98773b57cc7e9bf6b21cae290928bc87833c43d46ed5bfc724bff",
       "decodedBytes": 1794272,
       "lastModified": "Fri, 22 Nov 2019 07:50:32 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134310/27737.cmpt",
-      "acquiredAt": "2026-10-24T06:38:58.689189+00:00",
+      "acquiredAt": "2026-10-24T06:46:39.892024+00:00",
       "sha256": "e4793a311f3442c400dcd965f562ac7ee58080ee90b1fd740779383c85d70c95",
       "decodedBytes": 1811540,
       "lastModified": "Fri, 22 Nov 2019 07:50:32 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134311/27735.cmpt",
-      "acquiredAt": "2026-10-24T06:38:53.575652+00:00",
+      "acquiredAt": "2026-10-24T06:46:38.490676+00:00",
       "sha256": "5844ad6053cef33107b1a73206e360368c2527fbb235e32f1c0fd4cbcf40aa19",
       "decodedBytes": 864096,
       "lastModified": "Fri, 22 Nov 2019 07:50:28 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134311/27736.cmpt",
-      "acquiredAt": "2026-10-24T06:38:58.587332+00:00",
+      "acquiredAt": "2026-10-24T06:46:39.742266+00:00",
       "sha256": "57d42fc02f64382647aa423d00c54fe4524779112fd69d27ebfb7fa481669820",
       "decodedBytes": 904744,
       "lastModified": "Fri, 22 Nov 2019 07:50:29 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134311/27737.cmpt",
-      "acquiredAt": "2026-10-24T06:38:58.440625+00:00",
+      "acquiredAt": "2026-10-24T06:46:40.779936+00:00",
       "sha256": "1f29abefd177552b8b66f85406be9144a0c8db719c23841bdb7d7ba031008da8",
       "decodedBytes": 966016,
       "lastModified": "Fri, 22 Nov 2019 07:50:29 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134312/27735.cmpt",
-      "acquiredAt": "2026-10-24T06:38:58.663477+00:00",
+      "acquiredAt": "2026-10-24T06:46:40.435673+00:00",
       "sha256": "90b2ea20039973d7ee44413db291e6a6b88f97cab0c8cf02f2064c94ac6c8485",
       "decodedBytes": 1652776,
       "lastModified": "Fri, 22 Nov 2019 07:50:27 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134312/27736.cmpt",
-      "acquiredAt": "2026-10-24T06:39:08.044241+00:00",
+      "acquiredAt": "2026-10-24T06:46:41.086668+00:00",
       "sha256": "57574ebaf586ad46947d71484d2b4008d0230032a68ed2959f3d7d8eaa745028",
       "decodedBytes": 298192,
       "lastModified": "Fri, 22 Nov 2019 07:50:27 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134312/27737.cmpt",
-      "acquiredAt": "2026-10-24T06:39:07.980629+00:00",
+      "acquiredAt": "2026-10-24T06:46:40.756874+00:00",
       "sha256": "c7fe1e36e1c1b4a4181bc7b8ab413bffbe2f3e0ac2dac68e047116a5e7a31b04",
       "decodedBytes": 127544,
       "lastModified": "Fri, 22 Nov 2019 07:50:27 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134339/27739.cmpt",
-      "acquiredAt": "2026-10-24T06:39:08.127234+00:00",
+      "acquiredAt": "2026-10-24T06:46:42.246460+00:00",
       "sha256": "810897b5859cbd68bb2a2e7ab9660e76b7f7d32257b7a39ff018106252e0c21e",
       "decodedBytes": 1466692,
       "lastModified": "Fri, 22 Nov 2019 07:49:28 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134340/27738.cmpt",
-      "acquiredAt": "2026-10-24T06:39:08.142849+00:00",
+      "acquiredAt": "2026-10-24T06:46:42.903753+00:00",
       "sha256": "a34d804d398d48a56e5596b55326f638b0e2b6ccdeb64242122dd57a079aa80e",
       "decodedBytes": 2251960,
       "lastModified": "Fri, 22 Nov 2019 07:49:25 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134340/27739.cmpt",
-      "acquiredAt": "2026-10-24T06:39:07.948586+00:00",
+      "acquiredAt": "2026-10-24T06:46:41.398581+00:00",
       "sha256": "cb8b161b97112a097e0e5ee36ef20e65cc825257458ff461432d9b3057756837",
       "decodedBytes": 368476,
       "lastModified": "Fri, 22 Nov 2019 07:49:25 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134341/27738.cmpt",
-      "acquiredAt": "2026-10-24T06:39:12.833991+00:00",
+      "acquiredAt": "2026-10-24T06:46:42.058087+00:00",
       "sha256": "0c9e2ec88b21e5e00556d2c035cfd876faa080cbb04c2573725192ec3768a59d",
       "decodedBytes": 305012,
       "lastModified": "Fri, 22 Nov 2019 07:49:23 GMT"
     },
     {
       "url": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/tileset.json",
-      "acquiredAt": "2026-10-24T06:38:38.324158+00:00",
+      "acquiredAt": "2026-10-24T06:46:35.138016+00:00",
       "sha256": "9fbfe2869a8be18078139671aabafe0ed4a43e1d5b7a453bd4816ab9a24d6379",
       "decodedBytes": 7724,
       "lastModified": "Fri, 22 Nov 2019 07:47:25 GMT"
