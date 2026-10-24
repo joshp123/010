@@ -160,7 +160,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
         nextPosition.copy(position).addScaledVector(tangent.clone().normalize(), -direction * 25);
         if (!hasView || inside(nextPosition)) continue;
       }
-      if (cars.some(car => car.road === road && Math.abs(car.distance - distance) < 14)) continue;
+      if (coordinator.occupied(road.id, distance, 14)) continue;
       const originKey = `${road.sourceIndex}:${direction}`;
       if (unroutableOrigins.has(originKey)) continue;
       const journey = planner.plan({ roadIndex: road.sourceIndex, direction, random,

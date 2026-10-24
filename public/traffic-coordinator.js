@@ -8,6 +8,9 @@ export function createTrafficCoordinator() {
   let frameTime = null, frame = null;
   return {
     register(vehicles) { fleets.add(vehicles); return () => fleets.delete(vehicles); },
+    occupied(roadId, distance, clearance) {
+      return [...fleets].some(read => read().some(vehicle => vehicle.road.id === roadId && Math.abs(vehicle.distance - distance) < clearance));
+    },
     clear() { frameTime = null; junctions.clear(); },
     frame(time, delta) {
       if (frameTime === time) return frame;
