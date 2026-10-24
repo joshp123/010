@@ -477,7 +477,7 @@ try {
   }).catch(() => { byId('metro-source-status').textContent = 'Metro plan unavailable · live vehicles still work'; });
   window.addEventListener('pagehide', () => { liveTransit.stop(); });
   window.addEventListener('pageshow', event => { if (event.persisted) liveTransit.start(); });
-  window.__010 = { getView: () => scene.getView(), getDiagnostics: () => scene.getDiagnostics?.(), getTransit: () => latestTransitSnapshot };
+  window.__010 = { getView: () => scene.getView(), getDiagnostics: () => scene.getDiagnostics?.(), getTransit: () => latestTransitSnapshot, inspectTrafficSurfaces: options => scene.inspectTrafficSurfaces(options) };
 } catch (error) {
   console.error('Rotterdam could not be drawn.', error);
   showSceneStatus({ state: 'error', message: 'The map could not start. Reload to try again.' });

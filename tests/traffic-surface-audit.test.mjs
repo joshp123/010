@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import * as THREE from '../public/vendor/three/build/three.module.js';
+const source=(await readFile(new URL('../public/traffic-surface-audit.js',import.meta.url),'utf8')).replace("'three'",JSON.stringify(new URL('../public/vendor/three/build/three.module.js',import.meta.url).href));
+const {inspectTrafficSurfaces}=await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
+const group=new THREE.Group();
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(20,20),new THREE.MeshBasicMaterial({color:'#8d9694',side:THREE.DoubleSide}));
+ground.rotation.x=-Math.PI/2;ground.userData.surfaceKind='road';group.add(ground);
+const overlay=ground.clone();overlay.material=new THREE.MeshBasicMaterial({color:'#b78770',side:THREE.DoubleSide});overlay.position.y=.4;overlay.userData.surfaceKind='cycleway';group.add(overlay);group.updateMatrixWorld(true);
+const camera=new THREE.PerspectiveCamera(45,1,.1,100);camera.position.set(0,8,8);camera.lookAt(0,0,0);camera.updateMatrixWorld();
+const args={samples:[{worldBasePosition:[0,.05,0]}],tilesets:[{group,kind:'bridgeSurfaces',visibleTiles:new Set([{engineData:{scene:group}}])}],camera,width:390,height:390};
+let result=inspectTrafficSurfaces(args)[0];
+assert.equal(result.cameraSurfaces[0].surfaceKind,'cycleway');assert.equal(result.verticalSurfaces[0].colourBeforeLighting,'#b78770');
+overlay.visible=false;result=inspectTrafficSurfaces(args)[0];assert.equal(result.cameraSurfaces[0].surfaceKind,'road');assert.equal(result.cameraSurfaces[0].colourBeforeLighting,'#8d9694');
+assert.ok(result.screenCSS.every(Number.isFinite));
+console.log('Loaded surface audit identifies elevated orange overlay and excludes hidden geometry');

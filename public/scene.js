@@ -7,6 +7,7 @@ import { createSurfaceQuery } from './surface-query.js';
 import { createCompressedModelsPlugin } from './compressed-models.js';
 import { createObjectDetail } from './object-detail.js';
 import { createSimulatedTraffic } from './simulated-traffic.js';
+import { inspectTrafficSurfaces } from './traffic-surface-audit.js';
 import { createTransitView } from './transit-view.js';
 import { createBuildingBatches } from './building-batches.js';
 import { createTreeBatches } from './tree-batches.js';
@@ -818,6 +819,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   }
   return {
     trafficReady: () => trafficReady, cyclistsReady: () => cyclistsReady,
+    inspectTrafficSurfaces: (options = {}) => inspectTrafficSurfaces({ samples: [...traffic.sampleVehicles(options), ...cyclists.sampleVehicles(options)], tilesets, camera, width: canvas.clientWidth, height: canvas.clientHeight }),
     updateTransit, getTransitReport: id => transit.getReport(id), setMetroCutaway, metroReady: () => metroReady, getTransitStatistics: () => ({ ...transit.statistics(), metroState }),
     setView, getView: () => ({ ...view }), setLighting, captureCanvas,
     zoom: factor => setView({ span: view.span / factor }), reset: () => setView(DEFAULT_VIEW),
