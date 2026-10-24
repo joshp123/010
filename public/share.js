@@ -83,7 +83,7 @@ export async function openShareDialog(context) {
   const previewWrap = element('div', 'share-preview-wrap loading');
   const preview = element('img', 'share-preview'); preview.alt = `Rotterdam miniature map around ${context.locationLabel}, with 010 branding and @jjpcodes credit.`; previewWrap.append(preview);
   const actions = element('div', 'share-actions');
-  const caption = `Rotterdam in miniature${context.locationLabel !== 'Rotterdam' ? ` · ${context.locationLabel}` : ''}.\nMade by @jjpcodes\n${context.link}`;
+  let caption = `Rotterdam in miniature${context.locationLabel !== 'Rotterdam' ? ` · ${context.locationLabel}` : ''}.\nMade by @jjpcodes\n${context.link}`;
   const captionField = element('textarea', 'share-copy'); captionField.readOnly = true; captionField.value = caption; captionField.setAttribute('aria-label', 'Caption and link to copy');
   const status = element('p', 'share-status', 'Preparing the image…'); status.setAttribute('role', 'status');
   const notify = message => { status.textContent = message; };
@@ -128,8 +128,10 @@ export async function openShareDialog(context) {
     previewWrap.classList.add('loading'); notify('Rendering the high-resolution image…');
     try {
       const { width, height, footerHeight } = FORMATS[format];
+      let capturedView;
       const capture = captureQueue.then(() => {
         if (serial !== generation || dismissed) return null;
+        capturedView = context.scene.getView();
         return context.scene.captureCanvas(width, height - footerHeight);
       });
       captureQueue = capture.catch(() => {});
@@ -137,6 +139,14 @@ export async function openShareDialog(context) {
       if (serial !== generation || dismissed) return;
       const prepared = await drawPoster(imageSource, format, context);
       if (serial !== generation || dismissed) return;
+      const capturedLink = new URL(context.link);
+      capturedLink.searchParams.set('lat', capturedView.lat.toFixed(5));
+      capturedLink.searchParams.set('lon', capturedView.lon.toFixed(5));
+      capturedLink.searchParams.set('span', Math.round(capturedView.span));
+      capturedLink.searchParams.set('bearing', Math.round(capturedView.bearing));
+      context.link = capturedLink.toString();
+      caption = `Rotterdam in miniature${context.locationLabel !== 'Rotterdam' ? ` · ${context.locationLabel}` : ''}.\nMade by @jjpcodes\n${context.link}`;
+      captionField.value = caption;
       blob = prepared;
       if (previewUrl) URL.revokeObjectURL(previewUrl);
       previewUrl = URL.createObjectURL(blob); preview.src = previewUrl;
