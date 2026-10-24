@@ -18,7 +18,7 @@ const actual=network.roads.map(r=>{const points=r.coordinates.map(([lon,lat])=>(
 const {rules}=JSON.parse(await readFile(new URL('public/data/traffic/turn-restrictions.json',root),'utf8'));
 const baseline=createJourneyPlanner(actual),restricted=createJourneyPlanner(actual,{turnRestrictions:rules});
 assert.equal(restricted.diagnostics().unresolvedTurnRestrictions,0);
-assert.equal(restricted.diagnostics().turnRestrictionRules,7);
+assert.equal(restricted.diagnostics().turnRestrictionRules,10);
 let removed=0;
 for(const rule of rules) {
  const index=actual.findIndex(r=>r.id===rule.from&&(rule.fromDirection===1?r.end:r.start)===rule.via);
@@ -29,7 +29,7 @@ for(const rule of rules) {
  else assert.ok(after.every(step=>actual[step.roadIndex].id!==rule.to||step.direction!==rule.toDirection));
  removed+=before.length-after.length;
 }
-assert.ok(removed>=7);console.log(`Actual OSM/NWB rules: ${rules.length}; blocked directed transitions: ${removed}`);
+assert.ok(removed>=10);console.log(`Actual OSM/NWB rules: ${rules.length}; blocked directed transitions: ${removed}`);
 
 // Exercise the actual loader: loaded rules survive reprojection; an unavailable
 // source reports unavailable and never inherits stale restrictions.
@@ -38,8 +38,8 @@ const roadBytes=await readFile(new URL('public/data/traffic/roads.pb.gz',root));
 const layer=createSimulatedTraffic({maximumVehicles:0,project:(lat,lon,alt)=>({x:(lon-4.49)*68600,y:alt,z:(51.915-lat)*111300})});
 try {
  globalThis.fetch=async url=>String(url).endsWith('turn-restrictions.json')?new Response(JSON.stringify({version:1,mode:'motorcar',rules})):new Response(roadBytes);
- await layer.load();assert.equal(layer.statistics().restrictionStatus,'loaded:7');assert.equal(layer.statistics().network.turnRestrictionRules,7);
- layer.refreshProjection();assert.equal(layer.statistics().network.turnRestrictionRules,7);
+ await layer.load();assert.equal(layer.statistics().restrictionStatus,'loaded:10');assert.equal(layer.statistics().network.turnRestrictionRules,10);
+ layer.refreshProjection();assert.equal(layer.statistics().network.turnRestrictionRules,10);
  globalThis.fetch=async url=>String(url).endsWith('turn-restrictions.json')?new Response('',{status:404}):new Response(roadBytes);
  await layer.load();assert.match(layer.statistics().restrictionStatus,/unavailable:HTTP 404/);assert.equal(layer.statistics().network.turnRestrictionRules,0);
 } finally {globalThis.fetch=originalFetch;layer.dispose();}

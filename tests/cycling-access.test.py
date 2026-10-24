@@ -32,6 +32,12 @@ class AccessTest(unittest.TestCase):
   self.assertGreaterEqual(len(candidates),10)
   self.assertEqual(candidates[4063857]['fromNWB'],601722926)
   self.assertEqual(candidates[4063857]['toNWB'],601723271)
+  self.assertEqual(candidates[1312594]['matches']['to']['continuation']['roadId'],601214656)
+  self.assertEqual(candidates[14966194]['matches']['to']['continuation']['roadId'],601044957)
+  self.assertNotIn(21622541,candidates,'OSM/NWB motor direction conflict must remain unmatched')
+  without_continuation=[f for f in features if f['properties']['wvk_id']!=601214656]
+  rejected=mod.match_restrictions(osm,without_continuation)
+  self.assertEqual(next(r for r in rejected if r['osmRelation']==1312594)['status'],'unmatched','different names require actual connected continuation evidence')
  def test_empty_supported_inventory_is_error(self):
   feature={'properties':{},'geometry':{'type':'Point','coordinates':[4.49,51.92]}}
   with self.assertRaisesRegex(ValueError,'No usable NWB'):

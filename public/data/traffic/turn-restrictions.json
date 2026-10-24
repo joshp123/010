@@ -7,9 +7,18 @@
   "source": "https://github.com/joshp123/010/tree/main/source-data/traffic",
   "rawSourceSha256": "e2635e4ec394de6b7e25a70a74c05ce9ef54ec8e1d67a987678a7da4ec11be58",
   "nwbSourceSha256": "f9a8276b154d16eb2c7fd2b0a27f604ff660df3a7c1923a5ec5c22c1de6688ce",
-  "auditSha256": "3f5ace0cc65f1a6dc11312bd650c391d0d6d73fad844604e771283c45802c177",
-  "coverage": "Seven manually selected geometrically unambiguous pilot matches, not exhaustive legal routing; conditional and via-way restrictions unsupported",
+  "auditSha256": "7e2f26d1c1d37627ea23f1f6d8c356ecd50e3488dde30f9d1597772094fadd5f",
+  "coverage": "Ten manually selected geometrically unambiguous pilot matches, not exhaustive legal routing; conditional and via-way restrictions unsupported",
   "rules": [
+    {
+      "osmRelation": 1312594,
+      "restriction": "only_straight_on",
+      "from": 601214659,
+      "via": 600476512,
+      "to": 601214660,
+      "fromDirection": 1,
+      "toDirection": 1
+    },
     {
       "osmRelation": 4063857,
       "restriction": "only_straight_on",
@@ -56,6 +65,15 @@
       "toDirection": 1
     },
     {
+      "osmRelation": 14966194,
+      "restriction": "no_left_turn",
+      "from": 601724275,
+      "via": 185274202,
+      "to": 185274167,
+      "fromDirection": 1,
+      "toDirection": -1
+    },
+    {
       "osmRelation": 14966195,
       "restriction": "no_left_turn",
       "from": 601044903,
@@ -63,6 +81,15 @@
       "to": 601300569,
       "fromDirection": -1,
       "toDirection": 1
+    },
+    {
+      "osmRelation": 14966196,
+      "restriction": "no_right_turn",
+      "from": 185274167,
+      "via": 185274202,
+      "to": 601724275,
+      "fromDirection": 1,
+      "toDirection": -1
     },
     {
       "osmRelation": 18990384,

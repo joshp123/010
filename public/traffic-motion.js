@@ -26,3 +26,23 @@ export function speedForRoadClass(roadClass) {
   // NWB HR is hoofdrijbaan, NOT a motorway designation. No speed-limit source here.
   return roadClass === 'ERF' ? 3.5 : 7;
 }
+
+// Distance to a same-direction leader along this vehicle's already chosen trip,
+// including short source junction links. Seeing only the current road lets a
+// queued vehicle disappear from following logic just as the follower enters it.
+export function routeFollowingGap(car, occupants, range = followingDistance(car.speed)) {
+  let nearest=Infinity;
+  let offset=-(car.direction===1?car.distance:car.road.length-car.distance);
+  const path=car.journey.path;
+  for(let index=car.journeyIndex;index<path.length&&index<car.journeyIndex+16;index++) {
+    const {road,direction}=path[index];
+    for(const other of occupants.get(road)||[]) {
+      if(other===car||other.vehicle===car||other.direction!==direction)continue;
+      const gap=offset+(direction===1?other.distance:road.length-other.distance);
+      if(gap>0&&gap<=range)nearest=Math.min(nearest,gap);
+    }
+    offset+=road.length;
+    if(offset>range)break;
+  }
+  return nearest;
+}

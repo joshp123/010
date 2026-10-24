@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { rightHandOffset, safeStep, followingDistance, speedForRoadClass } from './traffic-motion.js';
+import { rightHandOffset, safeStep, routeFollowingGap, speedForRoadClass } from './traffic-motion.js';
 import { createJourneyPlanner } from './traffic-journeys.js';
 import { createCarGeometries, createBicycleGeometries } from './traffic-models.js';
 
@@ -250,7 +250,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
         distanceMetres:car.distance,roadLengthMetres:car.road.length,headingRadians:car.heading,speedMetresPerSecond:car.speed,
         sourcePosition:{longitude:a[0]+(b[0]-a[0])*fraction,latitude:a[1]+(b[1]-a[1])*fraction},
         sourceCentreline:centre.toArray(),localBasePosition:base.toArray(),worldBasePosition:base.clone().applyMatrix4(group.matrixWorld).toArray(),
-        laneOffset:[base.x-centre.x,base.z-centre.z],screenNDC:hasView?base.clone().applyMatrix4(cameraMatrix).toArray():null,
+        laneOffset:[base.x-centre.x,base.z-centre.z],screenNDC:hasView?base.clone().applyMatrix4(group.matrixWorld).applyMatrix4(cameraMatrix).toArray():null,
         modelScale:Math.hypot(matrix.elements[0],matrix.elements[1],matrix.elements[2]),
         journey:{origin:car.journey.origin,destination:car.journey.destination,step:car.journeyIndex,steps:car.journey.path.length,nextRoadId:car.next?.road.id??null}});
       if(samples.length>=cap)break;
@@ -274,18 +274,19 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
       const delta = safeStep(lastTime === null ? 0 : timeSeconds - lastTime); lastTime = timeSeconds;
       if (paused || !group.visible || !roads.length || !cars.length) return false;
       elapsed += delta;
-      const junctionReservations = new Map();
+      const junctionReservations = new Map(), occupants=new Map();
+      for(const vehicle of cars) {
+        if(!occupants.has(vehicle.road))occupants.set(vehicle.road,[]);
+        occupants.get(vehicle.road).push({vehicle,direction:vehicle.direction,distance:vehicle.distance});
+      }
       cars = cars.filter(car => {
         car.age += delta;
         let endDistance = car.direction === 1 ? car.road.length - car.distance : car.distance;
         let targetSpeed = car.cruise;
         // Brake into the planned turn. Trip demand is illustrative; legal turn restrictions are not in this source.
         if (car.next && car.next.weight < 5) targetSpeed = Math.min(targetSpeed, 3.5 + endDistance * .25);
-        for (const other of cars) {
-          if (other === car || other.road !== car.road || other.direction !== car.direction) continue;
-          const gap = (other.distance - car.distance) * car.direction;
-          if (gap > 0 && gap < followingDistance(car.speed)) targetSpeed = Math.min(targetSpeed, Math.max(0, (gap - 5.5) / 1.4));
-        }
+        const gap=routeFollowingGap(car,occupants);
+        if(Number.isFinite(gap))targetSpeed=Math.min(targetSpeed,Math.max(0,(gap-5.5)/1.4));
         const junction = car.direction === 1 ? car.road.end : car.road.start;
         if (junction && endDistance < 10 && !car.ending) {
           if (junctionReservations.has(junction)) targetSpeed = Math.min(targetSpeed, Math.max(0, (endDistance - 3) * .6));

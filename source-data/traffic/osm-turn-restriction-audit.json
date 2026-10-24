@@ -1,7 +1,8 @@
 {
-  "auditedAt": "2026-10-24T08:04:57.332910+00:00",
+  "auditedAt": "2026-10-24T08:18:21.388325+00:00",
   "endpoint": null,
   "query": "[out:json][timeout:45];rel[type=restriction](51.900,4.465,51.930,4.505);(._;>;);out body;",
+  "acquisition": null,
   "license": "OpenStreetMap ODbL-1.0; attribution OpenStreetMap contributors required before runtime use",
   "schema": "https://wiki.openstreetmap.org/wiki/Relation:restriction",
   "rawSha256": "e2635e4ec394de6b7e25a70a74c05ce9ef54ec8e1d67a987678a7da4ec11be58",
@@ -32,7 +33,7 @@
         "restriction": "only_straight_on",
         "type": "restriction"
       },
-      "status": "unmatched",
+      "status": "review-candidate",
       "osmViaNode": 1029946459,
       "nwbJunction": 600476512,
       "junctionDistanceMetres": 0.873,
@@ -44,10 +45,30 @@
           "nwbRoad": 601214659,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.999858
+          "alignmentCosine": 0.999858,
+          "nameEvidence": "exact",
+          "continuation": null
+        },
+        "to": {
+          "osmWay": 88726455,
+          "osmName": "Stieltjesstraat",
+          "nwbName": "Nassaukade",
+          "nwbRoad": 601214660,
+          "nwbAtStart": true,
+          "nwbMotorDirection": "H",
+          "alignmentCosine": 0.999939,
+          "nameEvidence": "short-source-continuation",
+          "continuation": {
+            "roadId": 601214656,
+            "name": "Stieltjesstraat",
+            "junction": 600476511,
+            "linkLengthMetres": 5.007
+          }
         }
       },
-      "reason": "missing or ambiguous name/direction/local-tangent match"
+      "restriction": "only_straight_on",
+      "fromNWB": 601214659,
+      "toNWB": 601214660
     },
     {
       "osmRelation": 2329782,
@@ -107,7 +128,9 @@
           "nwbRoad": 600726978,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.999303
+          "alignmentCosine": 0.999303,
+          "nameEvidence": "exact",
+          "continuation": null
         },
         "to": {
           "osmWay": 48534332,
@@ -116,7 +139,9 @@
           "nwbRoad": 600727009,
           "nwbAtStart": true,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.991738
+          "alignmentCosine": 0.991738,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "restriction": "only_straight_on",
@@ -167,7 +192,9 @@
           "nwbRoad": 601722926,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.999965
+          "alignmentCosine": 0.999965,
+          "nameEvidence": "exact",
+          "continuation": null
         },
         "to": {
           "osmWay": 304873645,
@@ -176,7 +203,9 @@
           "nwbRoad": 601723271,
           "nwbAtStart": true,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.999976
+          "alignmentCosine": 0.999976,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "restriction": "only_straight_on",
@@ -201,7 +230,9 @@
           "nwbRoad": 600361259,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.984922
+          "alignmentCosine": 0.984922,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "reason": "missing or ambiguous name/direction/local-tangent match"
@@ -237,7 +268,9 @@
           "nwbRoad": 187269064,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.997379
+          "alignmentCosine": 0.997379,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "reason": "missing or ambiguous name/direction/local-tangent match"
@@ -287,7 +320,9 @@
           "nwbRoad": 600909978,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.991705
+          "alignmentCosine": 0.991705,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "reason": "missing or ambiguous name/direction/local-tangent match"
@@ -310,7 +345,9 @@
           "nwbRoad": 188274062,
           "nwbAtStart": false,
           "nwbMotorDirection": "B",
-          "alignmentCosine": 0.940566
+          "alignmentCosine": 0.940566,
+          "nameEvidence": "exact",
+          "continuation": null
         },
         "to": {
           "osmWay": 325822867,
@@ -319,7 +356,9 @@
           "nwbRoad": 600909975,
           "nwbAtStart": true,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.994988
+          "alignmentCosine": 0.994988,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "restriction": "no_left_turn",
@@ -366,7 +405,9 @@
           "nwbRoad": 600729922,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.968912
+          "alignmentCosine": 0.968912,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "reason": "missing or ambiguous name/direction/local-tangent match"
@@ -415,7 +456,9 @@
           "nwbRoad": 600995671,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.999348
+          "alignmentCosine": 0.999348,
+          "nameEvidence": "exact",
+          "continuation": null
         },
         "to": {
           "osmWay": 142153187,
@@ -424,7 +467,9 @@
           "nwbRoad": 600995674,
           "nwbAtStart": true,
           "nwbMotorDirection": "B",
-          "alignmentCosine": 0.978032
+          "alignmentCosine": 0.978032,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "restriction": "no_left_turn",
@@ -462,7 +507,9 @@
           "nwbRoad": 600995674,
           "nwbAtStart": false,
           "nwbMotorDirection": "B",
-          "alignmentCosine": 0.978032
+          "alignmentCosine": 0.978032,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "reason": "missing or ambiguous name/direction/local-tangent match"
@@ -516,7 +563,9 @@
           "nwbRoad": 601109105,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.990763
+          "alignmentCosine": 0.990763,
+          "nameEvidence": "exact",
+          "continuation": null
         },
         "to": {
           "osmWay": 735291333,
@@ -525,7 +574,9 @@
           "nwbRoad": 601109099,
           "nwbAtStart": true,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.941758
+          "alignmentCosine": 0.941758,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "restriction": "no_u_turn",
@@ -690,7 +741,9 @@
           "nwbRoad": 186274186,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.998541
+          "alignmentCosine": 0.998541,
+          "nameEvidence": "exact",
+          "continuation": null
         },
         "to": {
           "osmWay": 7523381,
@@ -699,7 +752,9 @@
           "nwbRoad": 600729096,
           "nwbAtStart": true,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.994131
+          "alignmentCosine": 0.994131,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "restriction": "only_straight_on",
@@ -725,7 +780,9 @@
           "nwbRoad": 600386813,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.994682
+          "alignmentCosine": 0.994682,
+          "nameEvidence": "exact",
+          "continuation": null
         },
         "to": {
           "osmWay": 129271683,
@@ -734,7 +791,9 @@
           "nwbRoad": 600113971,
           "nwbAtStart": true,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.961034
+          "alignmentCosine": 0.961034,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "restriction": "no_left_turn",
@@ -759,7 +818,9 @@
           "nwbRoad": 601249162,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.987524
+          "alignmentCosine": 0.987524,
+          "nameEvidence": "exact",
+          "continuation": null
         },
         "to": {
           "osmWay": 141883050,
@@ -768,7 +829,9 @@
           "nwbRoad": 601078581,
           "nwbAtStart": true,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.986534
+          "alignmentCosine": 0.986534,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "restriction": "no_right_turn",
@@ -793,7 +856,9 @@
           "nwbRoad": 600995603,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.999998
+          "alignmentCosine": 0.999998,
+          "nameEvidence": "exact",
+          "continuation": null
         },
         "to": {
           "osmWay": 1463167890,
@@ -802,7 +867,9 @@
           "nwbRoad": 600995615,
           "nwbAtStart": true,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.988069
+          "alignmentCosine": 0.988069,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "restriction": "no_left_turn",
@@ -827,7 +894,9 @@
           "nwbRoad": 601225109,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.977188
+          "alignmentCosine": 0.977188,
+          "nameEvidence": "exact",
+          "continuation": null
         },
         "to": {
           "osmWay": 504538926,
@@ -836,7 +905,9 @@
           "nwbRoad": 601722285,
           "nwbAtStart": true,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.987487
+          "alignmentCosine": 0.987487,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "restriction": "only_straight_on",
@@ -870,7 +941,9 @@
           "nwbRoad": 600995605,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.999844
+          "alignmentCosine": 0.999844,
+          "nameEvidence": "exact",
+          "continuation": null
         },
         "to": {
           "osmWay": 61888288,
@@ -879,7 +952,9 @@
           "nwbRoad": 600995616,
           "nwbAtStart": true,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.981259
+          "alignmentCosine": 0.981259,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "restriction": "no_left_turn",
@@ -940,7 +1015,9 @@
           "nwbRoad": 184273077,
           "nwbAtStart": true,
           "nwbMotorDirection": "B",
-          "alignmentCosine": 0.999827
+          "alignmentCosine": 0.999827,
+          "nameEvidence": "exact",
+          "continuation": null
         },
         "to": {
           "osmWay": 1029321390,
@@ -949,7 +1026,9 @@
           "nwbRoad": 600909852,
           "nwbAtStart": true,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.999882
+          "alignmentCosine": 0.999882,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "restriction": "only_right_turn",
@@ -962,7 +1041,7 @@
         "restriction": "no_left_turn",
         "type": "restriction"
       },
-      "status": "unmatched",
+      "status": "review-candidate",
       "osmViaNode": 44404046,
       "nwbJunction": 185274202,
       "junctionDistanceMetres": 0.77,
@@ -974,10 +1053,30 @@
           "nwbRoad": 601724275,
           "nwbAtStart": false,
           "nwbMotorDirection": "B",
-          "alignmentCosine": 0.999709
+          "alignmentCosine": 0.999709,
+          "nameEvidence": "exact",
+          "continuation": null
+        },
+        "to": {
+          "osmWay": 925619734,
+          "osmName": "Aert van Nesstraat",
+          "nwbName": "Meent",
+          "nwbRoad": 185274167,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "B",
+          "alignmentCosine": 0.999491,
+          "nameEvidence": "short-source-continuation",
+          "continuation": {
+            "roadId": 601044957,
+            "name": "Aert van Nesstraat",
+            "junction": 185274199,
+            "linkLengthMetres": 19.119
+          }
         }
       },
-      "reason": "missing or ambiguous name/direction/local-tangent match"
+      "restriction": "no_left_turn",
+      "fromNWB": 601724275,
+      "toNWB": 185274167
     },
     {
       "osmRelation": 14966195,
@@ -997,7 +1096,9 @@
           "nwbRoad": 601044903,
           "nwbAtStart": true,
           "nwbMotorDirection": "B",
-          "alignmentCosine": 0.999094
+          "alignmentCosine": 0.999094,
+          "nameEvidence": "exact",
+          "continuation": null
         },
         "to": {
           "osmWay": 7525968,
@@ -1006,7 +1107,9 @@
           "nwbRoad": 601300569,
           "nwbAtStart": true,
           "nwbMotorDirection": "B",
-          "alignmentCosine": 0.998959
+          "alignmentCosine": 0.998959,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "restriction": "no_left_turn",
@@ -1019,12 +1122,42 @@
         "restriction": "no_right_turn",
         "type": "restriction"
       },
-      "status": "unmatched",
+      "status": "review-candidate",
       "osmViaNode": 44404046,
       "nwbJunction": 185274202,
       "junctionDistanceMetres": 0.77,
-      "matches": {},
-      "reason": "missing or ambiguous name/direction/local-tangent match"
+      "matches": {
+        "from": {
+          "osmWay": 925619734,
+          "osmName": "Aert van Nesstraat",
+          "nwbName": "Meent",
+          "nwbRoad": 185274167,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "B",
+          "alignmentCosine": 0.999491,
+          "nameEvidence": "short-source-continuation",
+          "continuation": {
+            "roadId": 601044957,
+            "name": "Aert van Nesstraat",
+            "junction": 185274199,
+            "linkLengthMetres": 19.119
+          }
+        },
+        "to": {
+          "osmWay": 7523402,
+          "osmName": "Coolsingel",
+          "nwbName": "Coolsingel",
+          "nwbRoad": 601724275,
+          "nwbAtStart": false,
+          "nwbMotorDirection": "B",
+          "alignmentCosine": 0.999709,
+          "nameEvidence": "exact",
+          "continuation": null
+        }
+      },
+      "restriction": "no_right_turn",
+      "fromNWB": 185274167,
+      "toNWB": 601724275
     },
     {
       "osmRelation": 14985911,
@@ -1073,7 +1206,9 @@
           "nwbRoad": 601077591,
           "nwbAtStart": false,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.992377
+          "alignmentCosine": 0.992377,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "reason": "missing or ambiguous name/direction/local-tangent match"
@@ -1097,7 +1232,9 @@
           "nwbRoad": 601116660,
           "nwbAtStart": false,
           "nwbMotorDirection": "B",
-          "alignmentCosine": 0.998768
+          "alignmentCosine": 0.998768,
+          "nameEvidence": "exact",
+          "continuation": null
         },
         "to": {
           "osmWay": 268261174,
@@ -1106,7 +1243,9 @@
           "nwbRoad": 601214699,
           "nwbAtStart": true,
           "nwbMotorDirection": "H",
-          "alignmentCosine": 0.999643
+          "alignmentCosine": 0.999643,
+          "nameEvidence": "exact",
+          "continuation": null
         }
       },
       "restriction": "only_right_turn",
@@ -1138,12 +1277,15 @@
     }
   ],
   "strictCandidateRelations": [
+    1312594,
     4063857,
     11231184,
     11758547,
     11783357,
     13774733,
+    14966194,
     14966195,
+    14966196,
     18990384
   ]
 }

@@ -41,7 +41,7 @@ def match_restrictions(osm,features,diagnostics=None):
             if len(local)<2:continue
             heading=bearing(local)
             if not heading:continue
-            item={'id':p['wvk_id'],'junction':junction,'point':local[0],'heading':heading,'start':start,'direction':p['rijrichtng'],'name':p.get('stt_naam')}
+            item={'id':p['wvk_id'],'junction':junction,'point':local[0],'heading':heading,'start':start,'direction':p['rijrichtng'],'name':p.get('stt_naam'),'otherJunction':p['jte_id_end' if start else 'jte_id_beg'],'length':sum(math.dist(a,b) for a,b in zip(local,local[1:])),'continuationHeading':bearing(local[::-1]),'singlePart':len(parts)==1}
             inventory['usableEndpoints']+=1
             endpoints[junction].append(item);grid[(int(local[0][0]//10),int(local[0][1]//10))].add(junction)
     inventory['junctions']=len(endpoints)
@@ -82,21 +82,39 @@ def match_restrictions(osm,features,diagnostics=None):
                     if edge['direction'] not in ('B',required):continue
                     dot=sum(a*b for a,b in zip(heading,edge['heading']))
                     nwbname,osmname=norm(edge['name']),norm(way.get('tags',{}).get('name'))
+                    name_evidence='exact' if nwbname and osmname and nwbname==osmname else 'unnamed-tight-geometry'
+                    continuation=None
                     if nwbname and osmname:
-                        if nwbname!=osmname or dot<.94:continue
+                        if nwbname==osmname:
+                            if dot<.94:continue
+                        else:
+                            # NWB may name a short junction link after the cross
+                            # street. Prove its continuation, never add an alias.
+                            if distance>2 or dot<.985 or edge['length']>25 or not edge['singlePart']:continue
+                            links=[]
+                            for adjacent in endpoints[edge['otherJunction']]:
+                                required_other='T' if (role=='from')==adjacent['start'] else 'H'
+                                if adjacent['id']==edge['id'] or norm(adjacent['name'])!=osmname or adjacent['direction'] not in ('B',required_other):continue
+                                if not edge['continuationHeading'] or -sum(a*b for a,b in zip(edge['continuationHeading'],adjacent['heading']))<.94:continue
+                                links.append(adjacent)
+                            if len(links)!=1:continue
+                            continuation={'roadId':links[0]['id'],'name':links[0]['name'],'junction':edge['otherJunction'],'linkLengthMetres':round(edge['length'],3)}
+                            name_evidence='short-source-continuation'
                     elif distance>2 or dot<.985:continue
-                    possibilities.append(dict(edge,alignmentCosine=round(dot,6)))
+                    possibilities.append(dict(edge,alignmentCosine=round(dot,6),nameEvidence=name_evidence,continuation=continuation))
             unique={e['id']:e for e in possibilities}
             if len(unique)!=1:failed=True;break
             edge=next(iter(unique.values()));matched[role]=edge['id']
-            result['matches'][role]={'osmWay':way['id'],'osmName':way.get('tags',{}).get('name'),'nwbName':edge['name'],'nwbRoad':edge['id'],'nwbAtStart':edge['start'],'nwbMotorDirection':edge['direction'],'alignmentCosine':edge['alignmentCosine']}
+            result['matches'][role]={'osmWay':way['id'],'osmName':way.get('tags',{}).get('name'),'nwbName':edge['name'],'nwbRoad':edge['id'],'nwbAtStart':edge['start'],'nwbMotorDirection':edge['direction'],'alignmentCosine':edge['alignmentCosine'],'nameEvidence':edge['nameEvidence'],'continuation':edge['continuation']}
         if failed:result['reason']='missing or ambiguous name/direction/local-tangent match';continue
         result.update({'status':'review-candidate','restriction':restriction,'nwbJunction':junction,'fromNWB':matched['from'],'toNWB':matched['to'],'junctionDistanceMetres':round(distance,3)})
     return results
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--download',action='store_true');p.add_argument('--input',type=Path);p.add_argument('--endpoint',default='https://overpass-api.de/api/interpreter');a=p.parse_args()
-    source=SOURCE/'osm-centre-turn-restrictions.json.gz'
+    p=argparse.ArgumentParser();p.add_argument('--source',type=Path);p.add_argument('--acquisition',type=Path);p.add_argument('--output',type=Path);p.add_argument('--download',action='store_true');p.add_argument('--input',type=Path);p.add_argument('--endpoint',default='https://overpass-api.de/api/interpreter');a=p.parse_args()
+    if a.source and (not a.output or not a.acquisition):p.error('Custom source requires --output and --acquisition to preserve reviewed central audit and provenance')
+    source=a.source or SOURCE/'osm-centre-turn-restrictions.json.gz'
+    if a.download and a.source:p.error('Custom retained sources are audited locally; use the municipality collector to acquire them')
     if a.input:raw=a.input.read_bytes()
     elif a.download:
         data=urllib.parse.urlencode({'data':QUERY}).encode()
@@ -109,8 +127,10 @@ def main():
     if a.download or a.input:source.write_bytes(gzip.compress(raw,mtime=0))
     features=json.loads(gzip.decompress((SOURCE/'nwb-roads.geojson.gz').read_bytes()))['features']
     inventory={};results=match_restrictions(osm,features,inventory)
-    report={'auditedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'endpoint':a.endpoint if a.download else None,'query':QUERY,'license':'OpenStreetMap ODbL-1.0; attribution OpenStreetMap contributors required before runtime use','schema':'https://wiki.openstreetmap.org/wiki/Relation:restriction','rawSha256':hashlib.sha256(raw).hexdigest(),'nwbSha256':hashlib.sha256((SOURCE/'nwb-roads.geojson.gz').read_bytes()).hexdigest(),'status':'review only, not activated; matching source geometry is not proof of legal completeness','inventory':inventory,'relations':results}
-    strict=[r for r in results if r['status']=='review-candidate' and r['junctionDistanceMetres']<=2 and all(m.get('osmName') and norm(m['osmName'])==norm(m['nwbName']) and m['alignmentCosine']>=.985 for m in r['matches'].values())]
+    acquisition=json.loads(a.acquisition.read_bytes()) if a.acquisition else None
+    if acquisition and (not acquisition.get('complete') or acquisition.get('outputSha256')!=hashlib.sha256(raw).hexdigest()):raise ValueError('Incomplete or mismatched acquisition manifest')
+    report={'auditedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'endpoint':a.endpoint if a.download else None,'query':None if a.source else QUERY,'acquisition':acquisition,'license':'OpenStreetMap ODbL-1.0; attribution OpenStreetMap contributors required before runtime use','schema':'https://wiki.openstreetmap.org/wiki/Relation:restriction','rawSha256':hashlib.sha256(raw).hexdigest(),'nwbSha256':hashlib.sha256((SOURCE/'nwb-roads.geojson.gz').read_bytes()).hexdigest(),'status':'review only, not activated; matching source geometry is not proof of legal completeness','inventory':inventory,'relations':results}
+    strict=[r for r in results if r['status']=='review-candidate' and r['junctionDistanceMetres']<=2 and all(m.get('osmName') and m.get('nameEvidence') in ('exact','short-source-continuation') and m['alignmentCosine']>=.985 for m in r['matches'].values())]
     report['strictCandidateRelations']=[r['osmRelation'] for r in strict]
-    (SOURCE/'osm-turn-restriction-audit.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({'relations':len(results),'reviewCandidates':sum(r['status']=='review-candidate' for r in results)}))
+    (a.output or SOURCE/'osm-turn-restriction-audit.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({'relations':len(results),'reviewCandidates':sum(r['status']=='review-candidate' for r in results)}))
 if __name__=='__main__':main()
