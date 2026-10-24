@@ -1,0 +1,163 @@
+{
+  "nativeTexels": true,
+  "source": "public/data/illustrated-neighbourhood/shared-18_268621_55472",
+  "sourceGLBSha256": "752493b2577040075e42021e71f7e348eab2c0cf5b3393cce04c6ebeb730f070",
+  "buildings": [
+    {
+      "bagId": "0599100000767277",
+      "sourceSha256": "752493b2577040075e42021e71f7e348eab2c0cf5b3393cce04c6ebeb730f070",
+      "output": "bag0599100000767277.glb",
+      "atlasSize": [
+        1440,
+        511
+      ],
+      "decodedRgbaBytesIncludingMips": 3920640,
+      "layout": "packed-islands",
+      "islands": 27,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671619",
+      "sourceSha256": "752493b2577040075e42021e71f7e348eab2c0cf5b3393cce04c6ebeb730f070",
+      "output": "bag0599100000671619.glb",
+      "atlasSize": [
+        860,
+        606
+      ],
+      "decodedRgbaBytesIncludingMips": 2778068,
+      "layout": "packed-islands",
+      "islands": 40,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100010058326",
+      "sourceSha256": "752493b2577040075e42021e71f7e348eab2c0cf5b3393cce04c6ebeb730f070",
+      "output": "bag0599100010058326.glb",
+      "atlasSize": [
+        1358,
+        667
+      ],
+      "decodedRgbaBytesIncludingMips": 4827004,
+      "layout": "packed-islands",
+      "islands": 71,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000760365",
+      "sourceSha256": "752493b2577040075e42021e71f7e348eab2c0cf5b3393cce04c6ebeb730f070",
+      "output": "bag0599100000760365.glb",
+      "atlasSize": [
+        479,
+        1239
+      ],
+      "decodedRgbaBytesIncludingMips": 3160844,
+      "layout": "packed-islands",
+      "islands": 22,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671684",
+      "sourceSha256": "752493b2577040075e42021e71f7e348eab2c0cf5b3393cce04c6ebeb730f070",
+      "output": "bag0599100000671684.glb",
+      "atlasSize": [
+        281,
+        1563
+      ],
+      "decodedRgbaBytesIncludingMips": 2339324,
+      "layout": "packed-islands",
+      "islands": 32,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000760366",
+      "sourceSha256": "752493b2577040075e42021e71f7e348eab2c0cf5b3393cce04c6ebeb730f070",
+      "output": "bag0599100000760366.glb",
+      "atlasSize": [
+        1072,
+        532
+      ],
+      "decodedRgbaBytesIncludingMips": 3041112,
+      "layout": "packed-islands",
+      "islands": 23,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000194804",
+      "sourceSha256": "752493b2577040075e42021e71f7e348eab2c0cf5b3393cce04c6ebeb730f070",
+      "output": "bag0599100000194804.glb",
+      "atlasSize": [
+        652,
+        461
+      ],
+      "decodedRgbaBytesIncludingMips": 1601608,
+      "layout": "packed-islands",
+      "islands": 21,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000650091",
+      "sourceSha256": "752493b2577040075e42021e71f7e348eab2c0cf5b3393cce04c6ebeb730f070",
+      "output": "bag0599100000650091.glb",
+      "atlasSize": [
+        329,
+        882
+      ],
+      "decodedRgbaBytesIncludingMips": 1546012,
+      "layout": "packed-islands",
+      "islands": 28,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000650093",
+      "sourceSha256": "752493b2577040075e42021e71f7e348eab2c0cf5b3393cce04c6ebeb730f070",
+      "output": "bag0599100000650093.glb",
+      "atlasSize": [
+        343,
+        879
+      ],
+      "decodedRgbaBytesIncludingMips": 1604976,
+      "layout": "packed-islands",
+      "islands": 20,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671632",
+      "sourceSha256": "752493b2577040075e42021e71f7e348eab2c0cf5b3393cce04c6ebeb730f070",
+      "output": "bag0599100000671632.glb",
+      "atlasSize": [
+        731,
+        615
+      ],
+      "decodedRgbaBytesIncludingMips": 2394536,
+      "layout": "packed-islands",
+      "islands": 11,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671599",
+      "sourceSha256": "752493b2577040075e42021e71f7e348eab2c0cf5b3393cce04c6ebeb730f070",
+      "output": "bag0599100000671599.glb",
+      "atlasSize": [
+        714,
+        787
+      ],
+      "decodedRgbaBytesIncludingMips": 2994728,
+      "layout": "packed-islands",
+      "islands": 24,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100010042503",
+      "sourceSha256": "752493b2577040075e42021e71f7e348eab2c0cf5b3393cce04c6ebeb730f070",
+      "output": "bag0599100010042503.glb",
+      "atlasSize": [
+        96,
+        249
+      ],
+      "decodedRgbaBytesIncludingMips": 127324,
+      "layout": "packed-islands",
+      "islands": 7,
+      "emissionCrops": []
+    }
+  ]
+}

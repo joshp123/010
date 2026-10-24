@@ -1,0 +1,104 @@
+{
+  "status": "context review only",
+  "namespace": "BAG",
+  "bagIds": [
+    "0599100000688699",
+    "0599100000688735",
+    "0599100010013248",
+    "0599100000671721",
+    "0599100000760394",
+    "0599100010060435",
+    "0599100000675880",
+    "0599100000760393",
+    "0599100000688717",
+    "0599100000688737",
+    "0599100000688731",
+    "0599100000760397",
+    "0599100000671719",
+    "0599100000688730",
+    "0599100000688683",
+    "0599100000760396",
+    "0599100000688766",
+    "0599100000675848",
+    "0599100010038677",
+    "0599100000688759",
+    "0599100000760398",
+    "0599100000675868",
+    "0599100000688707",
+    "0599100000688734",
+    "0599100010058557",
+    "0599100000671744",
+    "0599100000688753",
+    "0599100000688723"
+  ],
+  "sourceGLBSha256": "477b6407060d8468a9debca2c8ca56607253ea4ba78eba980a55422eaa89f282",
+  "sourceMunicipalSha256": "a88ba7544b0a29465df68c8ebd6dd50b0cd4246d1bdcde007077f35f236c4d10",
+  "outputGLBSha256": "b6fd6a6ccbe606effb838096d64b5354e7862c6d136cdfc982addb59bdfd5bf1",
+  "triangles": 1014,
+  "draws": 127,
+  "sourceIslandDraws": 514,
+  "originalGeometryRetained": true,
+  "originalUVsRetainedInSource": true,
+  "runtimeUVsAffineEquivalent": true,
+  "rtcAppliedOnce": true,
+  "atlasSize": [
+    1821,
+    4732
+  ],
+  "decodedRgbaBytesIncludingMips": 45946916,
+  "sourceReferencedImages": [
+    {
+      "uri": "painted-atlas-0.png",
+      "sha256": "8c5a5232f03674c53fde6c793cc3268f7c9a1b5399f48b65af181b67fb1ceed0"
+    },
+    {
+      "uri": "painted-atlas-1.png",
+      "sha256": "431f8d2662802f98898163ffc0f11b88bd942d1f0a75e672a92a85a0b9bf7313"
+    },
+    {
+      "uri": "painted-atlas-2.png",
+      "sha256": "f0b5d1ffc584d86d50aea685a9b3b1798eed593d05324977b121f6eed841d0b1"
+    },
+    {
+      "uri": "painted-atlas-3.png",
+      "sha256": "109b4fd04fc7ab7c79f75dcaf7d1642f78866da6fbf61e7957c23431091f27cb"
+    },
+    {
+      "uri": "painted-atlas-4.png",
+      "sha256": "9ba13c7332c6a694b12dce9b15418f3a29bf7774c55d9b0ad4a7660e0f27a8ee"
+    },
+    {
+      "uri": "painted-atlas-5.png",
+      "sha256": "b6936d5d1dd829ec87fc3a54cc2ef47b4037547776c392abb8719267bf53713d"
+    },
+    {
+      "uri": "painted-atlas-6.png",
+      "sha256": "e5a83ffaf36b2da8865adb60a8bc4d14090ad9617b5f67c0df296e9e3680c5c0"
+    },
+    {
+      "uri": "painted-atlas-7.png",
+      "sha256": "ec715aae9e99a44d577862c0bfe52d16f61a3270a3b8a6c2b9014ebca4c418a7"
+    },
+    {
+      "uri": "painted-atlas-8.png",
+      "sha256": "8c859ec558b402eea60181d59d8b3a8889bbecc31df7ef78d94760f0467c52f5"
+    },
+    {
+      "uri": "painted-atlas-9.png",
+      "sha256": "351a60dec3e32c2f1567700952031b587b446b78472c5c4af31f63ab7917270b"
+    }
+  ],
+  "emission": false,
+  "boundsLonLatHeight": [
+    [
+      4.4460490992040596,
+      51.90902701257733,
+      2.6495098061859608
+    ],
+    [
+      4.446644870145369,
+      51.909811160299014,
+      21.070488892495632
+    ]
+  ]
+}

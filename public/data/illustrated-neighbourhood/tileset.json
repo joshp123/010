@@ -7,10 +7,10 @@
   "root": {
     "boundingVolume": {
       "sphere": [
-        3931045.8183844527,
-        305719.6396652567,
-        4996589.508064847,
-        142.6379929811296
+        3931023.008411693,
+        305730.8164447512,
+        4996606.982258109,
+        166.67021471291284
       ]
     },
     "geometricError": 0,
@@ -33,34 +33,6 @@
       {
         "boundingVolume": {
           "sphere": [
-            3931037.1942079314,
-            305726.247081466,
-            4996597.506528041,
-            44.63467027121929
-          ]
-        },
-        "geometricError": 0,
-        "content": {
-          "uri": "adjoining32/tileset.json"
-        }
-      },
-      {
-        "boundingVolume": {
-          "sphere": [
-            3931046.3307412947,
-            305664.2102216013,
-            4996591.828479929,
-            33.01409550597135
-          ]
-        },
-        "geometricError": 0,
-        "content": {
-          "uri": "west-eight/tileset.json"
-        }
-      },
-      {
-        "boundingVolume": {
-          "sphere": [
             3930962.391945258,
             305721.51311384584,
             4996653.971230226,
@@ -70,6 +42,76 @@
         "geometricError": 0,
         "content": {
           "uri": "north18/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3930988.580885616,
+            305677.64332216355,
+            4996634.785349469,
+            82.65961832223098
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "shared-18_268619_55472/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3931037.3639448904,
+            305675.9220215228,
+            4996600.539808404,
+            48.44171484641074
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "shared-18_268619_55473/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3931037.1942079314,
+            305726.247081466,
+            4996597.506528041,
+            44.63467027121929
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "shared-18_268620_55473/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3930964.1004321184,
+            305767.6606189865,
+            4996649.9348484725,
+            35.84497530973175
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "shared-18_268621_55472/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3931034.070822707,
+            305780.14071115974,
+            4996597.412020959,
+            40.347055263262
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "shared-18_268621_55473/tileset.json"
         }
       }
     ]
