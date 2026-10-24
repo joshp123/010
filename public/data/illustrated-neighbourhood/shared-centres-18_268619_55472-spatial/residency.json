@@ -1,0 +1,150 @@
+{
+  "nativeTexels": true,
+  "source": "public/data/illustrated-neighbourhood/shared-centres-18_268619_55472",
+  "sourceGLBSha256": "236f74929b74bfcae27ed10ae33dcac355bd4b4a947b2bc521954e392c1dda07",
+  "buildings": [
+    {
+      "bagId": "0599100000671740",
+      "sourceSha256": "236f74929b74bfcae27ed10ae33dcac355bd4b4a947b2bc521954e392c1dda07",
+      "output": "bag0599100000671740.glb",
+      "atlasSize": [
+        1030,
+        427
+      ],
+      "decodedRgbaBytesIncludingMips": 2342952,
+      "layout": "packed-islands",
+      "islands": 12,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671726",
+      "sourceSha256": "236f74929b74bfcae27ed10ae33dcac355bd4b4a947b2bc521954e392c1dda07",
+      "output": "bag0599100000671726.glb",
+      "atlasSize": [
+        441,
+        1151
+      ],
+      "decodedRgbaBytesIncludingMips": 2704124,
+      "layout": "packed-islands",
+      "islands": 30,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671729",
+      "sourceSha256": "236f74929b74bfcae27ed10ae33dcac355bd4b4a947b2bc521954e392c1dda07",
+      "output": "bag0599100000671729.glb",
+      "atlasSize": [
+        558,
+        837
+      ],
+      "decodedRgbaBytesIncludingMips": 2488960,
+      "layout": "packed-islands",
+      "islands": 28,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671750",
+      "sourceSha256": "236f74929b74bfcae27ed10ae33dcac355bd4b4a947b2bc521954e392c1dda07",
+      "output": "bag0599100000671750.glb",
+      "atlasSize": [
+        305,
+        1406
+      ],
+      "decodedRgbaBytesIncludingMips": 2284656,
+      "layout": "packed-islands",
+      "islands": 20,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000656929",
+      "sourceSha256": "236f74929b74bfcae27ed10ae33dcac355bd4b4a947b2bc521954e392c1dda07",
+      "output": "bag0599100000656929.glb",
+      "atlasSize": [
+        653,
+        873
+      ],
+      "decodedRgbaBytesIncludingMips": 3037740,
+      "layout": "packed-islands",
+      "islands": 13,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671724",
+      "sourceSha256": "236f74929b74bfcae27ed10ae33dcac355bd4b4a947b2bc521954e392c1dda07",
+      "output": "bag0599100000671724.glb",
+      "atlasSize": [
+        919,
+        452
+      ],
+      "decodedRgbaBytesIncludingMips": 2213976,
+      "layout": "packed-islands",
+      "islands": 14,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000638397",
+      "sourceSha256": "236f74929b74bfcae27ed10ae33dcac355bd4b4a947b2bc521954e392c1dda07",
+      "output": "bag0599100000638397.glb",
+      "atlasSize": [
+        1078,
+        1187
+      ],
+      "decodedRgbaBytesIncludingMips": 6820916,
+      "layout": "packed-islands",
+      "islands": 84,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671734",
+      "sourceSha256": "236f74929b74bfcae27ed10ae33dcac355bd4b4a947b2bc521954e392c1dda07",
+      "output": "bag0599100000671734.glb",
+      "atlasSize": [
+        322,
+        1247
+      ],
+      "decodedRgbaBytesIncludingMips": 2139828,
+      "layout": "packed-islands",
+      "islands": 15,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671730",
+      "sourceSha256": "236f74929b74bfcae27ed10ae33dcac355bd4b4a947b2bc521954e392c1dda07",
+      "output": "bag0599100000671730.glb",
+      "atlasSize": [
+        301,
+        1542
+      ],
+      "decodedRgbaBytesIncludingMips": 2472244,
+      "layout": "packed-islands",
+      "islands": 28,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671728",
+      "sourceSha256": "236f74929b74bfcae27ed10ae33dcac355bd4b4a947b2bc521954e392c1dda07",
+      "output": "bag0599100000671728.glb",
+      "atlasSize": [
+        1242,
+        346
+      ],
+      "decodedRgbaBytesIncludingMips": 2290428,
+      "layout": "packed-islands",
+      "islands": 22,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000671727",
+      "sourceSha256": "236f74929b74bfcae27ed10ae33dcac355bd4b4a947b2bc521954e392c1dda07",
+      "output": "bag0599100000671727.glb",
+      "atlasSize": [
+        580,
+        885
+      ],
+      "decodedRgbaBytesIncludingMips": 2736236,
+      "layout": "packed-islands",
+      "islands": 15,
+      "emissionCrops": []
+    }
+  ]
+}

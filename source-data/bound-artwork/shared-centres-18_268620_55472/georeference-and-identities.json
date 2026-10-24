@@ -1,0 +1,182 @@
+{
+  "authorship": "Written by AI on 2026-10-24 by model GPT-6",
+  "geometry_asset": "source-bound-row.glb",
+  "geometry_asset_sha256": "462024146107a8f260c93937fe8fcde9a4d53fb3625fd474bf31c913509eb61b",
+  "root_node_matrix_column_major": [
+    -0.07753792694929008,
+    0.0,
+    -0.9969894030953422,
+    0.0,
+    0.6150405042297327,
+    0.7870433183731852,
+    -0.04783297148370899,
+    0.0,
+    0.7846738481950593,
+    -0.6168977346401308,
+    -0.06102570732594689,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "rtc_ecef_m": [
+    3930971.437245985,
+    305719.77514968335,
+    4996635.848394821
+  ],
+  "identity_namespace": "BAG",
+  "batch_identity": [
+    {
+      "batchId": 0,
+      "sourceId": "BAG_0599100000656926"
+    },
+    {
+      "batchId": 1,
+      "sourceId": "BAG_0599100000671705"
+    },
+    {
+      "batchId": 2,
+      "sourceId": "BAG_0599100000671718"
+    },
+    {
+      "batchId": 3,
+      "sourceId": "BAG_0599100000671720"
+    },
+    {
+      "batchId": 4,
+      "sourceId": "BAG_0599100000760369"
+    },
+    {
+      "batchId": 5,
+      "sourceId": "BAG_0599100000656917"
+    },
+    {
+      "batchId": 6,
+      "sourceId": "BAG_0599100000671694"
+    },
+    {
+      "batchId": 7,
+      "sourceId": "BAG_0599100000656923"
+    },
+    {
+      "batchId": 8,
+      "sourceId": "BAG_0599100000656921"
+    },
+    {
+      "batchId": 9,
+      "sourceId": "BAG_0599100000760381"
+    },
+    {
+      "batchId": 10,
+      "sourceId": "BAG_0599100000671716"
+    },
+    {
+      "batchId": 11,
+      "sourceId": "BAG_0599100000760368"
+    },
+    {
+      "batchId": 12,
+      "sourceId": "BAG_0599100010059655"
+    },
+    {
+      "batchId": 13,
+      "sourceId": "BAG_0599100000760370"
+    },
+    {
+      "batchId": 14,
+      "sourceId": "BAG_0599100000700986"
+    },
+    {
+      "batchId": 15,
+      "sourceId": "BAG_0599100010057617"
+    },
+    {
+      "batchId": 16,
+      "sourceId": "BAG_0599100000656925"
+    },
+    {
+      "batchId": 17,
+      "sourceId": "BAG_0599100000656924"
+    }
+  ],
+  "external_images": [
+    {
+      "uri": "painted-atlas-0.png",
+      "sha256": "3ef9d66024f40484d73e34cfcddf0506dddd185c4b9ad3af4a7690ff55149d65",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-1.png",
+      "sha256": "36b20bcf9d63575bdf972cfadd2aaf830521e382a9216262f59639491207ab3a",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-2.png",
+      "sha256": "10f96665843ddf6f5c3c2e02a0cce70cb45f9f77056ce3b1c64aacadacae9a9c",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-3.png",
+      "sha256": "f30518a61acf7e139e7a26fa9e0bc63106b9b7f8046c96e9a0813e8e871d98ac",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-4.png",
+      "sha256": "77bdcfb149e94ae882f9df44c685d8d8accac88a35da71306b67d0e8dac75a9c",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-5.png",
+      "sha256": "09fce7e2967b60fe8e9ef57149fa8f8a1e6c4939b0a06ce511520936b9c4836a",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-6.png",
+      "sha256": "7918eedbc2ca0191922698e40bc63ebb78934ae059bd38d569799d1887497215",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-7.png",
+      "sha256": "60ded248f7903cf6107dd110610fd35f0dd735a2d38905272d01df6b6a8996ab",
+      "dimensions": [
+        512,
+        512
+      ]
+    },
+    {
+      "uri": "painted-atlas-8.png",
+      "sha256": "c9c8ef66ef30d072f2feeb9357bf68f0c71359ba78bde9867e44136a45ee1f2d",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "triangles": 1010,
+  "source_decoded_sha256": "d898d44dc9d6440779d5c5b9784da9e9361a771b344e630ca523749c6c6ad596",
+  "source_file": "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/raw/18_268620_55472.b3dm",
+  "source_attribution": "Gemeente Rotterdam, CC BY 4.0",
+  "status": "Source-bound visual candidate; no acceptance claim"
+}

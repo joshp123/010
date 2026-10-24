@@ -1,0 +1,88 @@
+{
+  "status": "context review only",
+  "namespace": "BAG",
+  "bagIds": [
+    "0599100000671811",
+    "0599100000760478",
+    "0599100000760474",
+    "0599100000760489",
+    "0599100000671723",
+    "0599100000671589",
+    "0599100000760481",
+    "0599100000670784",
+    "0599100000283662",
+    "0599100000140595",
+    "0599100000760476",
+    "0599100000760479",
+    "0599100000671567",
+    "0599100000603392",
+    "0599100000690499",
+    "0599100000760477"
+  ],
+  "sourceGLBSha256": "92ec2a772e5e0738fb3f9d6b1074615f4893fd105c20f456f2f36c84144ef043",
+  "sourceMunicipalSha256": "432baec1beb1ddc6b33debf9328764860d308761a6b1cae2dd219220e3d08f20",
+  "outputGLBSha256": "50cc6fe0f60a9e1438fb65352604ef85a578ea3eb31d251648e1149b3f2062e4",
+  "triangles": 938,
+  "draws": 82,
+  "sourceIslandDraws": 420,
+  "originalGeometryRetained": true,
+  "originalUVsRetainedInSource": true,
+  "runtimeUVsAffineEquivalent": true,
+  "rtcAppliedOnce": true,
+  "atlasSize": [
+    1621,
+    4250
+  ],
+  "decodedRgbaBytesIncludingMips": 36733640,
+  "sourceReferencedImages": [
+    {
+      "uri": "painted-atlas-0.png",
+      "sha256": "9c344b7730bcf56af5d62e8761715f68bf9d0bda94ae26d5c5ea9f50f893855d"
+    },
+    {
+      "uri": "painted-atlas-1.png",
+      "sha256": "b01a184e416df76be7aad410d2f6b2422b7ab7abd2e2a8bf1c9ad6fc9ddde8eb"
+    },
+    {
+      "uri": "painted-atlas-2.png",
+      "sha256": "d24a634fe5769953665c05393c2405bee47640bb9826bc12dd6be96bb824fe1d"
+    },
+    {
+      "uri": "painted-atlas-3.png",
+      "sha256": "831dc6427fbd479eace95e2f62433ef22d5dc651718393df1d636d39c162b4fa"
+    },
+    {
+      "uri": "painted-atlas-4.png",
+      "sha256": "f62484066fc29b916f0b9d28b32ba62ea1178b390bca213a3664a382594f19d9"
+    },
+    {
+      "uri": "painted-atlas-5.png",
+      "sha256": "ca55eb3db1cc49ee1c3d1bff75c41d3c668e77772c40ab1598e009b79672d6fe"
+    },
+    {
+      "uri": "painted-atlas-6.png",
+      "sha256": "257342a7ebeef8269c1129642ecdcfc4755a940744702d5ce8e29c7452adf0fd"
+    },
+    {
+      "uri": "painted-atlas-7.png",
+      "sha256": "e1d42171b9108ba74a14155f01c3cf1d44d31b7774d75afde8fe843d3c077821"
+    },
+    {
+      "uri": "painted-atlas-8.png",
+      "sha256": "ed49cbc2df82b4ab6eb19f961a49e1da53855117d84276a2dcef40af7d65dd21"
+    }
+  ],
+  "emission": false,
+  "boundsLonLatHeight": [
+    [
+      4.447526678125916,
+      51.90904442660039,
+      2.0836998391896486
+    ],
+    [
+      4.448189377471182,
+      51.90968646418311,
+      22.096989452838898
+    ]
+  ]
+}

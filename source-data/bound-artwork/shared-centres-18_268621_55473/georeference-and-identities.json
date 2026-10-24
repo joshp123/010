@@ -1,0 +1,174 @@
+{
+  "authorship": "Written by AI on 2026-10-24 by model GPT-6",
+  "geometry_asset": "source-bound-row.glb",
+  "geometry_asset_sha256": "92ec2a772e5e0738fb3f9d6b1074615f4893fd105c20f456f2f36c84144ef043",
+  "root_node_matrix_column_major": [
+    -0.07754987508896832,
+    0.0,
+    -0.9969884737917913,
+    0.0,
+    0.615049334599407,
+    0.787035925275481,
+    -0.04784107371907091,
+    0.0,
+    0.7846657459597124,
+    -0.6169071666999558,
+    -0.061034537695644174,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "rtc_ecef_m": [
+    3931027.72193282,
+    305771.54783719813,
+    4996588.717016839
+  ],
+  "identity_namespace": "BAG",
+  "batch_identity": [
+    {
+      "batchId": 0,
+      "sourceId": "BAG_0599100000671811"
+    },
+    {
+      "batchId": 1,
+      "sourceId": "BAG_0599100000760478"
+    },
+    {
+      "batchId": 2,
+      "sourceId": "BAG_0599100000760474"
+    },
+    {
+      "batchId": 3,
+      "sourceId": "BAG_0599100000760489"
+    },
+    {
+      "batchId": 4,
+      "sourceId": "BAG_0599100000671723"
+    },
+    {
+      "batchId": 5,
+      "sourceId": "BAG_0599100000671589"
+    },
+    {
+      "batchId": 6,
+      "sourceId": "BAG_0599100000760481"
+    },
+    {
+      "batchId": 7,
+      "sourceId": "BAG_0599100000670784"
+    },
+    {
+      "batchId": 8,
+      "sourceId": "BAG_0599100000283662"
+    },
+    {
+      "batchId": 9,
+      "sourceId": "BAG_0599100000140595"
+    },
+    {
+      "batchId": 10,
+      "sourceId": "BAG_0599100000760476"
+    },
+    {
+      "batchId": 11,
+      "sourceId": "BAG_0599100000760479"
+    },
+    {
+      "batchId": 12,
+      "sourceId": "BAG_0599100000671567"
+    },
+    {
+      "batchId": 13,
+      "sourceId": "BAG_0599100000603392"
+    },
+    {
+      "batchId": 14,
+      "sourceId": "BAG_0599100000690499"
+    },
+    {
+      "batchId": 15,
+      "sourceId": "BAG_0599100000760477"
+    }
+  ],
+  "external_images": [
+    {
+      "uri": "painted-atlas-0.png",
+      "sha256": "9c344b7730bcf56af5d62e8761715f68bf9d0bda94ae26d5c5ea9f50f893855d",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-1.png",
+      "sha256": "b01a184e416df76be7aad410d2f6b2422b7ab7abd2e2a8bf1c9ad6fc9ddde8eb",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-2.png",
+      "sha256": "d24a634fe5769953665c05393c2405bee47640bb9826bc12dd6be96bb824fe1d",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-3.png",
+      "sha256": "831dc6427fbd479eace95e2f62433ef22d5dc651718393df1d636d39c162b4fa",
+      "dimensions": [
+        512,
+        256
+      ]
+    },
+    {
+      "uri": "painted-atlas-4.png",
+      "sha256": "f62484066fc29b916f0b9d28b32ba62ea1178b390bca213a3664a382594f19d9",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-5.png",
+      "sha256": "ca55eb3db1cc49ee1c3d1bff75c41d3c668e77772c40ab1598e009b79672d6fe",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-6.png",
+      "sha256": "257342a7ebeef8269c1129642ecdcfc4755a940744702d5ce8e29c7452adf0fd",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-7.png",
+      "sha256": "e1d42171b9108ba74a14155f01c3cf1d44d31b7774d75afde8fe843d3c077821",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-8.png",
+      "sha256": "ed49cbc2df82b4ab6eb19f961a49e1da53855117d84276a2dcef40af7d65dd21",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "triangles": 938,
+  "source_decoded_sha256": "432baec1beb1ddc6b33debf9328764860d308761a6b1cae2dd219220e3d08f20",
+  "source_file": "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/raw/18_268621_55473.b3dm",
+  "source_attribution": "Gemeente Rotterdam, CC BY 4.0",
+  "status": "Source-bound visual candidate; no acceptance claim"
+}

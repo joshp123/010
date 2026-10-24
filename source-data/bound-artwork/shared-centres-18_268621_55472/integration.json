@@ -1,0 +1,76 @@
+{
+  "status": "context review only",
+  "namespace": "BAG",
+  "bagIds": [
+    "0599100000767277",
+    "0599100000194804",
+    "0599100000671619",
+    "0599100010058326",
+    "0599100010042503",
+    "0599100000760365",
+    "0599100000671632",
+    "0599100000671684",
+    "0599100000671599",
+    "0599100000650091",
+    "0599100000650093",
+    "0599100000760366"
+  ],
+  "sourceGLBSha256": "649cbee0b6affaa4291142a6f969e22e17214713a2e498905b6aa5ed75811c95",
+  "sourceMunicipalSha256": "5489aaa793e8812ae228977fe81e5515265a9455e79bc399c3b15e2c5b8a6f4b",
+  "outputGLBSha256": "752493b2577040075e42021e71f7e348eab2c0cf5b3393cce04c6ebeb730f070",
+  "triangles": 720,
+  "draws": 59,
+  "sourceIslandDraws": 328,
+  "originalGeometryRetained": true,
+  "originalUVsRetainedInSource": true,
+  "runtimeUVsAffineEquivalent": true,
+  "rtcAppliedOnce": true,
+  "atlasSize": [
+    4548,
+    1252
+  ],
+  "decodedRgbaBytesIncludingMips": 30366216,
+  "sourceReferencedImages": [
+    {
+      "uri": "painted-atlas-0.png",
+      "sha256": "fa57247ec26abfabde3e67ffb459eb62c7cb3c745c38bd816d2b8755701631ab"
+    },
+    {
+      "uri": "painted-atlas-1.png",
+      "sha256": "b3e2f253d5c7e51f922f05d4d99487eaa7e0658195112bc37b913eba75058658"
+    },
+    {
+      "uri": "painted-atlas-2.png",
+      "sha256": "7729e2abafd54a999c2789bc4bb0864be79ae23bc881c527c5370075d050aa56"
+    },
+    {
+      "uri": "painted-atlas-3.png",
+      "sha256": "19a6059397232cae993519660cc544c9c4b9d3a470ffffefcbc85c72d80689d4"
+    },
+    {
+      "uri": "painted-atlas-4.png",
+      "sha256": "f1b52f76142dfa54664d56faaf5e790f7aca87abf78ff9546edb2e6192f3f187"
+    },
+    {
+      "uri": "painted-atlas-5.png",
+      "sha256": "36aeb3f7b650d861d82d78b52d36f041c7f0fac9796cee70c2e077ecf41a7bf1"
+    },
+    {
+      "uri": "painted-atlas-6.png",
+      "sha256": "e3c12e36c0f1d96e5028b6bf1572c99377272fff02e174b5e2f0f08d9d4b2efd"
+    }
+  ],
+  "emission": false,
+  "boundsLonLatHeight": [
+    [
+      4.44735134117191,
+      51.909926780344044,
+      2.177779803983867
+    ],
+    [
+      4.448172150199169,
+      51.910414627408336,
+      23.144588717259467
+    ]
+  ]
+}

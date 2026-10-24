@@ -45,7 +45,7 @@
       ]
     },
     {
-      "uri": "shared-18_268619_55472/tileset.json",
+      "uri": "shared-centres-18_268619_55472/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000671740",
@@ -68,7 +68,7 @@
       ]
     },
     {
-      "uri": "shared-18_268619_55473/tileset.json",
+      "uri": "shared-centres-18_268619_55473/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000688699",
@@ -108,7 +108,7 @@
       ]
     },
     {
-      "uri": "shared-18_268620_55473/tileset.json",
+      "uri": "shared-centres-18_268620_55473/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100100019945",
@@ -152,7 +152,7 @@
       ]
     },
     {
-      "uri": "shared-18_268621_55472/tileset.json",
+      "uri": "shared-centres-18_268621_55472/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000767277",
@@ -176,7 +176,7 @@
       ]
     },
     {
-      "uri": "shared-18_268621_55473/tileset.json",
+      "uri": "shared-centres-18_268621_55473/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000671811",
