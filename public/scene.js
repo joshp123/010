@@ -26,7 +26,7 @@ const LAYERS = [
   ['lamps', './data/lamps/tileset.json'],
   ['lamps', './data/supplementary-lamps/tileset.json'],
   ['buildings', './data/building-index/tileset.json'],
-  ['ground', '0025cb58-e0f5-4169-bb4c-5339a3bc2a7e'],
+  ['ground', './data/native-ground-bounds/tileset.json'],
   ['bridges', '06595036-c78e-4081-ab25-e8f88b66bc19'],
   ['bridgeSurfaces', './data/bridge-surfaces/tileset.json'],
   ['tanks', 'c70023a7-2878-41e9-bb81-a7c454bc310a'],
