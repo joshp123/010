@@ -1,0 +1,43 @@
+{
+  "preparedAt": "2026-10-24T07:42:51.374565+00:00",
+  "source": "https://downloads.rijkswaterstaatdata.nl/wkd/geogegevens/CSV-bestand/Verkeerstypen/01-10-2026.zip",
+  "sourceLicense": "WKD and NWB CC0; boundary and BRT CC BY 4.0",
+  "runtimePieces": 27701,
+  "kilometres": 2168.7140559133254,
+  "directionInterpretation": "Explicit WKD FIETS_H/T J/N only; never inherit motor direction",
+  "processing": "Exact WVK_ID join, exclude NWB records newer than WKD snapshot; source vertices and junction IDs; existing municipality/tunnel/negative-level exclusions; no geometric joining",
+  "boundarySha256": "8ad975faec184b943517adc582316edee8251a9d7114481a0b9b29de00ffe404",
+  "tunnelMaskSourceSha256": "2ffa63fe01878f4c05732c295a6587027ddbeceb927fdf38f68a8d399ab9b37d",
+  "outputSha256": "d421710e629c56076ab75ff8b951b17706d9ca19330e5c7a3198a4ead87689a8",
+  "outputBytes": 1176760,
+  "accessSelection": {
+    "RB": 17605,
+    "notEligibleOrNotPermitted": 8765,
+    "noWKDRecord": 1822,
+    "PAR": 603,
+    "ERF": 496,
+    "NRB": 33,
+    "VBW": 11,
+    "HR": 43,
+    "VBR": 1,
+    "GRB": 3,
+    "OPR": 2,
+    "AFR": 1,
+    "FP": 8247,
+    "PP": 579,
+    "VP": 18,
+    "PR": 18,
+    "BVP": 3,
+    "VDV": 1,
+    "PST": 1,
+    "PKB": 3,
+    "OVB": 3
+  },
+  "accessSourceSha256": "474b44339a1099323235c9dfd4b402fd51a7246613c49c7ccc98102dd6166e45",
+  "inputSha256": {
+    "nwb-roads.geojson.gz": "f9a8276b154d16eb2c7fd2b0a27f604ff660df3a7c1923a5ec5c22c1de6688ce",
+    "nwb-cycleways.geojson.gz": "9a348e4cc395f7f6b95ccc7447a8c94eac0214601b38748398a1d35d4b84d780",
+    "nwb-cycling-access-extra.geojson.gz": "7a11fe69c11ed7a19656b5748b18e9a1894f9d82e308d81d76d211627a22faad",
+    "wkd-cycling-access.csv.gz": "474b44339a1099323235c9dfd4b402fd51a7246613c49c7ccc98102dd6166e45"
+  }
+}

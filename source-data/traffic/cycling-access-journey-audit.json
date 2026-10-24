@@ -1,0 +1,316 @@
+{
+  "source": "WKD bicycle access + retained NWB exact IDs",
+  "network": {
+    "directedEdges": 50764,
+    "connections": 85772,
+    "rejectedEndpointGaps": 0,
+    "rejectedHeightGaps": 0,
+    "rejectedReversals": 2424,
+    "terminalEdges": 4166,
+    "components": 693,
+    "largestComponentEdges": 40156
+  },
+  "areas": {
+    "centre": {
+      "trips": 68,
+      "mixed": 62,
+      "example": [
+        {
+          "id": 601114151,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 601114152,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 600688844,
+          "direction": -1,
+          "class": "FP"
+        },
+        {
+          "id": 600491384,
+          "direction": -1,
+          "class": "FP"
+        },
+        {
+          "id": 601116538,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 601116539,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 601116521,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 601116522,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 600909887,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 185274085,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 185274084,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 600904603,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 600492008,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 600491383,
+          "direction": -1,
+          "class": "FP"
+        },
+        {
+          "id": 600651363,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 600518517,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 600642805,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 600675930,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 600506292,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 600492032,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 600676598,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 600729090,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 186274142,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 600909923,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 600909922,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 186274110,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 186275041,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 186275032,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 600729110,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 600729109,
+          "direction": 1,
+          "class": "RB"
+        }
+      ]
+    },
+    "Hoek": {
+      "trips": 95,
+      "mixed": 85,
+      "example": [
+        {
+          "id": 601106486,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 601117128,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 600986665,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 600542879,
+          "direction": 1,
+          "class": "FP"
+        },
+        {
+          "id": 600710941,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 600710940,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 137288022,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 137288021,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 137288020,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 138288050,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 138288049,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 138288048,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 138288047,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 138288046,
+          "direction": 1,
+          "class": "RB"
+        },
+        {
+          "id": 138288083,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 138288084,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 138288086,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 138288040,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 138288041,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 138288042,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 138288043,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 138288044,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 138288045,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 138287042,
+          "direction": -1,
+          "class": "RB"
+        },
+        {
+          "id": 138287016,
+          "direction": -1,
+          "class": "RB"
+        }
+      ]
+    }
+  },
+  "bridge": [
+    {
+      "id": 600491271,
+      "direction": 1,
+      "edges": 25,
+      "metres": 2349
+    },
+    {
+      "id": 601435887,
+      "direction": -1,
+      "edges": 27,
+      "metres": 2425
+    }
+  ]
+}

@@ -263,7 +263,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   document.addEventListener('visibilitychange', pauseTraffic); reducedMotion.addEventListener('change', pauseTraffic); pauseTraffic();
   const trafficReady = traffic.load().then(() => { trafficState = 'ready'; requestRender(); }).catch(error => { trafficState = 'error'; console.warn('010: simulated road traffic unavailable', error); throw error; });
   trafficReady.catch(() => {});
-  const cyclistsReady = cyclists.load().then(() => { cyclistsState = 'ready'; requestRender(); }).catch(error => { cyclistsState = 'error'; console.warn('010: simulated cyclists unavailable', error); throw error; });
+  const cyclistsReady = cyclists.load('./data/traffic/cycleways-wkd.pb.gz').then(() => { cyclistsState = 'ready'; requestRender(); }).catch(error => { cyclistsState = 'error'; console.warn('010: simulated cyclists unavailable', error); throw error; });
   cyclistsReady.catch(() => {});
   let metroState = 'loading';
   const metroReady = transit.loadMetro().then(() => {
