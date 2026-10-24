@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { rightHandOffset, turnWeight, safeStep, followingDistance, speedForRoadClass } from './traffic-motion.js';
 
 class RoadReader {
   constructor(bytes) { this.bytes = bytes; this.offset = 0; }
@@ -68,7 +69,8 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
   const frustum = new THREE.Frustum(), cameraMatrix = new THREE.Matrix4();
   let sourceNetwork = null, roads = [], outgoing = new Map(), candidates = [], cars = [];
   let span = 1700, viewportHeight = 900, hasView = false, enabled = true, paused = false, lastTime = null, elapsed = 0, sequence = 1;
-  let desiredCount = 0;
+  let desiredCount = 0, seeded = false;
+  const nextPosition = new THREE.Vector3();
 
   function random() { sequence = (Math.imul(sequence, 1664525) + 1013904223) >>> 0; return sequence / 4294967296; }
   function inside(point) { return !hasView || frustum.containsPoint(point); }
@@ -80,37 +82,58 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     tangent.subVectors(end, start);
   }
 
-  function setRoads(network) {
+  function setRoads(network, preserveCars = false) {
+    const previousCars = preserveCars ? cars : [];
     sourceNetwork = network; roads = []; outgoing = new Map(); cars = []; lastTime = null;
     for (const source of network.roads) {
+      if (source.coordinates.length < 2 || ![1, 2, 3].includes(source.direction)) continue;
       const points = source.coordinates.map(([longitude, latitude]) => place(latitude, longitude, .2, { source: 'NWB', roadId: source.id, roadClass: source.roadClass }));
       const distances = [0];
-      for (let index = 1; index < points.length; index++) distances.push(distances.at(-1) + points[index].distanceTo(points[index - 1]));
-      const road = { ...source, points, distances, length: distances.at(-1), bounds: new THREE.Box3().setFromPoints(points).expandByScalar(5) };
+      for (let index = 1; index < points.length; index++) distances.push(distances.at(-1) + Math.hypot(points[index].x - points[index - 1].x, points[index].z - points[index - 1].z));
+      if (distances.at(-1) < 1) continue;
+      const road = { ...source, sourceIndex: roads.length, points, distances, length: distances.at(-1), bounds: new THREE.Box3().setFromPoints(points).expandByScalar(5) };
       roads.push(road);
       for (const direction of source.direction === 3 ? [1, -1] : [source.direction === 1 ? 1 : -1]) {
         const start = direction === 1 ? road.start : road.end;
         if (start) { if (!outgoing.has(start)) outgoing.set(start, []); outgoing.get(start).push({ road, direction }); }
       }
     }
+    if (preserveCars) {
+      cars = previousCars.flatMap(car => {
+        const road = roads[car.road.sourceIndex];
+        if (!road || road.id !== car.road.id) return [];
+        return [{ ...car, road, distance: car.distance / car.road.length * road.length, next: car.next ? { ...car.next, road: roads[car.next.road.sourceIndex] } : car.next }];
+      });
+    } else seeded = false;
     selectRoads(); render();
   }
 
   function nextRoad(car) {
     const end = car.direction === 1 ? car.road.end : car.road.start;
     const endpoint = car.direction === 1 ? car.road.points.at(-1) : car.road.points[0];
-    const options = (outgoing.get(end) || []).filter(next => next.road !== car.road && endpoint.distanceTo(next.direction === 1 ? next.road.points[0] : next.road.points.at(-1)) <= .5);
-    return options.length ? options[Math.floor(random() * options.length)] : null;
+    const incoming = car.direction === 1
+      ? endpoint.clone().sub(car.road.points.at(-2))
+      : endpoint.clone().sub(car.road.points[1]);
+    const options = (outgoing.get(end) || []).flatMap(next => {
+      if (next.road === car.road || next.road.id === car.road.id) return [];
+      const start = next.direction === 1 ? next.road.points[0] : next.road.points.at(-1);
+      if (Math.hypot(endpoint.x - start.x, endpoint.z - start.z) > .5) return [];
+      const forward = (next.direction === 1 ? next.road.points[1] : next.road.points.at(-2)).clone().sub(start);
+      const weight = turnWeight([incoming.x, incoming.z], [forward.x, forward.z]);
+      return weight ? [{ ...next, weight }] : [];
+    });
+    let choice = random() * options.reduce((sum, next) => sum + next.weight, 0);
+    return options.find(next => (choice -= next.weight) <= 0) || null;
   }
 
   function selectRoads() {
     candidates = roads.filter(road => !hasView || frustum.intersectsBox(road.bounds));
     desiredCount = Math.min(maximumVehicles, Math.round(candidates.reduce((length, road) => length + road.length, 0) * vehiclesPerKilometre / 1000));
     cars = cars.filter(car => { locate(car.road, car.distance); return inside(position); }).slice(0, desiredCount);
-    populate();
+    populate(true); seeded = true;
   }
 
-  function populate() {
+  function populate(allowInterior = false) {
     if (!candidates.length || !group.visible) return;
     let attempts = 0;
     while (cars.length < desiredCount && attempts++ < desiredCount * 12) {
@@ -118,8 +141,16 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
       locate(road, distance);
       if (!inside(position)) continue;
       const direction = road.direction === 3 ? random() > .5 ? 1 : -1 : road.direction === 1 ? 1 : -1;
-      const motorway = road.roadClass === 'HR';
-      cars.push({ road, distance, direction, speed: motorway ? 16 + random() * 9 : 5 + random() * 5, color: PALETTE[Math.floor(random() * PALETTE.length)] });
+      // After a view change seed its roads once. Replacement traffic must enter at
+      // the view edge; a dead-end car no longer teleports to a random visible street.
+      if (!allowInterior && seeded) {
+        nextPosition.copy(position).addScaledVector(tangent.clone().normalize(), -direction * 25);
+        if (!hasView || inside(nextPosition)) continue;
+      }
+      if (cars.some(car => car.road === road && Math.abs(car.distance - distance) < 14)) continue;
+      cars.push({ road, distance, direction, speed: 0, cruise: speedForRoadClass(road.roadClass) * (.85 + random() * .3),
+        heading: Math.atan2(tangent.x * direction, tangent.z * direction), age: allowInterior ? 1 : 0,
+        color: PALETTE[Math.floor(random() * PALETTE.length)] });
     }
   }
 
@@ -128,10 +159,14 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     for (const car of cars) {
       locate(car.road, car.distance);
       if (!inside(position)) continue;
-      // No lane or corner interpolation: every centre stays on a source segment.
-      const scale = THREE.MathUtils.clamp(2 * span / viewportHeight / 4.2, 1, 2);
+      const [laneX, laneZ] = rightHandOffset(tangent.x, tangent.z, car.direction, car.distance, car.road.length, car.road.direction === 3);
+      position.x += laneX; position.z += laneZ;
+      // Keep city vehicles in scale; zoom must not turn cars into buses.
+      const endDistance = car.direction === 1 ? car.road.length - car.distance : car.distance;
+      const fade = Math.min(1, car.age * 2, car.next === null && car.ending ? endDistance / 8 : 1);
+      const scale = Math.max(0, fade);
       transform.position.copy(position); transform.position.y += .7 * scale;
-      transform.rotation.set(0, Math.atan2(tangent.x * car.direction, tangent.z * car.direction), 0);
+      transform.rotation.set(0, car.heading, 0);
       transform.scale.set(1.75 * scale, 1.4 * scale, 4.2 * scale); transform.updateMatrix(); body.setMatrixAt(count, transform.matrix);
       body.setColorAt(count, color.set(car.color));
       transform.position.y += .72 * scale; transform.scale.set(1.45 * scale, .35 * scale, 2.25 * scale); transform.updateMatrix(); roof.setMatrixAt(count, transform.matrix);
@@ -164,26 +199,52 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
       selectRoads(); render();
     },
     advance(timeSeconds) {
-      const delta = lastTime === null ? 0 : Math.max(0, timeSeconds - lastTime); lastTime = timeSeconds;
+      const delta = safeStep(lastTime === null ? 0 : timeSeconds - lastTime); lastTime = timeSeconds;
       if (paused || !group.visible || !roads.length || !cars.length) return false;
       elapsed += delta;
+      const junctionReservations = new Map();
       cars = cars.filter(car => {
+        car.age += delta;
+        let endDistance = car.direction === 1 ? car.road.length - car.distance : car.distance;
+        if (endDistance < 30 && car.next === undefined) {
+          car.next = nextRoad(car); car.ending = !car.next;
+        }
+        let targetSpeed = car.cruise;
+        // Brake into turns. Direction choices remain illustrative, not traffic rules.
+        if (car.next && car.next.weight < 5) targetSpeed = Math.min(targetSpeed, 3.5 + endDistance * .25);
+        for (const other of cars) {
+          if (other === car || other.road !== car.road || other.direction !== car.direction) continue;
+          const gap = (other.distance - car.distance) * car.direction;
+          if (gap > 0 && gap < followingDistance(car.speed)) targetSpeed = Math.min(targetSpeed, Math.max(0, (gap - 5.5) / 1.4));
+        }
+        const junction = car.direction === 1 ? car.road.end : car.road.start;
+        if (junction && endDistance < 10 && !car.ending) {
+          if (junctionReservations.has(junction)) targetSpeed = Math.min(targetSpeed, Math.max(0, (endDistance - 3) * .6));
+          else junctionReservations.set(junction, car);
+        }
+        car.speed += THREE.MathUtils.clamp(targetSpeed - car.speed, -6 * delta, 2 * delta);
         let remaining = delta * car.speed;
         while (remaining > 0) {
           const available = car.direction === 1 ? car.road.length - car.distance : car.distance;
           if (remaining < available) { car.distance += remaining * car.direction; break; }
           remaining -= available;
-          const next = nextRoad(car);
+          const next = car.next === undefined ? nextRoad(car) : car.next;
           if (!next) return false;
           car.road = next.road; car.direction = next.direction; car.distance = car.direction === 1 ? 0 : car.road.length;
+          car.next = undefined; car.ending = false;
+          car.cruise = speedForRoadClass(car.road.roadClass);
         }
-        locate(car.road, car.distance); return inside(position);
+        locate(car.road, car.distance);
+        const desiredHeading = Math.atan2(tangent.x * car.direction, tangent.z * car.direction);
+        const angle = Math.atan2(Math.sin(desiredHeading - car.heading), Math.cos(desiredHeading - car.heading));
+        car.heading += THREE.MathUtils.clamp(angle, -2.8 * delta, 2.8 * delta);
+        return inside(position);
       });
       populate(); render(); return cars.length > 0;
     },
     setPaused(value) { paused = value; lastTime = null; requestRender(); },
     setEnabled(value) { enabled = value; group.visible = enabled && span <= maximumSpan; lastTime = null; if (enabled) { selectRoads(); render(); } else requestRender(); },
-    refreshProjection() { if (sourceNetwork) setRoads(sourceNetwork); },
+    refreshProjection() { if (sourceNetwork) setRoads(sourceNetwork, true); },
     statistics,
     dispose() { group.removeFromParent(); group.clear(); body.dispose(); roof.dispose(); geometry.dispose(); material.dispose(); roofMaterial.dispose(); roads = []; cars = []; outgoing.clear(); },
   };
