@@ -159,11 +159,11 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     fragmentShader: `uniform float night; void main() { float radius = length(gl_PointCoord - 0.5) * 2.0; if(radius > 1.0) discard; float glow = exp(-radius * radius * 10.0) * 0.38 + exp(-radius * radius * 3.0) * 0.07; gl_FragColor = vec4(vec3(1.0, 0.61, 0.23), glow * night); }`,
   });
   const lampPixelsPerMetre = { value: 1 };
-  const lampPoolMaterial = createLampPoolMaterial(uniforms.night, lampPixelsPerMetre);
+  const fixtureSurfaceLighting = createFixtureSurfaceLighting({ enabled: true, night: uniforms.night, requestRender });
+  const lampPoolMaterial = createLampPoolMaterial(uniforms.night, lampPixelsPerMetre, fixtureSurfaceLighting.strengthUniform);
   const lampShaftMaterial = new THREE.LineBasicMaterial({ color: '#53666a', transparent: true, opacity: 0.55 });
   const materials = Object.fromEntries(LAYERS.map(([kind]) => [kind, createCityMaterial(['streets', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind) ? 'ground' : kind, uniforms)]));
-  const fixtureSurfaceLighting = createFixtureSurfaceLighting({ enabled: true, night: uniforms.night, requestRender });
-  for (const kind of ['buildings', 'industrialStructures', 'bridges', 'tanks']) fixtureSurfaceLighting.apply(materials[kind]);
+  for (const kind of ['buildings', 'industrialStructures', 'bridges', 'tanks', 'ground', 'streets', 'bridgeSurfaces', 'industrialTerrain', 'yards']) fixtureSurfaceLighting.apply(materials[kind]);
   const cartographicMaterial = createCityMaterial('ground', uniforms);
   cartographicMaterial.depthWrite = false;
   const contextLandMaterial = createCityMaterial('ground', uniforms);

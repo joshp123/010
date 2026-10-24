@@ -57,7 +57,7 @@ function groundFootprint(camera) {
 }
 
 export function createFixtureSurfaceLighting({ enabled, night, requestRender, baseUrl = './data/lamp-surface-lighting/' }) {
-  if (!enabled) return { apply() {}, setView() {}, async prepareView() {}, dispose() {}, diagnostics: () => ({ enabled: false }) };
+  if (!enabled) return { apply() {}, setView() {}, async prepareView() {}, dispose() {}, strengthUniform: { value: 0 }, diagnostics: () => ({ enabled: false }) };
   const fields = [0, 1].map(() => new Uint16Array(ATLAS_PIXELS * ATLAS_PIXELS * 4));
   const textures = fields.map(data => {
     const texture = new THREE.DataTexture(data, ATLAS_PIXELS, ATLAS_PIXELS, THREE.RGBAFormat, THREE.HalfFloatType);
@@ -142,6 +142,7 @@ export function createFixtureSurfaceLighting({ enabled, night, requestRender, ba
   }
 
   const api = {
+    strengthUniform: uniforms.fixtureFieldStrength,
     apply(material) {
       const previousCompile = material.onBeforeCompile;
       const previousKey = material.customProgramCacheKey();
