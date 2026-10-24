@@ -3,7 +3,7 @@ import * as THREE from 'three';
 const VEHICLE_STYLES = {
   bus: { color: '#c49558', width: 2.7, height: 3.1, length: 12 },
   tram: { color: '#b56a59', width: 2.6, height: 3.3, length: 28 },
-  metro: { color: '#d1d7cc', width: 3, height: 3.5, length: 48 },
+  metro: { color: '#d1d7cc', width: 3, height: 3.5, length: 42.7 },
   train: { color: '#d1af58', width: 3.2, height: 3.8, length: 72 },
   ferry: { color: '#698a9a', width: 5, height: 3.5, length: 20 },
   'metro-position': { color: '#d19a45', width: 2.2, height: 2.2, length: 2.2 },
@@ -32,11 +32,15 @@ export function createTransitView({ project, localPosition, requestRender = () =
   cutawayGroup.visible = false;
   group.add(cutawayGroup);
   const box = new THREE.BoxGeometry(1, 1, 1);
+  const metroBodyGeometry = box.clone();
+  const bodyVertices = metroBodyGeometry.getAttribute('position');
+  for (let i=0;i<bodyVertices.count;i++) if (Math.abs(bodyVertices.getZ(i))>.49) bodyVertices.setZ(i,bodyVertices.getZ(i)-Math.sign(bodyVertices.getZ(i))*.035*(bodyVertices.getY(i)+.5));
+  metroBodyGeometry.computeVertexNormals();
   const reportMarker = new THREE.OctahedronGeometry(.65);
   const bodyMaterial = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.9, metalness: 0, flatShading: true });
   const roofMaterial = new THREE.MeshStandardMaterial({ color: '#e3e2ce', roughness: 0.95, metalness: 0 });
   const floorMaterial = new THREE.MeshStandardMaterial({ color: '#293333', roughness: 1, side: THREE.DoubleSide });
-  const earthMaterial = new THREE.MeshStandardMaterial({ color: '#88745c', vertexColors:true, roughness: 1, side: THREE.DoubleSide });
+  const earthMaterial = new THREE.MeshStandardMaterial({ color: '#a68c70', vertexColors:true, roughness: 1, side: THREE.DoubleSide });
   const tunnelMaterial = new THREE.MeshStandardMaterial({ color: '#89928b', roughness: 1, side: THREE.DoubleSide });
   const metroBodyMaterial = bodyMaterial.clone(), metroRoofMaterial = roofMaterial.clone();
   for (const material of [metroBodyMaterial, metroRoofMaterial]) {
@@ -53,106 +57,31 @@ export function createTransitView({ project, localPosition, requestRender = () =
         float side = step(0.49, abs(transitLocal.x));
         float window = step(-0.02, transitLocal.y) * step(transitLocal.y, 0.31);
         float pane = step(0.12, fract(carriage * 6.0)) * step(fract(carriage * 6.0), 0.86);
-        float glazing = window * mix(step(0.49, abs(transitLocal.z)), pane, side);
+        float glazing = window * mix(step(0.45, abs(transitLocal.z)), pane, side);
         diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.025, 0.065, 0.075), glazing * 0.92);
-        float stripe = side * step(-0.15, transitLocal.y) * step(transitLocal.y, -0.07);
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.16, 0.36, 0.32), stripe);
+        float door = side * step(0.40, carriage) * step(carriage, 0.56);
+        float doorFrame = door * (step(0.43, carriage) * step(carriage, 0.53));
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.12, 0.16, 0.17), door * 0.72);
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.45, 0.48, 0.47), doorFrame * 0.65);
+        float badge = side * step(-0.30, transitLocal.y) * step(transitLocal.y, -0.12) * step(0.68, carriage) * step(carriage, 0.80);
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.02, 0.43, 0.49), badge);
+        float slash = badge * step(0.76 + transitLocal.y * 0.09, carriage);
+        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.74, 0.08, 0.06), slash);
         totalEmissiveRadiance += vec3(0.18, 0.14, 0.07) * glazing;
         ` : ''}
       `);
     };
-    material.customProgramCacheKey = () => `010-metro-articulation-${isBody ? 'body' : 'roof'}-v1`;
+    material.customProgramCacheKey = () => `010-metro-articulation-${isBody ? 'body' : 'roof'}-v2`;
   }
   const trackMaterials = [
     new THREE.MeshStandardMaterial({ color: '#414a46', roughness: 1, side: THREE.DoubleSide }),
     new THREE.MeshStandardMaterial({ color: '#62665c', roughness: 1, side: THREE.DoubleSide }),
     new THREE.MeshStandardMaterial({ color: '#949e92', roughness: 0.8, side: THREE.DoubleSide }),
   ];
-  // A deliberately separate section camera keeps the city intact. Geometry
-  // uses the selected source axis; engineering dimensions remain illustrative.
-  const sectionScene = new THREE.Scene();
-  sectionScene.background = new THREE.Color('#d9ded6');
-  const sectionCamera = new THREE.OrthographicCamera(-40,40,14,-14,.1,500);
-  const sectionModel = new THREE.Group();sectionModel.name='Illustrated underground section';
-  sectionScene.add(sectionModel);
-  const sectionAmbient = new THREE.HemisphereLight('#ffffff','#5d625d',2);
-  const sectionSun = new THREE.DirectionalLight('#fff5dd',2.2);sectionSun.position.set(-30,70,40);
-  sectionScene.add(sectionAmbient,sectionSun);
-  const inspectorMaterials = {
-    earth:new THREE.MeshStandardMaterial({color:'#776957',roughness:1}),
-    surface:new THREE.MeshStandardMaterial({color:'#b9beb1',roughness:1}),
-    lining:new THREE.MeshStandardMaterial({color:'#6c7775',roughness:1}),
-    floor:new THREE.MeshStandardMaterial({color:'#333d3d',roughness:1}),
-    rail:new THREE.MeshStandardMaterial({color:'#aeb6af',roughness:.65}),
-    edge:new THREE.MeshBasicMaterial({color:'#aaa394'}),
-  };
-  let inspectorAnchor=null,inspectorAxis=new THREE.Vector3(1,0,0),inspectorRecord=null,inspectorKey='';
-  function rebuildInspector(){
-    const record=records.find(record=>record.report.id===selectedReportId&&record.underground);
-    inspectorRecord=record||null;inspectorAnchor=record?.representedGround||sectionAnchor;
-    if(!cutaway||!inspectorAnchor)return;
-    const source=record?.rail?.segment||sectionSegments[0];
-    if(!source)return;
-    const selectedSegments=tunnelSegments.filter(segment=>segment.id===source.id).flatMap(segment=>clipToSection(segment,inspectorAnchor,38)||[]);
-    const key=JSON.stringify([selectedSegments.map(s=>[s.start.toArray(),s.end.toArray()]),record?[record.report.id,record.report.observedAt,record.report.freshness,record.report.sourceConnected,record.report.latitude,record.report.longitude]:null,record?.representedPosition]);
-    if(key===inspectorKey)return;inspectorKey=key;
-    for(const child of [...sectionModel.children]){sectionModel.remove(child);if(child.isInstancedMesh)child.dispose();if(!child.userData.sharedGeometry)child.geometry.dispose();}
-    inspectorAxis=source.end.clone().sub(source.start).setY(0).normalize();
-    const addBox=(name,centre,dimensions,direction,material)=>{
-      const mesh=new THREE.Mesh(new THREE.BoxGeometry(...dimensions),material);mesh.name=name;mesh.position.copy(centre);mesh.rotation.y=Math.atan2(direction.x,direction.z);sectionModel.add(mesh);return mesh;
-    };
-    // Cut only the near tunnel wall. The continuous earth cap, lining roof,
-    // side wall and floor establish a real void beneath the street datum.
-    for(const segment of selectedSegments){
-      const axis=segment.end.clone().sub(segment.start).setY(0).normalize(),side=new THREE.Vector3(-axis.z,0,axis.x);
-      if(side.dot(new THREE.Vector3(-inspectorAxis.z,0,inspectorAxis.x))<0)side.negate();
-      const centre=segment.start.clone().lerp(segment.end,.5),length=segment.start.distanceTo(segment.end)+.025;
-      const at=(y,lateral=0)=>centre.clone().addScaledVector(side,lateral).add(new THREE.Vector3(0,y,0));
-      addBox('Street datum · illustrative cap',at(-.18),[10,.36,length],axis,inspectorMaterials.surface);
-      addBox('Cut earth above tunnel',at(-3.35),[10,6,length],axis,inspectorMaterials.earth);
-      addBox('Tunnel roof lining',at(-6.55),[8,.4,length],axis,inspectorMaterials.lining);
-      addBox('Far tunnel lining',at(-9.25,-3.8),[.4,5.3,length],axis,inspectorMaterials.lining);
-      addBox('Chamber floor',at(-12.15),[8,.3,length],axis,inspectorMaterials.floor);
-      for(const offset of [-.75,.75])addBox('Source-axis rail',at(-11.82,offset),[.12,.15,length],axis,inspectorMaterials.rail);
-      // Section hatching is a drafting convention, not geological strata.
-      // Short diagonal ticks at the cut soil face distinguish cut material.
-      for(let distance=1;distance<length;distance+=3){
-        const tick=new THREE.Mesh(new THREE.BoxGeometry(.045,2.2,.045),inspectorMaterials.edge);
-        tick.name='Illustrative cut-face hatch';tick.position.copy(segment.start).addScaledVector(axis,distance).addScaledVector(side,5.025);tick.position.y-=3.35;
-        tick.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),axis.clone().multiplyScalar(.55).add(new THREE.Vector3(0,1,0)).normalize());sectionModel.add(tick);
-      }
-    }
-    // Show a cross-section at both ends without closing the tunnel opening.
-    const ends=selectedSegments.flatMap(segment=>[segment.start,segment.end]).sort((a,b)=>a.clone().sub(inspectorAnchor).dot(inspectorAxis)-b.clone().sub(inspectorAnchor).dot(inspectorAxis));
-    const side=new THREE.Vector3(-inspectorAxis.z,0,inspectorAxis.x);
-    for(const end of [ends[0],ends.at(-1)].filter(Boolean)){
-      for(const sign of [-1,1])addBox('Tunnel end jamb',end.clone().addScaledVector(side,sign*3.8).add(new THREE.Vector3(0,-9.25,0)),[.5,5.3,.7],inspectorAxis,inspectorMaterials.lining);
-    }
-    if(record&&!record.uncertainTrackPosition){
-      const style=VEHICLE_STYLES.metro;
-      for(const roof of [false,true]){
-        const mesh=new THREE.InstancedMesh(box,roof?metroRoofMaterial:metroBodyMaterial,1);mesh.name=roof?'Section train roof':'Section reported train';mesh.userData.sharedGeometry=true;
-        const position=record.representedGround.clone();position.y+=-TUNNEL_DEPTH+.4+style.height/2+(roof?style.height*.48:0);
-        const matrix=new THREE.Matrix4().compose(position,new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0),record.routeHeading??0),new THREE.Vector3(style.width*(roof?.8:1),style.height*(roof?.16:1),style.length*(roof?.97:1)));
-        mesh.setMatrixAt(0,matrix);mesh.setColorAt(0,new THREE.Color(record.report.freshness==='fresh'&&record.report.sourceConnected?(roof?'#ffffff':style.color):'#737d80'));
-        mesh.computeBoundingSphere();sectionModel.add(mesh);
-      }
-    }
-    sectionScene.updateMatrixWorld(true);
-  }
-  function getSectionView({width=390,height=844,night=false}={}){
-    const viewportHeight=Math.round(Math.min(height*.28,Math.max(150,height*.23)));
-    const enabled=cutaway&&!!inspectorAnchor;
-    if(enabled){
-      const aspect=width/viewportHeight,vertical=Math.max(21,84/aspect);
-      sectionCamera.left=-vertical*aspect/2;sectionCamera.right=vertical*aspect/2;sectionCamera.top=vertical/2;sectionCamera.bottom=-vertical/2;
-      const target=inspectorAnchor.clone().add(new THREE.Vector3(0,-6,0));
-      const side=new THREE.Vector3(-inspectorAxis.z,0,inspectorAxis.x);
-      sectionCamera.position.copy(target).addScaledVector(side,100).addScaledVector(inspectorAxis,10).add(new THREE.Vector3(0,5,0));
-      sectionCamera.lookAt(target);sectionCamera.updateProjectionMatrix();sectionCamera.updateMatrixWorld(true);
-      sectionScene.background.set(night?'#25353b':'#d9ded6');sectionAmbient.intensity=night?1.1:2;sectionSun.intensity=night?.8:2.2;
-    }
-    return {enabled,scene:sectionScene,camera:sectionCamera,viewportHeight,streetAnchor:inspectorAnchor?.clone()||null,report:presentReport(inspectorRecord),label:'Illustrated underground section · depth not surveyed'};
+  function getSectionView() {
+    const report = records.find(record => record.report.id === selectedReportId && record.underground);
+    const sourceTrack = report?.rail?.id ? tunnelSegments.filter(segment => segment.id === report.rail.id).flatMap(segment => clipToSection(segment, report.representedGround, 70) || []) : [];
+    return { enabled: cutaway && !!report, integrated: true, viewportHeight: 0, streetAnchor: report?.representedGround.clone() || null, sourceTrack, report: presentReport(report), label: 'Illustrated underground section · depth not surveyed' };
   }
   const batches = new Map();
   const transform = new THREE.Object3D(), color = new THREE.Color();
@@ -167,7 +96,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     if (!batch || batch.capacity < count) {
       if (batch) { group.remove(batch.body, batch.roof); batch.body.dispose(); batch.roof.dispose(); }
       const capacity = Math.max(16, count);
-      const body = new THREE.InstancedMesh(mode === 'metro-position' ? reportMarker : box, mode === 'metro' ? metroBodyMaterial : bodyMaterial, capacity);
+      const body = new THREE.InstancedMesh(mode === 'metro-position' ? reportMarker : mode === 'metro' ? metroBodyGeometry : box, mode === 'metro' ? metroBodyMaterial : bodyMaterial, capacity);
       const roof = new THREE.InstancedMesh(box, mode === 'metro' ? metroRoofMaterial : roofMaterial, capacity);
       body.name = mode === 'metro-position' ? 'Reported metro position · track mismatch' : `Observed ${mode}`; roof.name = `${mode} roofs`;
       body.instanceMatrix.setUsage(THREE.DynamicDrawUsage); roof.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -230,7 +159,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     }
     const modes = new Map();
     for (const record of records) {
-      if (record.underground) continue;
+      if (record.underground && (!cutaway || record.report.id !== selectedReportId)) continue;
       const displayMode = record.uncertainTrackPosition ? 'metro-position' : record.mode;
       if (!modes.has(displayMode)) modes.set(displayMode, []);
       modes.get(displayMode).push(record);
@@ -264,7 +193,6 @@ export function createTransitView({ project, localPosition, requestRender = () =
     }
     for (const [mode, batch] of batches) if (!modes.has(mode)) { batch.body.count = batch.roof.count = 0; batch.records = []; }
     group.updateMatrixWorld(true);
-    rebuildInspector();
     requestRender();
   }
 
@@ -325,7 +253,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
   function drawSection(segments, halfWidth, viewDirection) {
     for (const child of [...cutawayGroup.children]) { cutawayGroup.remove(child); child.geometry.dispose(); }
     mouthPolygons=[];openingPolygons=[];
-    const surfaces = [[], [], [], [], [], []]; // floor, earth banks, concrete, bed, sleepers, rail
+    const surfaces = [[], [], [], [], [], [], []]; // floor, earth banks, concrete, bed, sleepers, rail, surface edge
     const addQuad = (a,b,c,d,out) => { for (const point of [a,b,c,a,c,d]) out.push(point.x,point.y,point.z); };
     for (const segment of segments) {
       const {start,end}=segment;
@@ -370,6 +298,14 @@ export function createTransitView({ project, localPosition, requestRender = () =
       const faces=[[0,3],[1,2],...(segment.capStart?[[0,1]]:[]),...(segment.capEnd?[[3,2]]:[])];
       for(const [a,b]of faces){
         const topA=mouthPoint(a),topB=mouthPoint(b);
+        const rimWidth = .22;
+        const edge = topB.clone().sub(topA).setY(0).normalize();
+        const outward = new THREE.Vector3(-edge.z,0,edge.x);
+        const midpoint = topA.clone().lerp(topB,.5);
+        if (outward.dot(midpoint.clone().sub(sectionAnchor)) < 0) outward.negate();
+        const rimA = topA.clone().addScaledVector(outward,rimWidth).add(new THREE.Vector3(0,.02,0));
+        const rimB = topB.clone().addScaledVector(outward,rimWidth).add(new THREE.Vector3(0,.02,0));
+        addQuad(topA,topB,rimB,rimA,surfaces[6]);
         const liningHeight=2;
         const bottomA=floor[a].clone().add(new THREE.Vector3(0,liningHeight,0)),bottomB=floor[b].clone().add(new THREE.Vector3(0,liningHeight,0));
         addQuad(topA,topB,bottomB,bottomA,surfaces[1]);
@@ -393,8 +329,8 @@ export function createTransitView({ project, localPosition, requestRender = () =
       for(let distance=.6;distance<length;distance+=1.2){const centre=trackStart.clone().lerp(trackEnd,distance/length);strip(centre.clone().addScaledVector(direction,-.14),centre.clone().addScaledVector(direction,.14),1.3,.08,surfaces[4]);}
       for(const offset of [-.75,.75])strip(trackStart.clone().addScaledVector(side,offset),trackEnd.clone().addScaledVector(side,offset),.075,.2,surfaces[5]);
     }
-    const materialList=[floorMaterial,earthMaterial,tunnelMaterial,...trackMaterials];
-    const names=['Section floor','Cut earth face · depth illustrated','Concrete chamber','Illustrated track bed','Illustrated sleepers','Illustrated rails'];
+    const materialList=[floorMaterial,earthMaterial,tunnelMaterial,...trackMaterials,tunnelMaterial];
+    const names=['Section floor','Cut earth face · depth illustrated','Concrete chamber','Illustrated track bed','Illustrated sleepers','Illustrated rails','Cut surface edge'];
     for(let i=0;i<surfaces.length;i++){
       if(!surfaces[i].length)continue;
       const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(surfaces[i],3));geometry.computeVertexNormals();
@@ -435,6 +371,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
     }
     const metresPerPixel=span/viewportHeight;
     if(!force&&previousSelectedReportId===selectedReportId&&sectionAnchor&&anchor&&sectionAnchor.distanceToSquared(anchor)<100&&maskViewDirection.distanceToSquared(viewDirection)<.000001&&metresPerPixel>=maskMetresPerPixel*.8&&metresPerPixel<=maskMetresPerPixel*1.25)return;
+    cutawayGroup.visible = cutaway && candidates.some(record => record.report.id === selectedReportId && !record.uncertainTrackPosition);
     sectionAnchor=anchor;
     sectionSegments=anchor&&selectedRail?tunnelSegments.filter(segment=>segment.id===selectedRail.id).flatMap(segment=>clipToSection(segment,anchor,SECTION_RADIUS)||[]):[];
     for(const segment of sectionSegments){
@@ -444,6 +381,10 @@ export function createTransitView({ project, localPosition, requestRender = () =
     // An offset report is uncertainty, not evidence for a wider tunnel.
     const halfWidth=CHAMBER_HALF_WIDTH;
     drawSection(sectionSegments,halfWidth,viewDirection);
+    const axis = selectedRail?.end.clone().sub(selectedRail.start).setY(0).normalize();
+    const trainClip = anchor && axis && selectedReportId ? [new THREE.Plane(axis, SECTION_RADIUS - axis.dot(anchor)),new THREE.Plane(axis.clone().negate(),SECTION_RADIUS + axis.dot(anchor))] : [];
+    for (const material of [metroBodyMaterial, metroRoofMaterial]) { material.clippingPlanes = trainClip; material.needsUpdate = true; }
+
     const samples=sectionSegments.flatMap(segment=>[segment.startSample,segment.endSample]);
     const heights=samples.map(sample=>sample.point.y);
     const nearestAtReport=candidates[0]&&sectionSegments.map(segment=>({segment,...pointOnSegment(candidates[0].ground,segment.start,segment.end)})).sort((a,b)=>a.distance-b.distance)[0];
@@ -544,7 +485,7 @@ export function createTransitView({ project, localPosition, requestRender = () =
       visibleFreshUndergroundObservations: freshCount,
       metroFocusCandidates:focusCandidates.map(({report,uncertainTrackPosition})=>({inSection:report.id===selectedReportId,presentationState:uncertainTrackPosition?'marker':'train',id:report.id,latitude:report.latitude,longitude:report.longitude,label:report.label,observedAt:report.observedAt,freshness:report.freshness,sourceConnected:report.sourceConnected})),
       metroFocus: focus ? {id:focus.id,latitude:focus.latitude,longitude:focus.longitude,label:focus.label,observedAt:focus.observedAt,freshness:focus.freshness,sourceConnected:focus.sourceConnected} : null,
-      cutawayShortMessage:!cutaway?null:underground.some(record=>record.uncertainTrackPosition)?'Report off mapped track':freshCount?'Fresh metro · approximate position':underground.length?'Older/unverified metro · not live':'No metro report',
+      cutawayShortMessage:!cutaway?null:underground.some(record=>record.uncertainTrackPosition)?'Report off mapped track':freshCount?'Fresh metro · approximate position':underground.length?'Older/unverified metro · not live':'No metro report in this section',
       cutawayMessage: !cutaway ? null : underground.some(record=>record.uncertainTrackPosition)
         ? `${fresh(underground.find(record=>record.uncertainTrackPosition)) ? 'Fresh report' : 'Older/unverified report'} · ${Math.round(underground.find(record=>record.uncertainTrackPosition).rail.distance)} m from mapped track`
         : freshCount
@@ -559,25 +500,17 @@ export function createTransitView({ project, localPosition, requestRender = () =
     group,
     update(nextSnapshot) { snapshot = nextSnapshot; projectRails(); rebuild(true); updateCutawayMask(true); rebuild(); },
     setView(view) { camera = view.camera || camera; span = view.span ?? span; viewportHeight = view.viewportHeight ?? viewportHeight; updateCutawayMask(); rebuild(); },
-    setCutaway(enabled) { cutaway = typeof enabled === 'object' ? enabled.enabled : enabled; cutawayGroup.visible = false; updateCutawayMask(); rebuild(); return cutawayMask; },
+    setCutaway(enabled) { cutaway = typeof enabled === 'object' ? enabled.enabled : enabled; cutawayGroup.visible = cutaway; if (!cutaway) for (const material of [metroBodyMaterial, metroRoofMaterial]) { material.clippingPlanes = []; material.needsUpdate = true; } updateCutawayMask(); rebuild(); return cutawayMask; },
     getCutaway() { return cutawayMask; },
     getSectionView,
-    pickSection(normalizedPoint) {
-      if(!cutaway||!inspectorRecord)return null;
-      const ray=new THREE.Raycaster();ray.setFromCamera(normalizedPoint,sectionCamera);
-      return ray.intersectObject(sectionModel,true).some(hit=>hit.object.name==='Section reported train'||hit.object.name==='Section train roof')?presentReport(inspectorRecord):null;
-    },
-    getSectionGeometry() { return {enabled:false,segments:sectionSegments,halfWidth:CHAMBER_HALF_WIDTH,mouthPolygons,selectionHalfWidth:CHAMBER_HALF_WIDTH,depth:TUNNEL_DEPTH,projection:cutawayMask?.projection||new THREE.Vector2()}; },
+    getSectionGeometry() { return {enabled:cutaway && records.some(record=>record.report.id===selectedReportId&&!record.uncertainTrackPosition),segments:sectionSegments,halfWidth:CHAMBER_HALF_WIDTH,mouthPolygons,selectionHalfWidth:CHAMBER_HALF_WIDTH,depth:TUNNEL_DEPTH,projection:cutawayMask?.projection||new THREE.Vector2()}; },
     setMetroData, loadMetro, pick,
     getReport(id) { return presentReport(records.find(record => record.report.id === id)); },
     statistics() { return { ...metroVisibility(), observations: records.length, underground: records.filter(record => record.underground).length, batches: batches.size, drawCalls: [...batches.values()].filter(batch => batch.body.count).length * 2 + (cutaway ? cutawayGroup.children.length : 0), railSegments: railSegments.length, mask: cutawayMask ? { width: cutawayMask.texture.image.width, height: cutawayMask.texture.image.height, metresPerTexel: [cutawayMask.bounds.z / cutawayMask.texture.image.width, cutawayMask.bounds.w / cutawayMask.texture.image.height], rebuilds: maskRebuilds, milliseconds: maskMilliseconds } : null }; },
     dispose() {
       for (const batch of batches.values()) { batch.body.dispose(); batch.roof.dispose(); }
       for (const child of cutawayGroup.children) child.geometry.dispose();
-      cutawayMask?.texture.dispose(); box.dispose(); reportMarker.dispose(); bodyMaterial.dispose(); roofMaterial.dispose(); metroBodyMaterial.dispose(); metroRoofMaterial.dispose(); tunnelMaterial.dispose(); floorMaterial.dispose(); earthMaterial.dispose(); trackMaterials.forEach(material => material.dispose());
-      for(const child of sectionModel.children)if(!child.userData.sharedGeometry)child.geometry.dispose();
-      for(const material of Object.values(inspectorMaterials))material.dispose();
-      sectionScene.clear();
+      cutawayMask?.texture.dispose(); box.dispose(); metroBodyGeometry.dispose(); reportMarker.dispose(); bodyMaterial.dispose(); roofMaterial.dispose(); metroBodyMaterial.dispose(); metroRoofMaterial.dispose(); tunnelMaterial.dispose(); floorMaterial.dispose(); earthMaterial.dispose(); trackMaterials.forEach(material => material.dispose());
       group.removeFromParent(); group.clear(); batches.clear();
     },
   };
