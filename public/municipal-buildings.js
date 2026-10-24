@@ -1,6 +1,7 @@
 // Written by AI on 2026-10-24 by model GPT-6 Astra.
 import * as THREE from 'three';
 import { normalizedBagId } from './building-appearance.js';
+import { UNLOADED, LOADED } from './vendor/3d-tiles-renderer/build/index.core.js';
 
 function batchTableFor(mesh) {
   for (let node = mesh; node; node = node.parent) if (node.batchTable) return node.batchTable;
@@ -101,7 +102,13 @@ export function createMunicipalBuildingVisibility() {
 // Enter a neighbourhood through its first available source model, then refine
 // that same hierarchy. Leaf-first loading otherwise requests scores of models
 // before their ordinary streets have any source appearance at all.
-export function configureMunicipalBuildingStreaming(tiles) {
+export function configureMunicipalBuildingStreaming(tiles, municipalCache) {
+  if (municipalCache) {
+    municipalCache.maxBytesSize = 128 * 1024 * 1024;
+    municipalCache.minBytesSize = municipalCache.maxBytesSize * 0.8;
+    municipalCache.unloadPriorityCallback = tiles.lruCache.unloadPriorityCallback;
+    tiles.lruCache = municipalCache;
+  }
   const calculateViewError = tiles.calculateTileViewError.bind(tiles);
   tiles.loadAncestors = false;
   tiles.loadSiblings = false;
@@ -110,8 +117,9 @@ export function configureMunicipalBuildingStreaming(tiles) {
     // An unloaded renderable parent is the next useful source view. Once it is
     // resident, its original screen-space error selects finer source children.
     // The renderer keeps the visible parent until those children are ready.
-    if (tile.internal.hasRenderableContent && tile.internal.loadingState >= 0 && tile.internal.loadingState < 4) {
+    if (tile.internal.hasRenderableContent && tile.internal.loadingState >= UNLOADED && tile.internal.loadingState < LOADED) {
       result.error = Math.min(result.error, tiles.errorTarget);
     }
   };
+  return municipalCache;
 }
