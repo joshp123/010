@@ -26,7 +26,7 @@ import { CityTileCache } from './tile-residency.js';
 import { createSourceTextureResidency } from './source-texture-residency.js';
 import { createMetroLocationCue } from './metro-location-cue.js';
 import { TilesRenderer } from '3d-tiles-renderer';
-import { unifiedPriorityCallback, FAILED, LOADED } from './vendor/3d-tiles-renderer/build/index.core.js';
+import { unifiedPriorityCallback, FAILED, LOADED, UNLOADED } from './vendor/3d-tiles-renderer/build/index.core.js';
 
 const ORIGIN = { lat: 51.915, lon: 4.49 };
 const DEFAULT_VIEW = { lat: 51.9105, lon: 4.4875, span: 1700, bearing: 35 };
@@ -553,7 +553,20 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     tiles.addEventListener('load-error', event => {
       loadErrors++; console.warn(`010: ${kind} tile could not load`, event.error);
       const attempts = failedTileRetries.get(event.url) || 0;
-      if (attempts < 2) { failedTileRetries.set(event.url, attempts + 1); setTimeout(() => { if (!disposed) { tiles.resetFailedTiles(); requestRender(); } }, 1500 * (attempts + 1)); }
+      if (attempts < 2) {
+        failedTileRetries.set(event.url, attempts + 1);
+        setTimeout(() => {
+          if (disposed) return;
+          if (tiles.rootLoadingState === FAILED) tiles.rootLoadingState = UNLOADED;
+          // Source hierarchies contain raw descendants that have not entered
+          // the renderer yet. Only initialized tiles can have failed.
+          tiles.traverse(tile => {
+            if (tile.internal?.loadingState === FAILED) tile.internal.loadingState = UNLOADED;
+          }, null, false);
+          tiles.stats.failed = 0;
+          requestRender();
+        }, 1500 * (attempts + 1));
+      }
       requestRender();
     });
     scene.add(tiles.group);
