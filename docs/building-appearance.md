@@ -8,7 +8,7 @@ The 2019 municipal textured edition contains photographic facade/roof atlases wi
 
 ```sh
 python scripts/prepare-building-appearance.py --acquire # network acquisition, once
-python scripts/prepare-building-appearance.py           # retained bytes only, miniature preset
+python scripts/prepare-building-appearance.py --style source # retained evidence, no palette filter
 python scripts/prepare-building-appearance.py --style baseline # less stylised comparison
 ```
 
@@ -18,7 +18,9 @@ The output uses standard glTF2 PBR materials and a 3D Tiles index at `public/dat
 
 Only buildings with at least one actual textured primitive enter the candidate. Untyped or untextured-only buildings are left to the newer municipal model. The renderer must suppress matching newer geometry **only while the replacement tile is visible**, restoring it on unload; rendering both editions causes z-fighting and incorrect double buildings.
 
-## Interpretation, separately replaceable
+## Rejected filter experiments, retained for comparison
+
+Source mode is the default. The manager rejected both palette presets as art direction; they remain reproducible historical comparisons, not the intended city treatment. The next art candidate is whole-building model interpretation with source checks, supplied separately.
 
 The initial atlas transform applies a 3×3 median filter, modest saturation reduction and a 24-colour median-cut palette without dithering, followed by 3×3 mode filtering of palette indices to merge isolated noise into existing colour regions. `--style baseline` retains the first, gentler 48-colour transform without mode filtering. It does not invent windows, rooftop plant, balconies or decorative details. Source UVs preserve their placement. `facade-presets.jpg` and `roof-presets.jpg` compare the source, baseline and miniature presets at identical atlas coordinates. This is a deliberately modest, reproducible interpretation to test whether the retained detail supplies a useful basis for the miniature. It is not equivalent to the reference projects' learned redrawing, and may retain photographic shadows, occlusions and uneven source resolution. Those must be judged in actual rendered views.
 
@@ -106,3 +108,58 @@ all-1024 **96 MiB**, and native **336 MiB** (each total chooses the appropriate
 available level per tile). There are 43 content levels because two native tiles
 already fit 1024. Every level passes Khronos validation with zero errors and
 warnings; all accessor values match native exactly.
+
+### Native spatial residency and source-texel packing
+
+Close views now replace the last coarse context level with separate BAG
+contents, each culled by a tight **oriented** box in tile-local ECEF. The box is
+computed from the actual vertices after source node matrices and glTF Y-up to
+3D Tiles Z-up; its source-aligned axes avoid the excess volume of an ECEF axis
+aligned box. The RTC translation still occurs only on the outer context tile.
+The original full native GLB remains an offline reference, not a runtime leaf.
+
+A single union crop per building was rejected: atlas islands are scattered and
+union rectangles duplicated gigabytes of unused area. Instead, triangles are
+grouped by connected UV edges. Their source image rectangles are copied without
+resampling into a deterministic per-BAG atlas, with two native pixels of gutter.
+No geometry positions/normals change. UV coordinates receive a reversible affine
+crop/placement transform. Unreferenced images and source attributes are excluded.
+Each GLB's `extras.texturePacking` retains original asset/hash, source image size,
+crop rectangle, packed origin and source triangle indices for every island.
+Raw municipal sources remain untouched. Coarse context still supplies distance
+sampling; the packed native level is for approximately native-texel views. Deep
+mip values around new packing boundaries can differ from the original atlas;
+this is not a claim of identical arbitrary-mip sampling.
+
+`python tests/building-appearance-spatial.py` verifies every packed rectangle's
+pixels exactly, all expanded position/normal triangle arrays, inverse UV error
+below 3e-7, tight enclosing oriented boxes, per-BAG identities and leaf culling
+structure. This supplements the source-compaction and context-LOD tests.
+`--reuse-native` reruns residency conversion without repeating photographic
+preparation; it rejects a different `--style` from the existing native manifest.
+This mode is for local iteration, while normal `--acquire` remains the complete
+rerunnable pipeline. It does not lower native texture resolution or raise cache
+budgets. Cache savings depend on visible buildings and must be browser-verified.
+
+The retained candidate packs 550 BAG contents with 11,734 exact source-pixel
+rectangles. Across the entire prepared area, native decoded RGBA+mips now totals
+**325.25 MiB**, versus 336 MiB for shared full-tile atlases. Packing is rectangular
+NPOT, selecting the lower-area result of shelf and MaxRects arrangements; the
+largest current atlas dimension is 3455 pixels. The primary gain is visibility
+residency, not this modest whole-area total reduction.
+
+A conservative source-box projection at Delfshaven (51.9098, 4.448), span 200,
+bearing 35 estimates **131 visible BAGs / 67.59 MiB** at 390×844 versus 168 MiB
+for intersecting old native tiles. At 1440×900 it estimates **357 / 170.69 MiB**
+versus 240 MiB. Run `python tests/building-appearance-residency-estimate.py` to
+repeat. These are projected-box texture estimates, not measured browser usage;
+they exclude geometry, base layers, cached offscreen items and transition overlap.
+In particular, adding the manager's measured 78 MiB base to the desktop estimate
+can still exceed the 224 MiB shared cap. Actual close-view acceptance remains a
+manager browser check, and this implementation does not claim universal fit.
+
+All 550 content GLBs validate with zero errors/warnings. Exact source-compaction,
+LOD and spatial tests pass: 36,840 triangle attribute matches, every crop pixel
+matches the native reference, and inverse UV maximum error is below 1.5e-7.
+Leaf centers also independently fall within their original geographic source-tile
+envelopes after one RTC translation and correct source/up-axis rotation.

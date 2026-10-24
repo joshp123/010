@@ -259,17 +259,191 @@ def texture_lod(glb,limit=None):
     output=struct.pack('<4sII',b'glTF',2,28+len(jb)+len(bb))+struct.pack('<I4s',len(jb),b'JSON')+jb+struct.pack('<I4s',len(bb),b'BIN\0')+bb
     return output,info
 
+def rgba_mip_bytes(width,height):
+    total=0
+    while True:
+        total+=width*height*4
+        if width==height==1:return total
+        width=max(1,width//2);height=max(1,height//2)
+
+def uv_islands(indices,uv):
+    """Connected triangle components in UV space, preserving original seams."""
+    parents=list(range(len(indices)));edges={}
+    def root(i):
+        while parents[i]!=i:parents[i]=parents[parents[i]];i=parents[i]
+        return i
+    for ti,triangle in enumerate(indices):
+        keys=[tuple(uv[v].tolist()) for v in triangle]
+        for a,b in ((0,1),(1,2),(2,0)):
+            edge=tuple(sorted((keys[a],keys[b])))
+            if edge in edges:parents[root(ti)]=root(edges[edge])
+            else:edges[edge]=ti
+    groups={}
+    for i in range(len(indices)):groups.setdefault(root(i),[]).append(i)
+    return list(groups.values())
+
+def pack_rectangles(rectangles):
+    """Deterministic shelf pack, no rotation or resampling of source rectangles."""
+    if not rectangles:return 1,1
+    order=sorted(range(len(rectangles)),key=lambda i:(-rectangles[i]['height'],-rectangles[i]['width'],i))
+    area=sum(r['width']*r['height'] for r in rectangles)
+    minimum=max(r['width'] for r in rectangles)
+    candidates=sorted(set([minimum,*[max(minimum,int(np.sqrt(area)*f)) for f in (.65,.85,1,1.25,1.5,2)]]))
+    best=None
+    for width in candidates:
+        x=y=row=used_width=0;placements=[]
+        for i in order:
+            r=rectangles[i]
+            if x+r['width']>width:x=0;y+=row;row=0
+            placements.append((i,x,y));x+=r['width'];row=max(row,r['height']);used_width=max(used_width,x)
+        height=y+row
+        score=used_width*height
+        if best is None or score<best[0]:best=(score,used_width,height,placements)
+    # MaxRects complements shelf packing for mixed long facade/roof patches.
+    # Rectangles may overlap in the free list, never in occupied source patches.
+    area_order=sorted(range(len(rectangles)),key=lambda i:(-rectangles[i]['width']*rectangles[i]['height'],i))
+    for width in candidates:
+        for factor in (1.02,1.1,1.25,1.5):
+            height=max(max(r['height'] for r in rectangles),int(np.ceil(area/width*factor)))
+            if width*height>=best[0]*1.5:continue
+            free=[(0,0,width,height)];placements=[];used_w=used_h=0
+            for i in area_order:
+                rw,rh=rectangles[i]['width'],rectangles[i]['height']
+                fits=[(min(fw-rw,fh-rh),max(fw-rw,fh-rh),y,x) for x,y,fw,fh in free if fw>=rw and fh>=rh]
+                if not fits:break
+                _,_,y,x=min(fits);placements.append((i,x,y));used_w=max(used_w,x+rw);used_h=max(used_h,y+rh)
+                split=[]
+                for fx,fy,fw,fh in free:
+                    if x>=fx+fw or x+rw<=fx or y>=fy+fh or y+rh<=fy:split.append((fx,fy,fw,fh));continue
+                    if x>fx:split.append((fx,fy,x-fx,fh))
+                    if x+rw<fx+fw:split.append((x+rw,fy,fx+fw-x-rw,fh))
+                    if y>fy:split.append((fx,fy,fw,y-fy))
+                    if y+rh<fy+fh:split.append((fx,y+rh,fw,fy+fh-y-rh))
+                unique=list(dict.fromkeys(split))
+                free=[r for j,r in enumerate(unique) if not any(k!=j and r[0]>=q[0] and r[1]>=q[1] and r[0]+r[2]<=q[0]+q[2] and r[1]+r[3]<=q[1]+q[3] for k,q in enumerate(unique))]
+            if len(placements)==len(rectangles):
+                if used_w*used_h<best[0]:best=(used_w*used_h,used_w,used_h,placements)
+                break
+    for i,x,y in best[3]:rectangles[i]['packedOrigin']=[x,y]
+    return best[1],best[2]
+
+def spatial_buildings(glb,label):
+    """Per-BAG native texels packed by connected UV island, with tight local boxes."""
+    src,binary=read_glb(glb);worlds={}
+    def walk(ni,parent):
+        node=src['nodes'][ni]
+        if any(k in node for k in ('translation','rotation','scale')):raise ValueError('Expected source matrix nodes')
+        mat=parent@np.array(node.get('matrix',np.eye(4).flatten(order='F'))).reshape(4,4,order='F')
+        if 'mesh' in node:worlds.setdefault(node['mesh'],[]).append(mat)
+        for child in node.get('children',[]):walk(child,mat)
+    for ni in src['scenes'][src.get('scene',0)]['nodes']:walk(ni,np.eye(4))
+    atlases=[]
+    for im in src.get('images',[]):
+        v=src['bufferViews'][im['bufferView']]
+        atlases.append(Image.open(io.BytesIO(binary[v.get('byteOffset',0):v.get('byteOffset',0)+v['byteLength']])).convert('RGB'))
+    grouped={}
+    for mi,mesh in enumerate(src['meshes']):grouped.setdefault(mesh['extras']['bagId'],[]).append(mi)
+    for bag,mesh_ids in grouped.items():
+        rectangles=[];plans={};provenance=[]
+        for mi in mesh_ids:
+            for pi,p in enumerate(src['meshes'][mi]['primitives']):
+                tex=src['materials'][p['material']]['pbrMetallicRoughness'].get('baseColorTexture')
+                if tex is None:continue
+                ii=src['textures'][tex['index']]['source'];image=atlases[ii]
+                uv=accessor(src,binary,p['attributes']['TEXCOORD_0']);triangles=accessor(src,binary,p['indices'])[:,0].reshape(-1,3)
+                plan=[]
+                for rows in uv_islands(triangles,uv):
+                    values=uv[triangles[rows].reshape(-1)];pixels=values*image.size
+                    lo=np.maximum(0,np.floor(pixels.min(axis=0)).astype(int)-2);hi=np.minimum(image.size,np.ceil(pixels.max(axis=0)).astype(int)+2)
+                    if np.any(hi<=lo):raise ValueError('Invalid source UV crop')
+                    rect={'sourceImage':ii,'sourceSize':list(image.size),'sourceCrop':[int(lo[0]),int(lo[1]),int(hi[0]),int(hi[1])],'width':int(hi[0]-lo[0]),'height':int(hi[1]-lo[1]),'sourceMesh':mi,'sourcePrimitive':pi,'sourceTriangles':rows}
+                    plan.append(len(rectangles));rectangles.append(rect)
+                plans[mi,pi]=plan
+        width,height=pack_rectangles(rectangles)
+        atlas=Image.new('RGB',(width,height))
+        for r in rectangles:atlas.paste(atlases[r['sourceImage']].crop(r['sourceCrop']),tuple(r['packedOrigin']))
+        doc={'asset':copy.deepcopy(src['asset']),'scene':0,'scenes':[{'nodes':[]}],'nodes':[],'meshes':[],'accessors':[],'bufferViews':[],'buffers':[],'materials':[],'extras':{**src['extras'],'bagIds':[bag],'spatialSource':label}}
+        payload=bytearray()
+        def view(raw,target=None):
+            payload.extend(b'\0'*((-len(payload))%4));v={'buffer':0,'byteOffset':len(payload),'byteLength':len(raw)}
+            if target:v['target']=target
+            payload.extend(raw);doc['bufferViews'].append(v);return len(doc['bufferViews'])-1
+        def attr(values,template,target):
+            a={k:copy.deepcopy(v) for k,v in template.items() if k not in ('bufferView','byteOffset','count','min','max','sparse')}
+            a.update(bufferView=view(values.tobytes(),target),count=len(values))
+            if 'min' in template:a['min']=values.min(axis=0).tolist()
+            if 'max' in template:a['max']=values.max(axis=0).tolist()
+            doc['accessors'].append(a);return len(doc['accessors'])-1
+        if rectangles:
+            png=io.BytesIO();atlas.save(png,format='PNG',optimize=True)
+            doc['images']=[{'bufferView':view(png.getvalue()),'mimeType':'image/png'}]
+            doc['samplers']=copy.deepcopy(src['samplers']);doc['textures']=[{'source':0,'sampler':0}]
+        material_map={};bounds=[]
+        for mi in mesh_ids:
+            mesh=copy.deepcopy(src['meshes'][mi]);mesh['primitives']=[]
+            for pi,p in enumerate(src['meshes'][mi]['primitives']):
+                if p['material'] not in material_map:
+                    material=copy.deepcopy(src['materials'][p['material']]);tex=material['pbrMetallicRoughness'].get('baseColorTexture')
+                    if tex is not None:tex['index']=0
+                    material_map[p['material']]=len(doc['materials']);doc['materials'].append(material)
+                triangles=accessor(src,binary,p['indices'])[:,0].reshape(-1,3)
+                vertex_ids=[];new_indices=np.empty_like(triangles);new_uv=[]
+                if (mi,pi) in plans:
+                    uv=accessor(src,binary,p['attributes']['TEXCOORD_0'])
+                    for ri in plans[mi,pi]:
+                        r=rectangles[ri];rows=r['sourceTriangles'];used,inv=np.unique(triangles[rows],return_inverse=True)
+                        new_indices[rows]=inv.reshape(-1,3)+len(vertex_ids);vertex_ids.extend(used.tolist())
+                        mapped=(uv[used].astype(float)*r['sourceSize']-r['sourceCrop'][:2]+r['packedOrigin'])/[width,height]
+                        new_uv.extend(mapped.tolist())
+                else:
+                    used,inv=np.unique(triangles,return_inverse=True);vertex_ids=used.tolist();new_indices=inv.reshape(-1,3)
+                cp={**copy.deepcopy(p),'attributes':{},'material':material_map[p['material']]}
+                for semantic,ai in p['attributes'].items():
+                    values=np.ascontiguousarray(accessor(src,binary,ai)[vertex_ids])
+                    if semantic=='TEXCOORD_0' and new_uv:values=np.asarray(new_uv,dtype=values.dtype)
+                    cp['attributes'][semantic]=attr(values,src['accessors'][ai],34962)
+                    if semantic=='POSITION':
+                        for matrix in worlds[mi]:
+                            transformed=np.c_[values,np.ones(len(values))]@matrix.T
+                            # glTF Y-up -> 3D Tiles Z-up, then inherited RTC translation.
+                            bounds.append(transformed[:,:3][:,[0,2,1]]*[1,-1,1])
+                it=5123 if len(vertex_ids)<=65535 else 5125
+                cp['indices']=attr(new_indices.reshape(-1,1).astype(DTYPES[it]),{'componentType':it,'type':'SCALAR'},34963)
+                mesh['primitives'].append(cp)
+            new_mi=len(doc['meshes']);doc['meshes'].append(mesh)
+            for matrix in worlds[mi]:
+                doc['scenes'][0]['nodes'].append(len(doc['nodes']));doc['nodes'].append({'mesh':new_mi,'matrix':matrix.flatten(order='F').tolist(),'extras':{'bagId':bag}})
+        points=np.concatenate(bounds)
+        up_axis=np.array([[1,0,0],[0,0,-1],[0,1,0]],dtype=float)
+        frame=up_axis@worlds[mesh_ids[0]][0][:3,:3]
+        if not np.allclose(frame.T@frame,np.eye(3),atol=1e-6):raise ValueError('Expected rigid source frame')
+        # Oriented source-frame box avoids inflated ECEF AABBs at oblique views.
+        in_frame=points@frame;low=in_frame.min(axis=0);high=in_frame.max(axis=0)
+        centre=((low+high)/2)@frame.T;half=(high-low)/2+.001
+        box=[*centre,*(frame*half).flatten(order='F')]
+        provenance={'bagId':bag,'sourceAsset':label,'sourceAssetSha256':digest(glb),'atlasSize':[width,height],'paddingPixels':2,'mapping':'originalUV = (packedUV * atlasSize - packedOrigin + sourceCrop.xy) / sourceSize','islands':rectangles}
+        doc['extras']['texturePacking']=provenance
+        doc['buffers']=[{'byteLength':len(payload)}];jb=pad(packed_json(doc),fill=b' ');bb=pad(bytes(payload))
+        packed=struct.pack('<4sII',b'glTF',2,28+len(jb)+len(bb))+struct.pack('<I4s',len(jb),b'JSON')+jb+struct.pack('<I4s',len(bb),b'BIN\0')+bb
+        yield bag,packed,{'box':box},{'atlasSize':[width,height],'decodedRgbaBytesIncludingMips':rgba_mip_bytes(width,height) if rectangles else 0,'islands':len(rectangles)}
+
 def main():
     global STYLE
-    ap=argparse.ArgumentParser();ap.add_argument('--acquire',action='store_true');ap.add_argument('--style',choices=['source','baseline','miniature'],default='miniature');args=ap.parse_args();STYLE=args.style
+    ap=argparse.ArgumentParser();ap.add_argument('--acquire',action='store_true');ap.add_argument('--reuse-native',action='store_true',help='Rebuild residency from existing native files of the selected style');ap.add_argument('--style',choices=['source','baseline','miniature'],default='source');args=ap.parse_args();STYLE=args.style
     SOURCE.mkdir(parents=True,exist_ok=True);OUTPUT.mkdir(parents=True,exist_ok=True)
+    if args.reuse_native and json.loads((OUTPUT/'manifest.json').read_text())['style']!=STYLE:raise ValueError('Existing native style differs from --style')
     selected=select_tiles(args.acquire)
     print(f'Selected {len(selected)} source tiles',flush=True)
     with ThreadPoolExecutor(max_workers=5) as pool:list(pool.map(lambda t:fetch(t['url'],args.acquire),selected))
     children=[];entries=[];all_ids=set()
     for t in selected:
         for part,(doc,binary,batch,feature) in enumerate(b3dm_parts(fetch(t['url'],False))):
-            result=convert(doc,binary,batch,feature,'sample' if not entries else '')
+            existing_name=t['url'].removeprefix(BASE).replace('/','-').replace('.cmpt','').replace('.b3dm','')+f'-{part}.glb'
+            if args.reuse_native and (OUTPUT/existing_name).exists():
+                existing=(OUTPUT/existing_name).read_bytes();existing_doc,_=read_glb(existing)
+                rtc=doc.get('extensions',{}).get('CESIUM_RTC',{}).get('center',feature.get('RTC_CENTER'))
+                result=(existing,[1,0,0,0,0,1,0,0,0,0,1,0,*rtc,1],existing_doc['extras']['bagIds'],len(existing_doc.get('images',[])))
+            else:result=convert(doc,binary,batch,feature,'sample' if not entries else '')
             if not result:continue
             glb,transform,ids,image_count=result
             name=t['url'].removeprefix(BASE).replace('/','-').replace('.cmpt','').replace('.b3dm','')+f'-{part}.glb'
@@ -282,15 +456,20 @@ def main():
                 lod_name=name.replace('.glb',f'-tex{limit}.glb');(OUTPUT/lod_name).write_bytes(lod)
                 levels.append({**lod_info,'output':lod_name,'bytes':len(lod),'sha256':digest(lod)})
             levels.append({**native_info,'output':name,'bytes':len(glb),'sha256':digest(glb)})
-            child=None
-            for level in reversed(levels):
-                node={'boundingVolume':t['boundingVolume'],'geometricError':level['geometricError'],'refine':'REPLACE','content':{'uri':level['output']},'extras':{'bagIds':ids}}
-                if child:node['children']=[child]
-                child=node
+            spatial=[];spatial_nodes=[]
+            for bag,packed,bounds,info in spatial_buildings(glb,name):
+                packed_name=name.replace('.glb',f'-bag{bag}.glb');(OUTPUT/packed_name).write_bytes(packed)
+                spatial.append({**info,'bagId':bag,'output':packed_name,'sha256':digest(packed),'bytes':len(packed),'boundingVolume':bounds})
+                spatial_nodes.append({'boundingVolume':bounds,'geometricError':0,'content':{'uri':packed_name},'extras':{'bagIds':[bag]}})
+            child_nodes=spatial_nodes
+            for level in reversed(levels[:-1]):
+                node={'boundingVolume':t['boundingVolume'],'geometricError':level['geometricError'],'refine':'REPLACE','content':{'uri':level['output']},'extras':{'bagIds':ids},'children':child_nodes}
+                child_nodes=[node]
+            child=child_nodes[0] if len(child_nodes)==1 else {'boundingVolume':t['boundingVolume'],'geometricError':native_info['samplingMetersPerTexel'],'refine':'REPLACE','children':child_nodes}
             # RTC appears only on the outer tile. Descendants inherit it once.
             child['transform']=transform
             children.append(child);all_ids.update(ids)
-            entries.append({**t,'output':name,'sha256':digest(glb),'bytes':len(glb),'bagIds':ids,'atlases':image_count,'textureLevels':levels})
+            entries.append({**t,'output':name,'sha256':digest(glb),'bytes':len(glb),'bagIds':ids,'atlases':image_count,'textureLevels':levels,'spatialBuildings':spatial})
             print(f'{name}: {len(ids)} buildings, {len(glb)} bytes',flush=True)
     regions=[c['boundingVolume']['region'] for c in children]
     region=[min(r[0] for r in regions),min(r[1] for r in regions),max(r[2] for r in regions),max(r[3] for r in regions),min(r[4] for r in regions),max(r[5] for r in regions)]

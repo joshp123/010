@@ -14,10 +14,14 @@ for entry,tile in zip(manifest['entries'],tiles):
   assert doc['meshes']==native['meshes'] and doc['nodes']==native['nodes']
   assert doc['materials']==native['materials'] and doc['accessors']==native['accessors']
   for ai in range(len(native['accessors'])):assert np.array_equal(m.accessor(native,nb,ai),m.accessor(doc,binary,ai))
-  assert tile['content']['uri']==level['output'] and tile['refine']=='REPLACE'
-  if i:assert 'transform' not in tile
   if i<len(levels)-1:
-   assert tile['geometricError']>levels[i+1]['geometricError'];tile=tile['children'][0]
-  else:assert tile['geometricError']==0
+   assert tile['content']['uri']==level['output'] and tile['refine']=='REPLACE'
+   if i:assert 'transform' not in tile
+   assert tile['geometricError']>levels[i+1]['geometricError']
+   if i<len(levels)-2:tile=tile['children'][0]
+   else:
+    assert {c['content']['uri'] for c in tile['children']}=={b['output'] for b in entry['spatialBuildings']}
+    assert all(c['geometricError']==0 and 'transform' not in c for c in tile['children'])
+  else:assert level['geometricError']==0
   totals[level['maxTextureSize']]=totals.get(level['maxTextureSize'],0)+level['decodedRgbaBytesIncludingMips'];checked+=1
 print(json.dumps({'checkedLevels':checked,'decodedRgbaIncludingMipsByMaxDimension':totals},indent=2))

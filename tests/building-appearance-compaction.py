@@ -12,15 +12,8 @@ m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 OUT=ROOT/'public/data/building-appearance'
 manifest=json.loads((OUT/'manifest.json').read_text())
 tiles=json.loads((OUT/'tileset.json').read_text())
-children={}
-def collect_native(node,parent_transform=np.eye(4)):
-    local=np.array(node.get('transform',np.eye(4).flatten(order='F'))).reshape(4,4,order='F')
-    world=parent_transform@local
-    if node.get('children'):
-        for child in node['children']:collect_native(child,world)
-    elif 'content' in node:
-        children[node['content']['uri']]={**node,'transform':world.flatten(order='F').tolist()}
-collect_native(tiles['root'])
+# Native reference assets remain offline; runtime roots now replace with BAG leaves.
+children={entry['output']:root for entry,root in zip(manifest['entries'],tiles['root']['children'])}
 assert set(children)=={e['output'] for e in manifest['entries']}
 assert tiles['asset']['gltfUpAxis']=='Y'
 def read(raw):
