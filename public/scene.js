@@ -244,10 +244,10 @@ export async function createScene({ canvas, onViewChange = () => {}, onStatus = 
     requestRender();
     return true;
   }
-  const tileCaches = Object.fromEntries([['city', 224], ['trees', 48], ['lights', 24]].map(([name, megabytes]) => {
+  const tileCaches = Object.fromEntries([['city', 224], ['trees', 128], ['lights', 24]].map(([name, megabytes]) => {
     const cache = new LRUCache();
     cache.maxBytesSize = megabytes * 1024 * 1024;
-    cache.minBytesSize = cache.maxBytesSize * 0.8;
+    cache.minBytesSize = name === 'trees' ? 24 * 1024 * 1024 : cache.maxBytesSize * 0.8;
     return [name, cache];
   }));
   const overview = new THREE.Group();

@@ -7,6 +7,7 @@ These captures come from the running map in the Codex in-app browser. The requir
 | View | Reproduce with URL parameters | What the capture establishes |
 | --- | --- | --- |
 | [Entire municipality](images/whole-municipality.jpg) | `lat=51.925&lon=4.265&span=30000&bearing=0&light=day` | City, harbour chain, Maasvlakte and Hoek share one continuous geographic model; surrounding municipalities remain quiet context. |
+| [Wide city centre](images/wide-central.jpg) | `lat=51.925&lon=4.480&span=3400&bearing=35&light=day` | Continuous city fabric across both riverbanks, with every requested visible tree tile loaded. |
 | [Centre at night](images/centre-night.jpg) | `lat=51.91050&lon=4.48750&span=900&bearing=35&light=night` | Unified stylised streets and buildings, inhabited windows, street illumination and visible bridge structure. Lighting is illustrated. |
 | [Coast](images/coast-day.jpg) | `lat=51.995&lon=4.125&span=2500&bearing=35&light=day` | Surveyed dune/path geometry, open sea, adjacent municipal context and source-backed ponds. |
 | [Maasvlakte detail](images/port-day.jpg) | `lat=51.95609&lon=4.00802&span=550&bearing=35&light=day` | Measured cranes/container forms and continuous quay surfaces after missing-height repair. |

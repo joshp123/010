@@ -46,7 +46,7 @@ A measured 1440 × 900 night-view comparison on the development Mac (Apple M4 Pr
 
 Wide views descend empty building tiles until the source provides actual geometry; they must not stop at an empty geographic cell and erase whole districts. Building window heights compensate for Earth curvature in the local tangent frame, so the same material works at the coast as in the centre.
 
-The municipal overview loads independently of surrounding context so context cannot hold up the first map. Export waits for both, active source roots, queued requests and visible detail to settle; either overview or context failure prevents complete readiness. It temporarily permits 64 MB of tree source data for a wider poster frame, then returns to the 48 MB interactive cache. Tree batching uses the loader's visible model set; cached detached models must not leak into distant views.
+The municipal overview loads independently of surrounding context so context cannot hold up the first map. Export waits for both, active source roots, queued requests and visible detail to settle; either overview or context failure prevents complete readiness. Visible tree source data has a 128 MiB ceiling and a 24 MiB target for unused cached data. A 3.4 km central view required more than the previous 48 MiB ceiling; raising the ceiling retains full visible source detail without allocating it in advance. Export temporarily permits 64 MiB for native streetlights. Tree batching uses the loader's visible model set; cached detached models must not leak into distant views.
 
 ## Browser source and hosting
 
