@@ -93,7 +93,24 @@ export function createTransitView({ project, localPosition, requestRender = () =
   let span = 1700, viewportHeight = 900, camera = null;
   const maskViewDirection = new THREE.Vector3();
   let physicalData = null, sectionAnchor = null, sectionSegments = [], sectionDiagnostics = null, selectedReportId = null, mouthPolygons = [], openingPolygons = [];
+  let inspectionTarget = null;
   let tunnelSegments = [], maskRebuilds = 0, maskMilliseconds = 0, maskMetresPerPixel = Infinity;
+
+  function inspectionRecord() {
+    if (!inspectionTarget) return null;
+    const matches = records.filter(({ report }) => inspectionTarget.vehicleLabel
+      ? report.mode === 'metro' && report.source === inspectionTarget.source && report.operator === inspectionTarget.operator && report.vehicleLabel === inspectionTarget.vehicleLabel
+      : report.id === inspectionTarget.id);
+    return matches.sort((a, b) => (b.report.observedAt || 0) - (a.report.observedAt || 0))[0] || null;
+  }
+
+  function focusReport(id) {
+    const report = records.find(record => record.mode === 'metro' && record.report.id === id)?.report;
+    if (!report) return false;
+    inspectionTarget = { id: report.id, source: report.source, operator: report.operator, vehicleLabel: report.vehicleLabel };
+    updateCutawayMask(true); rebuild(); requestRender();
+    return true;
+  }
 
   function batchFor(mode, count) {
     let batch = batches.get(mode);
@@ -360,13 +377,14 @@ export function createTransitView({ project, localPosition, requestRender = () =
     const ray=new THREE.Raycaster();ray.setFromCamera(new THREE.Vector2(0,0),camera);
     const centre=ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0,1,0),0),new THREE.Vector3());
     if(!centre)return;
-    const candidates=records.filter(record=>record.underground&&inViewport(record));
+    const inspected = inspectionRecord();
+    const candidates=inspectionTarget ? inspected?.underground ? [inspected] : [] : records.filter(record=>record.underground&&inViewport(record));
     candidates.sort((a,b)=>Number(fresh(b))-Number(fresh(a))||a.ground.distanceToSquared(centre)-b.ground.distanceToSquared(centre));
     const previousSelectedReportId=selectedReportId;
     selectedReportId=candidates[0]?.report.id??null;
     let selectedRail=candidates[0]?.rail?.segment||null;
     let anchor=candidates[0]?.representedGround.clone()||null;
-    if(!anchor){
+    if(!anchor && !inspectionTarget){
       let best=Infinity;
       for(const segment of tunnelSegments){const result=pointOnSegment(centre,segment.start,segment.end);if(result.distance<best){best=result.distance;selectedRail=segment;anchor=segment.start.clone().lerp(segment.end,result.fraction);}}
       if(best>span*.8)anchor=null;
@@ -479,6 +497,13 @@ export function createTransitView({ project, localPosition, requestRender = () =
     const focusCandidates = metros.filter(record=>record.underground&&(fresh(record)||record.report.freshness==='stale'));
     focusCandidates.sort((a,b)=>Number(fresh(b))-Number(fresh(a))||(b.report.observedAt||0)-(a.report.observedAt||0));
     const focus=focusCandidates[0]?.report;
+    const inspected = inspectionRecord();
+    const inspectionMessage = !inspectionTarget ? null : !inspected
+      ? 'Selected metro absent from latest feed'
+      : !inspected.underground
+      ? `${fresh(inspected) ? 'Fresh' : 'Older/unverified'} selected metro · above ground`
+      : null;
+    const inspectionAgeSeconds = inspected ? Math.max(0, Math.round((Date.now() - inspected.report.observedAt) / 1000)) : null;
     return {
       metroObservations: metros.length,
       visibleMetroObservations: visible.length,
@@ -487,22 +512,26 @@ export function createTransitView({ project, localPosition, requestRender = () =
       visibleFreshUndergroundObservations: freshCount,
       metroFocusCandidates:focusCandidates.map(({report,uncertainTrackPosition,routeHeading})=>({preferredBearing:Number.isFinite(routeHeading)?(routeHeading*180/Math.PI+425)%360:undefined,inSection:report.id===selectedReportId,presentationState:uncertainTrackPosition?'marker':'train',id:report.id,latitude:report.latitude,longitude:report.longitude,label:report.label,observedAt:report.observedAt,freshness:report.freshness,sourceConnected:report.sourceConnected})),
       metroFocus: focus ? {id:focus.id,latitude:focus.latitude,longitude:focus.longitude,label:focus.label,observedAt:focus.observedAt,freshness:focus.freshness,sourceConnected:focus.sourceConnected} : null,
-      cutawayShortMessage:!cutaway?null:underground.some(record=>record.uncertainTrackPosition)?'Report off mapped track':freshCount?'Fresh metro · depth illustrated':underground.length?'Older/unverified metro · not live':'No metro report in this section',
-      cutawayMessage: !cutaway ? null : underground.some(record=>record.uncertainTrackPosition)
+      inspection: inspectionTarget ? { id: inspected?.report.id || inspectionTarget.id, vehicleLabel: inspectionTarget.vehicleLabel, observedAt: inspected?.report.observedAt ?? null, ageSeconds: inspectionAgeSeconds, present: !!inspected } : null,
+      cutawayShortMessage:!cutaway?null:(inspectionMessage || (underground.some(record=>record.uncertainTrackPosition)?'Report off mapped track':freshCount?'Fresh metro · depth illustrated':underground.length?'Older/unverified metro · not live':'No metro report in this section')) + (inspectionAgeSeconds === null ? '' : ` · ${inspectionAgeSeconds}s ago`),
+      cutawayMessage: !cutaway ? null : inspectionMessage || (underground.some(record=>record.uncertainTrackPosition)
         ? `${fresh(underground.find(record=>record.uncertainTrackPosition)) ? 'Fresh report' : 'Older/unverified report'} · ${Math.round(underground.find(record=>record.uncertainTrackPosition).rail.distance)} m from mapped track`
         : freshCount
         ? `Fresh metro · approximate track position · depth illustrated, not surveyed`
         : underground.length ? `${underground.length} ${underground.every(record=>record.report.freshness==='stale')?'older':'unverified'} metro ${underground.length===1?'report':'reports'} · not live`
-        : 'No metro report in this section',
+        : 'No metro report in this section') + (inspectionAgeSeconds === null ? '' : ` · observed ${inspectionAgeSeconds}s ago`),
       section: sectionAnchor ? {radiusMetres:SECTION_RADIUS,selectedReportId,segmentCount:sectionSegments.length,illustrativeDepthMetres:TUNNEL_DEPTH,...sectionDiagnostics} : null,
     };
   }
 
   return {
     group,
+    focusReport,
+    releaseReport() { inspectionTarget = null; },
+    inspectionReport() { return inspectionRecord()?.report || null; },
     update(nextSnapshot) { snapshot = nextSnapshot; projectRails(); rebuild(true); updateCutawayMask(true); rebuild(); },
     setView(view) { camera = view.camera || camera; span = view.span ?? span; viewportHeight = view.viewportHeight ?? viewportHeight; updateCutawayMask(); rebuild(); },
-    setCutaway(enabled) { cutaway = typeof enabled === 'object' ? enabled.enabled : enabled; cutawayGroup.visible = cutaway; if (!cutaway) for (const material of [metroBodyMaterial, metroRoofMaterial]) { material.clippingPlanes = []; material.needsUpdate = true; } updateCutawayMask(); rebuild(); return cutawayMask; },
+    setCutaway(enabled) { cutaway = typeof enabled === 'object' ? enabled.enabled : enabled; cutawayGroup.visible = cutaway; if (!cutaway) inspectionTarget = null; if (!cutaway) for (const material of [metroBodyMaterial, metroRoofMaterial]) { material.clippingPlanes = []; material.needsUpdate = true; } updateCutawayMask(); rebuild(); return cutawayMask; },
     getCutaway() { return cutawayMask; },
     getSectionView,
     getSectionGeometry() { return {enabled:cutaway && records.some(record=>record.report.id===selectedReportId&&!record.uncertainTrackPosition),segments:sectionSegments,halfWidth:CHAMBER_HALF_WIDTH,mouthPolygons,selectionHalfWidth:CHAMBER_HALF_WIDTH,depth:TUNNEL_DEPTH,projection:cutawayMask?.projection||new THREE.Vector2()}; },
