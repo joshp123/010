@@ -11,15 +11,16 @@ spec=importlib.util.spec_from_file_location('bound',Path(__file__).with_name('so
 class SourceCollection:
  """Observe adjoining sources together; export their original geometry separately."""
  def __init__(self,folder):
-  self.path=folder;self.sources=[m.Source(p) for p in sorted(folder.glob('*.b3dm'))];assert self.sources,'No retained municipal sources'
-  anchor=self.sources[0];anchor_rotation=np.array(anchor.doc['nodes'][0]['matrix']).reshape(4,4,order='F')[:3,:3];anchor_centre=np.array(anchor.feature['RTC_CENTER'])
+  self.path=folder;definition_path=folder/'source-collection.json';definition=json.loads(definition_path.read_text()) if definition_path.exists() else {};source_names=definition.get('sourceNames');paths=[folder/name for name in source_names] if source_names else sorted(folder.glob('*.b3dm'));self.sources=[m.Source(p) for p in paths];assert self.sources,'No retained municipal sources'
+  included_identities=set(definition['includeBagIds']) if definition.get('includeBagIds') else None
+  anchor=next((s for s in self.sources if s.path.name==definition.get('anchorSource')),self.sources[0]);anchor_rotation=np.array(anchor.doc['nodes'][0]['matrix']).reshape(4,4,order='F')[:3,:3];anchor_centre=np.array(anchor.feature['RTC_CENTER'])
   self.images=[];self.triangles=[];self.source_image_ranges=[]
   for source in self.sources:
    image_start=len(self.images);self.images.extend(source.images);self.source_image_ranges.append((image_start,len(self.images)))
    rotation=np.array(source.doc['nodes'][0]['matrix']).reshape(4,4,order='F')[:3,:3];relative_rotation=anchor_rotation.T@rotation;relative_centre=anchor_rotation.T@(np.array(source.feature['RTC_CENTER'])-anchor_centre)
    for triangle in source.triangles:
     original_identity=str(source.batch['id'][triangle['batch']])
-    if not original_identity.startswith('BAG_'):continue
+    if not original_identity.startswith('BAG_') or (included_identities is not None and triangle['identity'] not in included_identities):continue
     self.triangles.append({**triangle,'positions':triangle['positions']@relative_rotation.T+relative_centre,'image':triangle['image']+image_start})
   self.positions=np.array([t['positions'] for t in self.triangles]);self.normals=np.cross(self.positions[:,1]-self.positions[:,0],self.positions[:,2]-self.positions[:,0]);self.areas=np.linalg.norm(self.normals,axis=1)/2;self.normals/=np.maximum(self.areas[:,None]*2,1e-12)
   self.raw='\n'.join(m.digest(s.raw) for s in self.sources).encode();self.anchor_rotation=anchor_rotation;self.anchor_centre=anchor_centre
