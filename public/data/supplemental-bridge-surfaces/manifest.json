@@ -1,0 +1,145 @@
+{
+  "deckSource": {
+    "bronhouder": "G0599",
+    "creation_date": "2015-03-25T23:00:00Z",
+    "eind_registratie": null,
+    "hoort_bij_typeoverbrugging": null,
+    "hoort_bij_typeoverbrugging_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#VoidReasonValue",
+    "hoort_bij_typeoverbrugging_leeg": "waardeOnbekend",
+    "in_onderzoek": null,
+    "in_onderzoek_leeg": "geenWaarde",
+    "lokaal_id": "G0599.16fd01700ee0ccac9e050210a7e24119",
+    "lv_publicatiedatum": "2016-02-08T09:03:39Z",
+    "overbrugging_is_beweegbaar": null,
+    "overbrugging_is_beweegbaar_leeg": "waardeOnbekend",
+    "plus_status": null,
+    "plus_status_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#VoidReasonValue",
+    "plus_status_leeg": "geenWaarde",
+    "relatieve_hoogteligging": 1,
+    "status": "bestaand",
+    "status_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#Status",
+    "status_leeg": null,
+    "termination_date": null,
+    "termination_date_leeg": "geenWaarde",
+    "tijdstip_registratie": "2015-03-26T12:31:25Z",
+    "type_overbruggingsdeel": "dek",
+    "type_overbruggingsdeel_codespace": "http://www.geostandaarden.nl/imgeo/def/2.1#TypeOverbruggingsdeel",
+    "type_overbruggingsdeel_leeg": null,
+    "version": "fcea446b-f0df-6cf6-180d-11c9ef0a059d"
+  },
+  "surfaces": [
+    {
+      "sourceId": "G0599.170ade244cdbd2d73e050210a7e24429",
+      "kind": "footway",
+      "areaSquareMetres": 52.39889156087995,
+      "selectedAHNPoints": 460,
+      "inlierPoints": 449,
+      "heightModel": "robust quadratic, independent surface; residual cutoff0.08m",
+      "anchorRD": [
+        92795.93801574777,
+        437129.5179578979
+      ],
+      "coefficients": [
+        3.7647441156393042,
+        0.005912323516920843,
+        -0.006418825572147283,
+        -0.0017835376327198376,
+        -0.0005172776051930785,
+        0.001227402130834285
+      ],
+      "rmseMetres": 0.01846871620556168,
+      "heightRangeMetres": [
+        3.666,
+        3.9050000000000002
+      ]
+    },
+    {
+      "sourceId": "G0599.170ade244cdbe2d73e050210a7e24429",
+      "kind": "road",
+      "areaSquareMetres": 79.9979821690773,
+      "selectedAHNPoints": 1078,
+      "inlierPoints": 1078,
+      "heightModel": "robust quadratic, independent surface; residual cutoff0.08m",
+      "anchorRD": [
+        92795.93801574777,
+        437129.5179578979
+      ],
+      "coefficients": [
+        3.7586180868744634,
+        0.005088414869111563,
+        -0.00773507146294085,
+        -0.0018331824711825663,
+        0.005255443440888998,
+        -0.015612375406687848
+      ],
+      "rmseMetres": 0.018881582612754872,
+      "heightRangeMetres": [
+        3.556,
+        3.8040000000000003
+      ]
+    },
+    {
+      "sourceId": "G0599.170ade244cdbf2d73e050210a7e24429",
+      "kind": "footway",
+      "areaSquareMetres": 58.5887835668086,
+      "selectedAHNPoints": 837,
+      "inlierPoints": 828,
+      "heightModel": "robust quadratic, independent surface; residual cutoff0.08m",
+      "anchorRD": [
+        92795.93801574777,
+        437129.5179578979
+      ],
+      "coefficients": [
+        3.711209851470438,
+        0.001627465671188666,
+        0.034599912085532536,
+        -0.0014304026850648851,
+        -0.00041642997227976517,
+        -0.00197981355907318
+      ],
+      "rmseMetres": 0.02053199305093634,
+      "heightRangeMetres": [
+        3.644,
+        3.874
+      ]
+    },
+    {
+      "sourceId": "G0599.16fd01700ee0ccac9e050210a7e24119",
+      "kind": "paving",
+      "areaSquareMetres": 13.369860535418724,
+      "selectedAHNPoints": 2501,
+      "inlierPoints": 2394,
+      "heightModel": "robust quadratic, independent surface; residual cutoff0.08m",
+      "anchorRD": [
+        92795.93801574777,
+        437129.5179578979
+      ],
+      "coefficients": [
+        3.7378025815650813,
+        0.0036910059457036784,
+        0.001800542859275381,
+        -0.0014266715924491776,
+        -0.001535477511697017,
+        0.0036255346485516574
+      ],
+      "rmseMetres": 0.02998938186151824,
+      "heightRangeMetres": [
+        3.556,
+        3.923
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "overbruggingsdeel.json": "61bb687709feaead8c5efb706905c5098f8c344bb0853bfa348c93f0780abf07",
+    "wegdeel.json": "175d5d362b9caa6898cd5f92fabf8f77b251909138e9463d1fe5e5e372d0e8b0",
+    "ahn6-bridge-subset.laz": "7d03c64fa3ef65e74264969b60aeebd2d8dc0680814aa78cefabb79b41af94ee",
+    "tileset.json.gz": "cfee3b257a071032b1e979ed5c5d45ffd83d33773a2b0c67c05e1a11f7508682",
+    "textured-bridge-2099-433.json.gz": "38b22a22af9b5655019d2dc0de678633e965300ab2a2245bc6f934ceeb16ee4d"
+  },
+  "triangles": 638,
+  "bytes": 25140,
+  "profileRoads": [
+    185274065
+  ],
+  "limitations": "Measured top surfaces only; no invented arches, rails or underside. AHN height is NAP numerical height in existing project Earth convention. Original source network plan/access unchanged."
+}

@@ -80,7 +80,10 @@ export function createCityMaterial(kind, uniforms) {
         diffuseColor.rgb *= mix(1.0, 0.68, 1.0 - cityWall);
         diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.12, 0.23, 0.27), cityWindow * 0.62);
         diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.86, 0.90, 0.91), citySnow * smoothstep(0.4, 0.9, cityNormal.y));
-        totalEmissiveRadiance += cityWindowLight * cityWindow * cityLit * cityNight * 0.72;
+        // Generic fallback openings are schematic, so their night emission stays
+        // subordinate to the separately prepared, source-supported glazing.
+        // This term is exactly zero in day mode; no facade/day colour changes.
+        totalEmissiveRadiance += cityWindowLight * cityWindow * cityLit * cityNight * 0.25;
       `;
     } else if (kind === 'ground') {
       surface = `

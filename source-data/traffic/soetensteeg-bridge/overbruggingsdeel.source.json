@@ -1,0 +1,7 @@
+{
+  "url": "https://api.pdok.nl/kadaster/bgt/ogc/v1/collections/overbruggingsdeel/items?bbox=4.4826%2C51.9190%2C4.4834%2C51.9194&datetime=2026-10-24T00%3A00%3A00Z&limit=1000&f=json",
+  "sha256": "61bb687709feaead8c5efb706905c5098f8c344bb0853bfa348c93f0780abf07",
+  "acquiredAt": "2026-10-24T10:02:29.285568+00:00",
+  "license": "CC0-1.0",
+  "attribution": "Kadaster / PDOK BGT"
+}

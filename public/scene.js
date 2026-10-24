@@ -39,6 +39,7 @@ const LAYERS = [
   ['ground', './data/native-ground-bounds/tileset.json'],
   ['bridges', '06595036-c78e-4081-ab25-e8f88b66bc19'],
   ['bridgeSurfaces', './data/bridge-surfaces/tileset.json'],
+  ['bridgeSurfaces', './data/supplemental-bridge-surfaces/tileset.json'],
   ['tanks', 'c70023a7-2878-41e9-bb81-a7c454bc310a'],
   ['appearanceTanks', './data/current-tank-appearance/tileset.json'],
   ['trees', 'b9294d5b-79e0-4744-ac88-b61e3e90d5bc'],
@@ -253,8 +254,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       // Reviewed deck surfaces exclude towers/cables; BGT supplies measured ground.
       const surfaceKinds = groundOnly ? ['ground', 'industrialTerrain', 'greenTerrain'] : ['bridgeSurfaces', 'industrialTerrain', 'ground', 'greenTerrain'];
       for (const kind of surfaceKinds) {
-        const layer = tilesets.find(layer => layer.kind === kind);
-        if (!layer?.group.visible) continue;
+        if (!tilesets.some(layer => layer.kind === kind && layer.group.visible)) continue;
         const height = surfaceQueries.get(kind).heightAt(point.x, point.z, point.y - 80, point.y + 150);
         if (height !== null) { measured = { height, source: kind === 'bridgeSurfaces' ? 'surveyed bridge deck' : kind === 'industrialTerrain' ? 'survey-based reclaimed ground' : 'surveyed ground' }; break; }
       }
@@ -620,8 +620,8 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       if (sourceFusion.update()) { renderer.shadowMap.needsUpdate = true; groundArtwork.refresh(); }
     }
     for (const [kind, query] of surfaceQueries) {
-      const layer = tilesets.find(tiles => tiles.kind === kind);
-      const models = layer.group.visible ? [...layer.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean) : [];
+      const models = tilesets.filter(layer => layer.kind === kind && layer.group.visible)
+        .flatMap(layer => [...layer.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean));
       if (query.setModels(models)) transitSurfaceDirty = true;
     }
     if (transitSurfaceDirty) {

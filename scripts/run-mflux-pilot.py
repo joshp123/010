@@ -15,19 +15,21 @@ def sha(p):
   for chunk in iter(lambda:f.read(1024*1024),b''):h.update(chunk)
  return h.hexdigest()
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('--ssd-root',type=Path,required=True);p.add_argument('--style',type=Path,required=True);p.add_argument('--style-status',default='reference only; not architectural evidence or output acceptance',help='Exact review status, e.g. unapproved candidate; never implied approval');p.add_argument('--run-name',default='facade-seed42');p.add_argument('--run',action='store_true');a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--ssd-root',type=Path,required=True);p.add_argument('--style',type=Path,required=True);p.add_argument('--prompt-file',type=Path,default=ROOT/'source-data/mflux-pilot/interpretation.txt',help='Retained interpretation text; copied and hashed per run');p.add_argument('--style-status',default='reference only; not architectural evidence or output acceptance',help='Exact review status, e.g. unapproved candidate; never implied approval');p.add_argument('--run-name',default='facade-seed42');p.add_argument('--run',action='store_true');a=p.parse_args()
  if Path(a.run_name).name!=a.run_name: p.error('run-name must be a single path component')
  if not a.style.is_file():p.error('style must be an existing image supplied by manager/artworker')
+ if not a.prompt_file.is_file():p.error('prompt-file must exist')
  ssd=a.ssd_root.expanduser().resolve(); checkout=ssd/'mflux'/COMMIT; run=ssd/'runs'/a.run_name
  if run.exists():p.error('run folder already exists; use a new run-name to preserve earlier evidence')
  if a.run and (platform.system()!='Darwin' or platform.machine()!='arm64'):p.error('real execution requires Apple Silicon macOS; this cloud worker only prepares evidence')
  run.mkdir(parents=True); inp=run/'inputs';inp.mkdir();pilot=ROOT/'source-data/mflux-pilot'
- for name in ['source-panel.png','source.json','surface-map.npz','edit-mask.png','interpretation.txt']:shutil.copy2(pilot/name,inp/name)
+ for name in ['source-panel.png','source.json','surface-map.npz','edit-mask.png']:shutil.copy2(pilot/name,inp/name)
+ shutil.copy2(a.prompt_file,inp/'interpretation.txt')
  style=inp/('style'+a.style.suffix.lower());shutil.copy2(a.style,style)
  env=os.environ.copy();env.update(HF_HOME=str(ssd/'hf'),UV_CACHE_DIR=str(ssd/'uv-cache'),UV_PYTHON_INSTALL_DIR=str(ssd/'python'),UV_PROJECT_ENVIRONMENT=str(ssd/'venvs'/COMMIT),TOKENIZERS_PARALLELISM='false')
  snapshot=ssd/'models'/'FLUX.2-klein-4B'/REVISION
  cli=[str(Path(env['UV_PROJECT_ENVIRONMENT'])/'bin/mflux-generate-flux2-edit'),'--model',str(snapshot),'--base-model','flux2-klein-4b','--image-paths',str(inp/'source-panel.png'),str(style),'--prompt-file',str(inp/'interpretation.txt'),'--width','512','--height','1024','--steps','4','--seed','42','--quantize','8','--low-ram','--metadata','--output',str(run/'candidate.png')]
- record={'status':'prepared; no inference run','mfluxCommit':COMMIT,'model':MODEL,'modelRevision':REVISION,'modelLicense':'Apache-2.0','modelDownloadPatterns':DOWNLOAD_PATTERNS,'styleStatus':a.style_status,'inputs':{f.name:sha(f) for f in inp.iterdir()},'command':cli,'cacheEnvironment':{k:env[k] for k in ['HF_HOME','UV_CACHE_DIR','UV_PYTHON_INSTALL_DIR','UV_PROJECT_ENVIRONMENT']},'createdUtc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'pythonRequested':'3.13','publication':'No automatic UV bake or runtime mutation; generated output requires architectural review'}
+ record={'status':'prepared; no inference run','mfluxCommit':COMMIT,'model':MODEL,'modelRevision':REVISION,'modelLicense':'Apache-2.0','modelDownloadPatterns':DOWNLOAD_PATTERNS,'styleStatus':a.style_status,'promptSource':str(a.prompt_file.resolve()),'runnerSha256':sha(Path(__file__)),'inputs':{f.name:sha(f) for f in inp.iterdir()},'command':cli,'cacheEnvironment':{k:env[k] for k in ['HF_HOME','UV_CACHE_DIR','UV_PYTHON_INSTALL_DIR','UV_PROJECT_ENVIRONMENT']},'createdUtc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'pythonRequested':'3.13','publication':'No automatic UV bake or runtime mutation; generated output requires architectural review'}
  (run/'provenance.json').write_text(json.dumps(record,indent=2)+'\n'); print(json.dumps(record,indent=2))
  if not a.run:return
  def call(cmd,**kw):subprocess.run(cmd,check=True,env=env,**kw)

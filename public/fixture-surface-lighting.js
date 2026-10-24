@@ -19,9 +19,13 @@ const fragmentDeclarations = `
     vec3 toHead = vec3(cellCentre.x + head.x, head.y, cellCentre.y + head.z) - cityWorldPosition;
     float distanceToHead = length(toHead);
     float normalizedDistance = distanceToHead / head.w;
-    float downward = smoothstep(-1.0, 2.0, toHead.y);
+    // An illustrated downward distribution, not surveyed luminaire photometry.
+    // The old vertical-distance test lit walls almost sideways at head height,
+    // creating broad cream facade bands unrelated to the ground pool.
+    float downwardCosine = toHead.y / max(distanceToHead, 0.1);
+    float downward = smoothstep(0.25, 0.75, downwardCosine);
     float facing = max(0.0, dot(surfaceNormal, toHead / max(distanceToHead, 0.1)));
-    float falloff = exp(-2.0 * normalizedDistance * normalizedDistance)
+    float falloff = exp(-3.5 * normalizedDistance * normalizedDistance)
       * (1.0 - smoothstep(0.75, 1.0, normalizedDistance));
     return falloff * downward * facing;
   }
@@ -153,7 +157,7 @@ export function createFixtureSurfaceLighting({ enabled, night, requestRender, ba
         shader.fragmentShader = shader.fragmentShader.replace('void main() {', `${fragmentDeclarations}\nvoid main() {`);
         shader.fragmentShader = shader.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>\n${fragmentLighting}`);
       };
-      material.customProgramCacheKey = () => `${previousKey}-fixture-surface-v1`;
+      material.customProgramCacheKey = () => `${previousKey}-fixture-surface-v2`;
       material.needsUpdate = true;
     },
     setView(camera) {

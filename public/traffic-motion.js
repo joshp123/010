@@ -55,6 +55,24 @@ export function applyReviewedRoadGeometry(network,data) {
   return replacements.size;
 }
 
+// Additional height samples lie on the original NWB segments. They do not
+// authorise a new route, change lane access or move a plan junction.
+export function applySurfaceProfiles(network,data) {
+  if(data.version!==1||!Array.isArray(data.roads))throw new Error('Unsupported surface profile');
+  let count=0;
+  for(const profile of data.roads) {
+    const matches=network.roads.filter(road=>road.id===profile.roadId);
+    if(!matches.length)continue;
+    if(matches.length!==1)throw new Error('Ambiguous surface profile road');
+    const road=matches[0];
+    if(road.coordinates.length!==profile.expectedCoordinates.length||road.coordinates.some((p,i)=>p.some((v,j)=>Math.abs(v-profile.expectedCoordinates[i][j])>1.01e-7)))throw new Error('Surface profile source changed');
+    if(!Array.isArray(profile.coordinates)||profile.coordinates.length<2||profile.coordinates.some(p=>p.length!==2||p.some(v=>!Number.isFinite(v))))throw new Error('Invalid surface profile');
+    road.originalCoordinates=road.originalCoordinates||road.coordinates;
+    road.coordinates=profile.coordinates;road.surfaceProfileEvidence=data.source;count++;
+  }
+  return count;
+}
+
 // Distance to a same-direction leader along this vehicle's already chosen trip,
 // including short source junction links. Seeing only the current road lets a
 // queued vehicle disappear from following logic just as the follower enters it.

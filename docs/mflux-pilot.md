@@ -37,3 +37,25 @@ python scripts/bake-mflux-pilot.py \
 This command verifies the retained source/mapping/mask hashes, rejects a changed output size, samples the candidate through exact barycentric UV/XYZ mappings, protects texels shared by unselected source triangles, and asserts all other atlas texels are identical. It appends PNG image data while retaining the complete original binary prefix, mesh/accessor/node/material/texture contracts. `candidate-row.glb` and `view-a-source-candidate.png` / `view-d-source-candidate.png` are separate review artifacts. Source is left, candidate right; no production file changes. `bake.json` records hashes and changed/protected texel counts. Model-weight hashing streams 1 MiB chunks, avoiding a multi-gigabyte memory allocation. `--style-status` is optional descriptive provenance with a neutral reference-only default, not an approval requirement.
 
 The runnable helper ends with an **unreviewed image**, not an automatic acceptance gate or publication step. Review the four opening contours, pane divisions, slim frame widths, masonry/stone boundaries and source occlusions; reject shifted windows, invented decoration or generic source-erasing fills. The present pilot is a source-and-runtime test within the whole-city rescue, not evidence that isolated facade styling completes it.
+
+## Controlled second trial
+
+The manager's first actual Mac run completed in 200.55 s wall time (187.6 s denoising, four steps, reported peak MLX 10.33 GB). This verifies that specific operating path, not total system-memory usage or general performance. The manager/root inspected the image and opposing-view bake: four windows were crisp, but the result remained too photographic and shifted opening proportions/positions. Storefront lettering was hallucinated but excluded from the GLB by the hard mask. **Art/fidelity failed; do not scale that result.** These are manager-reported observations; the cloud worker did not rerun inference.
+
+The exact first prompt is retained as `interpretation-v1-rejected.txt`, including its incorrect “authoritative rectified” wording. The default prompt now correctly describes a plane-unwrapped photograph with remaining projection warp. `interpretation-v2-painted.txt` asks for the actual painted facade reference's miniature/pixel drawing language while distinguishing pixel registration from architectural truth. It permits no guessed straightening or opening movement. That geometric problem needs separately supported correspondences, not stronger prompt assertions.
+
+For trial two, supply the **actual independent artwork v4 plane90 facade-panel file** held by the manager/artworker. It has not been supplied to this cloud worker and is not labelled approved. Do not substitute an unrelated illustration. The source image, edit mask, mapping, model revision, 512×1024 size, 8-bit quantization, four steps and seed 42 stay unchanged. Only the prompt and style reference change; this is a controlled interpretation comparison, not a single-variable attribution of improvement.
+
+```sh
+python scripts/run-mflux-pilot.py \
+  --ssd-root /Volumes/ExternalSSD/010-mflux \
+  --style /absolute/path/to/actual-v4-plane90-facade-panel.png \
+  --prompt-file source-data/mflux-pilot/interpretation-v2-painted.txt \
+  --run-name facade-seed42-painted-v2 \
+  --run
+python scripts/bake-mflux-pilot.py \
+  --candidate /Volumes/ExternalSSD/010-mflux/runs/facade-seed42-painted-v2/candidate.png \
+  --output work/mflux-facade-seed42-painted-v2
+```
+
+The runner copies and hashes the selected prompt and exact style file, records the prompt path and runner-code hash, and leaves previous runs untouched. Compare the source with both trial images and their actual baked opposing views: did the rendering become deliberately illustrated, and did opening displacement worsen or persist? A cleaner illustration with moved openings still fails. No second-trial inference or result is claimed here; the full block remains the intended art scope after this bounded operating experiment.

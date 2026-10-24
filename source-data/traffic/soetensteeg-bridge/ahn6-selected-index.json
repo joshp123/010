@@ -1,0 +1,42 @@
+{
+  "sourceUrl": "https://basisdata.nl/hwh-portal/20230609_tmp/links/nationaal/Nederland/AHN6_KM_PC_COPC.json",
+  "fullIndexSha256": "0c6b6c179e93ea2ad71147506dfd04afa1c3793e972334f542054bab62aa21c3",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "file": "https://fsn1.your-objectstorage.com/hwh-ahn/AHN6/01_LAZ/AHN6_2026_C_92000_437000.COPC.LAZ",
+        "size": 247587181,
+        "mtime": "2026-10-14T10:47:58.934Z",
+        "sha256": null
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              93000.0,
+              437000.0
+            ],
+            [
+              93000.0,
+              438000.0
+            ],
+            [
+              92000.0,
+              438000.0
+            ],
+            [
+              92000.0,
+              437000.0
+            ],
+            [
+              93000.0,
+              437000.0
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

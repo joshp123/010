@@ -1,0 +1,26 @@
+{
+  "source": {
+    "file": "https://fsn1.your-objectstorage.com/hwh-ahn/AHN6/01_LAZ/AHN6_2026_C_92000_437000.COPC.LAZ",
+    "size": 247587181,
+    "mtime": "2026-10-14T10:47:58.934Z",
+    "sha256": null
+  },
+  "subsetSha256": "7d03c64fa3ef65e74264969b60aeebd2d8dc0680814aa78cefabb79b41af94ee",
+  "boundsRD": [
+    [
+      92773.77523536421,
+      437114.48212960927,
+      -5.0
+    ],
+    [
+      92819.77523536421,
+      437144.48212960927,
+      15.0
+    ]
+  ],
+  "resolutionMetres": 0.25,
+  "points": 12319,
+  "acquiredAt": "2026-10-24T10:05:11.931916+00:00",
+  "license": "CC BY 4.0",
+  "attribution": "Actueel Hoogtebestand Nederland / Het Waterschapshuis \u2014AHN6"
+}

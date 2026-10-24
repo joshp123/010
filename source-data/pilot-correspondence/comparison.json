@@ -1,0 +1,79 @@
+{
+  "bagId": "0599100000671699",
+  "currentTriangleIds": [
+    624,
+    625
+  ],
+  "currentSourceHash": "c51f35cc165e106b2d77a00f8614fecd1e22d977f35a0406f2efb8acfacf4425",
+  "legacySourceHash": "f47a18e1f4b98773b57cc7e9bf6b21cae290928bc87833c43d46ed5bfc724bff",
+  "legacySourceUrl": "https://www.3drotterdam.nl/datasource-data/a6aee273-9406-41c4-a504-de2a59f7d514/17/134310/27736.cmpt",
+  "legacyMatches": [
+    {
+      "part": 0,
+      "node": 2,
+      "mesh": 1,
+      "primitive": 0,
+      "triangle": 436,
+      "material": 1,
+      "image": 0,
+      "batchId": 17,
+      "maxPlaneDistanceMeters": 1.6859942384805278e-06
+    },
+    {
+      "part": 0,
+      "node": 2,
+      "mesh": 1,
+      "primitive": 0,
+      "triangle": 437,
+      "material": 1,
+      "image": 0,
+      "batchId": 17,
+      "maxPlaneDistanceMeters": 1.4020596943428368e-06
+    }
+  ],
+  "currentPanelHash": "0332b52b9dd04cfe2cdaacc4f4722def520dd60d8beea6449a700356bc106bee",
+  "localToPanel": [
+    [
+      -74.98677515203201,
+      0.0,
+      -9.90908863694719,
+      545.7984661075667
+    ],
+    [
+      0.0,
+      -75.63865734883875,
+      0.0,
+      1234.2590959369327
+    ],
+    [
+      0.13100561253020868,
+      -6.183509751312419e-06,
+      -0.9913816265431535,
+      -39.36316574196188
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "status": "Comparison evidence only: no source correction, model inference or opening-corner ground truth",
+  "measuredPlaneWidthMeters": 5.0831427574157715,
+  "measuredPlaneHeightMeters": 13.114983558654785,
+  "nativeCurrentAtlasDimensions": [
+    1024,
+    1024
+  ],
+  "nativeCurrentUVBoundsPixels": [
+    [
+      727.9012451171875,
+      278.0
+    ],
+    [
+      881.3975219726562,
+      517.1727294921875
+    ]
+  ],
+  "independence": "Different published imagery editions; independent photographic camera/date not established. Multiple CPU views of one atlas are not independent observations."
+}
