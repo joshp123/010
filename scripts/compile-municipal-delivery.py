@@ -6,8 +6,6 @@ Derived packs and retained originals live outside Git. No upload is performed.
 import argparse,concurrent.futures,copy,gzip,hashlib,io,json,math,pathlib,posixpath,struct,time,urllib.request
 from PIL import Image
 BASE='https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/'
-DTYPES={5120:'i1',5121:'u1',5122:'<i2',5123:'<u2',5125:'<u4',5126:'<f4'}
-SIZES={'SCALAR':1,'VEC2':2,'VEC3':3,'VEC4':4,'MAT4':16}
 def sha(b):return hashlib.sha256(b).hexdigest()
 def pad(b,fill=b'\0'):return b+fill*((-len(b))%4)
 def get_source(uri,root,acquire):
@@ -63,7 +61,7 @@ def main():
    if uri.endswith('.json'):walk(json.loads(get_source(uri,root,args.acquire))['root'],uri)
    elif uri.startswith('18/'):selected.append(uri)
   for child in node.get('children',[]):walk(child,base)
- walk(json.loads(get_source('tileset.json',root,args.acquire))['root'],'tileset.json');selected=sorted(set(selected));print(f'Selected complete area: {len(selected)} source leaves',flush=True);records=[];checkpoint=root/'compiled-tiles.json';prior={r['source']:r for r in json.loads(checkpoint.read_text()).get('tiles',[])} if checkpoint.exists() else {}
+ walk(json.loads(get_source('tileset.json',root,args.acquire))['root'],'tileset.json');selected=sorted(set(selected));print(f'Selected complete area: {len(selected)} source leaves',flush=True);records=[];checkpoint=root/'compiled-tiles.json';previous=json.loads(checkpoint.read_text()) if checkpoint.exists() else {};prior={r['source']:r for r in previous.get('tiles',[])} if previous.get('limit')==args.limit else {}
  def job(uri):
   if uri in prior and prior[uri].get('compilerVersion')==2 and (root/prior[uri]['file']).exists():return prior[uri]
   return compile_tile(uri,root,args.acquire,args.limit)
