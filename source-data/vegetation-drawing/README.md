@@ -4,15 +4,15 @@ Source-bound crown interpretation
 
 The retained municipal tree proxy is a generic inventory envelope, not a survey of leaf surfaces. The representative elm is bm_83722_K, Ulmus minor, diameter15m, total height22m, stem6m. Its original prototype, source URL and hash are retained here and in provenance.json. The illustration changes no instance matrix, tree position, occupied bounding envelope or trunk geometry. No individual branch/species reconstruction is claimed.
 
-Current private comparison
+Integrated bounded improvement
 
-Run `node scripts/preview-vegetation-isometric.mjs` while the normal preview runs on8785. Only8788 is used for the active comparison. Main public/vegetation-style.js remains unchanged.
+Run `node scripts/preview-vegetation-isometric.mjs` while the normal preview runs on8785. Only8788 is used for the active comparison. The selected module, reconstructed geometry and registered drawing field are now integrated into the main preview.
 
 vegetation-isometric.candidate.js uses crown-isometric-hull.js, reconstructed by build-isometric-hull.py from nine registered model-composed crown silhouettes. Eight views use the actual city-camera elevation35.264degrees and45degree azimuth steps; the ninth is overhead. The original municipal prototype is retained beside its registered source views. The model interprets a coherent upper light canopy and darker lower volume with sparse breaks; geometry is an intersection of those silhouettes, then fitted to the exact original source prototype envelope. Original instance matrices, positions, occupied extents and trunks remain unchanged. This is an illustration of a generic crown envelope, not a surveyed leaf/branch reconstruction or a species identification.
 
-Whole-crown paint is projected using camera direction in the instance's own frame; adjacent registered views blend during rotation. It does not scatter independent view patches according to each face normal. Native city material lighting, night/snow and metro-cut compilation remain active. The private preview skips generic object-detail simplification for this textured geometry because that simplifier would discard its custom projection coordinates. Main runtime foliage is unchanged.
+Whole-crown paint is projected using camera direction in the instance's own frame; adjacent registered views blend during rotation. It does not scatter independent view patches according to each face normal. Native city material lighting, night/snow and metro-cut compilation remain active. The private preview skips generic object-detail simplification for this textured geometry because that simplifier would discard its custom projection coordinates. The main object-detail path retains the registered projection coordinates instead of applying its generic mesh simplifier to these crowns.
 
-I looked at the full city on desktop and390x844 phone,45degree/opposing rotation and night. This is clearer and quieter than the woolly/camouflage candidates, but still has conspicuously rounded large crowns and is not whole-scene art acceptance. It remains a reversible comparison awaiting independent product review.
+I looked at the full city on desktop and390x844 phone,45degree/opposing rotation and night. This is clearer and quieter than the woolly/camouflage candidates, but still has conspicuously rounded large crowns and is not whole-scene art acceptance. The manager independently looked at the compact rotated phone view and accepted this bounded canopy improvement for integration. The full miniature remains unaccepted; large rounded crowns and photographic architecture remain visible.
 
 Rejected studies
 

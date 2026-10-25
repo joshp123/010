@@ -147,7 +147,7 @@ export function createObjectDetail({ maximumPixelError = 1, buildBudgetMilliseco
         if (instances.colors) mesh.instanceColor.needsUpdate = true;
       } else { if (instances?.compacted) changed = true; restoreInstances(mesh, instances); }
       let geometry = record.source;
-      if (!fullDetail) {
+      if (!fullDetail && !record.source.userData.preserveTextureProjection) {
         const pixelsPerSourceUnit = pixelsPerWorldUnit * mesh.matrixWorld.getMaxScaleOnAxis() * instanceScale;
         const maximumSourceError = maximumPixelError / pixelsPerSourceUnit;
         // Do not spend CPU making approximations of already tiny prototypes.

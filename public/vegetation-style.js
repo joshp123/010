@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { crownPositions, crownCoordinates, crownIndices } from './crown-isometric-hull.js';
 
 // Interpret the municipality's generic crown envelopes; never change source
 // instance placement, diameter, height or orientation. This is illustrated
@@ -11,82 +12,31 @@ function treePart(mesh) {
   try { return parent?.batchTable.getDataFromId(0)?.attributes?.tree_part; } catch { return null; }
 }
 
-// Source prototype cross-sections retain the distinction between narrow,
-// conical, broad and spherical crowns. Interpolate maximum radial extents at
-// 12 heights; this is a silhouette guide, not new botanical source data.
-function crownProfile(source) {
-  source.computeBoundingBox();
-  const box = source.boundingBox, size = box.getSize(new THREE.Vector3()), centre = box.getCenter(new THREE.Vector3());
-  const bins = Array.from({ length: 13 }, () => 0), positions = source.getAttribute('position');
-  for (let i = 0; i < positions.count; i++) {
-    const y = (positions.getY(i) - box.min.y) / size.y;
-    const radius = Math.hypot((positions.getX(i) - centre.x) / size.x, (positions.getZ(i) - centre.z) / size.z);
-    const bin = Math.min(12, Math.max(0, Math.round(y * 12)));
-    bins[bin] = Math.max(bins[bin], radius);
-  }
-  for (let i = 0; i < bins.length; i++) if (!bins[i]) {
-    let lo = i - 1, hi = i + 1;
-    while (lo >= 0 && !bins[lo]) lo--;
-    while (hi < bins.length && !bins[hi]) hi++;
-    bins[i] = lo >= 0 && hi < bins.length ? THREE.MathUtils.lerp(bins[lo], bins[hi], (i - lo) / (hi - lo)) : bins[lo >= 0 ? lo : hi] || .5;
-  }
-  return { box, size, centre, radius(y) { const t = THREE.MathUtils.clamp(y, 0, 1) * 12, lo = Math.floor(t); return THREE.MathUtils.lerp(bins[lo], bins[Math.min(12, lo + 1)], t - lo); } };
-}
-
+// Registered whole-crown fields colour one reconstructed volume.
+// Original prototype envelopes and source instance transforms remain exact.
+const crownPaint = new THREE.TextureLoader().load('./data/vegetation-drawing/crown-fields.png');
+crownPaint.colorSpace = THREE.SRGBColorSpace;
+crownPaint.magFilter = THREE.NearestFilter;
+crownPaint.minFilter = THREE.LinearMipmapLinearFilter;
 export function createCrownGeometry(source) {
-  const profile = crownProfile(source), positions = [], colors = [], indices = [];
-  const rings = 24, sectors = 64;
-  const dark = new THREE.Color('#344d3b'), body = new THREE.Color('#5c724b'), light = new THREE.Color('#81915e');
-  const masses = [
-    [-.18,.42,-.08,.32,.35,.33], [.19,.45,.08,.30,.30,.30],
-    [-.13,.70,.11,.28,.29,.29], [.13,.74,-.12,.26,.26,.27],
-    [.02,.28,.06,.28,.25,.25], [.28,.61,.12,.21,.25,.22],
-  ];
-  // Connected foliage masses interpret the inventory envelope, not branches or
-  // species. Their overlapping cross-sections avoid repeated vertical fluting.
-  for (let ring = 0; ring <= rings; ring++) for (let sector = 0; sector <= sectors; sector++) {
-    const y = ring / rings, angle = sector / sectors * Math.PI * 2;
-    const nx = Math.cos(angle), nz = Math.sin(angle);
-    let massRadius = 0, outerMass = masses[0];
-    for (const mass of masses) {
-      const [cx,cy,cz,rx,ry,rz] = mass;
-      const a = nx*nx/(rx*rx)+nz*nz/(rz*rz);
-      const b = -2*(nx*cx/(rx*rx)+nz*cz/(rz*rz));
-      const c = cx*cx/(rx*rx)+cz*cz/(rz*rz)+(y-cy)**2/(ry*ry)-1;
-      const discriminant = b*b-4*a*c;
-      if (discriminant < 0) continue;
-      const radius = (-b+Math.sqrt(discriminant))/(2*a);
-      if (radius > massRadius) outerMass = mass;
-      const overlap = Math.max(0, .07 - Math.abs(radius-massRadius)) / .07;
-      massRadius = Math.max(massRadius, radius) + overlap*overlap*.0175;
-    }
-    const leafEdge = 1 + .045*Math.sin(angle*19+y*27)*Math.sin(y*23-angle*9);
-    const radius = massRadius * Math.min(1, profile.radius(y)*2) * leafEdge;
-    const x = nx * radius, z = nz * radius;
-    const [,cy,,,ry] = outerMass;
-    const massTop = THREE.MathUtils.smoothstep((y-cy)/ry, -.35, .65);
-    const underside = THREE.MathUtils.smoothstep(y, .05, .42);
-    const shade = dark.clone().lerp(body, underside);
-    shade.lerp(light, massTop * .42 * underside);
-    positions.push(x, y, z); colors.push(shade.r, shade.g, shade.b);
-  }
-  for (let ring = 0; ring < rings; ring++) for (let sector = 0; sector < sectors; sector++) {
-    const a = ring * (sectors + 1) + sector, b = a + 1, c = a + sectors + 1, d = c + 1;
-    indices.push(a, c, b, b, c, d);
-  }
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-  geometry.setAttribute('canopyCoordinates', new THREE.Float32BufferAttribute(positions, 3));
-  geometry.setIndex(indices);
+  source.computeBoundingBox();
+  const size=source.boundingBox.getSize(new THREE.Vector3()),centre=source.boundingBox.getCenter(new THREE.Vector3());
+  const geometry=new THREE.BufferGeometry();
+  const coordinates=Float32Array.from(crownPositions),positions=new Float32Array(coordinates.length);
+  positions.set(coordinates);
+  geometry.setAttribute('position',new THREE.BufferAttribute(positions,3));
   geometry.computeBoundingBox();
-  const ownBox = geometry.boundingBox.clone(), ownSize = ownBox.getSize(new THREE.Vector3()), p = geometry.getAttribute('position');
-  for (let i = 0; i < p.count; i++) for (let axis = 0; axis < 3; axis++) {
-    p.setComponent(i, axis, profile.box.min.getComponent(axis) + (p.getComponent(i, axis) - ownBox.min.getComponent(axis)) / ownSize.getComponent(axis) * profile.size.getComponent(axis));
+  const illustratedSize=geometry.boundingBox.getSize(new THREE.Vector3()),illustratedCentre=geometry.boundingBox.getCenter(new THREE.Vector3());
+  for(let i=0;i<positions.length;i+=3) {
+    positions[i]=(positions[i]-illustratedCentre.x)/illustratedSize.x*size.x+centre.x;
+    positions[i+1]=(positions[i+1]-illustratedCentre.y)/illustratedSize.y*size.y+centre.y;
+    positions[i+2]=(positions[i+2]-illustratedCentre.z)/illustratedSize.z*size.z+centre.z;
   }
-  geometry.computeVertexNormals();
-  geometry.computeBoundingBox(); geometry.computeBoundingSphere();
-  geometry.userData = { ...source.userData, vegetationInterpretation: 'Connected shaded foliage volumes within the original inventory envelope, using shared city light; no inferred branches, species or new tree positions' };
+  geometry.setIndex(crownIndices);
+  geometry.setAttribute('canopyCoordinates',new THREE.BufferAttribute(Float32Array.from(crownCoordinates),3));
+  geometry.setAttribute('color',new THREE.BufferAttribute(new Float32Array(positions.length).fill(1),3));
+  geometry.computeVertexNormals();geometry.computeBoundingBox();geometry.computeBoundingSphere();
+  geometry.userData={...source.userData,vegetationInterpretation:'Nine-view model-drawn connected crown volume within exact inventory envelope, coherent whole-crown view projection',preserveTextureProjection:true};
   return geometry;
 }
 
@@ -120,30 +70,42 @@ export function createVegetationStyle() {
         if (!canopyMaterial) {
           const material = sourceMaterial.clone();
           material.flatShading = false;
+          material.map = crownPaint;
           material.onBeforeCompile = (shader, renderer) => {
             sourceMaterial.onBeforeCompile(shader, renderer);
-            shader.vertexShader = 'attribute vec3 canopyCoordinates; varying vec3 canopyPosition;\n' + shader.vertexShader;
-            shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ncanopyPosition = canopyCoordinates;');
-            shader.fragmentShader = `
-              varying vec3 canopyPosition;
-              float canopyHash(vec3 p) { return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453); }
-              float canopyMass(vec3 p) {
-                vec3 cell=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
-                return mix(mix(mix(canopyHash(cell),canopyHash(cell+vec3(1,0,0)),f.x),mix(canopyHash(cell+vec3(0,1,0)),canopyHash(cell+vec3(1,1,0)),f.x),f.y),mix(mix(canopyHash(cell+vec3(0,0,1)),canopyHash(cell+vec3(1,0,1)),f.x),mix(canopyHash(cell+vec3(0,1,1)),canopyHash(cell+vec3(1,1,1)),f.x),f.y),f.z);
+            shader.uniforms.crownFields = {value:crownPaint};
+            shader.vertexShader = 'attribute vec3 canopyCoordinates; varying vec3 crownPosition; varying vec3 crownViewDirection;\n'+shader.vertexShader;
+            shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+              crownPosition=canopyCoordinates;
+              mat4 crownViewTransform=modelViewMatrix;
+              #ifdef USE_INSTANCING
+                crownViewTransform*=instanceMatrix;
+              #endif
+              crownViewDirection=normalize(vec3(crownViewTransform[0][2],crownViewTransform[1][2],crownViewTransform[2][2]));
+            `);
+            shader.fragmentShader = `uniform sampler2D crownFields; varying vec3 crownPosition; varying vec3 crownViewDirection;
+              vec3 crownField(float index, vec3 position) {
+                float angle=index*.7853981634;
+                float elevation=index>7.5?1.5707963268:.6154797087;
+                vec3 right=vec3(cos(angle),0.0,-sin(angle));
+                vec3 up=vec3(-sin(angle)*sin(elevation),cos(elevation),-cos(angle)*sin(elevation));
+                vec2 projected=vec2(dot(position,right),-dot(position,up));
+                vec2 cell=vec2(mod(index,3.0),floor(index/3.0));
+                vec2 uv=(cell+projected*(320.0/512.0)+.5)/3.0;
+                uv.y=1.0-uv.y;
+                return texture2D(crownFields,uv).rgb;
               }
-            ` + shader.fragmentShader;
-            shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
-              float canopyPigment = max(dot(diffuseColor.rgb, vec3(.2126,.7152,.0722)), .001);
-              float canopyIllumination = dot(outgoingLight, vec3(.2126,.7152,.0722)) / canopyPigment;
-              float canopyPaint = .50 + .23*smoothstep(.38,.48,canopyIllumination) + .27*smoothstep(.78,.88,canopyIllumination);
-              float foliageMass = canopyMass(canopyPosition*vec3(13.0,17.0,13.0));
-              float foliageShade = .82 + .15*smoothstep(.34,.43,foliageMass) + .15*smoothstep(.57,.66,foliageMass);
-              canopyPaint *= foliageShade;
-              outgoingLight = mix(outgoingLight, diffuseColor.rgb*canopyPaint, .95*(1.0-cityNight));
-              #include <opaque_fragment>
+            `+shader.fragmentShader;
+            shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>', `
+              vec3 viewDirection=normalize(crownViewDirection);
+              float angle=mod(atan(viewDirection.x,viewDirection.z)+6.2831853072,6.2831853072)/.7853981634;
+              float first=floor(angle), fraction=fract(angle);
+              vec3 paint=mix(crownField(first,crownPosition),crownField(mod(first+1.0,8.0),crownPosition),smoothstep(.2,.8,fraction));
+              float topWeight=smoothstep(.82,.98,viewDirection.y);
+              diffuseColor.rgb*=mix(paint,crownField(8.0,crownPosition),topWeight);
             `);
           };
-          material.customProgramCacheKey = () => sourceMaterial.customProgramCacheKey() + '-joined-painted-canopy-v4';
+          material.customProgramCacheKey = () => sourceMaterial.customProgramCacheKey() + '-source-bound-whole-crown-isometric-v1';
           canopyMaterial = { material, references: 0 };
           canopyMaterials.set(sourceMaterial, canopyMaterial);
         }
