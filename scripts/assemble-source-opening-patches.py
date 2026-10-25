@@ -98,7 +98,8 @@ def assemble(arguments):
             valid &= (labels > 0) & (facade_bag_ids[labels] == triangle['identity'])
             patch = valid & source_patch_mask[pixel[:, :, 1], pixel[:, :, 0]]
             destination = image[y0:y1 + 1, x0:x1 + 1]
-            destination[valid] = wall_colours[labels[valid]]
+            if not arguments.openings_only:
+                destination[valid] = wall_colours[labels[valid]]
             destination[patch] = original_image[y0:y1 + 1, x0:x1 + 1][patch]
             drawn = valid & opening_mask[pixel[:, :, 1], pixel[:, :, 0]]
             destination[drawn] = opening_colours[pixel[:, :, 1][drawn], pixel[:, :, 0][drawn]]
@@ -113,7 +114,7 @@ def assemble(arguments):
             for item in metadata['external_images']:
                 if item['uri'] == image_path.name:
                     item['sha256'] = digest(image_path)
-        metadata['sourceOpeningAssembly'] = {'observationsSha256': digest(arguments.observations), 'meaning': 'Explicit observed frame/glass polygons over source-supported drawn wall regions; uncertain opening patches retain original source pixels. No extra emission or inferred inventory.'}
+        metadata['sourceOpeningAssembly'] = {'observationsSha256': digest(arguments.observations), 'baseCollectionSha256': digest(arguments.handoff / 'collection.json'), 'openingOnly': arguments.openings_only, 'meaning': 'Explicit observed frame/glass polygons over source-supported drawn wall regions; uncertain opening patches retain original source pixels. No extra emission or inferred inventory.'}
         (destination / 'georeference-and-identities.json').write_text(json.dumps(metadata, indent=2) + '\n')
     collection = read_json(arguments.handoff / 'collection.json')
     selected_children = {leaf.path.stem for leaf in source.sources}
@@ -125,4 +126,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     for name in ['source', 'observations', 'handoff', 'output', 'painter-scripts']:
         parser.add_argument('--' + name, required=True, type=Path)
+    parser.add_argument('--openings-only', action='store_true', help='Preserve registered complete facade artwork; apply only observed openings and uncertain source patches.')
     assemble(parser.parse_args())
