@@ -199,7 +199,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   for (const material of [...['ground', 'streets', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain', 'yards'].map(kind => materials[kind]), cartographicMaterial, contextLandMaterial]) applyPublicSpaceMaterial(material);
   const publicSpaceStyle = createPublicSpaceStyle({ material: materials.ground });
   const groundArtworkEnabled = !['native', 'off'].includes(new URLSearchParams(location.search).get('ground'));
-  const groundArtwork = createGroundArtwork({ baseUrl: (!new URLSearchParams(location.search).get('appearance') || new URLSearchParams(location.search).get('appearance') === 'illustrated-neighbourhood') ? './data/ground-artwork-neighbourhood-v3/' : './data/ground-artwork/', enabled: groundArtworkEnabled, requestRender, anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()) });
+  const groundArtwork = createGroundArtwork({ baseUrl: (!new URLSearchParams(location.search).get('appearance') || new URLSearchParams(location.search).get('appearance') === 'illustrated-neighbourhood') ? './data/ground-artwork-neighbourhood-v5/' : './data/ground-artwork/', enabled: groundArtworkEnabled, requestRender, anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()) });
   groundArtwork.apply(materials.ground);
   let groundArtworkPending = groundArtworkEnabled, groundArtworkFailed = false;
   groundArtwork.ready.then(() => { groundArtworkPending = false; groundArtworkFailed = Boolean(groundArtwork.diagnostics().error); requestRender(); });
