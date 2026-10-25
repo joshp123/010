@@ -1,0 +1,104 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "meaning": "Source-observed frame material support only within a full new model-authored masonry/stone/bay/glass/roof composition. Quiet local stone/paint value replaces uniform bright frame tracing; glass reflection and wall/roof drawing remain authored model fields, not palette transforms.",
+  "roles": [
+    {
+      "name": "unmodified",
+      "labelRgb": [
+        0,
+        0,
+        0
+      ],
+      "drawingRgba": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "source-frame",
+      "labelRgb": [
+        255,
+        0,
+        0
+      ],
+      "drawingRgba": [
+        172,
+        178,
+        163,
+        255
+      ]
+    },
+    {
+      "name": "glass",
+      "labelRgb": [
+        0,
+        255,
+        0
+      ],
+      "drawingRgba": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "source-screen",
+      "labelRgb": [
+        0,
+        0,
+        255
+      ],
+      "drawingRgba": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "bay-recess",
+      "labelRgb": [
+        0,
+        255,
+        255
+      ],
+      "drawingRgba": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "upper-glass-reflection",
+      "labelRgb": [
+        255,
+        255,
+        0
+      ],
+      "drawingRgba": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "dark-shop-frame",
+      "labelRgb": [
+        255,
+        0,
+        255
+      ],
+      "drawingRgba": [
+        66,
+        79,
+        75,
+        255
+      ]
+    }
+  ]
+}

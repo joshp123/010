@@ -1,0 +1,3 @@
+Written by AI on 2026-10-25 by model GPT-6
+
+Edit this exact drawing only to REMOVE EVERY green tree, shrub, hedge, potted plant and vegetation silhouette, including tiny plants on balconies and courtyard walls. These were unsupported additions. Replace those pixels with the actual adjacent building/courtyard wall or bare court material, preserving all existing architecture, roof shape, window/frame/glass positions, balconies, bays, material drawing, canvas, camera and pixel scale exactly. No new objects or openings. No other style or composition change. Return the identical-size cleaned drawing.

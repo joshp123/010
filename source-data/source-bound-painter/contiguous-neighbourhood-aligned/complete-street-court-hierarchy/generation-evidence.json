@@ -1,0 +1,17 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "status": "Source-role drawing candidate. Not imported or visually accepted. Existing-image material edit rejected unchanged before baking.",
+  "sourceRoles": {
+    "120": "/Users/josh/.codex/generated_images/01a16d33-13fd-7e93-b718-9273a13fd6f3/exec-287cd0bc-faae-4667-ad47-bf1fed29e8fe.png",
+    "300": "/Users/josh/.codex/generated_images/01a16d33-13fd-7e93-b718-9273a13fd6f3/exec-19a34e8f-05e8-405e-a2a5-deea518eee0d.png"
+  },
+  "sourceRolePrompt": "source-role-prompt.txt",
+  "sourceEvidence": "../complete-street-court/view-{120,300}-28-source-context.png",
+  "geometryEvidence": "../complete-street-court/view-{120,300}-28-geometry-context.png",
+  "rejectedExistingTemplateEdit": {
+    "image": "rejected-unchanged-template.png",
+    "prompt": "wall-300-prompt.txt",
+    "reason": "Glass shifted slightly toward blue, but dominant uniform outlines and architectural diagram hierarchy survived. Not baked."
+  },
+  "meaning": "Model judges whole-envelope source material-role support; code decodes explicit labels and paints chosen artwork values within those exact masks, then binds through retained source geometry/depth. This does not independently certify every source opening contour; existing exact observed openings must remain final layer."
+}

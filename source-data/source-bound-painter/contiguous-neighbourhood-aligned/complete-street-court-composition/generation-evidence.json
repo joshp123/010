@@ -1,0 +1,19 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "prompt": "full-material-prompt.txt",
+  "styleAuthorityOnly": "../complete-street-court/brixton-ordinary-neighbourhood-reference.png",
+  "sourceEvidence": "../complete-street-court/view-{120,300}-28-source-context.png",
+  "geometryGuide": "../complete-street-court/view-{120,300}-28-geometry-context.png",
+  "sourceRoleSupport": "../complete-street-court-hierarchy/source-roles-{120,300}.png",
+  "originalGenerations": {
+    "120": "/Users/josh/.codex/generated_images/01a16d33-13fd-7e93-b718-9273a13fd6f3/exec-7b52d01e-76e7-4232-8e99-cd2418dc231d.png",
+    "300": "/Users/josh/.codex/generated_images/01a16d33-13fd-7e93-b718-9273a13fd6f3/exec-0733be6f-1e61-43fa-8f64-5aaa5beb8461.png"
+  },
+  "status": "Full material hierarchy candidate; actual bound120/300 comparison required, no artwork acceptance or runtime import.",
+  "cleanup": {
+    "prompt": "remove-unsupported-plants-prompt.txt",
+    "120": "/Users/josh/.codex/generated_images/01a16d33-13fd-7e93-b718-9273a13fd6f3/exec-b9146a07-eb78-465a-8ace-c009ef89b79b.png",
+    "300": "/Users/josh/.codex/generated_images/01a16d33-13fd-7e93-b718-9273a13fd6f3/exec-ff516dd0-c9c3-4bf0-b458-3d38cda3c101.png",
+    "status": "Both outputs visually inspected; unsupported green vegetation removed. Bound source identity and final quality still require actual bake review."
+  }
+}

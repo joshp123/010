@@ -234,12 +234,20 @@ def bake_block_fields(source,folder):
   leaf_base=(folder/definition.get('baseOverrides',{}).get(leaf.path.stem,str(base))).resolve()
   for local,image_index in enumerate(range(first,last)):source.images[image_index]=np.asarray(Image.open(leaf_base/leaf.path.stem/f'painted-atlas-{local}.png').convert('RGB')).copy()
  painted_masks=[np.zeros(a.shape[:2],bool) for a in source.images]
+ ownership=None
+ if definition.get('connectedSurfaceOwnership'):
+  ownership,records=coherent_surface_views(source,plan,folder)
+  m.save_json(folder/'connected-drawing-planes.json',{'authorship':'Written by AI on 2026-10-25 by model GPT-6','meaning':'One source-visible drawing per connected architectural plane; original geometry and depth remain authoritative. This is binding provenance, not art acceptance.','planes':records})
  for field in definition['fields']:
   view=next(v for v in plan['views'] if v['name']==field['view']);c=view['camera'];bounds=view['contextCropBounds'];extent=(bounds[2]-bounds[0],bounds[3]-bounds[1]);drawing=Image.open(folder/field['drawing']).convert('RGBA')
   if 'drawingPixelsPerMetre' in field:
    drawing_size=tuple(max(1,round(length/c['scale']*field['drawingPixelsPerMetre'])) for length in extent)
    drawing=drawing.resize(drawing_size,Image.Resampling.BOX)
-  drawing=drawing.resize(extent,Image.Resampling.NEAREST);drawing.save(folder/(field['view']+'-registered-drawing.png'));registered=Image.new('RGBA',(c['size'],c['size']));registered.paste(drawing,bounds[:2]);apply_source_registered_field(source,source.images,c,np.asarray(registered),set(field['bagIds']),set(field['triangleIndices']) if 'triangleIndices' in field else None,painted_masks)
+  triangles=set(field['triangleIndices']) if 'triangleIndices' in field else None
+  if ownership is not None:
+   selected={face for face,owner in ownership.items() if owner==plan['views'].index(view)}
+   triangles=selected if triangles is None else triangles&selected
+  drawing=drawing.resize(extent,Image.Resampling.NEAREST);drawing.save(folder/(field['view']+'-registered-drawing.png'));registered=Image.new('RGBA',(c['size'],c['size']));registered.paste(drawing,bounds[:2]);apply_source_registered_field(source,source.images,c,np.asarray(registered),set(field['bagIds']),triangles,painted_masks)
  pad_painted_uv_charts(source,source.images,painted_masks)
  for view in plan['views']:
   rgb,_=render(source,view['camera']);Image.fromarray(rgb).save(folder/(view['name']+'-actual-bake.png'))
