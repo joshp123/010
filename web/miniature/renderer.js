@@ -206,6 +206,8 @@ const postFragment = `
   uniform float outlines;
   uniform float dither;
   uniform float depthScale;
+  uniform float metresPerPixel;
+  uniform vec3 background;
   in vec2 vUv;
   out vec4 fragColour;
 
@@ -234,7 +236,15 @@ const postFragment = `
     vec3 linearColour = texture(colourTexture, vUv).rgb;
     vec3 colour = mix(linearColour * 12.92, 1.055 * pow(linearColour, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, linearColour));
     float depth = depthAt(vUv);
-    if (outlines > 0.5 && depth < depthScale * 0.999) {
+    if (depth >= depthScale * 0.999) {
+      // Background stays exactly the page colour, so tile edges never show.
+      fragColour = vec4(background, 1.0);
+      return;
+    }
+    // At coarse scales neighbouring pixels are metres apart in depth; outline
+    // only real object edges, and drop inner creases once they are sub-pixel.
+    float edgeDepth = max(1.6, 4.0 * metresPerPixel);
+    if (outlines > 0.5) {
       vec3 normal = texture(normalTexture, vUv).xyz * 2.0 - 1.0;
       float silhouette = 0.0, crease = 0.0;
       vec2 offsets[4] = vec2[4](vec2(1, 0), vec2(-1, 0), vec2(0, 1), vec2(0, -1));
@@ -245,9 +255,9 @@ const postFragment = `
         vec3 neighbourNormal = texture(normalTexture, uv).xyz * 2.0 - 1.0;
         // Two parallel surfaces a little apart (tile joins, kerbs, quay steps)
         // are not an object edge; anything taller than a storey is.
-        bool parallelStep = dot(normal, neighbourNormal) > 0.98 && neighbourDepth - depth < 2.6;
-        if (neighbourDepth - depth > 1.6 && !parallelStep) silhouette = 1.0;
-        if (dot(normal, neighbourNormal) < 0.75 && abs(neighbourDepth - depth) < 1.6) crease = 1.0;
+        bool parallelStep = dot(normal, neighbourNormal) > 0.98 && neighbourDepth - depth < edgeDepth + 1.0;
+        if (neighbourDepth - depth > edgeDepth && !parallelStep) silhouette = 1.0;
+        if (metresPerPixel < 1.0 && dot(normal, neighbourNormal) < 0.75 && abs(neighbourDepth - depth) < edgeDepth) crease = 1.0;
       }
       if (silhouette > 0.5) colour = colour * vec3(0.36, 0.36, 0.44);
       else if (crease > 0.5) colour = colour * 0.80;
@@ -329,6 +339,8 @@ export class Miniature {
         outlines: { value: 1 },
         dither: { value: 0.35 },
         depthScale: { value: CAMERA_DISTANCE * 2 },
+        metresPerPixel: { value: 0.3 },
+        background: { value: new THREE.Vector3(0xc9 / 255, 0xd3 / 255, 0xdd / 255) },
       },
     });
     this.postScene = new THREE.Scene();
@@ -559,6 +571,7 @@ export class Miniature {
     this.colourTarget.setSize(width, height);
     this.normalTarget.setSize(width, height);
     this.postMaterial.uniforms.resolution.value.set(width, height);
+    if (this.screenWindow) this.postMaterial.uniforms.metresPerPixel.value = this.screenWindow.metresPerPixel;
   }
 
   render() {
@@ -566,6 +579,7 @@ export class Miniature {
     const overlay = Boolean(this.style.dataOverlay);
     this.overlayUniform.value = overlay ? 1 : 0;
     this.scene.background.set(overlay ? 0x000000 : 0xc9d3dd);
+    u.background.value.set(...(overlay ? [0, 0, 0] : [0xc9 / 255, 0xd3 / 255, 0xdd / 255]));
     u.pixelArt.value = this.style.pixelArt && !overlay ? 1 : 0;
     u.outlines.value = this.style.outlines && !overlay ? 1 : 0;
     u.dither.value = this.style.dither;

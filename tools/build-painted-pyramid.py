@@ -149,7 +149,9 @@ for level in range(len(meta["levels"])):
     for row in range(rows):
         for column in range(columns):
             tile = Image.new("RGB", (TILE, TILE), (0xc9, 0xd3, 0xdd))
-            tile.paste(level_image.crop((column * TILE, row * TILE, (column + 1) * TILE, (row + 1) * TILE)), (0, 0))
+            # Crop only inside the image: PIL fills anything beyond it with black.
+            box = (column * TILE, row * TILE, min((column + 1) * TILE, level_image.width), min((row + 1) * TILE, level_image.height))
+            tile.paste(level_image.crop(box), (0, 0))
             tile.save(os.path.join(out_dir, str(level), f"{column}_{row}.webp"), quality=88, method=6)
     # Downsampled levels keep level 0's origin, at their own scale.
     out_meta["levels"].append({"level": level, "metres_per_pixel": level0["metres_per_pixel"] * scale,
