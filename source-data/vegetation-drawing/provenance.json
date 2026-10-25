@@ -18,6 +18,24 @@
     "sha256": "f6f935fdde11695bdecf852fd4b1c7095322f9fdff3670b6b858f2ec7c6d0192",
     "geometry": "Six-view silhouette intersection; source prototype height profile and exact original envelope fit; original instance matrices",
     "prompt": "contour-prompt.txt",
-    "status": "Private comparison, no art or mobile performance acceptance"
+    "status": "Rejected after actual city review: mottled camouflage over balloon/cone bodies"
+  },
+  "connectedCrownCandidate": {
+    "module": "vegetation-structured.candidate.js",
+    "geometry": "crown-structured-contours.js",
+    "compiler": "build-structured-crown.py",
+    "interpretation": "Explicit model-composed connected crown contour rings with a broad upper mass, unequal shoulders and narrower irregular lower volume; original inventory envelope/instance matrices/trunk retained",
+    "illumination": "Existing city material/light compile chain, quiet upper/lower pigment, no surface noise or projected patch atlas",
+    "status": "Rejected after actual city review: geometric green boulders; not selected runtime"
+  },
+  "wholeCrownCandidate": {
+    "sourceViews": "source-isometric-views.png",
+    "registration": "isometric-registration.json",
+    "field": "model-drawn-isometric-broad.png",
+    "sha256": "9fa0f62afb3150de2ac420921ed6a44ebb881dd831b640cddb218d87564c95cf",
+    "geometry": "Nine-view silhouette intersection; exact original envelope fit; original instance matrices/trunks",
+    "sampling": "Whole-crown registered projection from local viewing direction, neighbouring-view blend; native city material lighting retained",
+    "compiler": "build-isometric-hull.py",
+    "status": "Private actual desktop/phone/rotation/night comparison; clearer broad hierarchy but rounded large crowns remain, not overall art acceptance"
   }
 }
