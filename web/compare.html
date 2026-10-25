@@ -32,7 +32,17 @@
   <a class="card" href="./t2.html"><img src="./compare/t2.webp" alt="Pre-rendered pixel art of Delfshaven"><div><b>Pixel pyramid</b><br>The same drawing rendered ahead of time into image tiles. Four angles.</div></a>
   <a class="card" href="./t3.html"><img src="./compare/t3.webp" alt="Painted pixel art of Delfshaven"><div><b>Painted</b><br>The pixel pyramid repainted by an image model, with rails and road markings put back from data. One angle.</div></a>
 </div>
-<!-- comparison table -->
+<table>
+<tr><th></th><th>Live 3D</th><th>Pixel pyramid</th><th>Painted</th></tr>
+<tr><td>Look</td><td>Pixelated model; 2018 photo façades read as muddy</td><td>Same as live 3D</td><td>Hand-drawn game look</td></tr>
+<tr><td>True to the data</td><td>Yes</td><td>Yes</td><td>Buildings and streets stay put; some façade and roof colours change; rails and markings are put back from data</td></tr>
+<tr><td>Rotation</td><td>Any angle</td><td>4 angles</td><td>1 angle (4 costs 4× the painting)</td></tr>
+<tr><td>Phone, first visit</td><td>4.4 s to a picture, 13 s complete</td><td>1.5 s</td><td>as pyramid</td></tr>
+<tr><td>Phone, return visit</td><td>1.3 s, 3.3 s complete</td><td>0.7 s</td><td>as pyramid</td></tr>
+<tr><td>Data for this km²</td><td>30 MB</td><td>4 MB per angle</td><td>3.5 MB</td></tr>
+<tr><td>Making this km²</td><td>Minutes of baking</td><td>10 s per angle on a laptop</td><td>54 image-model calls, about 40 min with 3 in parallel</td></tr>
+</table>
+<p class="note">Phone figures: emulated phone on a throttled connection (20 Mbit/s, 80 ms, 4× slower CPU), median of three runs against this site.</p>
 <p class="note">Data: Gemeente Rotterdam 3D model (public domain), BGT and NWB via PDOK (CC0), Luchtfoto 2026, Samenwerkingsverband Beeldmateriaal via PDOK (CC BY 4.0), Rotterdam road-marking register. Code MIT, <a href="https://github.com/joshp123/010">github.com/joshp123/010</a>. By <a href="https://x.com/jjpcodes">@jjpcodes</a>.</p>
 </main>
 </body>

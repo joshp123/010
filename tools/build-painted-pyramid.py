@@ -12,6 +12,10 @@ import base64, io, json, os, sys
 import numpy as np
 from PIL import Image
 from playwright.sync_api import sync_playwright
+from skimage.color import rgb2gray
+from skimage.filters import sobel
+from skimage.registration import phase_cross_correlation
+from skimage.transform import AffineTransform, PolynomialTransform, warp
 
 capture_url, t2_dir, squares_dir, out_dir = sys.argv[1:5]
 TILE, SQUARE, MARGIN = 512, 1024, 8
@@ -31,7 +35,65 @@ for row in range(level0["rows"]):
             canvas[row * TILE:(row + 1) * TILE, column * TILE:(column + 1) * TILE] = np.asarray(Image.open(path).convert("RGB"), float)
 
 ramp = 1 - np.abs(np.arange(SQUARE) + 0.5 - SQUARE / 2) / (SQUARE / 2)
-weight_square = np.outer(ramp, ramp)[..., None]
+# Squared tent: each square dominates near its centre, so where two paints
+# differ the blend zone is narrow.
+weight_square = (np.outer(ramp, ramp) ** 2)[..., None]
+
+
+def register(painted, render):
+    """The painter sometimes shifts or slightly warps its output. Measure the
+    offset of each 128 px block against the render, drop blocks that disagree,
+    fit a smooth map, and pull the painting back onto the render.
+    Returns (None, reason) if it will not fit."""
+    a, b = sobel(rgb2gray(render / 255)), sobel(rgb2gray(painted / 255))
+    block = 128
+    targets, sources = [], []
+    for by in range(0, SQUARE, block):
+        for bx in range(0, SQUARE, block):
+            ra, rb = a[by:by + block, bx:bx + block], b[by:by + block, bx:bx + block]
+            if ra.std() < 0.015 or rb.std() < 0.015:
+                continue  # plain background: nothing to match
+            shift, _, _ = phase_cross_correlation(ra, rb, upsample_factor=4)
+            if np.abs(shift).max() > 40:
+                continue
+            centre = np.array([bx + block / 2, by + block / 2], float)
+            targets.append(centre)
+            sources.append(centre - shift[::-1])
+    targets, sources = np.array(targets), np.array(sources)
+    if len(targets) < 3:
+        # Mostly background: judge the city part as a whole, shift only.
+        shift, _, _ = phase_cross_correlation(a, b, upsample_factor=4)
+        if np.abs(shift).max() > 4:
+            return None, "too little structure to match"
+        transform = AffineTransform(translation=-shift[::-1])
+        return warp(painted / 255, transform, output_shape=(SQUARE, SQUARE), mode="edge") * 255, "ok"
+    if len(targets) < 12:
+        # Small piece of city at the area edge: allow a plain shift only.
+        offsets = sources - targets
+        median = np.median(offsets, axis=0)
+        if np.abs(offsets - median).max(axis=1).mean() > 3:
+            return None, "edge blocks disagree"
+        transform = AffineTransform(translation=median)
+    else:
+        transform = None
+        for model in (AffineTransform(), PolynomialTransform()):
+            keep = np.ones(len(targets), bool)
+            for _ in range(3):
+                if model.__class__ is PolynomialTransform:
+                    model.estimate(targets[keep], sources[keep], order=2)
+                else:
+                    model.estimate(targets[keep], sources[keep])
+                error = np.linalg.norm(model(targets) - sources, axis=1)
+                keep = error < max(3.0, np.median(error) * 3)
+            if keep.mean() > 0.7 and np.median(error[keep]) < 2.0:
+                transform = model
+                break
+        if transform is None:
+            return None, f"warp too irregular (median error {np.median(error):.1f} px)"
+    warped = warp(painted / 255, transform, output_shape=(SQUARE, SQUARE), mode="edge") * 255
+    return warped, "ok"
+
+
 accumulated = np.zeros_like(canvas)
 weights = np.zeros((height, width, 1))
 for name in sorted(os.listdir(squares_dir)):
@@ -40,6 +102,13 @@ for name in sorted(os.listdir(squares_dir)):
     column, row = map(int, name[len("square_"):-len(".png")].split("_"))
     painted = np.asarray(Image.open(os.path.join(squares_dir, name)).convert("RGB").resize((SQUARE, SQUARE), Image.LANCZOS), float)
     y, x = row * TILE, column * TILE
+    render = canvas[y:y + SQUARE, x:x + SQUARE]
+    if render.shape[:2] != (SQUARE, SQUARE):
+        continue
+    painted, residual = register(painted, render)
+    if painted is None:
+        print(f"{name}: dropped, could not be aligned with the render ({residual})")
+        continue
     h, w = min(SQUARE, height - y), min(SQUARE, width - x)
     accumulated[y:y + h, x:x + w] += painted[:h, :w] * weight_square[:h, :w]
     weights[y:y + h, x:x + w] += weight_square[:h, :w]
