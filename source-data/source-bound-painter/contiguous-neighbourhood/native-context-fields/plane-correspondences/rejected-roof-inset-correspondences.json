@@ -1,0 +1,570 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "sourceSha256": "49c5db3c1b86183a800a9a406f9b78b9030ce22fc73384a3a4923f70027636fe",
+  "status": "Bounded straight architectural correspondence test; requires same-camera actual bake judgement, not accepted neighbourhood artwork",
+  "planes": [
+    {
+      "planeId": "context-300-28-3-04",
+      "identity": "0599100000671723",
+      "triangles": [
+        9806,
+        9807,
+        9808,
+        9809
+      ],
+      "view": "context-300-28-3",
+      "observedAreaFraction": 1.0,
+      "normal": [
+        1.6634463690785662e-05,
+        0.9999999998257528,
+        8.472840673352925e-06
+      ],
+      "sourcePolygon": [
+        [
+          390.9178364420096,
+          557.7122325932962
+        ],
+        [
+          444.07535517804627,
+          522.2582896497054
+        ],
+        [
+          451.8839558473546,
+          524.7941339129122
+        ],
+        [
+          497.6191043159756,
+          540.254991900177
+        ],
+        [
+          445.429570284708,
+          575.1128526407675
+        ]
+      ],
+      "cropBounds": [
+        376,
+        508,
+        512,
+        590
+      ],
+      "displayZoom": 3.676470588235294,
+      "displayPanelSize": [
+        500,
+        302
+      ],
+      "drawnPolygon": null,
+      "judgement": "Model-observed matching physical roof corners. Bind roof-face colour inside the drawn eave/ridge boundary; adjoining cream wall/parapet remains on its own source plane. No aperture or rooftop object added.",
+      "sourceAnchors": [
+        [
+          390.9178364420096,
+          557.7122325932962
+        ],
+        [
+          444.07535517804627,
+          522.2582896497054
+        ],
+        [
+          497.6191043159756,
+          540.254991900177
+        ],
+        [
+          445.429570284708,
+          575.1128526407675
+        ]
+      ],
+      "drawnAnchors": [
+        [
+          393.952,
+          557.504
+        ],
+        [
+          444.81600000000003,
+          524.864
+        ],
+        [
+          494.32,
+          540.368
+        ],
+        [
+          445.36,
+          572.192
+        ]
+      ]
+    },
+    {
+      "planeId": "context-300-28-3-06",
+      "identity": "0599100000603392",
+      "triangles": [
+        9556,
+        9704,
+        9861,
+        9862,
+        9863,
+        9864,
+        9865,
+        9866,
+        10035,
+        10036,
+        10037,
+        10038,
+        10039,
+        10040,
+        10041,
+        10042,
+        10267
+      ],
+      "view": "context-300-28-3",
+      "observedAreaFraction": 0.9648549043225907,
+      "normal": [
+        0.020546871241781,
+        0.5488510945712287,
+        0.8356675786879241
+      ],
+      "sourcePolygon": [
+        [
+          816.3381139939814,
+          674.1487821024027
+        ],
+        [
+          796.7976265878608,
+          637.2994914657847
+        ],
+        [
+          845.5461971922191,
+          595.0465000726196
+        ],
+        [
+          867.6363751063184,
+          630.7457788060306
+        ]
+      ],
+      "cropBounds": [
+        782,
+        581,
+        882,
+        689
+      ],
+      "displayZoom": 4.62962962962963,
+      "displayPanelSize": [
+        463,
+        500
+      ],
+      "drawnPolygon": null,
+      "judgement": "Model-observed matching physical roof corners. Bind roof-face colour inside the drawn eave/ridge boundary; adjoining cream wall/parapet remains on its own source plane. No aperture or rooftop object added.",
+      "sourceAnchors": [
+        [
+          816.3381139939814,
+          674.1487821024027
+        ],
+        [
+          796.7976265878608,
+          637.2994914657847
+        ],
+        [
+          845.5461971922191,
+          595.0465000726196
+        ],
+        [
+          867.6363751063184,
+          630.7457788060306
+        ]
+      ],
+      "drawnAnchors": [
+        [
+          817.64,
+          672.8
+        ],
+        [
+          798.416,
+          637.592
+        ],
+        [
+          845.072,
+          596.984
+        ],
+        [
+          866.456,
+          630.4639999999999
+        ]
+      ]
+    },
+    {
+      "planeId": "context-300-28-3-07",
+      "identity": "0599100000671723",
+      "triangles": [
+        9646,
+        9647,
+        9789,
+        9790,
+        10236,
+        10237,
+        10238,
+        10239,
+        10240,
+        10241
+      ],
+      "view": "context-300-28-3",
+      "observedAreaFraction": 0.9926435964201401,
+      "normal": [
+        -0.08169648825412049,
+        0.5191355332325478,
+        0.8507784564399257
+      ],
+      "sourcePolygon": [
+        [
+          390.9178364420096,
+          557.7122325932962
+        ],
+        [
+          374.99191712789053,
+          525.5424504932171
+        ],
+        [
+          399.64054714137956,
+          509.502739258095
+        ],
+        [
+          429.1614017508076,
+          490.29255874423274
+        ],
+        [
+          444.07535517804627,
+          522.2582896497054
+        ]
+      ],
+      "cropBounds": [
+        360,
+        476,
+        459,
+        572
+      ],
+      "displayZoom": 5,
+      "displayPanelSize": [
+        495,
+        480
+      ],
+      "drawnPolygon": null,
+      "judgement": "Model-observed matching physical roof corners. Bind roof-face colour inside the drawn eave/ridge boundary; adjoining cream wall/parapet remains on its own source plane. No aperture or rooftop object added.",
+      "sourceAnchors": [
+        [
+          390.9178364420096,
+          557.7122325932962
+        ],
+        [
+          374.99191712789053,
+          525.5424504932171
+        ],
+        [
+          429.1614017508076,
+          490.29255874423274
+        ],
+        [
+          444.07535517804627,
+          522.2582896497054
+        ]
+      ],
+      "drawnAnchors": [
+        [
+          392.4,
+          555.4
+        ],
+        [
+          376.4,
+          525.6
+        ],
+        [
+          428.0,
+          492.2
+        ],
+        [
+          441.8,
+          521.8
+        ]
+      ]
+    },
+    {
+      "planeId": "context-120-28-0-00",
+      "identity": "0599100000760477",
+      "triangles": [
+        9944,
+        9945,
+        9946,
+        9947,
+        9948,
+        9949,
+        9950
+      ],
+      "view": "context-120-28-0",
+      "observedAreaFraction": 1.0,
+      "normal": [
+        1.7353655120529054e-05,
+        0.9999999997518532,
+        1.3969407564332714e-05
+      ],
+      "sourcePolygon": [
+        [
+          861.2184284758255,
+          552.8869734907207
+        ],
+        [
+          934.8888894012524,
+          506.52499231088484
+        ],
+        [
+          958.364868364637,
+          516.554652855141
+        ],
+        [
+          967.0250804112919,
+          545.4056833769956
+        ],
+        [
+          911.181307730163,
+          578.3207070174253
+        ]
+      ],
+      "cropBounds": [
+        847,
+        492,
+        982,
+        593
+      ],
+      "displayZoom": 3.7037037037037037,
+      "displayPanelSize": [
+        500,
+        375
+      ],
+      "drawnPolygon": null,
+      "judgement": "Model-observed matching physical roof corners. Bind roof-face colour inside the drawn eave/ridge boundary; adjoining cream wall/parapet remains on its own source plane. No aperture or rooftop object added.",
+      "sourceAnchors": [
+        [
+          861.2184284758255,
+          552.8869734907207
+        ],
+        [
+          934.8888894012524,
+          506.52499231088484
+        ],
+        [
+          958.364868364637,
+          516.554652855141
+        ],
+        [
+          967.0250804112919,
+          545.4056833769956
+        ],
+        [
+          911.181307730163,
+          578.3207070174253
+        ]
+      ],
+      "drawnAnchors": [
+        [
+          864.55,
+          552.75
+        ],
+        [
+          936.37,
+          509.01
+        ],
+        [
+          956.62,
+          518.73
+        ],
+        [
+          964.72,
+          544.65
+        ],
+        [
+          911.26,
+          574.89
+        ]
+      ]
+    },
+    {
+      "planeId": "context-120-28-0-05",
+      "identity": "0599100000767287",
+      "triangles": [
+        10286,
+        10287,
+        10288
+      ],
+      "view": "context-120-28-0",
+      "observedAreaFraction": 0.9999763918695156,
+      "normal": [
+        1.3292813581240588e-05,
+        0.9999999997110676,
+        2.00291280796013e-05
+      ],
+      "sourcePolygon": [
+        [
+          792.2728415698349,
+          294.554699852946
+        ],
+        [
+          732.5805335858444,
+          276.0498247264593
+        ],
+        [
+          786.492952672003,
+          236.59172319417746
+        ],
+        [
+          843.188278502954,
+          254.0149662769203
+        ],
+        [
+          798.9361888515962,
+          289.26134102553283
+        ]
+      ],
+      "cropBounds": [
+        718,
+        222,
+        858,
+        309
+      ],
+      "displayZoom": 3.5714285714285716,
+      "displayPanelSize": [
+        500,
+        311
+      ],
+      "drawnPolygon": null,
+      "judgement": "Model-observed matching physical roof corners. Bind roof-face colour inside the drawn eave/ridge boundary; adjoining cream wall/parapet remains on its own source plane. No aperture or rooftop object added.",
+      "sourceAnchors": [
+        [
+          792.2728415698349,
+          294.554699852946
+        ],
+        [
+          732.5805335858444,
+          276.0498247264593
+        ],
+        [
+          786.492952672003,
+          236.59172319417746
+        ],
+        [
+          843.188278502954,
+          254.0149662769203
+        ]
+      ],
+      "drawnAnchors": [
+        [
+          792.48,
+          291.44
+        ],
+        [
+          735.92,
+          275.2
+        ],
+        [
+          787.44,
+          238.52
+        ],
+        [
+          840.92,
+          254.48
+        ]
+      ]
+    },
+    {
+      "planeId": "context-120-28-0-07",
+      "identity": "0599100000688733",
+      "triangles": [
+        5189,
+        5190,
+        5191,
+        5422,
+        5691,
+        5692,
+        5693,
+        5694,
+        5695,
+        5696,
+        5697,
+        5698,
+        5699,
+        5700,
+        5701,
+        6158,
+        6159
+      ],
+      "view": "context-120-28-0",
+      "observedAreaFraction": 0.9999999999999999,
+      "normal": [
+        0.6350262024840378,
+        0.7715159434945574,
+        0.03879266802379929
+      ],
+      "sourcePolygon": [
+        [
+          620.4493245151225,
+          590.6681260831779
+        ],
+        [
+          630.3343567765731,
+          570.9206198134999
+        ],
+        [
+          753.978246999807,
+          609.5456987519261
+        ],
+        [
+          744.4212164219103,
+          629.0022133912622
+        ]
+      ],
+      "cropBounds": [
+        606,
+        556,
+        768,
+        644
+      ],
+      "displayZoom": 3.0864197530864197,
+      "displayPanelSize": [
+        500,
+        272
+      ],
+      "drawnPolygon": null,
+      "judgement": "Model-observed matching physical roof corners. Bind roof-face colour inside the drawn eave/ridge boundary; adjoining cream wall/parapet remains on its own source plane. No aperture or rooftop object added.",
+      "sourceAnchors": [
+        [
+          620.4493245151225,
+          590.6681260831779
+        ],
+        [
+          630.3343567765731,
+          570.9206198134999
+        ],
+        [
+          753.978246999807,
+          609.5456987519261
+        ],
+        [
+          744.4212164219103,
+          629.0022133912622
+        ]
+      ],
+      "drawnAnchors": [
+        [
+          622.848,
+          591.316
+        ],
+        [
+          631.596,
+          574.468
+        ],
+        [
+          751.152,
+          610.108
+        ],
+        [
+          742.7280000000001,
+          625.66
+        ]
+      ]
+    }
+  ],
+  "unresolved": "Occluded party-wall boundaries and independently altered gable/dormer arrangements remain unregistered; no inferred grid or blind edge matching."
+}
