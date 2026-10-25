@@ -1,0 +1,104 @@
+{
+  "status": "context review only",
+  "namespace": "BAG",
+  "bagIds": [
+    "0599100000767277",
+    "0599100000194804",
+    "0599100000671619",
+    "0599100010058326",
+    "0599100010042503",
+    "0599100000760365",
+    "0599100000671632",
+    "0599100000671684",
+    "0599100000671599",
+    "0599100000650091",
+    "0599100000650093",
+    "0599100000760366"
+  ],
+  "sourceGLBSha256": "8779f2034ec334f5ddac27af790266e861e448f33302aca20900adc9bf054037",
+  "sourceMunicipalSha256": "5489aaa793e8812ae228977fe81e5515265a9455e79bc399c3b15e2c5b8a6f4b",
+  "outputGLBSha256": "fa5e6dd548f699a8445d2c3b7d923005f8f27f423f21bedcb785111d3a763ca2",
+  "triangles": 720,
+  "draws": 59,
+  "sourceIslandDraws": 328,
+  "originalGeometryRetained": true,
+  "originalUVsRetainedInSource": true,
+  "runtimeUVsAffineEquivalent": true,
+  "rtcAppliedOnce": true,
+  "atlasSize": [
+    4548,
+    1252
+  ],
+  "decodedRgbaBytesIncludingMips": 40073536,
+  "sourceReferencedImages": [
+    {
+      "uri": "painted-atlas-0.png",
+      "sha256": "7b213fb0a0799f78a43eb90c64815207428c5d4f3d44f8aab74f2b983592b54d"
+    },
+    {
+      "uri": "observed-apertures-0.png",
+      "sha256": "cb94cd86ba48ce004d51bab5a73d9f7ddcace090b8b92d1409d40e871b6cb06d"
+    },
+    {
+      "uri": "painted-atlas-1.png",
+      "sha256": "e616909410a91648a123337abd4f0672913e0870217b14c22ce0d49e795fb25a"
+    },
+    {
+      "uri": "observed-apertures-1.png",
+      "sha256": "bae036984e969ab7797193e4e2f25922e5582e75df1d2c2cce25b088ddc55907"
+    },
+    {
+      "uri": "painted-atlas-2.png",
+      "sha256": "cd078e5503c7f733f877723db2763bc65aad14017a85db7514733b63aecd644a"
+    },
+    {
+      "uri": "observed-apertures-2.png",
+      "sha256": "972de63997d63fb7001b76dcc3591623acb691844ff9462053a5532f4c1dbd65"
+    },
+    {
+      "uri": "painted-atlas-3.png",
+      "sha256": "d6a43530a62f99b82706f1ae6e57c3bd05b851ac626e34ef6b2ef5075a2694b6"
+    },
+    {
+      "uri": "observed-apertures-3.png",
+      "sha256": "e4074fcac8330e5f0d0e0c503ce3ab3ea23704b1ec62253f08ca85d2a56cebc5"
+    },
+    {
+      "uri": "painted-atlas-4.png",
+      "sha256": "f8ad91d5e565d3b863a428435adda494e1f40779582b5e37616df97d6269bbda"
+    },
+    {
+      "uri": "observed-apertures-4.png",
+      "sha256": "3808fc7839173730f01753bf74f460ba2e120d13c853ebcf83b13f56866951f9"
+    },
+    {
+      "uri": "painted-atlas-5.png",
+      "sha256": "4620e59f84960c2e5cd32d20ffb1798a46772eef0df7d94fef8c298e0bf8d68a"
+    },
+    {
+      "uri": "observed-apertures-5.png",
+      "sha256": "36df2b060580fb58c24ee9fff26005e0981bb78593905ff72806fa3ce4e391bc"
+    },
+    {
+      "uri": "painted-atlas-6.png",
+      "sha256": "f3247221a378e9a55bb2c42be43e27cfc4161ba6e588713a77683832d3e0d8b3"
+    },
+    {
+      "uri": "observed-apertures-6.png",
+      "sha256": "81763a36a05cc7ac72f3836047fdc42fe07fd6bc0a06111ac493aa5e436d5fda"
+    }
+  ],
+  "emission": true,
+  "boundsLonLatHeight": [
+    [
+      4.44735134117191,
+      51.909926780344044,
+      2.177779803983867
+    ],
+    [
+      4.448172150199169,
+      51.910414627408336,
+      23.144588717259467
+    ]
+  ]
+}

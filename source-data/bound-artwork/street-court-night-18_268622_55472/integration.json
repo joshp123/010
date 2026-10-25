@@ -1,0 +1,81 @@
+{
+  "status": "context review only",
+  "namespace": "BAG",
+  "bagIds": [
+    "0599100000760361",
+    "0599100000760364",
+    "0599100000650099",
+    "0599100000650101",
+    "0599100000760362",
+    "0599100000187001",
+    "0599100000241229",
+    "0599100000760543",
+    "0599100000650095",
+    "0599100000760363",
+    "0599100010033192",
+    "0599100000671566",
+    "0599100000650075"
+  ],
+  "sourceGLBSha256": "eedea54069ea4ae94e3dc098019769847ef65361b9edcf123f47af610d971540",
+  "sourceMunicipalSha256": "314a64b28a119570305869e1bcb698ba908c0474a3ce45ea1ca502187851e874",
+  "outputGLBSha256": "dbd25bb38448c2ce6561f57042d484ab04bfcc201381ac1e2d78cd8aa53bf20c",
+  "triangles": 766,
+  "draws": 74,
+  "sourceIslandDraws": 382,
+  "originalGeometryRetained": true,
+  "originalUVsRetainedInSource": true,
+  "runtimeUVsAffineEquivalent": true,
+  "rtcAppliedOnce": true,
+  "atlasSize": [
+    2894,
+    2038
+  ],
+  "decodedRgbaBytesIncludingMips": 31450064,
+  "sourceReferencedImages": [
+    {
+      "uri": "painted-atlas-0.png",
+      "sha256": "416a3cc25d1f2c49a1de276b1dc7f0f98f6fb0475224a743be87c58108a61203"
+    },
+    {
+      "uri": "painted-atlas-1.png",
+      "sha256": "aa5cda373edf5bb23fad4e786ff1d7d8f87fd32b67195c6f16ac80d9e44d21c2"
+    },
+    {
+      "uri": "painted-atlas-2.png",
+      "sha256": "947e9520355b843d5e98b3ea8a070634cf5c38562081d6fb76a18fe7139b495d"
+    },
+    {
+      "uri": "painted-atlas-3.png",
+      "sha256": "5e7157aa0fb79ebc40fe61a8e81429d0ed140f732e25fd191db29d18fac9847c"
+    },
+    {
+      "uri": "painted-atlas-4.png",
+      "sha256": "9a386baeb9d95bc62e16d52478e42a14cbd4f3a4cd95e051d12e8d85fa9ee2b1"
+    },
+    {
+      "uri": "painted-atlas-5.png",
+      "sha256": "6e29e018552a506d4ae15a562c1aaa68bb9509723e29fe4e7d6056cb4d3a0ba9"
+    },
+    {
+      "uri": "painted-atlas-6.png",
+      "sha256": "8b53936749ffe16245bbf23b5b31ff636f4743abbae1cae70f31cca513da5b80"
+    },
+    {
+      "uri": "painted-atlas-7.png",
+      "sha256": "ee6c28510c78aae11bce0194d67567c2af81b318a8124ac3fa1ccf9ceaa43156"
+    }
+  ],
+  "emission": false,
+  "boundsLonLatHeight": [
+    [
+      4.44800624930418,
+      51.909903184430014,
+      0.6783999595791101
+    ],
+    [
+      4.448746148525004,
+      51.91031544717021,
+      23.1445893663913
+    ]
+  ]
+}

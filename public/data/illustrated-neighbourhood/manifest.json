@@ -56,7 +56,7 @@
       ]
     },
     {
-      "uri": "gutters-night-18_268619_55472-spatial/tileset.json",
+      "uri": "street-court-night-18_268619_55472-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000671740",
@@ -161,7 +161,7 @@
       ]
     },
     {
-      "uri": "gutters-night-18_268620_55472-spatial/tileset.json",
+      "uri": "street-court-night-18_268620_55472-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000656926",
@@ -281,7 +281,7 @@
       ]
     },
     {
-      "uri": "gutters-18_268621_55471-spatial/tileset.json",
+      "uri": "street-court-night-18_268621_55471-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000650090",
@@ -312,7 +312,7 @@
       ]
     },
     {
-      "uri": "complete-block-night-18_268621_55472-spatial/tileset.json",
+      "uri": "street-court-night-18_268621_55472-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000767277",
@@ -397,7 +397,7 @@
       ]
     },
     {
-      "uri": "gutters-18_268622_55472-spatial/tileset.json",
+      "uri": "street-court-night-18_268622_55472-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000760361",
