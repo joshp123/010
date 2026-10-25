@@ -25,6 +25,8 @@ done
 mkdir -p "$dist/compare"
 cp "$data/renders/compare/"t[123].webp "$dist/compare/"
 cp "$data/renders/compare/og.jpg" "$dist/og.jpg"
+build_id="$(git -C "$repo" rev-parse --short HEAD)-$(date +%Y%m%d%H%M%S)"
+perl -pi -e "s/__BUILD__/$build_id/" "$dist/sw.js"
 mkdir -p "$out/.openai"
 cat > "$out/.openai/hosting.json" <<'EOF'
 {
