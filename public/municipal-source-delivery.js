@@ -14,7 +14,9 @@ function visibleMipDemand(tiles, model) {
       if (!mesh.isMesh || !mesh.visible) return;
       const geometry = mesh.geometry, position = geometry.getAttribute('position'), texcoord = geometry.getAttribute('uv');
       if (!texcoord) return;
-      const matrix = new THREE.Matrix4().multiplyMatrices(projection, mesh.matrixWorld);
+      const matrix = new THREE.Matrix4().copy(mesh.matrixWorld);
+      if (!model.parent) matrix.premultiply(tiles.group.matrixWorld);
+      matrix.premultiply(projection);
       const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
       const count = geometry.index?.count ?? position.count;
       for (const group of geometry.groups.length ? geometry.groups : [{ start: 0, count, materialIndex: 0 }]) {
@@ -64,15 +66,18 @@ export function createMunicipalSourceDelivery(tiles) {
       const key = source.slice(manifest.sourceRoot.length), record = manifest.tiles[key];
       if (!record || tile.children?.length) return;
       const original = { boundingVolume: structuredClone(tile.boundingVolume), geometricError: 0, refine: 'REPLACE', content: { ...tile.content, uri: source }, extras: { municipalNative: true } };
-      tile.children = [original]; tile.refine = 'REPLACE'; tile.geometricError = 0;
-      tile.content.uri = `/api/municipal-delivery/${key}`;
+      // The renderer treats equal parent/child errors as unconditional refinement;
+      // keep native's final zero error below this parent. viewError supplies the
+      // actual physical-texture demand instead of this structural value.
+      tile.children = [original]; tile.refine = 'REPLACE'; tile.geometricError = 1;
+      tile.content.uri = new URL(`/api/municipal-delivery/${key}`, location.origin).href;
       tile.extras = { ...tile.extras, municipalDerived: { source, key } };
     },
     viewError(tile, result) {
       if (!tile.extras?.municipalDerived) return;
       const model = tile.engineData?.scene;
       if (!model) { result.error = 0; return; }
-      const view = tiles.cameras.map(camera => [...camera.matrixWorld.elements, ...camera.projectionMatrix.elements, tiles.cameraMap.get(camera).width, tiles.cameraMap.get(camera).height].join(',')).join(';');
+      const view = [model.parent?.uuid, model.visible, ...tiles.cameras.map(camera => [...camera.matrixWorld.elements, ...camera.projectionMatrix.elements, tiles.cameraMap.get(camera).width, tiles.cameraMap.get(camera).height].join(','))].join(';');
       let entry = demands.get(tile);
       if (!entry || entry.model !== model || entry.view !== view) {
         entry = { model, view, demand: visibleMipDemand(tiles, model) }; demands.set(tile, entry);
@@ -80,9 +85,15 @@ export function createMunicipalSourceDelivery(tiles) {
       result.error = entry.demand * tiles.errorTarget;
     },
     async fetch(uri, options) {
-      const response = await fetch(uri, options);
-      if (response.ok || !new URL(uri, location.href).pathname.startsWith('/api/municipal-delivery/')) return response;
-      const key = new URL(uri, location.href).pathname.slice('/api/municipal-delivery/'.length);
+      const pathname = new URL(uri, location.href).pathname;
+      if (!pathname.startsWith('/api/municipal-delivery/')) return fetch(uri, options);
+      try {
+        const response = await fetch(uri, options);
+        if (response.ok) return response;
+      } catch (error) {
+        if (options?.signal?.aborted) throw error;
+      }
+      const key = pathname.slice('/api/municipal-delivery/'.length);
       return fetch(manifest.sourceRoot + key, options);
     },
   };
