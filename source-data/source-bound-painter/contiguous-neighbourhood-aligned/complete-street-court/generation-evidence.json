@@ -1,0 +1,37 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "tool": "built-in image_gen with existing resources; no paid API call",
+  "styleReference": "style-reference.json",
+  "fields": [
+    {
+      "drawing": "roof-paint.png",
+      "fullPrompt": "roof-prompt.txt",
+      "sourceImage": "view-0-90-source-context.png",
+      "geometryImage": "view-0-90-geometry-context.png",
+      "openingGuide": null,
+      "originalGeneratedFile": "/Users/josh/.codex/generated_images/01a16d33-13fd-7e93-b718-9273a13fd6f3/exec-00814c87-6cba-4c38-9fa2-2f8d62d49966.png"
+    },
+    {
+      "drawing": "wall-120-paint.png",
+      "fullPrompt": "wall-120-prompt.txt",
+      "sourceImage": "view-120-28-source-context.png",
+      "geometryImage": "view-120-28-geometry-context.png",
+      "openingGuide": "view-120-28-opening-guide-context.png",
+      "originalGeneratedFile": "/Users/josh/.codex/generated_images/01a16d33-13fd-7e93-b718-9273a13fd6f3/exec-626db111-a203-4a47-8f52-e36f49bcaa93.png"
+    },
+    {
+      "drawing": "wall-300-paint.png",
+      "fullPrompt": "wall-300-prompt.txt",
+      "sourceImage": "view-300-28-source-context.png",
+      "geometryImage": "view-300-28-geometry-context.png",
+      "openingGuide": "view-300-28-opening-guide-context.png",
+      "originalGeneratedFile": "/Users/josh/.codex/generated_images/01a16d33-13fd-7e93-b718-9273a13fd6f3/exec-b1244c6b-4376-4b7b-a6d5-80b2b5a4fdbd.png"
+    }
+  ],
+  "roofArtifactCorrection": {
+    "original": "roof-with-painted-tree-artifact.png",
+    "selected": "roof-paint.png",
+    "fullPrompt": "roof-cleanup-prompt.txt",
+    "selectedGeneratedFile": "/Users/josh/.codex/generated_images/01a16d33-13fd-7e93-b718-9273a13fd6f3/exec-eeac0e1d-2e99-4d31-9f9a-5d1ecc9263b3.png"
+  }
+}

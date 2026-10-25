@@ -235,7 +235,11 @@ def bake_block_fields(source,folder):
   for local,image_index in enumerate(range(first,last)):source.images[image_index]=np.asarray(Image.open(leaf_base/leaf.path.stem/f'painted-atlas-{local}.png').convert('RGB')).copy()
  painted_masks=[np.zeros(a.shape[:2],bool) for a in source.images]
  for field in definition['fields']:
-  view=next(v for v in plan['views'] if v['name']==field['view']);c=view['camera'];bounds=view['contextCropBounds'];drawing=Image.open(folder/field['drawing']).convert('RGBA').resize((bounds[2]-bounds[0],bounds[3]-bounds[1]),Image.Resampling.NEAREST);registered=Image.new('RGBA',(c['size'],c['size']));registered.paste(drawing,bounds[:2]);apply_source_registered_field(source,source.images,c,np.asarray(registered),set(field['bagIds']),set(field['triangleIndices']) if 'triangleIndices' in field else None,painted_masks)
+  view=next(v for v in plan['views'] if v['name']==field['view']);c=view['camera'];bounds=view['contextCropBounds'];extent=(bounds[2]-bounds[0],bounds[3]-bounds[1]);drawing=Image.open(folder/field['drawing']).convert('RGBA')
+  if 'drawingPixelsPerMetre' in field:
+   drawing_size=tuple(max(1,round(length/c['scale']*field['drawingPixelsPerMetre'])) for length in extent)
+   drawing=drawing.resize(drawing_size,Image.Resampling.BOX)
+  drawing=drawing.resize(extent,Image.Resampling.NEAREST);drawing.save(folder/(field['view']+'-registered-drawing.png'));registered=Image.new('RGBA',(c['size'],c['size']));registered.paste(drawing,bounds[:2]);apply_source_registered_field(source,source.images,c,np.asarray(registered),set(field['bagIds']),set(field['triangleIndices']) if 'triangleIndices' in field else None,painted_masks)
  pad_painted_uv_charts(source,source.images,painted_masks)
  for view in plan['views']:
   rgb,_=render(source,view['camera']);Image.fromarray(rgb).save(folder/(view['name']+'-actual-bake.png'))
