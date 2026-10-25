@@ -22,6 +22,7 @@ Target user request is roughly100ms loading/interaction: retain it as warm navig
 Maintain ONE compact candidate ledger: human-visible change, exact test link/source revision, actual visual decision, baseline/candidate arrival results, remaining failure and next move. If two candidates repeat the same visual defect, stop cosmetic tuning and revise missing mechanism. No new benchmark framework or evidence bundles.
 
 ## Current user test area
+Latest granularity assessment: neighbourhood is the artistic/delivery unit; source identities/surfaces/spatial tiles are processing units; the exploratory human journey is acceptance. Keep source reconstruction, interpretation, compilation/delivery and living-city systems separate under one integrated owner. NYC's learned style/infill and London's shared-latent joint generation provide consistency that our general prompted edits plus UV binding have NOT demonstrated. Preserving source surfaces across views does not itself establish common artistic style. Do not claim our approach is superior in quality or speed. Add actual nearest zoom (span40m) to phone/desktop acceptance alongside144/93m; no invented detail as zoom increases.
 https://010.jjpcodes.com/?lat=51.9102632881&lon=4.4475160231&span=144&bearing=120&light=day is the PUBLIC BASELINE, not a new accepted candidate.
 Cloud lead must provide running candidate URL and exact revision plus concise actual observation, then continue implementation. Root owns final integration/publication and all-project completion.
 
