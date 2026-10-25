@@ -45,7 +45,10 @@ for name in sorted(os.listdir(squares_dir)):
     weights[y:y + h, x:x + w] += weight_square[:h, :w]
 # Outside the scene the render is plain background; the painter invents
 # water or streets there, so keep the background wherever the render has it.
-background = np.all(np.abs(canvas - np.array([0xc9, 0xd3, 0xdd], float)) < 6, axis=-1)
+# The render's background colour went through the palette, so read it from a
+# corner of the canvas, which always lies outside the scene.
+background_colour = canvas[2, 2].copy()
+background = np.all(np.abs(canvas - background_colour) < 10, axis=-1) | np.all(canvas == 0, axis=-1)
 covered = (weights[..., 0] > 1e-3) & ~background
 canvas[covered] = accumulated[covered] / weights[covered]
 

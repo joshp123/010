@@ -10,12 +10,21 @@ data="/Volumes/Josh Extreme Pro USB4 4TB/010"
 out="${1:?output directory}"
 dist="$out/dist"
 mkdir -p "$dist"
-rsync -a --delete --exclude 'transit-feed.js' "$repo/web/" "$dist/"
+rsync -a --delete --exclude 'transit-feed.js' --exclude 'vendor' "$repo/web/" "$dist/"
 mkdir -p "$dist/scene" "$dist/pyramids"
-rsync -a --delete "$data/scene/web-v1/" "$dist/scene/"
+rsync -a --delete --exclude '*-phone.png' "$data/scene/web-v1/" "$dist/scene/"
+# One minified bundle for the live view instead of three.js's unminified modules.
+esbuild "$repo/web/t1.js" --bundle --minify --format=esm --target=es2022 \
+  --alias:three="$repo/web/vendor/three/build/three.module.js" \
+  --alias:three/addons="$repo/web/vendor/three/examples/jsm" \
+  --legal-comments=eof --outfile="$dist/t1.js"
+perl -0pi -e 's#<script type="importmap">.*?</script>\n##s' "$dist/t1.html"
 for name in t2 t3; do
   if [ -d "$data/pyramids/$name-live" ]; then rsync -a --delete "$data/pyramids/$name-live/" "$dist/pyramids/$name/"; fi
 done
+mkdir -p "$dist/compare"
+cp "$data/renders/compare/"t[123].webp "$dist/compare/"
+cp "$data/renders/compare/og.jpg" "$dist/og.jpg"
 mkdir -p "$out/.openai"
 cat > "$out/.openai/hosting.json" <<'EOF'
 {

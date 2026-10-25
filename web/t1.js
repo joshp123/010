@@ -49,7 +49,7 @@ async function runInteractive() {
   const state = {
     x: start.x,
     y: start.y,
-    bearing: Number(params.get('bearing') ?? 0),
+    bearing: Number(params.get('bearing') ?? 35),
     zoom: Number(params.get('z') ?? (innerWidth < 700 ? 3 : 2)),
   };
   let pending = false;

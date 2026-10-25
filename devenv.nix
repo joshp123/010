@@ -1,5 +1,6 @@
 { pkgs, ... }: {
   packages = [
+    pkgs.esbuild
     pkgs.meshoptimizer
     pkgs.nodejs_24
     pkgs.playwright-driver.browsers

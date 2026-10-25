@@ -6,8 +6,8 @@
 import { rdFromWgs84, wgs84FromRd } from './miniature/rd.js';
 
 const params = new URLSearchParams(location.search);
-const base = params.get('pyramid') ?? './pyramids/t2';
-const bearings = (params.get('bearings') ?? '35,125,215,305').split(',').map(Number);
+const base = params.get('pyramid') ?? document.body.dataset.pyramid ?? './pyramids/t2';
+const bearings = (params.get('bearings') ?? document.body.dataset.bearings ?? '35,125,215,305').split(',').map(Number);
 const STREET_HEIGHT = 3; // NAP metres; the point under the screen centre is at street level
 const zoomLevels = [
   { level: 3, cssPerArt: 1 },
