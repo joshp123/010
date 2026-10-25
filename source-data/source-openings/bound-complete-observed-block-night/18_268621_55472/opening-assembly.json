@@ -1,0 +1,21 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "base": "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/contiguous-neighbourhood-aligned/complete-adjoining-block/bound-complete-adjoining-block",
+  "openingEvidenceInAssemblyOrder": [
+    {
+      "path": "source-data/source-openings/complete-adjoining-block/aligned-opening-evidence/rear-openings.json",
+      "sha256": "95a7e87acc7466fc49a8e128af646b8fa1d0cd24445caea8d79fc897e34f3d68"
+    },
+    {
+      "path": "source-data/source-openings/complete-adjoining-block/aligned-opening-evidence/corner-openings.json",
+      "sha256": "24d70e0c0db40b5cf00c018de30a62663001a105802dfdc1b0e9710d2b7eda83"
+    },
+    {
+      "path": "source-data/source-openings/complete-adjoining-block/aligned-opening-evidence/side-openings.json",
+      "sha256": "581eef8d822555a50ec12a8d26de2acbdbbcf4a893d1f437b02e32d2a257e70a"
+    }
+  ],
+  "compiler": "scripts/assemble-source-opening-patches.py --openings-only",
+  "nightReusedFrom": "source-data/source-openings/bound-complete-observed-frontage-night/18_268621_55472",
+  "meaning": "Original source geometry/UVs retained; only explicit source frame/glass shapes and uncertain original source patches applied. Accepted frontage retained in base. Existing emission masks unchanged; no new activity inferred."
+}
