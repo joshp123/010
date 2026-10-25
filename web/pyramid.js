@@ -35,7 +35,8 @@ const state = {
 
 const metas = new Map();
 async function meta(bearing) {
-  if (!metas.has(bearing)) metas.set(bearing, fetch(`${base}/b${bearing}/meta.json`).then((r) => r.json()));
+  // The home page inlines the first bearing's metadata to save a round trip.
+  if (!metas.has(bearing)) metas.set(bearing, window.inlinedPyramidMeta?.[`${base}/b${bearing}`] ?? fetch(`${base}/b${bearing}/meta.json`).then((r) => r.json()));
   return metas.get(bearing);
 }
 

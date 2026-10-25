@@ -25,6 +25,9 @@ done
 mkdir -p "$dist/compare"
 cp "$data/renders/compare/"t[123].webp "$dist/compare/"
 cp "$data/renders/compare/og.jpg" "$dist/og.jpg"
+# The home page: viewer code and first metadata inlined, first tiles preloaded.
+esbuild "$repo/web/pyramid.js" --bundle --minify --format=esm --target=es2022 --outfile="$out/pyramid.bundle.js" --log-level=warning
+python3 "$repo/tools/inline-first-view.py" "$dist" index.html "$out/pyramid.bundle.js" pyramids/t2 35
 build_id="$(git -C "$repo" rev-parse --short HEAD)-$(date +%Y%m%d%H%M%S)"
 perl -pi -e "s/__BUILD__/$build_id/" "$dist/sw.js"
 mkdir -p "$out/.openai"
