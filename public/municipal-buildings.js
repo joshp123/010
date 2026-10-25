@@ -103,10 +103,26 @@ export function createMunicipalBuildingVisibility() {
 // that same hierarchy. Leaf-first loading otherwise requests scores of models
 // before their ordinary streets have any source appearance at all.
 export function configureMunicipalBuildingStreaming(tiles) {
+  tiles.registerPlugin({
+    name: 'Complete municipal transfers within the download queue',
+    async fetchData(uri, options) {
+      const response = await fetch(uri, options);
+      if (!response.ok) throw new Error(`Municipal source request failed: ${response.status} ${uri}`);
+      // Fetch resolves at headers. Keep its body inside the renderer's existing
+      // transfer slot so refinement cannot flood the source with active bodies.
+      return new URL(uri, location.href).pathname.endsWith('.json') ? response.json() : response.arrayBuffer();
+    },
+  });
   const calculateViewError = tiles.calculateTileViewError.bind(tiles);
   const presentedParents = new WeakSet();
   function hasResidentDescendant(tile) {
     return tile.children?.some(child => child.internal && ((child.internal.hasRenderableContent && child.internal.loadingState === LOADED) || hasResidentDescendant(child))) || false;
+  }
+  function hasPresentedAncestor(tile) {
+    for (let parent = tile.parent; parent; parent = parent.parent) {
+      if (parent.internal?.loadingState === LOADED && presentedParents.has(parent)) return true;
+    }
+    return false;
   }
   tiles.loadAncestors = false;
   tiles.loadSiblings = false;
@@ -116,10 +132,11 @@ export function configureMunicipalBuildingStreaming(tiles) {
     if (tile.internal.loadingState < LOADED) {
       if (!hasResidentDescendant(tile)) presentedParents.delete(tile);
     } else if (tile.traversal.wasSetVisible) presentedParents.add(tile);
-    // Loading is not presentation. Make a ready parent visible for a frame
-    // before refining; the renderer can then retain it until children arrive.
-    // Resident children already provide context after their parent is evicted.
-    if (tile.internal.loadingState >= UNLOADED && !presentedParents.has(tile)) {
+    // Present the first real source model before refinement. Once that model
+    // supplies context, let the native error traversal reach the needed detail
+    // directly; downloading every intermediate model serializes network waits.
+    // REPLACE traversal retains the presented ancestor until detail is ready.
+    if (tile.internal.loadingState >= UNLOADED && !presentedParents.has(tile) && !hasPresentedAncestor(tile)) {
       result.error = Math.min(result.error, tiles.errorTarget);
     }
   };
