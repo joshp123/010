@@ -29,7 +29,7 @@ def assemble(arguments):
     observations = read_json(arguments.observations)
     views_path = Path(observations['views'])
     views = read_json(views_path)
-    assert painter.m.digest(source.raw) == views['sourceSha256']
+    assert painter.m.digest(source.raw) == observations.get('sourceCollectionSha256', views['sourceSha256'])
     view = next(value for value in views['views'] if value['name'] == observations['view'])
     assert digest(Path(observations['sourceImage'])) == observations['sourceSha256']
     camera = view['camera']

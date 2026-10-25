@@ -1,0 +1,325 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "status": "HELD legacy common-context observations after discovered SourceCollection RTC-axis defect. Target12 shapes are same source leaf, but corrected shared depth/occlusion must be revalidated before binding/import. Accepted front remains unchanged.",
+  "sourceImage": "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/contiguous-neighbourhood/native-context-fields/complete-adjoining-block/view-270-0-source.png",
+  "sourceSha256": "7ce70723c9cc57c417a870c020578a277fbd327f72669fcf513076a7c19437b4",
+  "views": "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/contiguous-neighbourhood/native-context-fields/complete-adjoining-block/views.json",
+  "view": "view-270-0",
+  "sourceCollectionSha256": "078bd6824553e6c4ae39c7b72b1973a0965e7381d98b9bffce1cfefb45e426ac",
+  "coordinateFrame": "Original common anchor18_268619_55472, full208 depth cameras with unchanged same-anchor retained-six geometry.",
+  "drawingPalette": {
+    "frame": [
+      204,
+      205,
+      195
+    ],
+    "reveal": [
+      105,
+      100,
+      85
+    ],
+    "glass": [
+      53,
+      74,
+      78
+    ],
+    "transomGlass": [
+      91,
+      111,
+      109
+    ],
+    "frameLight": [
+      224,
+      224,
+      211
+    ],
+    "frameShade": [
+      148,
+      151,
+      143
+    ]
+  },
+  "facades": [
+    {
+      "id": "banded-corner-rear",
+      "sourceBagId": "0599100000650091",
+      "wallRgb": [
+        110,
+        105,
+        96
+      ],
+      "replacementPolygon": [
+        [
+          474,
+          795
+        ],
+        [
+          504,
+          795
+        ],
+        [
+          504,
+          861
+        ],
+        [
+          474,
+          861
+        ]
+      ],
+      "drawnOpenings": [
+        {
+          "id": "banded-rear-attic",
+          "framePolygon": [
+            [
+              475,
+              795
+            ],
+            [
+              489,
+              795
+            ],
+            [
+              489,
+              816
+            ],
+            [
+              475,
+              816
+            ]
+          ],
+          "glassPolygons": [
+            [
+              [
+                478,
+                798
+              ],
+              [
+                486,
+                798
+              ],
+              [
+                486,
+                812
+              ],
+              [
+                478,
+                812
+              ]
+            ]
+          ],
+          "glassRgb": [
+            [
+              108,
+              110,
+              94
+            ]
+          ],
+          "judgement": "Explicit visible source frame and divisions in the original rear camera. No continuation through occlusion or hidden inventory inferred."
+        }
+      ],
+      "sourcePatches": [
+        {
+          "polygon": [
+            [
+              474,
+              834
+            ],
+            [
+              504,
+              834
+            ],
+            [
+              504,
+              861
+            ],
+            [
+              474,
+              861
+            ]
+          ],
+          "judgement": "Partially occluded or unresolved opening; retain actual source pixels without inventing complete frame or inventory."
+        }
+      ]
+    },
+    {
+      "id": "stepped-corner-rear",
+      "sourceBagId": "0599100000194804",
+      "wallRgb": [
+        110,
+        105,
+        96
+      ],
+      "replacementPolygon": [
+        [
+          522,
+          792
+        ],
+        [
+          549,
+          792
+        ],
+        [
+          549,
+          860
+        ],
+        [
+          522,
+          860
+        ]
+      ],
+      "drawnOpenings": [
+        {
+          "id": "stepped-rear-attic",
+          "framePolygon": [
+            [
+              536,
+              792
+            ],
+            [
+              549,
+              792
+            ],
+            [
+              549,
+              816
+            ],
+            [
+              536,
+              816
+            ]
+          ],
+          "glassPolygons": [
+            [
+              [
+                539,
+                795
+              ],
+              [
+                546,
+                795
+              ],
+              [
+                546,
+                812
+              ],
+              [
+                539,
+                812
+              ]
+            ]
+          ],
+          "glassRgb": [
+            [
+              66,
+              74,
+              66
+            ]
+          ],
+          "judgement": "Explicit visible source frame and divisions in the original rear camera. No continuation through occlusion or hidden inventory inferred."
+        }
+      ],
+      "sourcePatches": [
+        {
+          "polygon": [
+            [
+              522,
+              835
+            ],
+            [
+              545,
+              835
+            ],
+            [
+              545,
+              860
+            ],
+            [
+              522,
+              860
+            ]
+          ],
+          "judgement": "Partially occluded or unresolved opening; retain actual source pixels without inventing complete frame or inventory."
+        }
+      ]
+    },
+    {
+      "id": "party-wall-vent",
+      "sourceBagId": "0599100000767277",
+      "wallRgb": [
+        110,
+        105,
+        96
+      ],
+      "replacementPolygon": [
+        [
+          1025,
+          821
+        ],
+        [
+          1033,
+          821
+        ],
+        [
+          1033,
+          832
+        ],
+        [
+          1025,
+          832
+        ]
+      ],
+      "drawnOpenings": [
+        {
+          "id": "single-observed-vent",
+          "framePolygon": [
+            [
+              1025,
+              821
+            ],
+            [
+              1033,
+              821
+            ],
+            [
+              1033,
+              832
+            ],
+            [
+              1025,
+              832
+            ]
+          ],
+          "glassPolygons": [
+            [
+              [
+                1027,
+                824
+              ],
+              [
+                1031,
+                824
+              ],
+              [
+                1031,
+                829
+              ],
+              [
+                1027,
+                829
+              ]
+            ]
+          ],
+          "glassRgb": [
+            [
+              38,
+              48,
+              48
+            ]
+          ],
+          "judgement": "The otherwise blank tall source partywall has one small visible dark vent. Chimney/shadow masses are not classified as windows; no extra opening added."
+        }
+      ],
+      "sourcePatches": []
+    }
+  ]
+}
