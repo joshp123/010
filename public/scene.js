@@ -17,7 +17,7 @@ import { createBuildingBatches } from './building-batches.js';
 import { createTreeBatches } from './tree-batches.js';
 import { createVegetationStyle } from './vegetation-style.js';
 import { applyPublicSpaceMaterial, createPublicSpaceStyle } from './public-space-style.js';
-import { miniatureLightingState, applyMiniatureLighting } from './miniature-lighting.js';
+import { miniatureLightingState, applyMiniatureLighting, miniatureAtmosphere } from './miniature-lighting.js';
 import { createGroundArtwork } from './ground-artwork.js';
 import { setAppearanceSampling } from './appearance-sampling.js';
 import { estimateAppearanceBytes } from './appearance-memory.js';
@@ -706,6 +706,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     camera.lookAt(target);
     camera.updateProjectionMatrix();
     camera.updateMatrixWorld();
+    updateAtmosphere();
     updateShadowCamera();
     fixtureSurfaceLighting.setView(camera);
     transit.setView({ camera, span: captureInspectionSpan ?? view.span, viewportHeight: height * renderer.getPixelRatio() });
@@ -866,6 +867,14 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     updateCamera();
     if (notify) onViewChange({ ...view });
   }
+  function updateAtmosphere() {
+    const atmosphere = miniatureAtmosphere({ visibility: lighting.visibility, cameraDistance: camera.position.distanceTo(target), span: captureInspectionSpan ?? view.span });
+    if (!atmosphere) { scene.fog = null; return; }
+    if (!scene.fog) scene.fog = new THREE.Fog(scene.background, atmosphere.near, atmosphere.far);
+    scene.fog.color.copy(scene.background);
+    scene.fog.near = atmosphere.near;
+    scene.fog.far = atmosphere.far;
+  }
   function setLighting(nextLighting) {
     lighting = { ...lighting, ...nextLighting };
     const mode = lighting.mode;
@@ -873,18 +882,22 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     const { night, golden, cloud } = miniatureLightingState({ mode, solarAltitudeRadians: solar.altitude, cloudCover: lighting.cloudCover });
     uniforms.night.value = night;
     fixtureSurfaceLighting.setView(camera);
-    uniforms.snow.value = Math.min(1, Number(lighting.snow) || 0);
+    // Current snowfall is a rate; it does not establish snow cover.
+    uniforms.snow.value = 0;
     sunVector = mode === 'live' && night < 0.9 ? solar.direction : golden ? new THREE.Vector3(-0.9, 0.24, 0.34).normalize() : night ? new THREE.Vector3(-0.5, 0.75, -0.45).normalize() : new THREE.Vector3(-0.65, 0.8, 0.45).normalize();
     applyMiniatureLighting({ sun, sky, background: scene.background }, { night, golden, cloud });
     const wetness = Math.min(1, Number(lighting.rain) || 0);
     weatherUniforms.rain.value = wetness > 0 ? Math.max(0.2, wetness) : 0;
     weatherUniforms.snow.value = Math.min(1, Number(lighting.snow) || 0);
-    materials.ground.roughness = 0.94 - wetness * 0.35;
-    materials.ground.color.setScalar(1 - wetness * 0.13);
+    for (const kind of ['ground', 'streets', 'bridgeSurfaces', 'industrialTerrain', 'yards']) {
+      materials[kind].roughness = 0.94 - wetness * 0.35;
+      materials[kind].color.setScalar(1 - wetness * 0.13);
+    }
     cartographicMaterial.color.copy(materials.ground.color); cartographicMaterial.roughness = materials.ground.roughness;
     contextLandMaterial.color.copy(cartographicMaterial.color).multiplyScalar(0.72 - night * 0.27);
     contextLandMaterial.roughness = cartographicMaterial.roughness;
     renderer.toneMappingExposure = 1.12 + night * .23;
+    updateAtmosphere();
     updateShadowCamera();
     requestRender();
   }

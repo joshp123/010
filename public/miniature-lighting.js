@@ -30,3 +30,11 @@ export function applyMiniatureLighting({sun,sky,background},state) {
   sun.intensity=day.sunIntensity+(dark.sunIntensity-day.sunIntensity)*night;
   sky.intensity=day.skyIntensity+(dark.skyIntensity-day.skyIntensity)*night;
 }
+
+// The isometric camera sits 40 km away for depth precision. Atmosphere starts at
+// the displayed city's near side, so this virtual offset cannot hide the map.
+export function miniatureAtmosphere({visibility,cameraDistance,span}) {
+  if(!Number.isFinite(visibility)||visibility<=0)return null;
+  const near=Math.max(0,cameraDistance-span*.5);
+  return {near,far:near+visibility};
+}

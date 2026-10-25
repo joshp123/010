@@ -203,7 +203,7 @@ function applyLighting() {
   const night = lightingMode === 'night' || lightingMode === 'live' && (hour < 7 || hour >= 19);
   document.body.dataset.theme = night ? 'night' : 'day';
   document.querySelector('meta[name="theme-color"]').content = night ? '#192c24' : '#e9ede7';
-  scene?.setLighting({ mode: lightingMode, date: now, cloudCover: weather?.available ? weather.cloudCover : 0, rain: weather?.available ? weather.rain : 0, snow: weather?.available ? weather.snow : 0 });
+  scene?.setLighting({ mode: lightingMode, date: now, cloudCover: weather?.available ? weather.cloudCover : 0, rain: weather?.available ? weather.rain : 0, snow: weather?.available ? weather.snow : 0, visibility: weather?.available ? weather.visibility : null });
   document.querySelectorAll('[data-light]').forEach(button => {
     const selected = button.dataset.light === lightingMode;
     button.classList.toggle('selected', selected);
