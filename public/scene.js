@@ -274,7 +274,8 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       }
     }
     const groundOnly = context?.preferGround === true;
-    const key = `${groundOnly ? 'ground' : 'surface'}:${latitude}:${longitude}`;
+    const roadSource = context?.source === 'NWB';
+    const key = `${groundOnly ? 'ground' : Number.isFinite(context?.bridgeEdgeHeight) ? `bridge-edge:${context.roadId}` : roadSource ? 'road' : 'surface'}:${latitude}:${longitude}`;
     let surface = transitSurfaceCache.get(key);
     if (!surface) {
       const point = localPosition(latitude, longitude);
@@ -283,7 +284,10 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       const surfaceKinds = groundOnly ? ['ground', 'industrialTerrain', 'greenTerrain'] : ['bridgeSurfaces', 'industrialTerrain', 'ground', 'greenTerrain'];
       for (const kind of surfaceKinds) {
         if (!tilesets.some(layer => layer.kind === kind && layer.group.visible)) continue;
-        const height = surfaceQueries.get(kind).heightAt(point.x, point.z, point.y - 80, point.y + 150);
+        const query = surfaceQueries.get(kind);
+        let height = query.heightAt(point.x, point.z, point.y - 80, point.y + 150);
+        // Only repair a deck-edge gap bracketed by measured deck samples on this road.
+        if (height === null && roadSource && kind === 'bridgeSurfaces' && Number.isFinite(context.bridgeEdgeHeight)) height = query.nearestHeightAt(point.x, point.z, context.bridgeEdgeHeight - 1, context.bridgeEdgeHeight + 1, 1);
         if (height !== null) { measured = { height, source: kind === 'bridgeSurfaces' ? 'surveyed bridge deck' : kind === 'industrialTerrain' ? 'survey-based reclaimed ground' : 'surveyed ground' }; break; }
       }
       surface = { point, ...(measured || { height: point.y, source: 'graphic surface height' }) };

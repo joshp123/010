@@ -79,8 +79,41 @@ export function createSurfaceQuery() {
     return highest;
   }
 
+  function nearestHeightAt(x, z, minimumHeight, maximumHeight, maximumDistance) {
+    let nearestDistanceSquared = maximumDistance * maximumDistance, nearestHeight = null;
+    const keys = [];
+    for (let cellX = Math.floor((x - maximumDistance) / CELL_METRES); cellX <= Math.floor((x + maximumDistance) / CELL_METRES); cellX++) {
+      for (let cellZ = Math.floor((z - maximumDistance) / CELL_METRES); cellZ <= Math.floor((z + maximumDistance) / CELL_METRES); cellZ++) keys.push(cellKey(cellX, cellZ));
+    }
+    for (const { position, index, matrix, cells, large } of records.values()) {
+      const visited = new Set();
+      for (const offsets of [...keys.map(key => cells.get(key)), large]) {
+        if (!offsets) continue;
+        for (const offset of offsets) {
+          if (visited.has(offset)) continue;
+          visited.add(offset);
+          a.fromBufferAttribute(position, index ? index.getX(offset) : offset).applyMatrix4(matrix);
+          b.fromBufferAttribute(position, index ? index.getX(offset + 1) : offset + 1).applyMatrix4(matrix);
+          c.fromBufferAttribute(position, index ? index.getX(offset + 2) : offset + 2).applyMatrix4(matrix);
+          normal.subVectors(b, a).cross(edge.subVectors(c, a));
+          if (normal.y * normal.y <= normal.lengthSq() * 0.09) continue;
+          for (const [start, end] of [[a, b], [b, c], [c, a]]) {
+            const dx = end.x - start.x, dz = end.z - start.z, lengthSquared = dx * dx + dz * dz;
+            const fraction = lengthSquared ? Math.max(0, Math.min(1, ((x - start.x) * dx + (z - start.z) * dz) / lengthSquared)) : 0;
+            const height = start.y + (end.y - start.y) * fraction;
+            const distanceSquared = (start.x + dx * fraction - x) ** 2 + (start.z + dz * fraction - z) ** 2;
+            if (height > minimumHeight && height < maximumHeight && distanceSquared <= nearestDistanceSquared) {
+              nearestDistanceSquared = distanceSquared; nearestHeight = height;
+            }
+          }
+        }
+      }
+    }
+    return nearestHeight;
+  }
+
   return {
-    setModels, heightAt,
+    setModels, heightAt, nearestHeightAt,
     diagnostics: () => ({ ...counters, meshes: records.size, triangles: [...records.values()].reduce((sum, record) => sum + record.triangles, 0), indexBytes: [...records.values()].reduce((sum, record) => sum + record.indexBytes, 0) }),
     dispose() { records.clear(); },
   };
