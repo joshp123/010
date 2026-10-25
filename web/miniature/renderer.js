@@ -7,6 +7,7 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { buildPalette, surfaceClassColours } from './palette.js';
 
 const TILE_METRES = 250;
@@ -230,8 +231,11 @@ const postFragment = `
         vec2 uv = vUv + offsets[i] * texel;
         float neighbourDepth = depthAt(uv);
         // Outline belongs to the nearer surface, so objects keep their size.
-        if (neighbourDepth - depth > 1.6) silhouette = 1.0;
         vec3 neighbourNormal = texture(normalTexture, uv).xyz * 2.0 - 1.0;
+        // Two parallel surfaces a little apart (tile joins, kerbs, quay steps)
+        // are not an object edge; anything taller than a storey is.
+        bool parallelStep = dot(normal, neighbourNormal) > 0.98 && neighbourDepth - depth < 2.6;
+        if (neighbourDepth - depth > 1.6 && !parallelStep) silhouette = 1.0;
         if (dot(normal, neighbourNormal) < 0.75 && abs(neighbourDepth - depth) < 1.6) crease = 1.0;
       }
       if (silhouette > 0.5) colour = colour * vec3(0.36, 0.36, 0.44);
@@ -254,7 +258,7 @@ const postFragment = `
   }`;
 
 export class Miniature {
-  constructor(canvas, { sceneBase, manifest, style = {} }) {
+  constructor(canvas, { sceneBase, manifest, area = 'core', style = {} }) {
     this.canvas = canvas;
     this.sceneBase = sceneBase;
     this.manifest = manifest;
@@ -263,6 +267,10 @@ export class Miniature {
       const [, x, y] = id.match(/^x(\d+)_y(\d+)$/);
       return { id, x_min: Number(x), y_min: Number(y) };
     });
+    const bounds = manifest.area?.[area]?.bounds_rd;
+    if (bounds) {
+      this.tileList = this.tileList.filter((t) => t.x_min >= bounds[0] && t.y_min >= bounds[1] && t.x_min < bounds[2] && t.y_min < bounds[3]);
+    }
     // A fixed origin keeps every coordinate small; it does not move when the area grows.
     this.origin = { x: 89750, y: 435250 };
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
@@ -326,7 +334,7 @@ export class Miniature {
     const offset = this.tileOffset(tile);
     const group = new THREE.Group();
     group.position.copy(offset);
-    const loader = new GLTFLoader();
+    const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
     const optional = (promise) => promise.catch((error) => { console.warn(error.message ?? error); return null; });
     const [ground, buildings, classTexture, orthoTexture, objects] = await Promise.all([
       optional(loader.loadAsync(`${base}/ground.glb`)),

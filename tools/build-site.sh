@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Written by AI on 2026-10-25 by model Claude Opus 5.5.
+# Assemble the static site for ChatGPT Sites: pages and code from web/, the
+# phone-sized scene and the pyramids from the SSD. Generated data never enters
+# the GitHub repository; it is copied into the Sites deployment only.
+# Usage: tools/build-site.sh OUT_DIR
+set -euo pipefail
+repo="$(cd "$(dirname "$0")/.." && pwd)"
+data="/Volumes/Josh Extreme Pro USB4 4TB/010"
+out="${1:?output directory}"
+dist="$out/dist"
+mkdir -p "$dist"
+rsync -a --delete --exclude 'transit-feed.js' "$repo/web/" "$dist/"
+mkdir -p "$dist/scene" "$dist/pyramids"
+rsync -a --delete "$data/scene/web-v1/" "$dist/scene/"
+for name in t2 t3; do
+  if [ -d "$data/pyramids/$name-live" ]; then rsync -a --delete "$data/pyramids/$name-live/" "$dist/pyramids/$name/"; fi
+done
+mkdir -p "$out/.openai"
+cat > "$out/.openai/hosting.json" <<'EOF'
+{
+  "project_id": "appgprj_6adbd00c69208191bb5e4884a7b60303",
+  "static": {"directory": "dist"},
+  "d1": null,
+  "r2": null
+}
+EOF
+echo "files: $(find "$dist" -type f | wc -l)  bytes: $(du -sk "$dist" | cut -f1) KB"

@@ -30,7 +30,13 @@ with sync_playwright() as p:
     page.wait_for_function("window.captureReady === true", timeout=600000)
     for bearing in args.bearings:
         folder = os.path.join(args.out, f"b{int(bearing)}")
-        meta = {"tile": TILE, "bearing": bearing, "levels": []}
+        camera = page.evaluate("({origin: window.miniature.origin, elevation: window.miniature.style.elevationDegrees})")
+        # Everything a viewer needs to map RD coordinates to pyramid pixels:
+        # screen x = (p . right) / mpp, screen y (up) = (p . up) / mpp, where p is
+        # (RD x - origin x, NAP z, -(RD y - origin y)) and right/up follow from
+        # the bearing and camera elevation (web/miniature/renderer.js, screenAxes).
+        meta = {"tile": TILE, "bearing": bearing, "origin_rd": [camera["origin"]["x"], camera["origin"]["y"]],
+                "elevation_degrees": camera["elevation"], "levels": []}
         started = time.time()
         count = 0
         for level, mpp in enumerate(LEVELS):
