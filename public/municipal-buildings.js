@@ -1,5 +1,6 @@
 // Written by AI on 2026-10-24 by model GPT-6 Astra.
 import * as THREE from 'three';
+import { createMunicipalSourceDelivery } from './municipal-source-delivery.js';
 import { normalizedBagId } from './building-appearance.js';
 import { UNLOADED, LOADED } from './vendor/3d-tiles-renderer/build/index.core.js';
 
@@ -103,10 +104,13 @@ export function createMunicipalBuildingVisibility() {
 // that same hierarchy. Leaf-first loading otherwise requests scores of models
 // before their ordinary streets have any source appearance at all.
 export function configureMunicipalBuildingStreaming(tiles) {
+  const delivery = createMunicipalSourceDelivery(tiles);
   tiles.registerPlugin({
     name: 'Complete municipal transfers within the download queue',
+    preprocessNode: (tile, basePath) => delivery.preprocessNode(tile, basePath),
     async fetchData(uri, options) {
-      const response = await fetch(uri, options);
+      await delivery.ready;
+      const response = await delivery.fetch(uri, options);
       if (!response.ok) throw new Error(`Municipal source request failed: ${response.status} ${uri}`);
       // Fetch resolves at headers. Keep its body inside the renderer's existing
       // transfer slot so refinement cannot flood the source with active bodies.
@@ -128,6 +132,7 @@ export function configureMunicipalBuildingStreaming(tiles) {
   tiles.loadSiblings = false;
   tiles.calculateTileViewError = (tile, result) => {
     calculateViewError(tile, result);
+    delivery.viewError(tile, result);
     if (!tile.internal.hasRenderableContent) return;
     if (tile.internal.loadingState < LOADED) {
       if (!hasResidentDescendant(tile)) presentedParents.delete(tile);
