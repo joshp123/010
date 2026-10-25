@@ -58,7 +58,7 @@ class Source:
         self.normals /= np.maximum(self.areas[:,None]*2,1e-12)
     def accessor(self, index): return appearance.accessor(self.doc,self.binary,index).copy()
 
-    def surfaces(self):
+    def surfaces(self,normal_cosine=.9995):
         """Connected coplanar faces, independent of compass direction and size."""
         edge_faces = {}; neighbours = [set() for _ in self.triangles]
         for index, triangle in enumerate(self.triangles):
@@ -66,7 +66,7 @@ class Source:
             for first,second in ((0,1),(1,2),(2,0)):
                 key=(triangle['identity'], *sorted([corners[first],corners[second]]))
                 for other in edge_faces.get(key,[]):
-                    if np.dot(self.normals[index],self.normals[other])>.9995:
+                    if np.dot(self.normals[index],self.normals[other])>normal_cosine:
                         neighbours[index].add(other); neighbours[other].add(index)
                 edge_faces.setdefault(key,[]).append(index)
         remaining = set(range(len(self.triangles))); groups=[]

@@ -84,9 +84,31 @@ def prepare_overlapping_context(source,out,native_pixels=1254,drawing_pixels_per
    views.append({'name':name,'camera':c,'source':name+'-source.png','geometryGuide':name+'-geometry.png','paint':name+'-paint.png','depth':name+'-depth.npy','includeBagIds':sorted(identities),'drawingConfidence':1 if elevation==28 else .45 if elevation==45 else .2})
  m.save_json(out/'views.json',{'authorship':'Written by AI on 2026-10-25 by model GPT-6','status':'Overlapping native-scale source observations; no model drawing or art acceptance yet','sourceSha256':m.digest(source.raw),'sourcePath':str(source.path.resolve()),'nativeGenerationPixels':native_pixels,'drawingPixelsPerMetre':drawing_pixels_per_metre,'contextSpanMetres':context_span,'handoffDirectory':'bound-overlapping-neighbourhood','views':views})
 
-def bake(source,out):
+def coherent_surface_views(source,plan,out):
+ """Choose one observed drawing for each connected source-supported surface."""
+ chosen={};records=[];sample_weights=np.array([[1/3,1/3,1/3],[.6,.2,.2],[.2,.6,.2],[.2,.2,.6]])
+ for faces in m.Source.surfaces(source,normal_cosine=math.cos(math.radians(5))):
+  normal=np.average(source.normals[faces],axis=0,weights=source.areas[faces]);normal/=np.linalg.norm(normal);identity=source.triangles[faces[0]]['identity'];candidates=[]
+  for view_index,view in enumerate(plan['views']):
+   if view.get('includeBagIds') and identity not in view['includeBagIds']:continue
+   if not (out/view['paint']).exists():continue
+   c=view['camera'];basis=np.array(c['basis']);facing=float(normal@basis[:,2])
+   if facing<.4:continue
+   depth=np.load(out/view['depth'],mmap_mode='r');visible_area=0
+   for face in faces:
+    q,xy=project(sample_weights@source.positions[face],c);px=np.floor(xy).astype(int);inside=(px[:,0]>=0)&(px[:,0]<c['size'])&(px[:,1]>=0)&(px[:,1]<c['size']);px=px.clip(0,c['size']-1);delta=(px+.5-xy)/c['scale'];n=source.normals[face]@basis;expected=q[:,2]-(n[0]*delta[:,0]-n[1]*delta[:,1])/n[2];visible=inside&(abs(expected-depth[px[:,1],px[:,0]])<.12);visible_area+=source.areas[face]*visible.mean()
+   visible_fraction=visible_area/source.areas[faces].sum();score=facing*view.get('drawingConfidence',1)*visible_fraction**2
+   if visible_fraction:candidates.append((score,view_index,visible_fraction))
+  if not candidates:continue
+  score,view_index,visible_fraction=max(candidates)
+  for face in faces:chosen[face]=view_index
+  records.append({'identity':identity,'triangles':faces,'view':plan['views'][view_index]['name'],'observedAreaFraction':float(visible_fraction),'normal':normal.tolist()})
+ return chosen,records
+
+def bake(source,out,coherent_planes=False):
  plan=json.loads((out/'views.json').read_text());assert plan['sourceSha256']==m.digest(source.raw);images=[a.copy() for a in source.images];scores=[np.full(a.shape[:2],-np.inf) for a in images]
- for view in plan['views']:
+ chosen,records=coherent_surface_views(source,plan,out) if coherent_planes else ({},[])
+ for view_index,view in enumerate(plan['views']):
   path=out/view['paint']
   if not path.exists():continue
   included_identities=set(view['includeBagIds']) if view.get('includeBagIds') else None
@@ -95,9 +117,10 @@ def bake(source,out):
   if pixel_size:drawing=drawing.resize((pixel_size,pixel_size),Image.Resampling.BOX)
   paint=np.asarray(drawing.resize((size,size),Image.Resampling.NEAREST));depth=np.load(out/view['depth']);toward=np.array(c['basis'])[:,2]
   for index,t in enumerate(source.triangles):
+   if coherent_planes and chosen.get(index)!=view_index:continue
    if included_identities is not None and t['identity'] not in included_identities:continue
    facing=float(source.normals[index]@toward)
-   if facing<.4:continue
+   if facing<(0 if coherent_planes else .4):continue
    score=facing*view.get('drawingConfidence',1)
    tex=images[t['image']];h,w=tex.shape[:2]
    for x0,y0,x1,y1,weights,inside in m.raster_triangle(t['uv']*[w,h],w,h):
@@ -105,11 +128,11 @@ def bake(source,out):
     view_normal=source.normals[index]@np.array(c['basis']);sample_delta=(px+.5-xy)/c['scale'];sample_plane_depth=q[:,:,2]-(view_normal[0]*sample_delta[:,:,0]-view_normal[1]*sample_delta[:,:,1])/view_normal[2]
     valid&=abs(sample_plane_depth-depth[px[:,:,1],px[:,:,0]])<.12;valid&=score>scores[t['image']][y0:y1+1,x0:x1+1];tex[y0:y1+1,x0:x1+1][valid]=paint[px[:,:,1][valid],px[:,:,0][valid]];scores[t['image']][y0:y1+1,x0:x1+1][valid]=score
  if not isinstance(source,SourceCollection):source.export(images,out/'model-drawn-block.glb')
- source.export_handoff(images,{t['identity'] for t in source.triangles},out/plan.get('handoffDirectory','bound-model-drawn-block'));np.savez_compressed(out/'painted-atlases.npz',**{f'image_{i}':a for i,a in enumerate(images)})
- m.save_json(out/'baked.json',{'sourceSha256':m.digest(source.raw),'paintedViews':[v['paint'] for v in plan['views'] if (out/v['paint']).exists()],'identities':sorted({t['identity'] for t in source.triangles}),'status':'Whole model drawing field candidate; source aperture and opposing view inspection required, no fidelity acceptance inferred from geometry'})
+ suffix='-coherent-planes' if coherent_planes else '';source.export_handoff(images,{t['identity'] for t in source.triangles},out/(plan.get('handoffDirectory','bound-model-drawn-block')+suffix));np.savez_compressed(out/f'painted-atlases{suffix}.npz',**{f'image_{i}':a for i,a in enumerate(images)})
+ m.save_json(out/f'baked{suffix}.json',{'sourceSha256':m.digest(source.raw),'paintedViews':[v['paint'] for v in plan['views'] if (out/v['paint']).exists()],'identities':sorted({t['identity'] for t in source.triangles}),'status':'Whole model drawing field candidate; source aperture and opposing view inspection required, no fidelity acceptance inferred from geometry',**({'connectedSurfaceObservations':records} if coherent_planes else {})})
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('operation',choices=['prepare','prepare-overlaps','bake']);p.add_argument('source',type=Path);p.add_argument('output',type=Path);a=p.parse_args();s=load_source(a.source)
+ p=argparse.ArgumentParser();p.add_argument('operation',choices=['prepare','prepare-overlaps','bake','bake-coherent']);p.add_argument('source',type=Path);p.add_argument('output',type=Path);a=p.parse_args();s=load_source(a.source)
  if a.operation=='prepare':prepare(s,a.output)
  elif a.operation=='prepare-overlaps':prepare_overlapping_context(s,a.output)
- else:bake(s,a.output)
+ else:bake(s,a.output,coherent_planes=a.operation=='bake-coherent')
