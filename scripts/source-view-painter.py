@@ -194,6 +194,26 @@ def apply_architectural_patches(source,images,plan,out,observations):
     q,xy=project(weights@triangle['positions'],c);pixels=np.floor(xy).astype(int);valid=inside&(pixels[:,:,0]>=0)&(pixels[:,:,0]<size)&(pixels[:,:,1]>=0)&(pixels[:,:,1]<size);pixels=pixels.clip(0,size-1);normal=source.normals[index]@np.asarray(c['basis']);delta=(pixels+.5-xy)/c['scale'];expected=q[:,:,2]-(normal[0]*delta[:,:,0]-normal[1]*delta[:,:,1])/normal[2];valid&=(abs(expected-depth[pixels[:,:,1],pixels[:,:,0]])<.12)&region[pixels[:,:,1],pixels[:,:,0]]
     mapped=np.dstack([xy,np.ones(xy.shape[:2])])@transform.T;drawn_pixels=np.floor(mapped[:,:,:2]/mapped[:,:,2,None]).astype(int);valid&=(drawn_pixels[:,:,0]>=0)&(drawn_pixels[:,:,0]<size)&(drawn_pixels[:,:,1]>=0)&(drawn_pixels[:,:,1]<size);drawn_pixels=drawn_pixels.clip(0,size-1);image[y0:y1+1,x0:x1+1][valid]=paint[drawn_pixels[:,:,1][valid],drawn_pixels[:,:,0][valid]]
 
+def align_frontage_field(folder):
+ """Map independently observed straight facade parts into their source camera."""
+ registration=json.loads((folder/'registration.json').read_text());plan=json.loads((folder/registration['sourceCameraViews']).resolve().read_text());camera=next(v['camera'] for v in plan['views'] if v['name']==registration['sourceCamera']);size=camera['size'];drawing=np.asarray(Image.open(folder/registration.get('drawingImage','paint.png')).convert('RGB'));result=np.zeros((size,size,4),np.uint8);parts=json.loads((folder/'architectural-correspondences.json').read_text())['parts']
+ for part in parts:
+  x0,x1=part['sourceX'];ys=part['sourceFloorDatums'];vs=part['drawnFloorDatums'];y0,y1=min(ys),max(ys);xx,yy=np.meshgrid(np.arange(x0,x1),np.arange(y0,y1));u=np.interp(xx+.5,part['sourceX'],part['drawnX']);v=np.interp(yy+.5,ys,vs);u=np.floor(u).astype(int).clip(0,drawing.shape[1]-1);v=np.floor(v).astype(int).clip(0,drawing.shape[0]-1);result[y0:y1,x0:x1,:3]=drawing[v,u];result[y0:y1,x0:x1,3]=255
+ Image.fromarray(result).save(folder/'aligned-substrate.png')
+
+def apply_source_registered_field(source,images,c,drawing,identities):
+ """Bind a source-camera RGBA drawing using original geometry, UVs and occlusion."""
+ _,depth=render(source,c);size=c['size'];toward=np.asarray(c['basis'])[:,2]
+ for index,triangle in enumerate(source.triangles):
+  if triangle['identity'] not in identities or source.normals[index]@toward<.1:continue
+  image=images[triangle['image']];height,width=image.shape[:2]
+  for x0,y0,x1,y1,weights,inside in m.raster_triangle(triangle['uv']*[width,height],width,height):
+   q,xy=project(weights@triangle['positions'],c);pixels=np.floor(xy).astype(int);valid=inside&(pixels[:,:,0]>=0)&(pixels[:,:,0]<size)&(pixels[:,:,1]>=0)&(pixels[:,:,1]<size);pixels=pixels.clip(0,size-1);normal=source.normals[index]@np.asarray(c['basis']);delta=(pixels+.5-xy)/c['scale'];expected=q[:,:,2]-(normal[0]*delta[:,:,0]-normal[1]*delta[:,:,1])/normal[2];valid&=(abs(expected-depth[pixels[:,:,1],pixels[:,:,0]])<.12)&(drawing[pixels[:,:,1],pixels[:,:,0],3]>0);image[y0:y1+1,x0:x1+1][valid]=drawing[pixels[:,:,1][valid],pixels[:,:,0][valid],:3]
+
+def bake_frontage_field(source,folder):
+ """Rebuild one registered drawing from retained source, teacher and judgement."""
+ registration=json.loads((folder/'registration.json').read_text());align_frontage_field(folder);plan=json.loads((folder/registration['sourceCameraViews']).resolve().read_text());c=next(v['camera'] for v in plan['views'] if v['name']==registration['sourceCamera']);packed=np.load(folder/registration['baseAtlases']);source.images=[packed[f'image_{i}'].copy() for i in range(len(source.images))];apply_source_registered_field(source,source.images,c,np.asarray(Image.open(folder/'aligned-substrate.png')),set(registration['bagIds']));rgb,_=render(source,c);Image.fromarray(rgb).save(folder/'actual-no-plants-substrate-bake.png');source.export_handoff(source.images,{t['identity'] for t in source.triangles},folder/registration['handoffDirectory'])
+
 def pad_painted_uv_charts(source,images,painted_masks):
  """Supply sampling gutters outside UV charts, never inside unseen surfaces."""
  for image_index,image in enumerate(images):
@@ -237,8 +257,9 @@ def bake(source,out,coherent_planes=False,observed_planes=False,uv_gutters=False
  m.save_json(out/f'baked{suffix}.json',{'sourceSha256':m.digest(source.raw),'paintedViews':[v['paint'] for v in plan['views'] if (out/v['paint']).exists()],'identities':sorted({t['identity'] for t in source.triangles}),'status':'Whole model drawing field candidate; source aperture and opposing view inspection required, no fidelity acceptance inferred from geometry',**({'connectedSurfaceObservations':records} if coherent_planes else {}),**({'architecturalCorrespondences':observations} if observed_planes else {})})
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('operation',choices=['prepare','prepare-overlaps','prepare-correspondences','bake','bake-coherent','bake-observed','bake-gutters']);p.add_argument('source',type=Path);p.add_argument('output',type=Path);a=p.parse_args();s=load_source(a.source)
+ p=argparse.ArgumentParser();p.add_argument('operation',choices=['prepare','prepare-overlaps','prepare-correspondences','bake','bake-coherent','bake-observed','bake-gutters','bake-frontage']);p.add_argument('source',type=Path);p.add_argument('output',type=Path);a=p.parse_args();s=load_source(a.source)
  if a.operation=='prepare':prepare(s,a.output)
  elif a.operation=='prepare-overlaps':prepare_overlapping_context(s,a.output)
  elif a.operation=='prepare-correspondences':prepare_plane_correspondences(s,a.output)
+ elif a.operation=='bake-frontage':bake_frontage_field(s,a.output)
  else:bake(s,a.output,coherent_planes=a.operation in ['bake-coherent','bake-observed','bake-gutters'],observed_planes=a.operation=='bake-observed',uv_gutters=a.operation=='bake-gutters')

@@ -1,0 +1,144 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "meaning": "Model-observed architectural part correspondences in exact cardinal source pixels and native drawn pixels. Separate straight affine maps meet at observed vertical facade boundaries and horizontal cornice/floor datums, not an image-edge warp. Right large gable spans both source BAG identities. Candidate coordinates require composed render judgement.",
+  "parts": [
+    {
+      "id": "left",
+      "sourceX": [
+        510,
+        571
+      ],
+      "drawnX": [
+        44,
+        268
+      ],
+      "sourceFloorDatums": [
+        595,
+        632,
+        696,
+        750
+      ],
+      "drawnFloorDatums": [
+        223,
+        380,
+        650,
+        792
+      ]
+    },
+    {
+      "id": "brown",
+      "sourceX": [
+        571,
+        676
+      ],
+      "drawnX": [
+        268,
+        714
+      ],
+      "sourceFloorDatums": [
+        568,
+        615,
+        690,
+        750
+      ],
+      "drawnFloorDatums": [
+        100,
+        300,
+        610,
+        792
+      ]
+    },
+    {
+      "id": "grey",
+      "sourceX": [
+        676,
+        730
+      ],
+      "drawnX": [
+        714,
+        930
+      ],
+      "sourceFloorDatums": [
+        586,
+        622,
+        690,
+        745
+      ],
+      "drawnFloorDatums": [
+        178,
+        350,
+        610,
+        792
+      ]
+    },
+    {
+      "id": "stepped",
+      "sourceX": [
+        730,
+        782
+      ],
+      "drawnX": [
+        930,
+        1136
+      ],
+      "sourceFloorDatums": [
+        586,
+        622,
+        690,
+        747
+      ],
+      "drawnFloorDatums": [
+        178,
+        350,
+        610,
+        792
+      ]
+    },
+    {
+      "id": "bay",
+      "sourceX": [
+        782,
+        840
+      ],
+      "drawnX": [
+        1136,
+        1374
+      ],
+      "sourceFloorDatums": [
+        552,
+        622,
+        690,
+        746
+      ],
+      "drawnFloorDatums": [
+        160,
+        350,
+        610,
+        792
+      ]
+    },
+    {
+      "id": "shared-gable",
+      "sourceX": [
+        840,
+        958
+      ],
+      "drawnX": [
+        1374,
+        1848
+      ],
+      "sourceFloorDatums": [
+        552,
+        622,
+        690,
+        746
+      ],
+      "drawnFloorDatums": [
+        30,
+        350,
+        610,
+        792
+      ]
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "sourceCameraViews": "../../../shared-neighbourhood/model-fields/views.json",
+  "sourceCamera": "view-0-0",
+  "cropBounds": [
+    495,
+    540,
+    980,
+    740
+  ],
+  "referenceImageSize": [
+    1455,
+    600
+  ],
+  "sourceObservationContract": "/Users/josh/code/010-rescue-metro/source-data/source-openings/contiguous-frontage.json",
+  "meaning": "Blue marks only explicit observed frame/glass areas supplied separately. Preserve real masonry, stringcourses, cornices, gable trims and shop structure in the drawn complete field.",
+  "drawingImage": "paint-no-plants.png",
+  "baseAtlases": "../painted-atlases-uv-gutters.npz",
+  "bagIds": [
+    "0599100000671684",
+    "0599100000767277",
+    "0599100000671632",
+    "0599100000671619",
+    "0599100000671599",
+    "0599100000760366",
+    "0599100000760365"
+  ],
+  "handoffDirectory": "bound-complete-frontage-no-plants",
+  "status": "Drawn whole-frontage substrate candidate. Exact opening layer and actual city judgement required; not an accepted neighbourhood."
+}
