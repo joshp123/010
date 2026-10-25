@@ -1,0 +1,19 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "sourceSha256": "5489aaa793e8812ae228977fe81e5515265a9455e79bc399c3b15e2c5b8a6f4b",
+  "observationsSha256": "f0bd9d78cf42d9f7c2682ba04c5666f2ab89cca606e2da6332340ebcd3a5a54c",
+  "daytimeGeometrySha256": "649cbee0b6affaa4291142a6f969e22e17214713a2e498905b6aa5ed75811c95",
+  "daytimeArtworkUnchanged": true,
+  "supportedBuildings": [
+    "0599100000671599",
+    "0599100000671619",
+    "0599100000671632",
+    "0599100000671684",
+    "0599100000760365",
+    "0599100000760366",
+    "0599100000767277"
+  ],
+  "meaning": "Source-observed pane interiors. Warm emission is an illustrated night response, not observed occupancy, household activity or live lighting. Unobserved and occluded surfaces remain dark.",
+  "status": "Night assembly candidate; actual day/dusk/night opposing city review required",
+  "observedMasksReusedFrom": "source-data/source-openings/bound-complete-observed-block-night/18_268621_55472"
+}

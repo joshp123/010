@@ -1,0 +1,19 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "sourceSha256": "2a84cc9ab10e13a81bbe0053da3692330daf74bb745da5d8e2966436c8017f84",
+  "observationsSha256": "6b0ae2f7a9bcb96786acea008cc4d7872c7087252eea1fef9243657baaadb7bd",
+  "daytimeGeometrySha256": "518fa6b99bf409d597575c83bd4ac56b398f770cff21d736f11f76acbc52f892",
+  "daytimeArtworkUnchanged": true,
+  "supportedBuildings": [
+    "0599100000656929",
+    "0599100000671724",
+    "0599100000671726",
+    "0599100000671727",
+    "0599100000671728",
+    "0599100000671729",
+    "0599100000671734"
+  ],
+  "meaning": "Source-observed pane interiors. Warm emission is an illustrated night response, not observed occupancy, household activity or live lighting. Unobserved and occluded surfaces remain dark.",
+  "status": "Night assembly candidate; actual day/dusk/night opposing city review required",
+  "observedMasksReusedFrom": "/Users/josh/code/010-rescue-local/source-data/source-apertures/bound-gutters/18_268619_55472"
+}

@@ -1,0 +1,17 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "base": "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/contiguous-neighbourhood-aligned/complete-street-court/bound-complete-street-court",
+  "changedChildren": [
+    "18_268619_55472",
+    "18_268620_55472",
+    "18_268621_55471",
+    "18_268621_55472",
+    "18_268622_55472"
+  ],
+  "openingEvidence": [
+    "source-data/source-openings/complete-adjoining-block/aligned-opening-evidence/rear-openings.json",
+    "source-data/source-openings/complete-adjoining-block/aligned-opening-evidence/corner-openings.json",
+    "source-data/source-openings/complete-adjoining-block/aligned-opening-evidence/side-openings.json"
+  ],
+  "meaning": "Existing exact source opening drawing applied without wall repaint. Accepted front retained in art base; unchanged source-supported emission rebound only where previously observed. No additional aperture or occupancy inferred."
+}

@@ -1,0 +1,260 @@
+{
+  "authorship": "Written by AI on 2026-10-24 by model GPT-6",
+  "geometry_asset": "source-bound-row.glb",
+  "geometry_asset_sha256": "6c77848340415961a526ffac1da4eaeb52d9cb31ef87d955ef9f4a395efed607",
+  "root_node_matrix_column_major": [
+    -0.07753792694929008,
+    0.0,
+    -0.9969894030953422,
+    0.0,
+    0.6150405042297327,
+    0.7870433183731852,
+    -0.04783297148370899,
+    0.0,
+    0.7846738481950593,
+    -0.6168977346401308,
+    -0.06102570732594689,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "rtc_ecef_m": [
+    3930971.437245985,
+    305719.77514968335,
+    4996635.848394821
+  ],
+  "identity_namespace": "BAG",
+  "batch_identity": [
+    {
+      "batchId": 0,
+      "sourceId": "BAG_0599100000656926"
+    },
+    {
+      "batchId": 1,
+      "sourceId": "BAG_0599100000671705"
+    },
+    {
+      "batchId": 2,
+      "sourceId": "BAG_0599100000671718"
+    },
+    {
+      "batchId": 3,
+      "sourceId": "BAG_0599100000671720"
+    },
+    {
+      "batchId": 4,
+      "sourceId": "BAG_0599100000760369"
+    },
+    {
+      "batchId": 5,
+      "sourceId": "BAG_0599100000656917"
+    },
+    {
+      "batchId": 6,
+      "sourceId": "BAG_0599100000671694"
+    },
+    {
+      "batchId": 7,
+      "sourceId": "BAG_0599100000656923"
+    },
+    {
+      "batchId": 8,
+      "sourceId": "BAG_0599100000656921"
+    },
+    {
+      "batchId": 9,
+      "sourceId": "BAG_0599100000760381"
+    },
+    {
+      "batchId": 10,
+      "sourceId": "BAG_0599100000671716"
+    },
+    {
+      "batchId": 11,
+      "sourceId": "BAG_0599100000760368"
+    },
+    {
+      "batchId": 12,
+      "sourceId": "BAG_0599100010059655"
+    },
+    {
+      "batchId": 13,
+      "sourceId": "BAG_0599100000760370"
+    },
+    {
+      "batchId": 14,
+      "sourceId": "BAG_0599100000700986"
+    },
+    {
+      "batchId": 15,
+      "sourceId": "BAG_0599100010057617"
+    },
+    {
+      "batchId": 16,
+      "sourceId": "BAG_0599100000656925"
+    },
+    {
+      "batchId": 17,
+      "sourceId": "BAG_0599100000656924"
+    }
+  ],
+  "external_images": [
+    {
+      "uri": "painted-atlas-0.png",
+      "sha256": "9768151e2cf68076008ed06def16d56b10b558f2bc3c12a9ac251cda7cea0c9b",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-1.png",
+      "sha256": "20884c353aab21508f5d84633f7e5c41afeb6ce417d53713d91e9c4ebc8add51",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-2.png",
+      "sha256": "cb18e15b6169c01d022bc078b8e9c8b8932befc5363f825beca280e127019120",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-3.png",
+      "sha256": "4d81435d2b5782b43ed0f3059f0145f823b1dcf8b722e02d55103cb946f13228",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-4.png",
+      "sha256": "baf025bd0768a8009be0b771144648e28d6984a0a0073232c8ec002cb41345c7",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-5.png",
+      "sha256": "ac3ebb61b4f95c11d6e3c424b288f8894d0d4527d71c13a0b23d543401909cb5",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-6.png",
+      "sha256": "f9f114bc2de91cf423cb57db1380b178503c26a57e93ac15021a0f3266b7ebc5",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "painted-atlas-7.png",
+      "sha256": "715cf4800f13980dbec5d929dc7e8c729623284237b2d0afd38cfea3cb1097df",
+      "dimensions": [
+        512,
+        512
+      ]
+    },
+    {
+      "uri": "painted-atlas-8.png",
+      "sha256": "49114ce9879d932b2f67069f0637515c85da2ccbf15f2aae83ddaaf9fe236235",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "observed-apertures-0.png",
+      "sha256": "188a43b4d82267a00dea37ebfa1ab4e4dca4ae6da80c2bfd211d863e888690d9",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "observed-apertures-1.png",
+      "sha256": "60320557d67fb0ef84a552a4722abc140dccb601a39a058befeb3fd7438754f6",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "observed-apertures-2.png",
+      "sha256": "5f5ca0a84fe98a9002777c0b21cd0563adee328261d92ba0549e128b5be139e7",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "observed-apertures-3.png",
+      "sha256": "9dc90cb11d47e8181951fc98a5917df5ebb7bde261b7906875a1cf86e6057d1d",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "observed-apertures-4.png",
+      "sha256": "93ce95c7e39552850923e4224f805af6b41ed745cdb91bb2799921db7aca1eba",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "observed-apertures-5.png",
+      "sha256": "100ba0903c74b121d19e9a465c4d021d8391448cbb305ab4b6d227e5e1ba55c7",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "observed-apertures-6.png",
+      "sha256": "d2ffbab19a2898dab38da299aae49ec8f67d36a53cc7bd1780856be4e4d99d68",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "uri": "observed-apertures-7.png",
+      "sha256": "57e9b77229dca63e8883f8fb732e5c233f7a2e392b22055a92638e5f4093ca4e",
+      "dimensions": [
+        512,
+        512
+      ]
+    },
+    {
+      "uri": "observed-apertures-8.png",
+      "sha256": "65b97e28addb2f6a3fdda105c64b915d41f26e7c34a5a051d593d2185ab9262a",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "triangles": 1010,
+  "source_decoded_sha256": "d898d44dc9d6440779d5c5b9784da9e9361a771b344e630ca523749c6c6ad596",
+  "source_file": "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/raw/18_268620_55472.b3dm",
+  "source_attribution": "Gemeente Rotterdam, CC BY 4.0",
+  "status": "Source-bound visual candidate; no acceptance claim",
+  "sourceOpeningAssembly": {
+    "observationsSha256": "581eef8d822555a50ec12a8d26de2acbdbbcf4a893d1f437b02e32d2a257e70a",
+    "baseCollectionSha256": "5b765b9aa20c6745303d7befb3f7729a9c114616883b49ba6935348641f2406f",
+    "openingOnly": true,
+    "meaning": "Explicit observed frame/glass polygons over source-supported drawn wall regions; uncertain opening patches retain original source pixels. No extra emission or inferred inventory."
+  }
+}
