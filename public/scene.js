@@ -632,7 +632,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   tilesets[0].downloadQueue.priorityCallback = prioritizeCitySurfaces;
   tilesets[0].parseQueue.priorityCallback = prioritizeCitySurfaces;
   async function loadOverview() {
-    const palette = { context: '#b5bfad', water: '#367b86', farmland: '#a6af7b', forest: '#678368', grass: '#869c72', land: '#b7baa2', urban: '#b9b7a6', sand: '#d7c8a4' };
+    const palette = { context: '#b5bfad', water: streetColor('water'), farmland: '#a6af7b', forest: '#678368', grass: '#869c72', land: '#b7baa2', urban: '#b9b7a6', sand: '#d7c8a4' };
     const positionsByKind = new Map();
     const cartographicDrawOrder = { context: -29, land: -28, urban: -27, farmland: -26, grass: -25, forest: -24, sand: -23, water: -22 };
     function addPolygon(rings, kind, height) {
