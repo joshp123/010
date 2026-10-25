@@ -390,7 +390,11 @@ byId('metro-find-detail').addEventListener('click', focusNextMetro);
 byId('zoom-in').addEventListener('click', () => scene?.zoom(1.4));
 byId('zoom-out').addEventListener('click', () => scene?.zoom(.7));
 byId('rotate').addEventListener('click', () => scene?.setView({ ...currentView, bearing: currentView.bearing + 45 }));
-byId('home').addEventListener('click', () => navigateTo({ ...INITIAL_VIEW, name: 'Erasmusbrug' }));
+byId('home').addEventListener('click', () => {
+  navigateTo({ ...INITIAL_VIEW, name: 'Erasmusbrug' });
+  byId('place-search').value = '';
+  byId('search-clear').hidden = true;
+});
 byId('whole-city').addEventListener('click', showMunicipality);
 byId('minimap').addEventListener('click', event => {
   if (!minimapProjection) return showMunicipality();
