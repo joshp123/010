@@ -43,12 +43,17 @@ def camera(source,angle,elevation,size=1600):
 def project(points,c):
  q=(points-np.array(c['centre']))@np.array(c['basis']);return q,(q[...,:2]-c['mid'])*[c['scale'],-c['scale']]+c['size']/2
 
-def render(source,c):
+def render(source,c,geometry_only=False):
  size=c['size'];rgb=np.full((size,size,3),[232,234,229],np.uint8);depth=np.full((size,size),-np.inf)
- for t in source.triangles:
+ for triangle_index,t in enumerate(source.triangles):
   q,xy=project(t['positions'],c)
   for x0,y0,x1,y1,w,inside in m.raster_triangle(xy,size,size):
-   zz=w@q[:,2];valid=inside&(zz>depth[y0:y1+1,x0:x1+1]);im=source.images[t['image']];uv=w@t['uv'];px=np.floor(uv*[im.shape[1],im.shape[0]]).astype(int);px[:,:,0]=px[:,:,0].clip(0,im.shape[1]-1);px[:,:,1]=px[:,:,1].clip(0,im.shape[0]-1);rgb[y0:y1+1,x0:x1+1][valid]=im[px[:,:,1][valid],px[:,:,0][valid]];depth[y0:y1+1,x0:x1+1][valid]=zz[valid]
+   zz=w@q[:,2];valid=inside&(zz>depth[y0:y1+1,x0:x1+1])
+   if geometry_only:
+    light=np.array([.4,.8,.5]);light/=np.linalg.norm(light);shade=round(180+55*float(source.normals[triangle_index]@light));rgb[y0:y1+1,x0:x1+1][valid]=[shade]*3
+   else:
+    im=source.images[t['image']];uv=w@t['uv'];px=np.floor(uv*[im.shape[1],im.shape[0]]).astype(int);px[:,:,0]=px[:,:,0].clip(0,im.shape[1]-1);px[:,:,1]=px[:,:,1].clip(0,im.shape[0]-1);rgb[y0:y1+1,x0:x1+1][valid]=im[px[:,:,1][valid],px[:,:,0][valid]]
+   depth[y0:y1+1,x0:x1+1][valid]=zz[valid]
  return rgb,depth
 
 def prepare(source,out):
@@ -59,16 +64,38 @@ def prepare(source,out):
   name=f'view-{angle}-{elevation}';c=camera(source,angle,elevation);rgb,depth=render(source,c);Image.fromarray(rgb).save(out/(name+'-source.png'));np.save(out/(name+'-depth.npy'),depth);views.append({'name':name,'camera':c,'source':name+'-source.png','paint':name+'-paint.png','depth':name+'-depth.npy',**accepted_views.get(name,{})})
  m.save_json(out/'views.json',{'authorship':'Written by AI on 2026-10-24 by model GPT-6','status':'Model drawing fields require actual source architecture review before acceptance',**previous,'sourceSha256':m.digest(source.raw),'sourcePath':str(source.path.resolve()),'views':views})
 
+def prepare_overlapping_context(source,out,native_pixels=1254,drawing_pixels_per_metre=6):
+ out.mkdir(parents=True,exist_ok=True);views=[];size=1600;context_span=(native_pixels-32)/drawing_pixels_per_metre;scale=size*drawing_pixels_per_metre/native_pixels
+ identity_points={}
+ for triangle in source.triangles:identity_points.setdefault(triangle['identity'],[]).extend(triangle['positions'])
+ for angle,elevation in [(120,28),(300,28),(0,45),(180,45),(0,90)]:
+  whole_camera=camera(source,angle,elevation,size);projected,_=project(source.positions.reshape(-1,3),whole_camera);minimum=projected[:,:2].min(0);maximum=projected[:,:2].max(0)
+  axes=[]
+  for low,high in zip(minimum,maximum):
+   count=max(1,math.ceil((high-low)/context_span))
+   axes.append(np.linspace(low+context_span/2,high-context_span/2,count) if count>1 else np.array([(low+high)/2]))
+  centres=np.array([(x,y) for y in axes[1] for x in axes[0]])
+  ownership=[[] for _ in centres]
+  for identity,points in identity_points.items():
+   q,_=project(np.asarray(points),whole_camera);centre=(q[:,:2].min(0)+q[:,:2].max(0))/2;ownership[int(np.argmin(np.sum((centres-centre)**2,axis=1)))].append(identity)
+  for index,(centre,identities) in enumerate(zip(centres,ownership)):
+   if not identities:continue
+   name=f'context-{angle}-{elevation}-{index}';c={**whole_camera,'scale':scale,'mid':centre.tolist()};rgb,depth=render(source,c);Image.fromarray(rgb).save(out/(name+'-source.png'));np.save(out/(name+'-depth.npy'),depth);guide,_=render(source,c,geometry_only=True);Image.fromarray(guide).save(out/(name+'-geometry.png'))
+   views.append({'name':name,'camera':c,'source':name+'-source.png','geometryGuide':name+'-geometry.png','paint':name+'-paint.png','depth':name+'-depth.npy','includeBagIds':sorted(identities),'drawingConfidence':1 if elevation==28 else .45 if elevation==45 else .2})
+ m.save_json(out/'views.json',{'authorship':'Written by AI on 2026-10-25 by model GPT-6','status':'Overlapping native-scale source observations; no model drawing or art acceptance yet','sourceSha256':m.digest(source.raw),'sourcePath':str(source.path.resolve()),'nativeGenerationPixels':native_pixels,'drawingPixelsPerMetre':drawing_pixels_per_metre,'contextSpanMetres':context_span,'handoffDirectory':'bound-overlapping-neighbourhood','views':views})
+
 def bake(source,out):
  plan=json.loads((out/'views.json').read_text());assert plan['sourceSha256']==m.digest(source.raw);images=[a.copy() for a in source.images];scores=[np.full(a.shape[:2],-np.inf) for a in images]
  for view in plan['views']:
   path=out/view['paint']
   if not path.exists():continue
+  included_identities=set(view['includeBagIds']) if view.get('includeBagIds') else None
   c=view['camera'];size=c['size'];drawing=Image.open(path).convert('RGB');pixel_size=plan.get('drawingPixelSize')
   if plan.get('drawingPixelsPerMetre'):pixel_size=round(size*plan['drawingPixelsPerMetre']/c['scale'])
   if pixel_size:drawing=drawing.resize((pixel_size,pixel_size),Image.Resampling.BOX)
   paint=np.asarray(drawing.resize((size,size),Image.Resampling.NEAREST));depth=np.load(out/view['depth']);toward=np.array(c['basis'])[:,2]
   for index,t in enumerate(source.triangles):
+   if included_identities is not None and t['identity'] not in included_identities:continue
    facing=float(source.normals[index]@toward)
    if facing<.4:continue
    score=facing*view.get('drawingConfidence',1)
@@ -82,6 +109,7 @@ def bake(source,out):
  m.save_json(out/'baked.json',{'sourceSha256':m.digest(source.raw),'paintedViews':[v['paint'] for v in plan['views'] if (out/v['paint']).exists()],'identities':sorted({t['identity'] for t in source.triangles}),'status':'Whole model drawing field candidate; source aperture and opposing view inspection required, no fidelity acceptance inferred from geometry'})
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('operation',choices=['prepare','bake']);p.add_argument('source',type=Path);p.add_argument('output',type=Path);a=p.parse_args();s=load_source(a.source)
+ p=argparse.ArgumentParser();p.add_argument('operation',choices=['prepare','prepare-overlaps','bake']);p.add_argument('source',type=Path);p.add_argument('output',type=Path);a=p.parse_args();s=load_source(a.source)
  if a.operation=='prepare':prepare(s,a.output)
+ elif a.operation=='prepare-overlaps':prepare_overlapping_context(s,a.output)
  else:bake(s,a.output)
