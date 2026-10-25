@@ -1,0 +1,917 @@
+{
+  "method": "One median-order finest tile from each of40 source subtrees, plus8 level15 tiles; not probability sample. Mip image totals use BOX resize+losslessWebP, keeping smaller original. Geometry/metadata unchanged.",
+  "samples": [
+    {
+      "subtree": "12/4186/865.json",
+      "uri": "15/33491/6927.b3dm",
+      "wireBytes": 8686,
+      "expandedBytes": 18376,
+      "imageBytes": 2568,
+      "geometryAndMetadataBytes": 15808,
+      "imageCount": 1,
+      "pixels": 8192,
+      "mipImageBytes": {
+        "128": 2568,
+        "256": 2568,
+        "512": 2568
+      },
+      "wireSha256": "a46653c8257db6eee72d3cbfe86bd8a9b478c6b8ce4d5226311b6a32e2434d93",
+      "downloadSeconds": 0.634,
+      "decodeAndEncodeSeconds": 0.185,
+      "seconds": 0.82
+    },
+    {
+      "subtree": "12/4186/865.json",
+      "uri": "18/267932/55420.b3dm",
+      "wireBytes": 796881,
+      "expandedBytes": 806600,
+      "imageBytes": 795852,
+      "geometryAndMetadataBytes": 10748,
+      "imageCount": 2,
+      "pixels": 1179648,
+      "mipImageBytes": {
+        "128": 26212,
+        "256": 99624,
+        "512": 352822
+      },
+      "wireSha256": "8a35b1a9c4103005e99a9b854526c15358f8a42bf9c08902bcd749b931622fd0",
+      "downloadSeconds": 1.844,
+      "decodeAndEncodeSeconds": 0.541,
+      "seconds": 2.38
+    },
+    {
+      "subtree": "12/4186/866.json",
+      "uri": "18/267944/55440.b3dm",
+      "wireBytes": 128073,
+      "expandedBytes": 132064,
+      "imageBytes": 127628,
+      "geometryAndMetadataBytes": 4436,
+      "imageCount": 1,
+      "pixels": 262144,
+      "mipImageBytes": {
+        "128": 12858,
+        "256": 49258,
+        "512": 127628
+      },
+      "wireSha256": "7da49d649a5a266cf9d2973164c3d9b177469a12ee7f0c05540d92e18b892ba9",
+      "downloadSeconds": 1.203,
+      "decodeAndEncodeSeconds": 0.259,
+      "seconds": 1.46
+    },
+    {
+      "subtree": "12/4187/864.json",
+      "uri": "18/267977/55359.b3dm",
+      "wireBytes": 3141820,
+      "expandedBytes": 3187016,
+      "imageBytes": 3142796,
+      "geometryAndMetadataBytes": 44220,
+      "imageCount": 5,
+      "pixels": 4718592,
+      "mipImageBytes": {
+        "128": 72640,
+        "256": 280362,
+        "512": 1172866
+      },
+      "wireSha256": "4e67cabcaca5f1b4792e8b8a41e41f8052aff654c34a53c634f379d2d8b684a6",
+      "downloadSeconds": 3.395,
+      "decodeAndEncodeSeconds": 1.3,
+      "seconds": 4.69
+    },
+    {
+      "subtree": "12/4187/865.json",
+      "uri": "15/33500/6923.b3dm",
+      "wireBytes": 45868,
+      "expandedBytes": 78464,
+      "imageBytes": 25832,
+      "geometryAndMetadataBytes": 52632,
+      "imageCount": 1,
+      "pixels": 131072,
+      "mipImageBytes": {
+        "128": 8230,
+        "256": 25832,
+        "512": 25832
+      },
+      "wireSha256": "2e42fb3cc86e39eaf1696844e8ea68f563bb4b7ff68db3be688a44ac5aab37c1",
+      "downloadSeconds": 0.981,
+      "decodeAndEncodeSeconds": 0.26,
+      "seconds": 1.24
+    },
+    {
+      "subtree": "12/4187/865.json",
+      "uri": "18/268005/55406.b3dm",
+      "wireBytes": 638122,
+      "expandedBytes": 647024,
+      "imageBytes": 636948,
+      "geometryAndMetadataBytes": 10076,
+      "imageCount": 1,
+      "pixels": 1048576,
+      "mipImageBytes": {
+        "128": 15742,
+        "256": 62212,
+        "512": 248910
+      },
+      "wireSha256": "fe1f4e4994d5405f9fbd59befcefc9c1e54f3b94528566bce59c3718b868a25c",
+      "downloadSeconds": 1.514,
+      "decodeAndEncodeSeconds": 0.258,
+      "seconds": 1.77
+    },
+    {
+      "subtree": "12/4187/866.json",
+      "uri": "18/268015/55431.b3dm",
+      "wireBytes": 74798,
+      "expandedBytes": 77864,
+      "imageBytes": 72920,
+      "geometryAndMetadataBytes": 4944,
+      "imageCount": 1,
+      "pixels": 131072,
+      "mipImageBytes": {
+        "128": 7174,
+        "256": 27696,
+        "512": 72920
+      },
+      "wireSha256": "0ce783fca373d5db8b7a4d05f47daa70d10a1d1692b0cc47645941ea8a58b49b",
+      "downloadSeconds": 1.085,
+      "decodeAndEncodeSeconds": 0.231,
+      "seconds": 1.32
+    },
+    {
+      "subtree": "12/4188/865.json",
+      "uri": "18/268053/55414.b3dm",
+      "wireBytes": 78379,
+      "expandedBytes": 82904,
+      "imageBytes": 78436,
+      "geometryAndMetadataBytes": 4468,
+      "imageCount": 1,
+      "pixels": 262144,
+      "mipImageBytes": {
+        "128": 7826,
+        "256": 29158,
+        "512": 78436
+      },
+      "wireSha256": "c515cdb41ed8526a9fe5aeb46f0c6160ffec0ae173b4116869b6cf76894823ca",
+      "downloadSeconds": 0.825,
+      "decodeAndEncodeSeconds": 0.22,
+      "seconds": 1.05
+    },
+    {
+      "subtree": "12/4188/866.json",
+      "uri": "18/268069/55436.b3dm",
+      "wireBytes": 60715,
+      "expandedBytes": 63712,
+      "imageBytes": 59100,
+      "geometryAndMetadataBytes": 4612,
+      "imageCount": 1,
+      "pixels": 131072,
+      "mipImageBytes": {
+        "128": 5882,
+        "256": 21724,
+        "512": 59100
+      },
+      "wireSha256": "dcdef25749bd630d054c2c61a354d1ff0362d1531a6b0f17e28dffa6d6c6c0cd",
+      "downloadSeconds": 0.731,
+      "decodeAndEncodeSeconds": 0.22,
+      "seconds": 0.95
+    },
+    {
+      "subtree": "12/4189/864.json",
+      "uri": "18/268159/55351.b3dm",
+      "wireBytes": 1893400,
+      "expandedBytes": 1941832,
+      "imageBytes": 1881864,
+      "geometryAndMetadataBytes": 59968,
+      "imageCount": 3,
+      "pixels": 2621440,
+      "mipImageBytes": {
+        "128": 51038,
+        "256": 184842,
+        "512": 708674
+      },
+      "wireSha256": "7e20929a98b03cf87d41561d243f74cd95a2156225d3b5a8987636358a6a18f9",
+      "downloadSeconds": 2.44,
+      "decodeAndEncodeSeconds": 0.784,
+      "seconds": 3.22
+    },
+    {
+      "subtree": "12/4189/865.json",
+      "uri": "18/268132/55414.b3dm",
+      "wireBytes": 426289,
+      "expandedBytes": 435784,
+      "imageBytes": 430836,
+      "geometryAndMetadataBytes": 4948,
+      "imageCount": 1,
+      "pixels": 1048576,
+      "mipImageBytes": {
+        "128": 9902,
+        "256": 38176,
+        "512": 159292
+      },
+      "wireSha256": "23855e1fd8d08842931743170e7780401b58d602464ee7483fb94fc4a0513eb9",
+      "downloadSeconds": 1.179,
+      "decodeAndEncodeSeconds": 0.226,
+      "seconds": 1.41
+    },
+    {
+      "subtree": "12/4189/866.json",
+      "uri": "15/33515/6929.b3dm",
+      "wireBytes": 5351,
+      "expandedBytes": 11424,
+      "imageBytes": 1212,
+      "geometryAndMetadataBytes": 10212,
+      "imageCount": 1,
+      "pixels": 2048,
+      "mipImageBytes": {
+        "128": 1212,
+        "256": 1212,
+        "512": 1212
+      },
+      "wireSha256": "45a570e924011544c0c6dfeaf83aaf473c1533c086ff6cb97cefeef3c11d508c",
+      "downloadSeconds": 0.668,
+      "decodeAndEncodeSeconds": 0.013,
+      "seconds": 0.68
+    },
+    {
+      "subtree": "12/4189/866.json",
+      "uri": "18/268126/55425.b3dm",
+      "wireBytes": 951669,
+      "expandedBytes": 965488,
+      "imageBytes": 956808,
+      "geometryAndMetadataBytes": 8680,
+      "imageCount": 2,
+      "pixels": 1572864,
+      "mipImageBytes": {
+        "128": 21056,
+        "256": 83448,
+        "512": 352598
+      },
+      "wireSha256": "728514bde3e08745cc7a7b357806280f00340b6568ad310ed662574f42a4eed4",
+      "downloadSeconds": 1.853,
+      "decodeAndEncodeSeconds": 0.6,
+      "seconds": 2.45
+    },
+    {
+      "subtree": "12/4190/864.json",
+      "uri": "18/268165/55354.b3dm",
+      "wireBytes": 3360751,
+      "expandedBytes": 3424432,
+      "imageBytes": 3349264,
+      "geometryAndMetadataBytes": 75168,
+      "imageCount": 4,
+      "pixels": 4194304,
+      "mipImageBytes": {
+        "128": 84598,
+        "256": 317092,
+        "512": 1250330
+      },
+      "wireSha256": "6a787fd5b8eac5f1dc4557e7f26a2a94ffe4630b6fa201f00f6809411aee80e9",
+      "downloadSeconds": 2.372,
+      "decodeAndEncodeSeconds": 1.083,
+      "seconds": 3.45
+    },
+    {
+      "subtree": "12/4190/865.json",
+      "uri": "18/268179/55360.b3dm",
+      "wireBytes": 572572,
+      "expandedBytes": 588920,
+      "imageBytes": 574188,
+      "geometryAndMetadataBytes": 14732,
+      "imageCount": 1,
+      "pixels": 1048576,
+      "mipImageBytes": {
+        "128": 13686,
+        "256": 50322,
+        "512": 200726
+      },
+      "wireSha256": "91318565d475992db636a0d61705ceb8dd3d4fb9b13605513cc47c7e88331b81",
+      "downloadSeconds": 1.046,
+      "decodeAndEncodeSeconds": 0.234,
+      "seconds": 1.28
+    },
+    {
+      "subtree": "12/4190/866.json",
+      "uri": "18/268211/55438.b3dm",
+      "wireBytes": 237229,
+      "expandedBytes": 243864,
+      "imageBytes": 237476,
+      "geometryAndMetadataBytes": 6388,
+      "imageCount": 1,
+      "pixels": 524288,
+      "mipImageBytes": {
+        "128": 6358,
+        "256": 23820,
+        "512": 89556
+      },
+      "wireSha256": "66d1864e96273126914e7a1b358862fd16340de02bc201cc6695fdd0a215147b",
+      "downloadSeconds": 0.637,
+      "decodeAndEncodeSeconds": 0.201,
+      "seconds": 0.84
+    },
+    {
+      "subtree": "12/4191/865.json",
+      "uri": "18/268249/55417.b3dm",
+      "wireBytes": 545619,
+      "expandedBytes": 559040,
+      "imageBytes": 548196,
+      "geometryAndMetadataBytes": 10844,
+      "imageCount": 1,
+      "pixels": 1048576,
+      "mipImageBytes": {
+        "128": 13658,
+        "256": 50690,
+        "512": 200708
+      },
+      "wireSha256": "8daeb46b754e1ab978e5affd515e84f518a98f87fcd284a4e507c9a576f09011",
+      "downloadSeconds": 0.891,
+      "decodeAndEncodeSeconds": 0.271,
+      "seconds": 1.16
+    },
+    {
+      "subtree": "12/4191/866.json",
+      "uri": "18/268244/55448.b3dm",
+      "wireBytes": 114809,
+      "expandedBytes": 121312,
+      "imageBytes": 112536,
+      "geometryAndMetadataBytes": 8776,
+      "imageCount": 1,
+      "pixels": 262144,
+      "mipImageBytes": {
+        "128": 11504,
+        "256": 42860,
+        "512": 112536
+      },
+      "wireSha256": "06a4d429f0ab73b0b877b27d0867f3082ea31a8ced76ce57f058b77d3622ec57",
+      "downloadSeconds": 0.744,
+      "decodeAndEncodeSeconds": 0.272,
+      "seconds": 1.02
+    },
+    {
+      "subtree": "12/4192/866.json",
+      "uri": "18/268323/55479.b3dm",
+      "wireBytes": 2728513,
+      "expandedBytes": 2803040,
+      "imageBytes": 2702104,
+      "geometryAndMetadataBytes": 100936,
+      "imageCount": 3,
+      "pixels": 3145728,
+      "mipImageBytes": {
+        "128": 68702,
+        "256": 260576,
+        "512": 1020196
+      },
+      "wireSha256": "084d769952357575c6dee9d3ac90a0e2ee1c398bec1d307e2f15fc4525abb75b",
+      "downloadSeconds": 1.532,
+      "decodeAndEncodeSeconds": 0.939,
+      "seconds": 2.47
+    },
+    {
+      "subtree": "12/4192/867.json",
+      "uri": "15/33541/6938.b3dm",
+      "wireBytes": 83683,
+      "expandedBytes": 171448,
+      "imageBytes": 34604,
+      "geometryAndMetadataBytes": 136844,
+      "imageCount": 1,
+      "pixels": 131072,
+      "mipImageBytes": {
+        "128": 11376,
+        "256": 34604,
+        "512": 34604
+      },
+      "wireSha256": "d65626a7c497120f8148cdeaec1d7147e827c28a83259ca4cabe5b82e983f28e",
+      "downloadSeconds": 0.56,
+      "decodeAndEncodeSeconds": 0.244,
+      "seconds": 0.8
+    },
+    {
+      "subtree": "12/4192/867.json",
+      "uri": "18/268334/55522.b3dm",
+      "wireBytes": 3694338,
+      "expandedBytes": 3720128,
+      "imageBytes": 3699648,
+      "geometryAndMetadataBytes": 20480,
+      "imageCount": 6,
+      "pixels": 5767168,
+      "mipImageBytes": {
+        "128": 87608,
+        "256": 345510,
+        "512": 1422018
+      },
+      "wireSha256": "d2fbf8c1ffbfb83e4a669565a61861d93f58a0578dcd0504daf5f04abe8a47e7",
+      "downloadSeconds": 1.744,
+      "decodeAndEncodeSeconds": 1.584,
+      "seconds": 3.33
+    },
+    {
+      "subtree": "12/4193/866.json",
+      "uri": "18/268358/55485.b3dm",
+      "wireBytes": 36618,
+      "expandedBytes": 39808,
+      "imageBytes": 34412,
+      "geometryAndMetadataBytes": 5396,
+      "imageCount": 1,
+      "pixels": 65536,
+      "mipImageBytes": {
+        "128": 12900,
+        "256": 34412,
+        "512": 34412
+      },
+      "wireSha256": "ac8bc42b62a0faff1caf8d0e53c04cb884341c00cb381b42b7025c70090d217b",
+      "downloadSeconds": 0.723,
+      "decodeAndEncodeSeconds": 0.175,
+      "seconds": 0.9
+    },
+    {
+      "subtree": "12/4193/867.json",
+      "uri": "18/268373/55530.b3dm",
+      "wireBytes": 1168291,
+      "expandedBytes": 1184736,
+      "imageBytes": 1162376,
+      "geometryAndMetadataBytes": 22360,
+      "imageCount": 2,
+      "pixels": 1572864,
+      "mipImageBytes": {
+        "128": 31782,
+        "256": 116858,
+        "512": 444366
+      },
+      "wireSha256": "6de798f40245d753c0907f2af44c48078aa891e33176af5a9e06b669cb2f1885",
+      "downloadSeconds": 2.06,
+      "decodeAndEncodeSeconds": 0.522,
+      "seconds": 2.58
+    },
+    {
+      "subtree": "12/4194/867.json",
+      "uri": "18/268478/55494.b3dm",
+      "wireBytes": 46019,
+      "expandedBytes": 48480,
+      "imageBytes": 44048,
+      "geometryAndMetadataBytes": 4432,
+      "imageCount": 1,
+      "pixels": 65536,
+      "mipImageBytes": {
+        "128": 16120,
+        "256": 44048,
+        "512": 44048
+      },
+      "wireSha256": "650c91c9845fbac78614d6c178183801452ce3863e45f0acc913789279cd2194",
+      "downloadSeconds": 0.98,
+      "decodeAndEncodeSeconds": 0.179,
+      "seconds": 1.16
+    },
+    {
+      "subtree": "12/4195/865.json",
+      "uri": "18/268541/55395.b3dm",
+      "wireBytes": 182350,
+      "expandedBytes": 190312,
+      "imageBytes": 184752,
+      "geometryAndMetadataBytes": 5560,
+      "imageCount": 1,
+      "pixels": 524288,
+      "mipImageBytes": {
+        "128": 4608,
+        "256": 17324,
+        "512": 66482
+      },
+      "wireSha256": "7272d60af2c44645b28d5b3cd8c3b8e452a1ca210710f17fe1006b1b00ca7670",
+      "downloadSeconds": 1.205,
+      "decodeAndEncodeSeconds": 0.555,
+      "seconds": 1.76
+    },
+    {
+      "subtree": "12/4195/867.json",
+      "uri": "15/33562/6943.b3dm",
+      "wireBytes": 689519,
+      "expandedBytes": 1720688,
+      "imageBytes": 135644,
+      "geometryAndMetadataBytes": 1585044,
+      "imageCount": 1,
+      "pixels": 524288,
+      "mipImageBytes": {
+        "128": 10656,
+        "256": 39120,
+        "512": 134006
+      },
+      "wireSha256": "e200a2534237cea46924484efb1d4af171d53a5ba1d957a1d95387c2dc50b677",
+      "downloadSeconds": 1.736,
+      "decodeAndEncodeSeconds": 0.232,
+      "seconds": 1.97
+    },
+    {
+      "subtree": "12/4195/867.json",
+      "uri": "18/268503/55550.b3dm",
+      "wireBytes": 947353,
+      "expandedBytes": 973096,
+      "imageBytes": 945636,
+      "geometryAndMetadataBytes": 27460,
+      "imageCount": 2,
+      "pixels": 1310720,
+      "mipImageBytes": {
+        "128": 28904,
+        "256": 113992,
+        "512": 414240
+      },
+      "wireSha256": "4d508b408ec9c8474b87625c450c1951909a2c007f31f11dc44139e3ea3b0e24",
+      "downloadSeconds": 1.855,
+      "decodeAndEncodeSeconds": 0.491,
+      "seconds": 2.35
+    },
+    {
+      "subtree": "12/4194/868.json",
+      "uri": "18/268479/55552.b3dm",
+      "wireBytes": 1532394,
+      "expandedBytes": 1566920,
+      "imageBytes": 1525400,
+      "geometryAndMetadataBytes": 41520,
+      "imageCount": 2,
+      "pixels": 2097152,
+      "mipImageBytes": {
+        "128": 40650,
+        "256": 150250,
+        "512": 574320
+      },
+      "wireSha256": "daf2fa94dda1239aff093f852fcf82917e792c8935bdd6692d1a4d3cbd83a9c2",
+      "downloadSeconds": 1.788,
+      "decodeAndEncodeSeconds": 0.535,
+      "seconds": 2.32
+    },
+    {
+      "subtree": "12/4195/868.json",
+      "uri": "18/268509/55556.b3dm",
+      "wireBytes": 1478574,
+      "expandedBytes": 1501592,
+      "imageBytes": 1482592,
+      "geometryAndMetadataBytes": 19000,
+      "imageCount": 3,
+      "pixels": 2162688,
+      "mipImageBytes": {
+        "128": 53338,
+        "256": 181776,
+        "512": 575450
+      },
+      "wireSha256": "fe70faf14dbb1f0d4994c79cc40e68a91a6d2001931d4a68475f768d040009c1",
+      "downloadSeconds": 1.779,
+      "decodeAndEncodeSeconds": 0.727,
+      "seconds": 2.51
+    },
+    {
+      "subtree": "12/4196/865.json",
+      "uri": "18/268575/55417.b3dm",
+      "wireBytes": 1332809,
+      "expandedBytes": 1355632,
+      "imageBytes": 1332872,
+      "geometryAndMetadataBytes": 22760,
+      "imageCount": 2,
+      "pixels": 2097152,
+      "mipImageBytes": {
+        "128": 35458,
+        "256": 135712,
+        "512": 523644
+      },
+      "wireSha256": "f96ba36c985632ecfac4a48ae70d9f30046781ee4bef253a4e934e1aafcdf871",
+      "downloadSeconds": 1.73,
+      "decodeAndEncodeSeconds": 0.53,
+      "seconds": 2.26
+    },
+    {
+      "subtree": "12/4196/866.json",
+      "uri": "18/268579/55465.b3dm",
+      "wireBytes": 4959900,
+      "expandedBytes": 5049232,
+      "imageBytes": 4933504,
+      "geometryAndMetadataBytes": 115728,
+      "imageCount": 6,
+      "pixels": 5767168,
+      "mipImageBytes": {
+        "128": 126260,
+        "256": 483826,
+        "512": 1871298
+      },
+      "wireSha256": "55371367e9a5076cf47351fe9d6847d6aa7db93d76daf44dcc99ccf1e7a82855",
+      "downloadSeconds": 5.285,
+      "decodeAndEncodeSeconds": 1.685,
+      "seconds": 6.97
+    },
+    {
+      "subtree": "12/4196/867.json",
+      "uri": "18/268582/55497.b3dm",
+      "wireBytes": 1746725,
+      "expandedBytes": 1790984,
+      "imageBytes": 1734056,
+      "geometryAndMetadataBytes": 56928,
+      "imageCount": 2,
+      "pixels": 2097152,
+      "mipImageBytes": {
+        "128": 41878,
+        "256": 158496,
+        "512": 630388
+      },
+      "wireSha256": "8ba7f99edb074258dd6e60ee8f1cfb2dd01d5f78e18b41d589512526120dd5b9",
+      "downloadSeconds": 2.208,
+      "decodeAndEncodeSeconds": 0.58,
+      "seconds": 2.79
+    },
+    {
+      "subtree": "12/4197/865.json",
+      "uri": "18/268645/55409.b3dm",
+      "wireBytes": 133708,
+      "expandedBytes": 137360,
+      "imageBytes": 132744,
+      "geometryAndMetadataBytes": 4616,
+      "imageCount": 1,
+      "pixels": 262144,
+      "mipImageBytes": {
+        "128": 13700,
+        "256": 51926,
+        "512": 132744
+      },
+      "wireSha256": "d6bf063c5aedfbfc56ee037f245d5e1d9f0cb5326b563c4033ec4a839c554794",
+      "downloadSeconds": 1.18,
+      "decodeAndEncodeSeconds": 0.23,
+      "seconds": 1.41
+    },
+    {
+      "subtree": "12/4197/866.json",
+      "uri": "15/33580/6928.b3dm",
+      "wireBytes": 279953,
+      "expandedBytes": 669296,
+      "imageBytes": 78132,
+      "geometryAndMetadataBytes": 591164,
+      "imageCount": 1,
+      "pixels": 262144,
+      "mipImageBytes": {
+        "128": 24496,
+        "256": 78132,
+        "512": 78132
+      },
+      "wireSha256": "985db05099175b8cb8d4f31ce7a19ad1429e5d4c1b34da72571953ad1cbc3c94",
+      "downloadSeconds": 1.356,
+      "decodeAndEncodeSeconds": 0.26,
+      "seconds": 1.62
+    },
+    {
+      "subtree": "12/4197/866.json",
+      "uri": "18/268638/55480.b3dm",
+      "wireBytes": 600143,
+      "expandedBytes": 615208,
+      "imageBytes": 600044,
+      "geometryAndMetadataBytes": 15164,
+      "imageCount": 1,
+      "pixels": 1048576,
+      "mipImageBytes": {
+        "128": 16108,
+        "256": 59904,
+        "512": 227548
+      },
+      "wireSha256": "fe439e31fe608e81a36861631b5994f7ccabebf21cf71b9430549f12d0990d09",
+      "downloadSeconds": 1.642,
+      "decodeAndEncodeSeconds": 0.247,
+      "seconds": 1.89
+    },
+    {
+      "subtree": "12/4197/867.json",
+      "uri": "18/268652/55517.b3dm",
+      "wireBytes": 479135,
+      "expandedBytes": 504032,
+      "imageBytes": 475652,
+      "geometryAndMetadataBytes": 28380,
+      "imageCount": 1,
+      "pixels": 1048576,
+      "mipImageBytes": {
+        "128": 12940,
+        "256": 47866,
+        "512": 178738
+      },
+      "wireSha256": "e9f4195c108c4e1a9aae72dcf571b655c1eeb7eee5d230d2577998d130482ae3",
+      "downloadSeconds": 1.739,
+      "decodeAndEncodeSeconds": 0.215,
+      "seconds": 1.95
+    },
+    {
+      "subtree": "12/4198/865.json",
+      "uri": "18/268697/55394.b3dm",
+      "wireBytes": 964846,
+      "expandedBytes": 997040,
+      "imageBytes": 951116,
+      "geometryAndMetadataBytes": 45924,
+      "imageCount": 1,
+      "pixels": 1048576,
+      "mipImageBytes": {
+        "128": 25150,
+        "256": 91996,
+        "512": 355072
+      },
+      "wireSha256": "e293ce200629c3b9d3e4d6e718f2515f3fdca0b6ab0b73e169241cc2685a9876",
+      "downloadSeconds": 1.982,
+      "decodeAndEncodeSeconds": 0.314,
+      "seconds": 2.3
+    },
+    {
+      "subtree": "12/4198/866.json",
+      "uri": "18/268703/55470.b3dm",
+      "wireBytes": 6580381,
+      "expandedBytes": 6704704,
+      "imageBytes": 6565268,
+      "geometryAndMetadataBytes": 139436,
+      "imageCount": 7,
+      "pixels": 6815744,
+      "mipImageBytes": {
+        "128": 154112,
+        "256": 597796,
+        "512": 2358984
+      },
+      "wireSha256": "e7233f700c551d0d1d675f5832956f7d5f35813b2a5f05cfc6e742d3d437cd0e",
+      "downloadSeconds": 5.443,
+      "decodeAndEncodeSeconds": 2.122,
+      "seconds": 7.57
+    },
+    {
+      "subtree": "12/4198/867.json",
+      "uri": "15/33587/6941.b3dm",
+      "wireBytes": 366944,
+      "expandedBytes": 945952,
+      "imageBytes": 58616,
+      "geometryAndMetadataBytes": 887336,
+      "imageCount": 1,
+      "pixels": 262144,
+      "mipImageBytes": {
+        "128": 15584,
+        "256": 53500,
+        "512": 58616
+      },
+      "wireSha256": "b3bf7f25f6652d371aeafa621f843cc81f7aa58bd7465b100521537233fab6f6",
+      "downloadSeconds": 1.674,
+      "decodeAndEncodeSeconds": 0.248,
+      "seconds": 1.92
+    },
+    {
+      "subtree": "12/4198/867.json",
+      "uri": "18/268699/55528.b3dm",
+      "wireBytes": 1534834,
+      "expandedBytes": 1569344,
+      "imageBytes": 1528320,
+      "geometryAndMetadataBytes": 41024,
+      "imageCount": 2,
+      "pixels": 2097152,
+      "mipImageBytes": {
+        "128": 38416,
+        "256": 148468,
+        "512": 573792
+      },
+      "wireSha256": "dc484c29d0663f7e9b44235b5a0a6b433f04567f88dfefc469c4bf5b7e6d74ee",
+      "downloadSeconds": 2.487,
+      "decodeAndEncodeSeconds": 0.682,
+      "seconds": 3.17
+    },
+    {
+      "subtree": "12/4199/865.json",
+      "uri": "18/268772/55385.b3dm",
+      "wireBytes": 977705,
+      "expandedBytes": 1002672,
+      "imageBytes": 969668,
+      "geometryAndMetadataBytes": 33004,
+      "imageCount": 2,
+      "pixels": 1179648,
+      "mipImageBytes": {
+        "128": 30318,
+        "256": 111096,
+        "512": 403570
+      },
+      "wireSha256": "8191ac6ad630c1d12908b1367cc62e076d4226fe989adefb588acfb62f30258f",
+      "downloadSeconds": 2.07,
+      "decodeAndEncodeSeconds": 0.464,
+      "seconds": 2.53
+    },
+    {
+      "subtree": "12/4199/866.json",
+      "uri": "18/268775/55431.b3dm",
+      "wireBytes": 2610149,
+      "expandedBytes": 2652504,
+      "imageBytes": 2618592,
+      "geometryAndMetadataBytes": 33912,
+      "imageCount": 4,
+      "pixels": 3670016,
+      "mipImageBytes": {
+        "128": 64564,
+        "256": 245746,
+        "512": 941726
+      },
+      "wireSha256": "11b469ea61e2be1ac9698d540378753f34b953b8f0d74208b702e46a1945a6a9",
+      "downloadSeconds": 3.232,
+      "decodeAndEncodeSeconds": 1.01,
+      "seconds": 4.24
+    },
+    {
+      "subtree": "12/4199/867.json",
+      "uri": "15/33594/6941.b3dm",
+      "wireBytes": 187351,
+      "expandedBytes": 455872,
+      "imageBytes": 36688,
+      "geometryAndMetadataBytes": 419184,
+      "imageCount": 1,
+      "pixels": 131072,
+      "mipImageBytes": {
+        "128": 11012,
+        "256": 36688,
+        "512": 36688
+      },
+      "wireSha256": "98b9ef8caf17a9e9dc0b0312d13505e7842117543f890be253ec1ee7f570ab68",
+      "downloadSeconds": 1.152,
+      "decodeAndEncodeSeconds": 0.242,
+      "seconds": 1.39
+    },
+    {
+      "subtree": "12/4199/867.json",
+      "uri": "18/268758/55520.b3dm",
+      "wireBytes": 239113,
+      "expandedBytes": 249096,
+      "imageBytes": 232924,
+      "geometryAndMetadataBytes": 16172,
+      "imageCount": 1,
+      "pixels": 262144,
+      "mipImageBytes": {
+        "128": 22026,
+        "256": 83850,
+        "512": 232924
+      },
+      "wireSha256": "330e61c11121627b76fc7cf8658f7cf9ec471a8bcddca622dc89e11dfbeb87a8",
+      "downloadSeconds": 1.398,
+      "decodeAndEncodeSeconds": 0.28,
+      "seconds": 1.68
+    },
+    {
+      "subtree": "12/4200/864.json",
+      "uri": "18/268828/55352.b3dm",
+      "wireBytes": 2181170,
+      "expandedBytes": 2230472,
+      "imageBytes": 2164544,
+      "geometryAndMetadataBytes": 65928,
+      "imageCount": 3,
+      "pixels": 2129920,
+      "mipImageBytes": {
+        "128": 61034,
+        "256": 218266,
+        "512": 782650
+      },
+      "wireSha256": "d6d00f492d26889bd6ad567b481e07afd1907bf3012abd15b56cd28c4eb89d9e",
+      "downloadSeconds": 2.712,
+      "decodeAndEncodeSeconds": 0.709,
+      "seconds": 3.42
+    },
+    {
+      "subtree": "12/4200/865.json",
+      "uri": "18/268830/55366.b3dm",
+      "wireBytes": 3545720,
+      "expandedBytes": 3645104,
+      "imageBytes": 3512208,
+      "geometryAndMetadataBytes": 132896,
+      "imageCount": 4,
+      "pixels": 4194304,
+      "mipImageBytes": {
+        "128": 85892,
+        "256": 326124,
+        "512": 1287008
+      },
+      "wireSha256": "7b83533b1492f40dfe9150fafa51787a7d5df3bedcfb54a68ee3a85ec5c11290",
+      "downloadSeconds": 3.739,
+      "decodeAndEncodeSeconds": 1.179,
+      "seconds": 4.92
+    },
+    {
+      "subtree": "12/4200/866.json",
+      "uri": "18/268802/55486.b3dm",
+      "wireBytes": 1630943,
+      "expandedBytes": 1657056,
+      "imageBytes": 1646220,
+      "geometryAndMetadataBytes": 10836,
+      "imageCount": 3,
+      "pixels": 3145728,
+      "mipImageBytes": {
+        "128": 37290,
+        "256": 151010,
+        "512": 625524
+      },
+      "wireSha256": "3420873e09bab9f7e4644ff87e8e9de90de47cb1ee5f954cecd26ab81f2edf0a",
+      "downloadSeconds": 1.872,
+      "decodeAndEncodeSeconds": 0.722,
+      "seconds": 2.59
+    },
+    {
+      "subtree": "12/4200/867.json",
+      "uri": "18/268807/55488.b3dm",
+      "wireBytes": 2685393,
+      "expandedBytes": 2774536,
+      "imageBytes": 2656520,
+      "geometryAndMetadataBytes": 118016,
+      "imageCount": 3,
+      "pixels": 3145728,
+      "mipImageBytes": {
+        "128": 66028,
+        "256": 246140,
+        "512": 952124
+      },
+      "wireSha256": "a9f372dac19166d3970ee516ac5fc8bcd6d798d10dd2cf3885af52baa22e16be",
+      "downloadSeconds": 2.825,
+      "decodeAndEncodeSeconds": 0.899,
+      "seconds": 3.72
+    }
+  ]
+}
