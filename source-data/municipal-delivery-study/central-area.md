@@ -2,7 +2,7 @@
 
 Written by AI on 2026-10-25 by model GPT-6 Astra.
 
-Assets live outside Git at `/Users/josh/code/010-municipal-delivery/central-256`. The immutable pack filenames, tile offsets/lengths, source/derived/gzip hashes and CC BY4.0 edition attribution are in `manifest.json`. No release upload occurred.
+Assets live outside Git at `/Users/josh/code/010-municipal-delivery/central-256`. The immutable pack filenames, tile offsets/lengths, source/derived/gzip hashes and CC BY4.0 edition attribution are in `manifest.json`. The reviewed three packs are published in the fixed release recorded below.
 
 The complete rectangle [west4.474,south51.914,east4.491,north51.922] covers230 source leaves around Beurs/Blaak and ordinary central streets. Stations at Eendrachtsplein/Leuvehaven fall outside this rectangle and retain the original source path. The compiler selected all finest tiles whose official bounding regions intersect the rectangle; it did not select attractive individual buildings.
 
@@ -25,7 +25,7 @@ The original source's occasional tiny-UV triangles make a global worst-world-tex
 
 `?sourceMips=256` enables the local candidate. Outside the exact manifest coverage, the source hierarchy is untouched. A missing derived response falls back to the original source URL. The main default remains unchanged.
 
-The shared Worker handler requires a reviewed release tag before public use. The local adapter supplies the same Range contract from the durable pack directory. A public Worker streams the exact independently gzipped member range as200gzip and may cache it by immutable gzip hash; it never fetches/decompresses the whole pack. GitHub distribution/cold latency has not yet been proved for these new assets.
+The shared Worker handler requires a reviewed release tag before public use. The local adapter supplies the same Range contract from the durable pack directory. A public Worker streams the exact independently gzipped member range as200gzip and may cache it by immutable gzip hash; it never fetches/decompresses the whole pack. Genuine GitHub distribution was exercised through this handler in the remote preview; deployed Worker edge-cache behaviour remains unverified.
 
 ## Actual integrated review
 
@@ -36,3 +36,13 @@ The first real review caught and corrected two integration defects before releas
 The operational pilot release is `municipal-central-256-20261025-a290827d998f` in the existing public repository. The released manifest adds only this fixed releaseTag to the reviewed content metadata. The three pack filenames/bytes remain unchanged. `public/data/municipal-delivery/manifest.json` and `ATTRIBUTION.md` are small deployment metadata; packs and originals remain outside Git. Hash-named assets and this tag must never be overwritten; changed content gets a new release. Repository-wide release immutability is disabled, matching its original policy.
 
 For the genuine GitHub local preview, use `createLocalMunicipalDelivery('/Users/josh/code/010-municipal-delivery/central-256/release', { remote: true })`. This bypasses local pack reads and exercises the same fixed-origin Range handler as the Worker. The default adapter remains local for reproducible offline inspection.
+
+## Actual GitHub delivery review
+
+The release upload digests match all three reviewed local pack SHA256 values. Independently requested members from each pack returned exact206 ranges and decoded to the recorded tile hashes. MAIN8785 then ran the same handler with `remote:true`, without local pack reads or an injected edge cache.
+
+A dedicated390×844 phone tab with browser HTTP cache disabled entered the central450m view. At the first actual screenshot around8seconds, real source buildings were visible while the remainder refined. Five ordinary ZoomIn taps followed by45degree rotation retained city geometry and responsive controls. The close84m view initially showed the coarse photography while original18 arrived, then settled with sharp original fans/pipes/window divisions, zero pending/refused/errors. This establishes a bounded remote transition, not blazing arrival or instantaneous native detail.
+
+Normal Find selected a genuine C report outside pilot coverage first, correctly using original delivery. Next selected a central C report: full train/rails and city context remained visible while detail refined, then the surrounding native city settled. Subsequent genuine C reports moved the followed camera from Beurs51.91788/4.48119 to51.92024/4.48946, then51.92287/4.49680 outside the pilot. Full train/rails and real city context remained visible in both actual phone frames as detail refined; outside coverage used the original source route. There was no invented movement or freshness. The existing photo/CAD appearance remains outside the art brief; this delivery work does not accept it.
+
+The public Site has not been changed for this pilot. The source candidate now includes the narrow Worker route using its existing Cache API and execution context; this passes the actual project Worker typecheck, but has not been deployed or edge-tested. Coverage outside this bounded central rectangle remains the unchanged original path.
