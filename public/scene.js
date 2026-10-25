@@ -785,10 +785,10 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       transit.update(transitSnapshot);
       trafficProjectionDirty = true;
     }
-    if (trafficProjectionDirty && viewReadiness().ready && now - lastTrafficProjection > 1500) {
+    if (trafficProjectionDirty && now - lastTrafficProjection > 1500) {
       trafficProjectionDirty = false; lastTrafficProjection = now;
       for (const layer of simulatedLayers) layer.refreshProjection();
-    } else if (trafficProjectionDirty && viewReadiness().ready) {
+    } else if (trafficProjectionDirty) {
       scheduleDeferredUpdate(Math.max(1, 1501 - (now - lastTrafficProjection)));
     }
     }
