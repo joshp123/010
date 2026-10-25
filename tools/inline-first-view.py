@@ -20,8 +20,8 @@ mpp = level["metres_per_pixel"]
 sx = (right[0] * x + right[2] * z) / mpp
 sy = (up[0] * x + up[1] * y + up[2] * z) / mpp
 left, top = round(sx - 195), round(sy + 422)
-columns = range(max(0, (left - level["left"]) // 512), min(level["columns"] - 1, (left + 390 - level["left"]) // 512) + 1)
-rows = range(max(0, (level["top"] - top) // 512), min(level["rows"] - 1, (level["top"] - top + 844) // 512) + 1)
+columns = range(max(0, int((left - level["left"]) // 512)), min(level["columns"] - 1, int((left + 390 - level["left"]) // 512)) + 1)
+rows = range(max(0, int((level["top"] - top) // 512)), min(level["rows"] - 1, int((level["top"] - top + 844) // 512)) + 1)
 preloads = "".join(f'<link rel="preload" as="image" href="./{base}/b{bearing}/0/{c}_{r}.webp" media="(max-width: 700px)">\n' for r in rows for c in columns)
 
 inline = f'<script>window.inlinedPyramidMeta = {{"./{base}/b{bearing}": {json.dumps(meta, separators=(",", ":"))}}};</script>\n'
