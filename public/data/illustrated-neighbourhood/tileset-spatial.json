@@ -7,10 +7,10 @@
   "root": {
     "boundingVolume": {
       "sphere": [
-        3931023.008411693,
-        305730.8164447512,
-        4996606.982258109,
-        166.67021471291284
+        3931000.1385906315,
+        305736.10235270724,
+        4996624.918321413,
+        194.06115418592591
       ]
     },
     "geometricError": 0,
@@ -33,15 +33,43 @@
       {
         "boundingVolume": {
           "sphere": [
-            3930962.391945258,
-            305721.51311384584,
-            4996653.971230226,
-            34.538801979116485
+            3930967.732763542,
+            305614.0083931375,
+            4996658.573343292,
+            18.623277130727793
           ]
         },
         "geometricError": 0,
         "content": {
-          "uri": "shared-composition-night-18_268620_55472-spatial/tileset.json"
+          "uri": "contiguous-18_268618_55472-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3931043.8980327165,
+            305629.60715052456,
+            4996597.242760936,
+            9.447904966595562
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "contiguous-18_268618_55473-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3930939.75236289,
+            305686.17805549456,
+            4996680.267997864,
+            36.633770344585685
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "contiguous-18_268619_55471-spatial/tileset.json"
         }
       },
       {
@@ -55,7 +83,7 @@
         },
         "geometricError": 0,
         "content": {
-          "uri": "shared-composition-night-18_268619_55472-spatial/tileset.json"
+          "uri": "contiguous-night-18_268619_55472-spatial/tileset.json"
         }
       },
       {
@@ -69,7 +97,49 @@
         },
         "geometricError": 0,
         "content": {
-          "uri": "shared-composition-night-18_268619_55473-spatial/tileset.json"
+          "uri": "contiguous-night-18_268619_55473-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3931090.1239041663,
+            305675.8866531993,
+            4996556.965521706,
+            33.39854344424032
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "contiguous-18_268619_55474-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3930914.575302464,
+            305716.14617897186,
+            4996699.089876238,
+            37.84224898286234
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "contiguous-18_268620_55471-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3930962.391945258,
+            305721.51311384584,
+            4996653.971230226,
+            34.538801979116485
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "contiguous-night-18_268620_55472-spatial/tileset.json"
         }
       },
       {
@@ -83,7 +153,49 @@
         },
         "geometricError": 0,
         "content": {
-          "uri": "shared-composition-night-18_268620_55473-spatial/tileset.json"
+          "uri": "contiguous-night-18_268620_55473-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3931091.3024453,
+            305726.284556824,
+            4996554.0459744185,
+            36.18764461823926
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "contiguous-18_268620_55474-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3930875.9639287055,
+            305754.7609657893,
+            4996718.720338238,
+            14.6119850708463
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "contiguous-18_268621_55470-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3930912.0743273725,
+            305765.5338183758,
+            4996689.698453259,
+            49.282719117749394
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "contiguous-18_268621_55471-spatial/tileset.json"
         }
       },
       {
@@ -97,7 +209,7 @@
         },
         "geometricError": 0,
         "content": {
-          "uri": "shared-composition-night-18_268621_55472-spatial/tileset.json"
+          "uri": "contiguous-night-18_268621_55472-spatial/tileset.json"
         }
       },
       {
@@ -111,7 +223,77 @@
         },
         "geometricError": 0,
         "content": {
-          "uri": "shared-composition-night-18_268621_55473-spatial/tileset.json"
+          "uri": "contiguous-night-18_268621_55473-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3931071.5221108254,
+            305772.377415722,
+            4996565.140750313,
+            17.65856489889129
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "contiguous-18_268621_55474-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3930932.0394626823,
+            305804.5088259963,
+            4996669.6612207815,
+            35.93481751402169
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "contiguous-18_268622_55471-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3930968.0023272503,
+            305809.3758750773,
+            4996645.647643708,
+            31.49006210629146
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "contiguous-18_268622_55472-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3931016.1870908355,
+            305797.5436824834,
+            4996610.928353753,
+            15.692274080472682
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "contiguous-18_268622_55473-spatial/tileset.json"
+        }
+      },
+      {
+        "boundingVolume": {
+          "sphere": [
+            3931018.538872036,
+            305854.1203692908,
+            4996603.508386975,
+            14.165098310408125
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "uri": "contiguous-18_268623_55473-spatial/tileset.json"
         }
       }
     ]

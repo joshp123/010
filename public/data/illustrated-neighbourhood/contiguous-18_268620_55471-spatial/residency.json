@@ -1,0 +1,33 @@
+{
+  "nativeTexels": true,
+  "source": "/Users/josh/code/010-rescue-local/public/data/illustrated-neighbourhood/contiguous-18_268620_55471",
+  "sourceGLBSha256": "1f0be25be96debbab64858bef60bd45b388d2901fd1bd3b9c58ddd8f442590ec",
+  "buildings": [
+    {
+      "bagId": "0599100000656922",
+      "sourceSha256": "1f0be25be96debbab64858bef60bd45b388d2901fd1bd3b9c58ddd8f442590ec",
+      "output": "bag0599100000656922.glb",
+      "atlasSize": [
+        1435,
+        1577
+      ],
+      "decodedRgbaBytesIncludingMips": 12063524,
+      "layout": "packed-islands",
+      "islands": 59,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000752501",
+      "sourceSha256": "1f0be25be96debbab64858bef60bd45b388d2901fd1bd3b9c58ddd8f442590ec",
+      "output": "bag0599100000752501.glb",
+      "atlasSize": [
+        731,
+        4426
+      ],
+      "decodedRgbaBytesIncludingMips": 17244800,
+      "layout": "packed-islands",
+      "islands": 41,
+      "emissionCrops": []
+    }
+  ]
+}

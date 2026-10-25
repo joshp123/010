@@ -1,0 +1,46 @@
+{
+  "nativeTexels": true,
+  "source": "/Users/josh/code/010-rescue-local/public/data/illustrated-neighbourhood/contiguous-18_268622_55473",
+  "sourceGLBSha256": "8d6133fab27445d9463ce52784f04ac14f69c533b05b1bbb27b190f1aea5f511",
+  "buildings": [
+    {
+      "bagId": "0599100000671659",
+      "sourceSha256": "8d6133fab27445d9463ce52784f04ac14f69c533b05b1bbb27b190f1aea5f511",
+      "output": "bag0599100000671659.glb",
+      "atlasSize": [
+        1314,
+        472
+      ],
+      "decodedRgbaBytesIncludingMips": 3307080,
+      "layout": "packed-islands",
+      "islands": 37,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000760482",
+      "sourceSha256": "8d6133fab27445d9463ce52784f04ac14f69c533b05b1bbb27b190f1aea5f511",
+      "output": "bag0599100000760482.glb",
+      "atlasSize": [
+        310,
+        1483
+      ],
+      "decodedRgbaBytesIncludingMips": 2449556,
+      "layout": "packed-islands",
+      "islands": 25,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000760483",
+      "sourceSha256": "8d6133fab27445d9463ce52784f04ac14f69c533b05b1bbb27b190f1aea5f511",
+      "output": "bag0599100000760483.glb",
+      "atlasSize": [
+        1006,
+        494
+      ],
+      "decodedRgbaBytesIncludingMips": 2648632,
+      "layout": "packed-islands",
+      "islands": 20,
+      "emissionCrops": []
+    }
+  ]
+}
