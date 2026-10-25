@@ -1,0 +1,41 @@
+{
+  "observedAt": "2026-10-25",
+  "source": "https://github.com/cli/cli/releases/download/v2.103.2/gh_2.103.2_linux_amd64.tar.gz",
+  "totalBytes": 15031001,
+  "method": "Actual GET following stable release URL redirect, Origin localhost8785. Four requests; no upload.",
+  "responses": [
+    {
+      "range": "0-99",
+      "status": 206,
+      "bytes": 100,
+      "sha256": "1c8a06179ae5e59c973b48e52b8c1569b6e6457ee1ccfb581989f3be1872cdd8"
+    },
+    {
+      "range": "7500000-7500099",
+      "status": 206,
+      "bytes": 100,
+      "sha256": "3d67debbb435d90f7f02f5598912d45cd17addf3ddf1f05e3d5b241cfc5d21c1"
+    },
+    {
+      "range": "15030901-15031000",
+      "status": 206,
+      "bytes": 100,
+      "sha256": "1a9246019135ce0f8c3eded19d135990d888084fb64540c41f6b356eacfe173f"
+    },
+    {
+      "range": "7500000-7500099",
+      "status": 206,
+      "bytes": 100,
+      "sha256": "3d67debbb435d90f7f02f5598912d45cd17addf3ddf1f05e3d5b241cfc5d21c1"
+    }
+  ],
+  "headers": {
+    "ETag": "0x8DF31439706FB04",
+    "Accept-Ranges": "bytes",
+    "Content-Length": "100",
+    "Content-Range": "exact requested range /15031001",
+    "Content-Encoding": null,
+    "Access-Control-Allow-Origin": null
+  },
+  "browserProbe": "Chrome fetch from localhost8785 failed; own lightweight probe tab closed."
+}
