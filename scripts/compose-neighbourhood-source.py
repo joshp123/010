@@ -12,6 +12,22 @@ spec=importlib.util.spec_from_file_location('painter',Path(__file__).with_name('
 painter=importlib.util.module_from_spec(spec);spec.loader.exec_module(painter)
 
 
+def runtime_camera(source,latitude,longitude,vertical_span,bearing,aspect=1,size=2304,runtime_origin=(51.915,4.49)):
+    """Observe exact map focus/direction; square context contains its viewport."""
+    origin_latitude,origin_longitude=np.radians(runtime_origin)
+    east=np.array([-np.sin(origin_longitude),np.cos(origin_longitude),0])
+    up=np.array([np.cos(origin_latitude)*np.cos(origin_longitude),np.cos(origin_latitude)*np.sin(origin_longitude),np.sin(origin_latitude)])
+    south=np.array([np.sin(origin_latitude)*np.cos(origin_longitude),np.sin(origin_latitude)*np.sin(origin_longitude),-np.cos(origin_latitude)])
+    earth_to_gltf=np.array([[1.,0.,0.],[0.,0.,1.],[0.,-1.,0.]])
+    local_from_earth=source.anchor_rotation.T@earth_to_gltf
+    map_to_source=local_from_earth@np.stack([east,up,south],axis=1)
+    radians=np.radians(bearing);toward=map_to_source@np.array([np.sin(radians),1/np.sqrt(2),np.cos(radians)]);toward/=np.linalg.norm(toward)
+    right=map_to_source@np.array([np.cos(radians),0,-np.sin(radians)]);image_up=np.cross(toward,right)
+    focus=np.array(Transformer.from_crs(4979,4978,always_xy=True).transform(longitude,latitude,0))
+    span=vertical_span*max(1,aspect);scale=size/span;viewport=np.array([vertical_span*aspect,vertical_span])*scale
+    return {'centre':(local_from_earth@(focus-source.anchor_centre)).tolist(),'basis':np.stack([right,image_up,toward],axis=1).tolist(),'scale':scale,'mid':[0,0],'size':size,'angle':bearing,'elevation':float(np.degrees(np.arctan(1/np.sqrt(2)))),'runtimeFocus':{'lat':latitude,'lon':longitude,'height':0},'runtimeVerticalSpan':vertical_span,'runtimeAspect':aspect,'runtimeOrigin':list(runtime_origin),'runtimeCropBounds':np.r_[((size-viewport)/2),((size+viewport)/2)].tolist()}
+
+
 def compose(buildings, runtime, folder):
     source=painter.load_source(buildings)
     building_triangle_count=len(source.triangles)
