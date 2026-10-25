@@ -1,5 +1,9 @@
 # Rescue management
 
+## Current execution ownership — resumed
+
+Written by AI on 2026-10-25 by model GPT-6. Josh resumed and clarified the ENTIRE product remains root's responsibility. Historic Delfshaven around Aelbrechtskolk/Voorhaven/Schiedamseweg is first, not a scope limit. Follow [production execution](production-execution.md) for current order, actual-rendered verification and load/interaction SLOs. Local workers remain paused; fresh cloud execution lead01a17365-3d4e-701a-997d-622669bc7057 on host durable has executed shell commands and is obtaining current sources. Root remains accountable for integration, independent product judgement, publication and whole-project completion. Native-camera artwork is preserved but unaccepted. This supersedes older local-active instructions below. Resumed heartbeat supplements active management; setup is not product progress.
+
 Written by AI on 2026-10-24 by model GPT-6. Earlier investigations and corrections remain in Git history; this file states the current assessment.
 
 ## Outcome and steering
