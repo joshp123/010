@@ -103,6 +103,16 @@ export function createMunicipalBuildingVisibility() {
 // that same hierarchy. Leaf-first loading otherwise requests scores of models
 // before their ordinary streets have any source appearance at all.
 export function configureMunicipalBuildingStreaming(tiles) {
+  tiles.registerPlugin({
+    name: 'Complete municipal transfers within the download queue',
+    async fetchData(uri, options) {
+      const response = await fetch(uri, options);
+      if (!response.ok) throw new Error(`Municipal source request failed: ${response.status} ${uri}`);
+      // Fetch resolves at headers. Keep its body inside the renderer's existing
+      // transfer slot so refinement cannot flood the source with active bodies.
+      return new URL(uri, location.href).pathname.endsWith('.json') ? response.json() : response.arrayBuffer();
+    },
+  });
   const calculateViewError = tiles.calculateTileViewError.bind(tiles);
   const presentedParents = new WeakSet();
   function hasResidentDescendant(tile) {
