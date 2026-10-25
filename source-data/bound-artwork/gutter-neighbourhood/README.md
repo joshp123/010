@@ -1,0 +1,7 @@
+Written by AI on 2026-10-25 by model GPT-6.
+
+This retained review candidate uses the nineteen original-source children in bound-overlapping-neighbourhood-uv-gutters from rescue/internal-source-painter. Source geometry, original UVs, teacher fields and connected-plane view ownership are unchanged; two-texel gutters outside referenced UV triangles prevent sampling pale source texels at the drawing boundary. The separate apartment remains.
+
+Prepare each child with scripts/prepare-bound-artwork.py and scripts/prepare-artwork-residency.py. Runtime uses thirteen gutters-* spatial children and six gutters-night-* spatial children. The latter reuse exact full-source observed emission maps from rescue/municipal-source-buildings source-data/source-apertures/shared-neighbourhood/bound-overlapping via scripts/rebind-source-aperture-emission.py, which checks unchanged geometry/UV buffers before appending emission. Native source fallback sampling and painted BAG priority remain unchanged.
+
+Actual main renderer established 150 m / 125 degree desktop and 305 degree phone Day/Night retain painted identity and observed warm panes with dark roofs. This is a bounded UV-edge repair. The complete scene still fails the intended miniature drawing quality: broken bright edges, uneven recesses and literal photographic appearance remain. This candidate does not include the rejected observed-planes or registered-planes diagnostics.

@@ -1,0 +1,20 @@
+{
+  "nativeTexels": true,
+  "source": "/Users/josh/code/010-rescue-local/public/data/illustrated-neighbourhood/gutters-18_268619_55471",
+  "sourceGLBSha256": "ab802f2aac96607000b9c9ac0bc5aac0becd3088b7bdebe5f1a24b238f787dee",
+  "buildings": [
+    {
+      "bagId": "0599100000752498",
+      "sourceSha256": "ab802f2aac96607000b9c9ac0bc5aac0becd3088b7bdebe5f1a24b238f787dee",
+      "output": "bag0599100000752498.glb",
+      "atlasSize": [
+        490,
+        9820
+      ],
+      "decodedRgbaBytesIncludingMips": 25653836,
+      "layout": "packed-islands",
+      "islands": 127,
+      "emissionCrops": []
+    }
+  ]
+}
