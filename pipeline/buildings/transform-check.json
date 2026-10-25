@@ -1,0 +1,18 @@
+{
+  "source_datum_assumption": "ETRS89 geocentric EPSG:4936; source epoch not verified",
+  "reference_url": "https://github.com/GeodetischeInfrastructuur/transformations/blob/main/validate/data/Z001_ETRS89andRDNAP.txt",
+  "reference_count": 3208,
+  "max_horizontal_error_m": 0.00014144084802002974,
+  "max_vertical_error_m": 4.9979368651253964e-05,
+  "first_reference_expected_rdnap": [
+    108360.879,
+    415757.2745,
+    258.0057
+  ],
+  "first_reference_actual_rdnap": [
+    108360.87899306347,
+    415757.2745302898,
+    258.005666294988
+  ],
+  "pipeline": "+proj=pipeline +step +inv +proj=cart +ellps=GRS80 +step +inv +proj=vgridshift +grids=\"/Volumes/Josh Extreme Pro USB4 4TB/010/sources/coordinate-grids/2026-10-25/nl_nsgi_nlgeo2018.tif\" +multiplier=1 +step +inv +proj=hgridshift +grids=\"/Volumes/Josh Extreme Pro USB4 4TB/010/sources/coordinate-grids/2026-10-25/nl_nsgi_rdtrans2018.tif\" +step +proj=sterea +lat_0=52.1561605555556 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel"
+}

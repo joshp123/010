@@ -1,0 +1,89 @@
+{
+  "textured2018": {
+    "source_nap": {
+      "feature_count": 204,
+      "base_height_quantiles_m": [
+        -1.2869351403787732,
+        -0.8729651786386967,
+        -0.3874801592901349,
+        0.7902548506855966,
+        3.8047147998586297
+      ],
+      "roof_height_quantiles_m": [
+        1.3923755511641502,
+        1.9283868197351695,
+        11.431638208217919,
+        18.511553833447397,
+        40.284001503139734
+      ]
+    },
+    "standard_etrs89": {
+      "feature_count": 204,
+      "base_height_quantiles_m": [
+        -44.8931457316987,
+        -44.479357077202394,
+        -43.9942040090236,
+        -42.818065106212316,
+        -39.80410445568471
+      ],
+      "roof_height_quantiles_m": [
+        -42.21410010212531,
+        -41.678606125817595,
+        -32.17446518377504,
+        -25.097023586876663,
+        -3.324968827052274
+      ]
+    }
+  },
+  "lod2": {
+    "source_nap": {
+      "feature_count": 202,
+      "base_height_quantiles_m": [
+        -1.2869371427223086,
+        -0.8729687688872219,
+        -0.3874801592901349,
+        0.7927945513278246,
+        3.7509838566184044
+      ],
+      "roof_height_quantiles_m": [
+        1.392375790514052,
+        1.9281447649002075,
+        11.87494205404073,
+        18.511730570439248,
+        40.284001503139734
+      ]
+    },
+    "standard_etrs89": {
+      "feature_count": 202,
+      "base_height_quantiles_m": [
+        -44.89314680458231,
+        -44.47936613311262,
+        -43.9942040090236,
+        -42.815371453132514,
+        -39.85783542035469
+      ],
+      "roof_height_quantiles_m": [
+        -42.214099862775406,
+        -41.67893929009,
+        -31.731138638286875,
+        -25.096855662796894,
+        -3.324968827052274
+      ]
+    }
+  },
+  "provenance": {
+    "source_files": {
+      "textured2018": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/textured2018/2026-10-25/16/67155/13867.cmpt",
+      "lod2": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/lod2/2026-10-25/16/67155/13867.b3dm"
+    },
+    "quantile_probabilities": [
+      0,
+      0.1,
+      0.5,
+      0.9,
+      1
+    ],
+    "method": "Decode batch geometry through build.py load_tile; compare per-feature vertex minimum and maximum transformed heights with preserved source-height and true ETRS89 geoid transformation. Identity tile matrix; samples have CESIUM_RTC Earth-centred origins.",
+    "conclusion": "Both building editions encode NAP directly as source geodetic height; geoid conversion would erroneously lower them 43.61m. Tree explicit Hoogte comparison independently supports convention."
+  }
+}
