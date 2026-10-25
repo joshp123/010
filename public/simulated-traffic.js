@@ -293,8 +293,11 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     },
     advance(timeSeconds) {
       const delta = safeStep(lastTime === null ? 0 : timeSeconds - lastTime); lastTime = timeSeconds;
-      if (paused || !group.visible || !roads.length || !cars.length) return false;
+      if (paused || !group.visible || !roads.length) return false;
       elapsed += delta;
+      // A temporarily occupied entry must not disable this fleet forever.
+      // New journeys still enter through the view boundary after initial seeding.
+      if (!cars.length) { populate(); render(); return desiredCount > 0; }
       const { occupants, junctionReservations } = coordinator.frame(timeSeconds, delta);
       cars = cars.filter(car => {
         car.age += delta;
