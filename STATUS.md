@@ -11,7 +11,7 @@ Written by AI on 2026-10-25 by model Claude Opus 5.5. Kept under one page. Josh'
 - **T2, pixel pyramid**: the same shader rendered offline into image tiles, four bearings (35°, 125°, 215°, 305°). About 10 s of MacBook time and 4 MB per bearing per km².
 - **T3, painted pyramid**: T2 repainted square by square by ChatGPT's image tool (54 squares, median 43 s a call, three runs in parallel, no limit hit), each square aligned back onto the render, overlaps blended, rails and road markings stamped back from data. One bearing (35°).
 
-**Published** at 010.jjpcodes.com: home page is T2; `compare.html` links all three. Phone profile (20 Mbit/s, 80 ms, 4× CPU) against the live site: T1 4.4 s to a picture, 13 s complete (30 MB for the km²); T2 0.9 s first visit, 0.3 s return visit, 8 ms pan frames; T3 1.5 s and 0.4 s before its page was inlined. Targets are about 0.35 s and 0.1 s: not met yet. The page HTML still comes from the network on return visits.
+**Published** at 010.jjpcodes.com: home page is T2; `compare.html` links all three. Phone profile (20 Mbit/s, 80 ms, 4× CPU) against the live site: T1 4.4 s to a picture, 13 s complete (30 MB for the km²); T2 0.9 s first visit, 0.3 s return visit, 8 ms pan frames; T3 0.8 s and 0.23 s. Targets are about 0.35 s and 0.1 s: not met yet. The page HTML still comes from the network on return visits.
 
 **Owners.** Claude Opus 5.5: renderer, shader, pages, judging, publishing. GPT-6.1 Sol (Codex background runs): scene builders, web bake, speed script, paint batches.
 
