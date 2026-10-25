@@ -1,6 +1,6 @@
 // Written by AI on 2026-10-25 by model GPT-6 Astra.
 // One exact immutable tile range, never a whole-pack fetch or an image codec.
-export function createMunicipalDeliveryProxy({ manifest, fetchAsset, cache = null, waitUntil = null }) {
+export function createMunicipalDeliveryProxy({ manifest, fetchAsset = null, cache = null, waitUntil = null }) {
   return async request => {
     const url = new URL(request.url), prefix = '/api/municipal-delivery/';
     if (!url.pathname.startsWith(prefix)) return null;
