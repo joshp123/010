@@ -1,0 +1,242 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "sourceSha256": "1a2506d4c5fab98e1032c64fd5bdfc39cd42fbe3d7420bcc17ae7b9937768bb7",
+  "sourceView": "view-0-0",
+  "meaning": "Model-judged quiet wall masses for explicit source-supported facade replacement regions. Material families follow actual source frontage, with subdued shared drawing colours. No joints, windows, ornament, illumination or architectural geometry inferred. Complete source opening patches are a separate evidence layer; exact frame/reveal texture remains where drawing is uncertain. Candidate must be judged in actual complete street and city.",
+  "facades": [
+    {
+      "id": "left-pale",
+      "replacementPolygon": [
+        [
+          510,
+          631
+        ],
+        [
+          565,
+          631
+        ],
+        [
+          565,
+          683
+        ],
+        [
+          510,
+          683
+        ]
+      ],
+      "wallRgb": [
+        190,
+        177,
+        150
+      ]
+    },
+    {
+      "id": "broad-brown",
+      "replacementPolygon": [
+        [
+          570,
+          622
+        ],
+        [
+          662,
+          622
+        ],
+        [
+          662,
+          681
+        ],
+        [
+          570,
+          681
+        ]
+      ],
+      "wallRgb": [
+        151,
+        128,
+        105
+      ]
+    },
+    {
+      "id": "narrow-grey",
+      "replacementPolygon": [
+        [
+          666,
+          622
+        ],
+        [
+          720,
+          622
+        ],
+        [
+          720,
+          682
+        ],
+        [
+          666,
+          682
+        ]
+      ],
+      "wallRgb": [
+        161,
+        157,
+        143
+      ]
+    },
+    {
+      "id": "stepped-brown",
+      "replacementPolygon": [
+        [
+          723,
+          626
+        ],
+        [
+          778,
+          626
+        ],
+        [
+          778,
+          683
+        ],
+        [
+          723,
+          683
+        ]
+      ],
+      "wallRgb": [
+        161,
+        138,
+        113
+      ]
+    },
+    {
+      "id": "narrow-right",
+      "replacementPolygon": [
+        [
+          780,
+          627
+        ],
+        [
+          810,
+          627
+        ],
+        [
+          810,
+          683
+        ],
+        [
+          780,
+          683
+        ]
+      ],
+      "wallRgb": [
+        154,
+        132,
+        111
+      ]
+    },
+    {
+      "id": "bay",
+      "replacementPolygon": [
+        [
+          811,
+          627
+        ],
+        [
+          835,
+          627
+        ],
+        [
+          835,
+          684
+        ],
+        [
+          811,
+          684
+        ]
+      ],
+      "wallRgb": [
+        171,
+        162,
+        140
+      ]
+    },
+    {
+      "id": "ornate-grey",
+      "replacementPolygon": [
+        [
+          836,
+          626
+        ],
+        [
+          892,
+          626
+        ],
+        [
+          892,
+          684
+        ],
+        [
+          836,
+          684
+        ]
+      ],
+      "wallRgb": [
+        159,
+        157,
+        143
+      ]
+    },
+    {
+      "id": "ornate-right",
+      "replacementPolygon": [
+        [
+          895,
+          626
+        ],
+        [
+          946,
+          626
+        ],
+        [
+          946,
+          684
+        ],
+        [
+          895,
+          684
+        ]
+      ],
+      "wallRgb": [
+        154,
+        140,
+        118
+      ]
+    },
+    {
+      "id": "edge",
+      "replacementPolygon": [
+        [
+          947,
+          626
+        ],
+        [
+          963,
+          626
+        ],
+        [
+          963,
+          684
+        ],
+        [
+          947,
+          684
+        ]
+      ],
+      "wallRgb": [
+        157,
+        142,
+        120
+      ]
+    }
+  ]
+}
