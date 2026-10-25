@@ -1,0 +1,30 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6 Astra",
+  "nativeSource": "https://www.3drotterdam.nl/datasource-data/06595036-c78e-4081-ab25-e8f88b66bc19/15/33584/6934.b3dm",
+  "nativeSha256": "d5736323d3b404cf3b85dc6de4461f850077780415b9de846373a4856c067d08",
+  "originalTriangles": 2313,
+  "geometry": "Original source triangles; generated plane UVs only",
+  "fields": [
+    [
+      "reconciled-views.json",
+      "reconciled-north-125",
+      "north-125-painted.png"
+    ],
+    [
+      "views.json",
+      "pylon-125",
+      "pylon-125-painted.png"
+    ],
+    [
+      "reconciled-views.json",
+      "reconciled-north-305",
+      "north-305-painted.png"
+    ],
+    [
+      "views.json",
+      "pylon-305",
+      "pylon-305-painted.png"
+    ]
+  ],
+  "status": "Unaccepted source-bound visual candidate"
+}

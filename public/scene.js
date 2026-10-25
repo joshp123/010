@@ -48,6 +48,8 @@ const LAYERS = [
   ['appearanceBuildings', 'https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/tileset.json'],
   ['ground', './data/native-ground-bounds/tileset.json'],
   ['bridges', '06595036-c78e-4081-ab25-e8f88b66bc19'],
+  ['appearanceBridge', './data/erasmus-structure-drawing/tileset.json'],
+  ['appearanceBuildings', './data/erasmus-drawn-shore/tileset.json'],
   ['bridgeSurfaces', './data/bridge-surfaces/tileset.json'],
   ['bridgeSurfaces', './data/supplemental-bridge-surfaces/tileset.json'],
   ['tanks', 'c70023a7-2878-41e9-bb81-a7c454bc310a'],
@@ -451,15 +453,15 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     return ids;
   }
   function colorModel(model, kind) {
-    if (kind === 'appearanceBuildings' || kind === 'appearanceTanks') {
+    if (kind === 'appearanceBuildings' || kind === 'appearanceTanks' || kind === 'appearanceBridge') {
       if (model.userData.municipalSource) municipalBuildingVisibility.addModel(model);
       prepareAppearanceModel(model, {
         night: uniforms.night,
         applyLighting: material => fixtureSurfaceLighting.apply(material),
-        applyCutaway: material => applyMetroCutaway(material, cutawayUniforms),
+        applyCutaway: material => { if (kind !== 'appearanceBridge') applyMetroCutaway(material, cutawayUniforms); },
       });
       setAppearanceSampling([model], { renderer, preset: model.userData.appearanceRole === 'painted' ? 'baseline' : appearanceSamplingPreset });
-      bindCutawayShadows(model);
+      if (kind !== 'appearanceBridge') bindCutawayShadows(model);
       return;
     }
     if (kind === 'ground') model.userData.groundHeightFilter = omitInvalidGroundTriangles(model);
@@ -519,9 +521,11 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   if (appearancePlans[1].status === 'fulfilled') for (const entry of appearancePlans[1].value?.entries || []) for (const id of entry.bagIds) plannedCurrentBuildingIds.add(normalizedBagId(id));
 
   for (const [kind, id] of LAYERS) {
+    const bridgeDrawing = new URLSearchParams(location.search).has('bridgeDrawing');
+    if (id.includes('/erasmus-') && !bridgeDrawing) continue;
     const municipalSource = id.includes('3adbe5af-d05c-475a-b34c-59e69ba8dadc');
     if (municipalSource && !municipalSourceEnabled) continue;
-    if (municipalSourceEnabled && kind === 'appearanceBuildings' && !municipalSource && !id.includes('illustrated-neighbourhood')) continue;
+    if (municipalSourceEnabled && kind === 'appearanceBuildings' && !municipalSource && !id.includes('illustrated-neighbourhood') && !id.includes('/erasmus-drawn-shore/')) continue;
     if (kind === 'appearanceTanks' && (!tankAppearanceEnabled || (id.includes('illustrated-tank') && tankAppearanceEdition !== 'illustrated'))) continue;
     if (kind === 'appearanceBuildings' && id.includes('illustrated-neighbourhood') && !appearanceEdition.startsWith('illustrated-')) continue;
     if (kind === 'appearanceBuildings' && id.includes('current-building-appearance') && appearanceEdition === 'legacy') continue;
@@ -529,7 +533,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     const tiles = new TilesRenderer(layerSource.startsWith('./') || layerSource.startsWith('https:') ? layerSource : `${DATA_BASE}${layerSource}/tileset.json`);
     tiles.registerPlugin(createCompressedModelsPlugin());
     tiles.kind = kind;
-    if (kind === 'appearanceBuildings') tiles.appearanceRole = municipalSource ? 'municipal' : id.includes('illustrated-neighbourhood') ? 'painted' : (id.includes('/current-building-appearance/') || id.includes('/hoek-building-appearance/')) ? 'current' : 'legacy';
+    if (kind === 'appearanceBuildings') tiles.appearanceRole = municipalSource ? 'municipal' : (id.includes('illustrated-neighbourhood') || id.includes('/erasmus-drawn-shore/')) ? 'painted' : (id.includes('/current-building-appearance/') || id.includes('/hoek-building-appearance/')) ? 'current' : 'legacy';
     if (kind === 'appearanceBuildings' && tiles.appearanceRole !== 'painted') {
       const calculateViewError = tiles.calculateTileViewError.bind(tiles);
       tiles.calculateTileViewError = (tile, result) => {
@@ -612,7 +616,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   }
   // A source appearance is optional until its complete tile is resident. Load
   // the city underneath first so texture arrivals cannot starve its ground.
-  const layerPriority = { buildings: 7, appearanceBuildings: -1, appearanceTanks: -1, lamps: 6, streets: 6, yards: 5, industrialTerrain: 5, ground: 5, greenTerrain: 5, industrialStructures: 3, bridges: 4, bridgeSurfaces: 3, tanks: 2, lights: 1, trees: 0 };
+  const layerPriority = { buildings: 7, appearanceBuildings: -1, appearanceTanks: -1, lamps: 6, streets: 6, yards: 5, industrialTerrain: 5, ground: 5, greenTerrain: 5, industrialStructures: 3, bridges: 4, appearanceBridge: 4, bridgeSurfaces: 3, tanks: 2, lights: 1, trees: 0 };
   let paintedBuildingIds = new Set(), currentBuildingIds = new Set();
   const prioritizeCitySurfaces = (a, b) => {
     const firstLayer = a.internal?.renderer?.kind, secondLayer = b.internal?.renderer?.kind;
@@ -789,6 +793,12 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       renderer.shadowMap.needsUpdate = true;
       requestRender();
     }
+    const bridgeDrawingReady = tilesets.some(tiles => tiles.kind === 'appearanceBridge' && tiles.visibleTiles.size > 0);
+    for (const tiles of tilesets.filter(layer => layer.kind === 'bridges')) for (const tile of tiles.visibleTiles) tile.engineData.scene?.traverse(mesh => {
+      if (!mesh.isMesh) return;
+      const table = batchTableFor(mesh);
+      if (table && JSON.stringify(table.getDataFromId(0)).includes('br05A040')) mesh.layers.set(bridgeDrawingReady ? 2 : 0);
+    });
     if (tankAppearancePriority.update(visibleTankAppearanceModels('native'), visibleTankAppearanceModels('illustrated'))) renderer.shadowMap.needsUpdate = true;
     if (tankAppearance.setVisibleModels(visibleTankAppearanceModels())) renderer.shadowMap.needsUpdate = true;
     if (tilesets.find(tiles => tiles.kind === 'ground').group.visible) {

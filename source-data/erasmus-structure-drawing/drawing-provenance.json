@@ -1,0 +1,14 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6 Astra",
+  "generator": "Built-in imagegen, four registered source-camera edits",
+  "instruction": "Retain exact supplied geometry, perspective and source feature boundaries. Interpret pale steel and warm concrete with quiet connected light/shadow drawing masses using Brixton miniature reference. Blue in architect photographs is sky reflection, not painted steel. Do not add objects, furnishings, markings, railings or openings. Source geometry and BGT remain geographic authority.",
+  "architect": "https://www.unstudio.com/projects/erasmus-bridge/",
+  "dayPhoto": "https://a.storyblok.com/f/324448/x/308a842471/2672-10.TIF/m/1600x0/filters:quality(85):format(jpeg)",
+  "fields": {
+    "north-125-painted.png": "718cfa01e2efb1403757782cd4d4397e49082f0805508391efa3db0e0657fb8e",
+    "north-305-painted.png": "6e3381d860bc0187219921ec42789ab5bbcac67120bec53ea62bf8f7816eb21a",
+    "pylon-125-painted.png": "59d1c6dfcd6bf1783e00cc478ec75310c6d36bfea36600ce98b77c1089e1dc3c",
+    "pylon-305-painted.png": "7d6238e21f78faefab034d62aad55918e078c641dd7f745e25a9f099534dfd90"
+  },
+  "status": "Unaccepted visual comparison; original source geometry retained, default renderer unchanged."
+}
