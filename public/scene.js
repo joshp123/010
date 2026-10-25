@@ -45,6 +45,9 @@ const LAYERS = [
   ['appearanceBuildings', './data/current-building-appearance/tileset-spatial.json'],
   ['appearanceBuildings', './data/hoek-building-appearance/tileset-spatial.json'],
   ['appearanceBuildings', './data/illustrated-neighbourhood/tileset-spatial.json'],
+  ['appearanceBuildings', './data/authored-scene-complete-buildings/tileset.json'],
+  ['authoredGround', './data/authored-scene-complete-context/ground/tileset.json'],
+  ['authoredTrees', './data/authored-scene-complete-context/tree/tileset.json'],
   ['appearanceBuildings', 'https://www.3drotterdam.nl/datasource-data/3adbe5af-d05c-475a-b34c-59e69ba8dadc/tileset.json'],
   ['ground', './data/native-ground-bounds/tileset.json'],
   ['bridges', '06595036-c78e-4081-ab25-e8f88b66bc19'],
@@ -101,6 +104,7 @@ function solarDirection(date, lat, lon) {
 }
 
 export async function createScene({ canvas, municipalityData, onViewChange = () => {}, onStatus = () => {}, onTransitSelect = () => {} }) {
+  const startupOptions = new URLSearchParams(location.search);
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
   renderer.localClippingEnabled = true;
   const shaderErrors = [];
@@ -200,8 +204,10 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   for (const material of [...Object.values(materials), cartographicMaterial, contextLandMaterial, lampGlowMaterial, lampPoolMaterial, lampShaftMaterial]) applyMetroCutaway(material, cutawayUniforms);
   for (const material of [...['ground', 'streets', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain', 'yards'].map(kind => materials[kind]), cartographicMaterial, contextLandMaterial]) applyPublicSpaceMaterial(material);
   const publicSpaceStyle = createPublicSpaceStyle({ material: materials.ground });
-  const groundArtworkEnabled = !['native', 'off'].includes(new URLSearchParams(location.search).get('ground'));
-  const groundArtwork = createGroundArtwork({ baseUrl: (!new URLSearchParams(location.search).get('appearance') || new URLSearchParams(location.search).get('appearance') === 'illustrated-neighbourhood') ? './data/ground-artwork-neighbourhood-v5/' : './data/ground-artwork/', enabled: groundArtworkEnabled, requestRender, anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()) });
+  const authoredSurfaceIllumination = { value: new THREE.Color(1, 1, 1) };
+  const authoredDaylightReference = new THREE.Color('#d9e0e5').multiplyScalar(1.45).add(new THREE.Color('#fff4e4').multiplyScalar(2.6));
+  const groundArtworkEnabled = !['native', 'off'].includes(startupOptions.get('ground'));
+  const groundArtwork = createGroundArtwork({ baseUrl: (!startupOptions.get('appearance') || startupOptions.get('appearance') === 'illustrated-neighbourhood') ? './data/ground-artwork-neighbourhood-v5/' : './data/ground-artwork/', enabled: groundArtworkEnabled, requestRender, anisotropy: Math.min(8, renderer.capabilities.getMaxAnisotropy()) });
   groundArtwork.apply(materials.ground);
   let groundArtworkPending = groundArtworkEnabled, groundArtworkFailed = false;
   groundArtwork.ready.then(() => { groundArtworkPending = false; groundArtworkFailed = Boolean(groundArtwork.diagnostics().error); requestRender(); });
@@ -240,23 +246,23 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   const tilesets = [];
   const sourceFusion = createSourceFusion();
   const vegetationStyle = createVegetationStyle();
-  const vegetationEnabled = new URLSearchParams(location.search).get('vegetation') !== 'native';
+  const vegetationEnabled = startupOptions.get('vegetation') !== 'native';
   const objectDetail = createObjectDetail({ maximumPixelError: 1 });
   const treeBatches = createTreeBatches(scene);
   const buildingBatches = createBuildingBatches();
   const buildingAppearance = createBuildingAppearanceReconciliation(buildingBatches);
   const municipalBuildingVisibility = createMunicipalBuildingVisibility();
   const sourceTextureResidency = createSourceTextureResidency();
-  const municipalSourceEnabled = new URLSearchParams(location.search).get('source') !== 'prepared';
+  const municipalSourceEnabled = startupOptions.get('source') !== 'prepared';
   const sourceBuildingPriority = createAppearancePriorityReconciliation({ normalize: normalizedBagId, identityField: 'bagId' });
   const paintedBuildingPriority = createAppearancePriorityReconciliation({ normalize: normalizedBagId, identityField: 'bagId' });
   const tankAppearance = createTankAppearanceReconciliation();
   const tankAppearancePriority = createAppearancePriorityReconciliation();
   let appearanceSamplingPreset = 'anisotropic';
-  const appearanceOption = new URLSearchParams(location.search).get('appearance');
+  const appearanceOption = startupOptions.get('appearance');
   const appearanceEnabled = appearanceOption !== 'off';
   const appearanceEdition = ['legacy', 'current', 'illustrated-row', 'illustrated-neighbourhood'].includes(appearanceOption) ? appearanceOption : 'illustrated-neighbourhood';
-  const tankAppearanceEdition = new URLSearchParams(location.search).get('tanks');
+  const tankAppearanceEdition = startupOptions.get('tanks');
   const tankAppearanceEnabled = tankAppearanceEdition === 'illustrated' || (appearanceEdition === 'current' && tankAppearanceEdition === 'current');
   let capturingFullDetail = false, captureInspectionSpan = null;
   let transitSnapshot = { vehicles: [] }, transitSurfaceDirty = false;
@@ -453,15 +459,17 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     return ids;
   }
   function colorModel(model, kind) {
-    if (kind === 'appearanceBuildings' || kind === 'appearanceTanks' || kind === 'appearanceBridge') {
+    if (kind === 'appearanceBuildings' || kind === 'appearanceTanks' || kind === 'appearanceBridge' || kind === 'authoredGround' || kind === 'authoredTrees') {
       if (model.userData.municipalSource) municipalBuildingVisibility.addModel(model);
       prepareAppearanceModel(model, {
         night: uniforms.night,
+        authoredIllumination: kind === 'authoredGround' || kind === 'authoredTrees' || model.userData.appearanceRole === 'painted' && model.userData.authoredScene ? authoredSurfaceIllumination : null,
         applyLighting: material => fixtureSurfaceLighting.apply(material),
         applyCutaway: material => { if (kind !== 'appearanceBridge') applyMetroCutaway(material, cutawayUniforms); },
       });
       setAppearanceSampling([model], { renderer, preset: model.userData.appearanceRole === 'painted' ? 'baseline' : appearanceSamplingPreset });
       if (kind !== 'appearanceBridge') bindCutawayShadows(model);
+      if (kind === 'authoredGround') model.traverse(mesh => { if (mesh.isMesh) { mesh.castShadow = false; mesh.userData.sourceAttributes ||= { DGDT_ID: mesh.userData.sourceFeatureId }; } });
       return;
     }
     if (kind === 'ground') model.userData.groundHeightFilter = omitInvalidGroundTriangles(model);
@@ -521,11 +529,14 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   if (appearancePlans[1].status === 'fulfilled') for (const entry of appearancePlans[1].value?.entries || []) for (const id of entry.bagIds) plannedCurrentBuildingIds.add(normalizedBagId(id));
 
   for (const [kind, id] of LAYERS) {
-    const bridgeDrawing = new URLSearchParams(location.search).has('bridgeDrawing');
+    const authoredScene = startupOptions.get('authoredScene') === '120';
+    if (id.includes('/authored-scene') && !authoredScene) continue;
+    if (authoredScene && id.includes('/illustrated-neighbourhood/')) continue;
+    const bridgeDrawing = startupOptions.has('bridgeDrawing');
     if (id.includes('/erasmus-') && !bridgeDrawing) continue;
     const municipalSource = id.includes('3adbe5af-d05c-475a-b34c-59e69ba8dadc');
     if (municipalSource && !municipalSourceEnabled) continue;
-    if (municipalSourceEnabled && kind === 'appearanceBuildings' && !municipalSource && !id.includes('illustrated-neighbourhood') && !id.includes('/erasmus-drawn-shore/')) continue;
+    if (municipalSourceEnabled && kind === 'appearanceBuildings' && !municipalSource && !id.includes('illustrated-neighbourhood') && !id.includes('authored-scene-complete-buildings') && !id.includes('/erasmus-drawn-shore/')) continue;
     if (kind === 'appearanceTanks' && (!tankAppearanceEnabled || (id.includes('illustrated-tank') && tankAppearanceEdition !== 'illustrated'))) continue;
     if (kind === 'appearanceBuildings' && id.includes('illustrated-neighbourhood') && !appearanceEdition.startsWith('illustrated-')) continue;
     if (kind === 'appearanceBuildings' && id.includes('current-building-appearance') && appearanceEdition === 'legacy') continue;
@@ -533,7 +544,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     const tiles = new TilesRenderer(layerSource.startsWith('./') || layerSource.startsWith('https:') ? layerSource : `${DATA_BASE}${layerSource}/tileset.json`);
     tiles.registerPlugin(createCompressedModelsPlugin());
     tiles.kind = kind;
-    if (kind === 'appearanceBuildings') tiles.appearanceRole = municipalSource ? 'municipal' : (id.includes('illustrated-neighbourhood') || id.includes('/erasmus-drawn-shore/')) ? 'painted' : (id.includes('/current-building-appearance/') || id.includes('/hoek-building-appearance/')) ? 'current' : 'legacy';
+    if (kind === 'appearanceBuildings') tiles.appearanceRole = municipalSource ? 'municipal' : (id.includes('illustrated-neighbourhood') || id.includes('authored-scene-complete-buildings') || id.includes('/erasmus-drawn-shore/')) ? 'painted' : (id.includes('/current-building-appearance/') || id.includes('/hoek-building-appearance/')) ? 'current' : 'legacy';
     if (kind === 'appearanceBuildings' && tiles.appearanceRole !== 'painted') {
       const calculateViewError = tiles.calculateTileViewError.bind(tiles);
       tiles.calculateTileViewError = (tile, result) => {
@@ -554,7 +565,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     }
     if (['appearanceBuildings', 'appearanceTanks'].includes(kind)) tiles.calculateBytesUsed = (_tile, model) => model ? estimateAppearanceBytes(model) : null;
     if (kind === 'appearanceTanks') tiles.appearanceRole = id.includes('illustrated-tank') ? 'illustrated' : 'native';
-    if (['buildings', 'appearanceBuildings', 'appearanceTanks'].includes(kind)) tiles.registerPlugin({
+    if (['buildings', 'appearanceBuildings', 'appearanceTanks', 'authoredGround', 'authoredTrees'].includes(kind)) tiles.registerPlugin({
       name: 'Reach the first available building geometry',
       preprocessNode(tile) {
         if (!tile.internal.hasContent && tile.children?.length) tile.geometricError = Infinity;
@@ -582,13 +593,13 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (tiles.appearanceRole === 'municipal') {
       configureMunicipalBuildingStreaming(tiles);
     }
-    tiles.addEventListener('load-model', event => { event.scene.userData.appearanceRole = tiles.appearanceRole; if (municipalSource) event.scene.userData.municipalSource = true; colorModel(event.scene, kind); if (['ground', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) transitSurfaceDirty = true; if (kind === 'ground') sourceFusion.addGround(event.scene); loadedTiles++; renderer.shadowMap.needsUpdate = true; requestRender(); });
-    if (['ground', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) tiles.addEventListener('dispose-model', () => { transitSurfaceDirty = true; });
+    tiles.addEventListener('load-model', event => { event.scene.userData.appearanceRole = tiles.appearanceRole; if (id.includes('/authored-scene-complete-buildings/')) event.scene.userData.authoredScene = true; if (municipalSource) event.scene.userData.municipalSource = true; colorModel(event.scene, kind); if (['ground', 'authoredGround', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) transitSurfaceDirty = true; if (kind === 'ground' || kind === 'authoredGround') sourceFusion.addGround(event.scene); loadedTiles++; renderer.shadowMap.needsUpdate = true; requestRender(); });
+    if (['ground', 'authoredGround', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain'].includes(kind)) tiles.addEventListener('dispose-model', () => { transitSurfaceDirty = true; });
     if (kind === 'buildings') tiles.addEventListener('dispose-model', event => { buildingAppearance.removeModel(event.scene); buildingBatches.removeModel(event.scene); });
     if (kind === 'tanks') tiles.addEventListener('dispose-model', event => tankAppearance.removeModel(event.scene));
     if (municipalSource) tiles.addEventListener('dispose-model', event => municipalBuildingVisibility.removeModel(event.scene));
     if (kind === 'appearanceTanks') tiles.addEventListener('dispose-model', requestRender);
-    if (kind === 'ground') tiles.addEventListener('dispose-model', event => { sourceFusion.removeGround(event.scene); groundArtwork.removeModel(event.scene); });
+    if (kind === 'ground' || kind === 'authoredGround') tiles.addEventListener('dispose-model', event => { sourceFusion.removeGround(event.scene); groundArtwork.removeModel(event.scene); });
     if (['ground', 'streets', 'bridgeSurfaces', 'greenTerrain', 'industrialTerrain', 'yards'].includes(kind)) tiles.addEventListener('dispose-model', event => publicSpaceStyle.removeModel(event.scene));
     if (kind === 'trees' || kind === 'lights') tiles.addEventListener('dispose-model', event => { if (kind === 'trees') treeBatches.removeModel(event.scene); objectDetail.removeModel(event.scene); if (kind === 'trees') vegetationStyle.removeModel(event.scene); });
     for (const event of ['load-tileset', 'needs-update', 'tile-visibility-change', 'tiles-load-end']) tiles.addEventListener(event, requestRender);
@@ -616,7 +627,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   }
   // A source appearance is optional until its complete tile is resident. Load
   // the city underneath first so texture arrivals cannot starve its ground.
-  const layerPriority = { buildings: 7, appearanceBuildings: -1, appearanceTanks: -1, lamps: 6, streets: 6, yards: 5, industrialTerrain: 5, ground: 5, greenTerrain: 5, industrialStructures: 3, bridges: 4, appearanceBridge: 4, bridgeSurfaces: 3, tanks: 2, lights: 1, trees: 0 };
+  const layerPriority = { buildings: 7, appearanceBuildings: -1, appearanceTanks: -1, lamps: 6, streets: 6, yards: 5, industrialTerrain: 5, ground: 5, greenTerrain: 5, industrialStructures: 3, bridges: 4, appearanceBridge: 4, authoredGround: 10, authoredTrees: 10, bridgeSurfaces: 3, tanks: 2, lights: 1, trees: 0 };
   let paintedBuildingIds = new Set(), currentBuildingIds = new Set();
   const prioritizeCitySurfaces = (a, b) => {
     const firstLayer = a.internal?.renderer?.kind, secondLayer = b.internal?.renderer?.kind;
@@ -766,7 +777,7 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     currentBuildingIds = new Set();
     for (const model of visibleBuildingAppearanceModels('current')) model.traverseVisible(mesh => { const id = normalizedBagId(mesh.userData.bagId); if (mesh.isMesh && id) currentBuildingIds.add(id); });
     for (const tiles of tilesets) {
-      const visible = tiles.kind === 'appearanceTanks' ? tankAppearanceEnabled && view.span < 2400 : tiles.kind === 'appearanceBuildings' ? appearanceEnabled && view.span < 2400 : tiles.kind === 'streets' ? true : tiles.kind === 'lamps' ? uniforms.night.value > 0.1 : tiles.kind === 'ground' ? view.span < 1400 : tiles.kind === 'greenTerrain' ? view.span >= 1400 && view.span < 12000 : ['industrialStructures', 'industrialTerrain'].includes(tiles.kind) ? view.span < 18000 : tiles.kind === 'trees' ? view.span < 3500 : tiles.kind === 'lights' ? view.span < 700 && uniforms.night.value > 0.1 : ['bridges', 'bridgeSurfaces'].includes(tiles.kind) ? view.span < 12000 : tiles.kind === 'tanks' ? view.span < 18000 : true;
+      const visible = tiles.kind === 'appearanceTanks' ? tankAppearanceEnabled && view.span < 2400 : tiles.kind === 'appearanceBuildings' ? appearanceEnabled && view.span < 2400 : tiles.kind === 'streets' ? true : tiles.kind === 'lamps' ? uniforms.night.value > 0.1 : ['ground', 'authoredGround'].includes(tiles.kind) ? view.span < 1400 : tiles.kind === 'greenTerrain' ? view.span >= 1400 && view.span < 12000 : ['industrialStructures', 'industrialTerrain'].includes(tiles.kind) ? view.span < 18000 : ['trees', 'authoredTrees'].includes(tiles.kind) ? view.span < 3500 : tiles.kind === 'lights' ? view.span < 700 && uniforms.night.value > 0.1 : ['bridges', 'bridgeSurfaces'].includes(tiles.kind) ? view.span < 12000 : tiles.kind === 'tanks' ? view.span < 18000 : true;
       if (!visible && tiles.group.visible) {
         for (const tile of tiles.usedSet) tiles.lruCache.markUnused(tile);
         tiles.lruCache.scheduleUnload();
@@ -801,12 +812,14 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     });
     if (tankAppearancePriority.update(visibleTankAppearanceModels('native'), visibleTankAppearanceModels('illustrated'))) renderer.shadowMap.needsUpdate = true;
     if (tankAppearance.setVisibleModels(visibleTankAppearanceModels())) renderer.shadowMap.needsUpdate = true;
+    const authoredGroundModels = tilesets.filter(layer => layer.kind === 'authoredGround' && layer.group.visible).flatMap(layer => [...layer.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean));
+    sourceFusion.setAuthoredGround(authoredGroundModels);
     if (tilesets.find(tiles => tiles.kind === 'ground').group.visible) {
       sourceFusion.setVisibleBridges(tilesets.filter(tiles => tiles.kind === 'bridges' && tiles.group.visible).flatMap(tiles => [...tiles.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean)));
       if (sourceFusion.update()) { transitSurfaceDirty = true; renderer.shadowMap.needsUpdate = true; groundArtwork.refresh(); }
     }
     for (const [kind, query] of surfaceQueries) {
-      const models = tilesets.filter(layer => layer.kind === kind && layer.group.visible)
+      const models = tilesets.filter(layer => (layer.kind === kind || kind === 'ground' && layer.kind === 'authoredGround') && layer.group.visible)
         .flatMap(layer => [...layer.visibleTiles].map(tile => tile.engineData.scene).filter(Boolean));
       if (query.setModels(models)) transitSurfaceDirty = true;
     }
@@ -842,7 +855,11 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     if (detail.changed) renderer.shadowMap.needsUpdate = true;
     if (detail.pending) requestRender();
     const treeLayer = tilesets.find(tiles => tiles.kind === 'trees');
-    treeBatches.update(new Set(treeLayer.group.visible ? [...treeLayer.visibleTiles].map(tile => tile.engineData.scene) : []));
+    const authoredTreeIds = new Set();
+    for (const layer of tilesets.filter(layer => layer.kind === 'authoredTrees' && layer.group.visible)) for (const tile of layer.visibleTiles) tile.engineData.scene?.traverseVisible(mesh => {
+      if (mesh.isMesh && mesh.userData.sourceTreeId) authoredTreeIds.add(String(mesh.userData.sourceTreeId));
+    });
+    treeBatches.update(new Set(treeLayer.group.visible ? [...treeLayer.visibleTiles].map(tile => tile.engineData.scene) : []), authoredTreeIds);
     for (const layer of tilesets.filter(tiles => tiles.kind === 'lamps')) for (const tile of layer.visibleTiles) tile.engineData.scene?.traverse(object => { if (object.isLineSegments) object.visible = (object.userData.illustratedPole || view.span >= 700) && view.span < 3500; });
     if (reflectCity) {
       const background = scene.background; scene.background = new THREE.Color(0x000000);
@@ -909,6 +926,10 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
     uniforms.snow.value = 0;
     sunVector = mode === 'live' && night < 0.9 ? solar.direction : golden ? new THREE.Vector3(-0.9, 0.24, 0.34).normalize() : night ? new THREE.Vector3(-0.5, 0.75, -0.45).normalize() : new THREE.Vector3(-0.65, 0.8, 0.45).normalize();
     applyMiniatureLighting({ sun, sky, background: scene.background }, { night, golden, cloud });
+    authoredSurfaceIllumination.value.copy(sky.color).multiplyScalar(sky.intensity).add(sun.color.clone().multiplyScalar(sun.intensity));
+    authoredSurfaceIllumination.value.r /= authoredDaylightReference.r;
+    authoredSurfaceIllumination.value.g /= authoredDaylightReference.g;
+    authoredSurfaceIllumination.value.b /= authoredDaylightReference.b;
     const wetness = Math.min(1, Number(lighting.rain) || 0);
     weatherUniforms.rain.value = wetness > 0 ? Math.max(0.2, wetness) : 0;
     weatherUniforms.snow.value = Math.min(1, Number(lighting.snow) || 0);

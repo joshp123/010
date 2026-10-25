@@ -77,10 +77,10 @@ export function createTreeBatches(scene) {
     models.delete(model);
   }
 
-  function update(visibleModels) {
+  function update(visibleModels, excludedSourceIds = new Set()) {
     const started = performance.now();
     for (const candidates of groups.values()) for (const group of candidates) { group.count = 0; group.ranges.length = 0; group.inputs.length = 0; }
-    let visibleSourceMeshes = 0, submittedInstances = 0;
+    let visibleSourceMeshes = 0, submittedInstances = 0, replacedSourceInstances = 0;
     for (const [model, records] of models) for (const record of records) {
       const { mesh } = record;
       let visible = visibleModels.has(model) && record.sourceVisible;
@@ -90,7 +90,7 @@ export function createTreeBatches(scene) {
       if (!visible || !mesh.count) continue;
       const group = groupFor(record);
       group.inputs.push(mesh);
-      visibleSourceMeshes++; submittedInstances += mesh.count;
+      visibleSourceMeshes++;
     }
     let activeBatches = 0;
     for (const candidates of groups.values()) for (const group of candidates) {
@@ -107,19 +107,26 @@ export function createTreeBatches(scene) {
         scene.add(group.mesh);
       }
       for (const mesh of group.inputs) {
-        const start = group.count;
+        let tableParent = mesh;
+        while (tableParent && !tableParent.batchTable) tableParent = tableParent.parent;
+        let rangeStart = group.count, rangeIndices = [];
         for (let index = 0; index < mesh.count; index++) {
+          const sourceIndex = mesh.userData.objectDetailSourceInstanceIndices?.[index] ?? index;
+          const sourceId = tableParent?.batchTable.getDataFromId(sourceIndex)?.id;
+          if (excludedSourceIds.has(String(sourceId))) { replacedSourceInstances++; continue; }
+          rangeIndices.push(sourceIndex);
           mesh.getMatrixAt(index, instanceMatrix);
           worldMatrix.multiplyMatrices(mesh.matrixWorld, instanceMatrix);
           group.mesh.setMatrixAt(group.count++, worldMatrix);
         }
-        group.ranges.push({ start, count: mesh.count, sourceMesh: mesh, sourceInstanceIndices: mesh.userData.objectDetailSourceInstanceIndices || null });
+        group.ranges.push({ start: rangeStart, count: rangeIndices.length, sourceMesh: mesh, sourceInstanceIndices: rangeIndices });
+        submittedInstances += rangeIndices.length;
       }
       group.mesh.count = group.count; group.mesh.visible = group.count > 0;
       group.mesh.userData.sourceInstanceRanges = group.ranges;
       if (group.count) { group.mesh.instanceMatrix.needsUpdate = true; activeBatches++; }
     }
-    lastUpdate = { updateMilliseconds: performance.now() - started, visibleSourceMeshes, submittedInstances, activeBatches };
+    lastUpdate = { updateMilliseconds: performance.now() - started, visibleSourceMeshes, submittedInstances, replacedSourceInstances, activeBatches };
     return lastUpdate;
   }
 

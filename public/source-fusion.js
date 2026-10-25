@@ -63,6 +63,7 @@ function* trianglesFor(mesh, geometry = mesh.geometry) {
   }
 }
 function featureAttributes(mesh, vertex) {
+  if (mesh.userData.sourceAttributes) return mesh.userData.sourceAttributes;
   const batch = mesh.geometry.getAttribute('_batchid');
   let parent = mesh;
   while (parent && !parent.batchTable) parent = parent.parent;
@@ -83,6 +84,8 @@ export function createSourceFusion() {
   const grid = new Map(), bridgeMeshCache = new Map(), groundCandidates = new WeakMap(), bridgeTransforms = new WeakMap();
   let bridgeTriangles = 0;
   let groundCorrections = [];
+  let authoredGroundModels = [], authoredGroundRevision = 0;
+  const authoredTrianglesByFeature = new Map();
   const correctionsByFeature = new Map();
   function restore(mesh, original) {
     if (mesh.geometry !== original) { mesh.geometry.dispose(); mesh.geometry = original; }
@@ -145,9 +148,9 @@ export function createSourceFusion() {
     }
     for (const [model, originals] of groundModels) {
       const previousRevision = groundRevisions.get(model);
-      if (previousRevision?.bridgeRevision === bridgeRevision && previousRevision.matrix.equals(model.matrixWorld)) continue;
+      if (previousRevision?.bridgeRevision === bridgeRevision && previousRevision.authoredGroundRevision === authoredGroundRevision && previousRevision.matrix.equals(model.matrixWorld)) continue;
       model.updateWorldMatrix(true, true);
-      groundRevisions.set(model, { bridgeRevision, matrix: model.matrixWorld.clone() });
+      groundRevisions.set(model, { bridgeRevision, authoredGroundRevision, matrix: model.matrixWorld.clone() });
       for (const [mesh, original] of originals) {
         if (!original.boundingBox) original.computeBoundingBox();
         const meshBounds = original.boundingBox.clone().applyMatrix4(mesh.matrixWorld);
@@ -157,11 +160,11 @@ export function createSourceFusion() {
           for (const triangle of grid.get(cell) || []) if (intersects(projectedBounds, triangle.bounds)) candidatesForMesh.add(triangle);
         }
         const previous = groundCandidates.get(mesh);
-        if (previous && previous.matrix.equals(mesh.matrixWorld) && previous.triangles.size === candidatesForMesh.size && [...candidatesForMesh].every(triangle => previous.triangles.has(triangle))) { reusedGroundMeshes++; continue; }
-        groundCandidates.set(mesh, { matrix: mesh.matrixWorld.clone(), triangles: candidatesForMesh });
+        if (previous && previous.authoredGroundRevision === authoredGroundRevision && previous.matrix.equals(mesh.matrixWorld) && previous.triangles.size === candidatesForMesh.size && [...candidatesForMesh].every(triangle => previous.triangles.has(triangle))) { reusedGroundMeshes++; continue; }
+        groundCandidates.set(mesh, { authoredGroundRevision, matrix: mesh.matrixWorld.clone(), triangles: candidatesForMesh });
         restore(mesh, original);
         meshResults.delete(mesh);
-        if (!candidatesForMesh.size && !groundCorrections.length) continue;
+        if (!candidatesForMesh.size && !groundCorrections.length && !authoredTrianglesByFeature.size) continue;
         processedMeshes++;
         const positions = original.getAttribute('position'), sourceIndices = original.index;
         const indexCount = sourceIndices?.count ?? positions.count;
@@ -176,6 +179,17 @@ export function createSourceFusion() {
           if (suppressedBatches.has(batchId)) continue;
           if (!attributesByBatch.has(batchId)) attributesByBatch.set(batchId, featureAttributes(mesh, firstVertex));
           const attributes = attributesByBatch.get(batchId);
+          if (!mesh.userData.authoredSceneContext) {
+            const replacements = authoredTrianglesByFeature.get(String(attributes.DGDT_ID));
+            if (replacements) {
+              const indices = [firstVertex, indexAt(offset + 1), indexAt(offset + 2)];
+              const vertices = indices.map(index => new THREE.Vector3().fromBufferAttribute(positions, index).applyMatrix4(mesh.matrixWorld));
+              if (replacements.some(triangle => vertices.every(point => triangle.some(expected => point.distanceToSquared(expected) < 0.0004)))) {
+                changedTriangles.set(offset, { vertexIndices: indices, polygons: [] });
+                continue;
+              }
+            }
+          }
           const featureCorrections = correctionsByFeature.get(String(attributes.DGDT_ID)) || [];
           if (!candidatesForMesh.size && !featureCorrections.length) continue;
           const structure = attributes.KLASSE_IMG === 'Overbruggingsdeel';
@@ -273,6 +287,20 @@ export function createSourceFusion() {
     return true;
   }
   return {
+    setAuthoredGround(models) {
+      if (models.length === authoredGroundModels.length && models.every(model => authoredGroundModels.includes(model))) return;
+      authoredGroundModels = models; authoredTrianglesByFeature.clear();
+      for (const model of models) {
+        model.updateWorldMatrix(true, true);
+        model.traverse(mesh => {
+          if (!mesh.isMesh || !mesh.userData.sourceFeatureId) return;
+          const id = String(mesh.userData.sourceFeatureId);
+          if (!authoredTrianglesByFeature.has(id)) authoredTrianglesByFeature.set(id, []);
+          for (const triangle of trianglesFor(mesh)) authoredTrianglesByFeature.get(id).push(triangle.points.map(point => new THREE.Vector3(point.x, point.y, point.z)));
+        });
+      }
+      authoredGroundRevision++; dirty = true;
+    },
     setGroundCorrections(data) {
       if (data.version !== 1 || data.origin?.longitude !== 4.49 || data.origin?.latitude !== 51.915 || !Array.isArray(data.triangles) || data.triangles.some(p => !p.featureId || p.expectedWorldPositions?.length !== 3 || p.expectedWorldPositions.some(v => v.length !== 3 || v.some(n => !Number.isFinite(n))) || p.replacementWorldY?.length !== 3 || p.replacementWorldY.some(n => !Number.isFinite(n)))) throw new Error('Invalid ground triangle correction');
       groundCorrections = data.triangles; correctionsByFeature.clear();
