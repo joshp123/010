@@ -1,0 +1,11 @@
+{
+  "writtenBy": "AI, GPT-6,2026-10-25",
+  "tool": "built-in imagegen",
+  "rawEvidence": "PDOK2026 OrthoHR adjoining-neighbourhood-2026.jpg; exact surveyed material masks and reviewed road-paint support retained separately",
+  "styleReference": "Tiny London Brixton actual close screenshot",
+  "materialSheetSha256": "3c995eb4bfd3e0eafd11c90271e98b0d11224251c9387623bbe89a9df56a54cd",
+  "worldScale": "Asphalt panel16m; walking stone4m; brick1.6m; grass4m. Model-created joint units rescaled to subordinate sub-metre illustration, not metre-wide grids.",
+  "geography": "No generated geographic output transfers. Earlier generated overhead target shifted boundaries and is rejected for binding. Material sheet supplies diffuse texture only.",
+  "notSurveyed": "Drawn material irregularities are illustration; no paving-unit geometry, objects, markings or source positions generated.",
+  "previousCandidate": "Dense speckled sheet was rejected after actual complete desktop scene review; quiet material drawing replaces it."
+}
