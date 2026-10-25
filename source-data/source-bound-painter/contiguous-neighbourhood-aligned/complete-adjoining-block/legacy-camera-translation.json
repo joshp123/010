@@ -1,0 +1,50 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "targetLeaf": "18_268621_55472",
+  "legacyToAlignedTranslation": [
+    93.93572292845798,
+    -69.64856976533873,
+    63.872580512033316
+  ],
+  "maxResidualMetres": 5.684341886080801e-13,
+  "legacyFrontageCameraEquivalent": {
+    "name": "view-0-0",
+    "camera": {
+      "centre": [
+        97.84000454466891,
+        -3.092041350393046,
+        54.678154026945386
+      ],
+      "basis": [
+        [
+          1.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "scale": 9.494489311638391,
+      "mid": [
+        0.0,
+        0.0
+      ],
+      "size": 1600,
+      "angle": 0,
+      "elevation": 0
+    },
+    "source": "view-0-0-source.png",
+    "paint": "view-0-0-paint.png",
+    "depth": "view-0-0-depth.npy",
+    "drawingConfidence": 1
+  },
+  "meaning": "Apply translation to legacy camera CENTRE only for this leaf. Basis, mid, scale and pixel source polygons remain identical. Revalidate full aligned208 scene depth/visibility before applying any previously visible face. Exported original source GLB and UVs unchanged."
+}

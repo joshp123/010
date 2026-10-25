@@ -1,0 +1,31 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "tool": "built-in image_gen, existing resources, no API/paid call",
+  "styleReference": "/Users/josh/Documents/Codex/2026-10-24/i-want-you-to-take-over/review/local-integrated-runtime/tiny-london-brixton-close-reference.png",
+  "fields": [
+    {
+      "drawing": "roof-paint.png",
+      "fullPrompt": "roof-prompt.txt",
+      "sourceImage": "view-0-90-source-context.png",
+      "geometryImage": "view-0-90-geometry-context.png",
+      "openingGuide": null,
+      "originalGeneratedFile": "/Users/josh/.codex/generated_images/01a16d33-13fd-7e93-b718-9273a13fd6f3/exec-e7b62fbd-5db8-49c6-8c95-46e9a4fc1005.png"
+    },
+    {
+      "drawing": "rear-paint.png",
+      "fullPrompt": "rear-prompt.txt",
+      "sourceImage": "view-120-28-source-context.png",
+      "geometryImage": "view-120-28-geometry-context.png",
+      "openingGuide": "rear-opening-guide-context.png",
+      "originalGeneratedFile": "/Users/josh/.codex/generated_images/01a16d33-13fd-7e93-b718-9273a13fd6f3/exec-4f71538e-e0b8-4d10-b212-eea4ac0c235e.png"
+    },
+    {
+      "drawing": "opposite-paint.png",
+      "fullPrompt": "opposite-prompt.txt",
+      "sourceImage": "view-300-28-source-context.png",
+      "geometryImage": "view-300-28-geometry-context.png",
+      "openingGuide": "opposite-opening-guide-context.png",
+      "originalGeneratedFile": "/Users/josh/.codex/generated_images/01a16d33-13fd-7e93-b718-9273a13fd6f3/exec-40948ad8-dc43-425b-be93-756369fe8c5f.png"
+    }
+  ]
+}

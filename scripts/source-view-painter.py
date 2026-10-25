@@ -14,16 +14,17 @@ class SourceCollection:
   self.path=folder;definition_path=folder/'source-collection.json';definition=json.loads(definition_path.read_text()) if definition_path.exists() else {};source_names=definition.get('sourceNames');paths=[folder/name for name in source_names] if source_names else sorted(folder.glob('*.b3dm'));self.sources=[m.Source(p) for p in paths];assert self.sources,'No retained municipal sources'
   included_identities=set(definition['includeBagIds']) if definition.get('includeBagIds') else None
   anchor=next((s for s in self.sources if s.path.name==definition.get('anchorSource')),self.sources[0]);anchor_rotation=np.array(anchor.doc['nodes'][0]['matrix']).reshape(4,4,order='F')[:3,:3];anchor_centre=np.array(anchor.feature['RTC_CENTER'])
-  self.images=[];self.triangles=[];self.source_image_ranges=[]
+  self.images=[];self.triangles=[];self.source_image_ranges=[];coordinate_frame=definition.get('coordinateFrame','legacy-unconverted-rtc');ecef_to_gltf=np.array([[1.,0.,0.],[0.,0.,1.],[0.,-1.,0.]]) if coordinate_frame=='ecef-rtc-in-gltf-y-up' else np.eye(3)
   for source in self.sources:
    image_start=len(self.images);self.images.extend(source.images);self.source_image_ranges.append((image_start,len(self.images)))
-   rotation=np.array(source.doc['nodes'][0]['matrix']).reshape(4,4,order='F')[:3,:3];relative_rotation=anchor_rotation.T@rotation;relative_centre=anchor_rotation.T@(np.array(source.feature['RTC_CENTER'])-anchor_centre)
+   rotation=np.array(source.doc['nodes'][0]['matrix']).reshape(4,4,order='F')[:3,:3];relative_rotation=anchor_rotation.T@rotation;relative_centre=anchor_rotation.T@ecef_to_gltf@(np.array(source.feature['RTC_CENTER'])-anchor_centre)
    for triangle in source.triangles:
     original_identity=str(source.batch['id'][triangle['batch']])
     if not original_identity.startswith('BAG_') or (included_identities is not None and triangle['identity'] not in included_identities):continue
     self.triangles.append({**triangle,'positions':triangle['positions']@relative_rotation.T+relative_centre,'image':triangle['image']+image_start})
   self.positions=np.array([t['positions'] for t in self.triangles]);self.normals=np.cross(self.positions[:,1]-self.positions[:,0],self.positions[:,2]-self.positions[:,0]);self.areas=np.linalg.norm(self.normals,axis=1)/2;self.normals/=np.maximum(self.areas[:,None]*2,1e-12)
   self.raw='\n'.join(m.digest(s.raw) for s in self.sources).encode();self.anchor_rotation=anchor_rotation;self.anchor_centre=anchor_centre
+  if coordinate_frame!='legacy-unconverted-rtc':self.raw+=('\n'+coordinate_frame).encode()
 
  def export_handoff(self,images,identities,folder):
   folder.mkdir(parents=True,exist_ok=True);tiles=[]
@@ -63,6 +64,16 @@ def prepare(source,out):
  for angle,elevation in [(0,0),(90,0),(180,0),(270,0),(0,90),(120,28),(300,28),(0,45),(180,45)]:
   name=f'view-{angle}-{elevation}';c=camera(source,angle,elevation);rgb,depth=render(source,c);Image.fromarray(rgb).save(out/(name+'-source.png'));np.save(out/(name+'-depth.npy'),depth);views.append({'name':name,'camera':c,'source':name+'-source.png','paint':name+'-paint.png','depth':name+'-depth.npy',**accepted_views.get(name,{})})
  m.save_json(out/'views.json',{'authorship':'Written by AI on 2026-10-24 by model GPT-6','status':'Model drawing fields require actual source architecture review before acceptance',**previous,'sourceSha256':m.digest(source.raw),'sourcePath':str(source.path.resolve()),'views':views})
+
+def prepare_focused_block(source,out):
+ """Observe explicit neighbouring identities with their surrounding source context."""
+ import copy
+ definition=json.loads((out/'block-observation.json').read_text());identities=set(definition['bagIds']);focused=copy.copy(source);focused.positions=np.array([t['positions'] for t in source.triangles if t['identity'] in identities]);views=[]
+ for angle,elevation in definition['cameraAngles']:
+  name=f'view-{angle}-{elevation}';c=camera(focused,angle,elevation,definition.get('size',1600));c['scale']=min(c['scale'],definition['sourcePixelsPerMetre']);rgb,depth=render(source,c);guide,_=render(source,c,geometry_only=True);Image.fromarray(rgb).save(out/(name+'-source.png'));Image.fromarray(guide).save(out/(name+'-geometry.png'));np.save(out/(name+'-depth.npy'),depth)
+  _,xy=project(focused.positions.reshape(-1,3),c);lo=np.maximum(0,np.floor(xy.min(0)-20).astype(int));hi=np.minimum(c['size'],np.ceil(xy.max(0)+20).astype(int));bounds=[int(lo[0]),int(lo[1]),int(hi[0]),int(hi[1])]
+  Image.fromarray(rgb).crop(bounds).save(out/(name+'-source-context.png'));Image.fromarray(guide).crop(bounds).save(out/(name+'-geometry-context.png'));views.append({'name':name,'camera':c,'source':name+'-source.png','geometryGuide':name+'-geometry.png','depth':name+'-depth.npy','paint':name+'-paint.png','includeBagIds':sorted(identities),'contextCropBounds':bounds})
+ m.save_json(out/'views.json',{'authorship':'Written by AI on 2026-10-25 by model GPT-6','sourceSha256':m.digest(source.raw),'sourcePath':str(source.path.resolve()),'status':'Exact adjoining source observations; not interpreted artwork','views':views})
 
 def prepare_overlapping_context(source,out,native_pixels=1254,drawing_pixels_per_metre=6):
  out.mkdir(parents=True,exist_ok=True);views=[];size=1600;context_span=(native_pixels-32)/drawing_pixels_per_metre;scale=size*drawing_pixels_per_metre/native_pixels
@@ -201,22 +212,39 @@ def align_frontage_field(folder):
   x0,x1=part['sourceX'];ys=part['sourceFloorDatums'];vs=part['drawnFloorDatums'];y0,y1=min(ys),max(ys);xx,yy=np.meshgrid(np.arange(x0,x1),np.arange(y0,y1));u=np.interp(xx+.5,part['sourceX'],part['drawnX']);v=np.interp(yy+.5,ys,vs);u=np.floor(u).astype(int).clip(0,drawing.shape[1]-1);v=np.floor(v).astype(int).clip(0,drawing.shape[0]-1);result[y0:y1,x0:x1,:3]=drawing[v,u];result[y0:y1,x0:x1,3]=255
  Image.fromarray(result).save(folder/'aligned-substrate.png')
 
-def apply_source_registered_field(source,images,c,drawing,identities):
+def apply_source_registered_field(source,images,c,drawing,identities,triangle_indices=None,painted_masks=None):
  """Bind a source-camera RGBA drawing using original geometry, UVs and occlusion."""
  _,depth=render(source,c);size=c['size'];toward=np.asarray(c['basis'])[:,2]
  for index,triangle in enumerate(source.triangles):
+  if triangle_indices is not None and index not in triangle_indices:continue
   if triangle['identity'] not in identities or source.normals[index]@toward<.1:continue
   image=images[triangle['image']];height,width=image.shape[:2]
   for x0,y0,x1,y1,weights,inside in m.raster_triangle(triangle['uv']*[width,height],width,height):
    q,xy=project(weights@triangle['positions'],c);pixels=np.floor(xy).astype(int);valid=inside&(pixels[:,:,0]>=0)&(pixels[:,:,0]<size)&(pixels[:,:,1]>=0)&(pixels[:,:,1]<size);pixels=pixels.clip(0,size-1);normal=source.normals[index]@np.asarray(c['basis']);delta=(pixels+.5-xy)/c['scale'];expected=q[:,:,2]-(normal[0]*delta[:,:,0]-normal[1]*delta[:,:,1])/normal[2];valid&=(abs(expected-depth[pixels[:,:,1],pixels[:,:,0]])<.12)&(drawing[pixels[:,:,1],pixels[:,:,0],3]>0);image[y0:y1+1,x0:x1+1][valid]=drawing[pixels[:,:,1][valid],pixels[:,:,0][valid],:3]
+   if painted_masks is not None:painted_masks[triangle['image']][y0:y1+1,x0:x1+1]|=valid
 
 def bake_frontage_field(source,folder):
  """Rebuild one registered drawing from retained source, teacher and judgement."""
  registration=json.loads((folder/'registration.json').read_text());align_frontage_field(folder);plan=json.loads((folder/registration['sourceCameraViews']).resolve().read_text());c=next(v['camera'] for v in plan['views'] if v['name']==registration['sourceCamera']);packed=np.load(folder/registration['baseAtlases']);source.images=[packed[f'image_{i}'].copy() for i in range(len(source.images))];apply_source_registered_field(source,source.images,c,np.asarray(Image.open(folder/'aligned-substrate.png')),set(registration['bagIds']));rgb,_=render(source,c);Image.fromarray(rgb).save(folder/'actual-no-plants-substrate-bake.png');source.export_handoff(source.images,{t['identity'] for t in source.triangles},folder/registration['handoffDirectory'])
 
+def bake_block_fields(source,folder):
+ """Continue an existing drawing with explicitly source-registered block fields."""
+ definition=json.loads((folder/'block-drawing.json').read_text());plan=json.loads((folder/'views.json').read_text());base=(folder/definition['baseHandoff']).resolve()
+ for leaf,(first,last) in zip(source.sources,source.source_image_ranges):
+  leaf_base=(folder/definition.get('baseOverrides',{}).get(leaf.path.stem,str(base))).resolve()
+  for local,image_index in enumerate(range(first,last)):source.images[image_index]=np.asarray(Image.open(leaf_base/leaf.path.stem/f'painted-atlas-{local}.png').convert('RGB')).copy()
+ painted_masks=[np.zeros(a.shape[:2],bool) for a in source.images]
+ for field in definition['fields']:
+  view=next(v for v in plan['views'] if v['name']==field['view']);c=view['camera'];bounds=view['contextCropBounds'];drawing=Image.open(folder/field['drawing']).convert('RGBA').resize((bounds[2]-bounds[0],bounds[3]-bounds[1]),Image.Resampling.NEAREST);registered=Image.new('RGBA',(c['size'],c['size']));registered.paste(drawing,bounds[:2]);apply_source_registered_field(source,source.images,c,np.asarray(registered),set(field['bagIds']),set(field['triangleIndices']) if 'triangleIndices' in field else None,painted_masks)
+ pad_painted_uv_charts(source,source.images,painted_masks)
+ for view in plan['views']:
+  rgb,_=render(source,view['camera']);Image.fromarray(rgb).save(folder/(view['name']+'-actual-bake.png'))
+ source.export_handoff(source.images,{t['identity'] for t in source.triangles},folder/definition['handoffDirectory'])
+
 def pad_painted_uv_charts(source,images,painted_masks):
  """Supply sampling gutters outside UV charts, never inside unseen surfaces."""
  for image_index,image in enumerate(images):
+  if not painted_masks[image_index].any():continue
   height,width=image.shape[:2];covered=np.zeros((height,width),dtype=bool)
   for triangle in source.triangles:
    if triangle['image']!=image_index:continue
@@ -257,9 +285,11 @@ def bake(source,out,coherent_planes=False,observed_planes=False,uv_gutters=False
  m.save_json(out/f'baked{suffix}.json',{'sourceSha256':m.digest(source.raw),'paintedViews':[v['paint'] for v in plan['views'] if (out/v['paint']).exists()],'identities':sorted({t['identity'] for t in source.triangles}),'status':'Whole model drawing field candidate; source aperture and opposing view inspection required, no fidelity acceptance inferred from geometry',**({'connectedSurfaceObservations':records} if coherent_planes else {}),**({'architecturalCorrespondences':observations} if observed_planes else {})})
 
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('operation',choices=['prepare','prepare-overlaps','prepare-correspondences','bake','bake-coherent','bake-observed','bake-gutters','bake-frontage']);p.add_argument('source',type=Path);p.add_argument('output',type=Path);a=p.parse_args();s=load_source(a.source)
+ p=argparse.ArgumentParser();p.add_argument('operation',choices=['prepare','prepare-block','prepare-overlaps','prepare-correspondences','bake','bake-coherent','bake-observed','bake-gutters','bake-frontage','bake-block']);p.add_argument('source',type=Path);p.add_argument('output',type=Path);a=p.parse_args();s=load_source(a.source)
  if a.operation=='prepare':prepare(s,a.output)
+ elif a.operation=='prepare-block':prepare_focused_block(s,a.output)
  elif a.operation=='prepare-overlaps':prepare_overlapping_context(s,a.output)
  elif a.operation=='prepare-correspondences':prepare_plane_correspondences(s,a.output)
  elif a.operation=='bake-frontage':bake_frontage_field(s,a.output)
+ elif a.operation=='bake-block':bake_block_fields(s,a.output)
  else:bake(s,a.output,coherent_planes=a.operation in ['bake-coherent','bake-observed','bake-gutters'],observed_planes=a.operation=='bake-observed',uv_gutters=a.operation=='bake-gutters')

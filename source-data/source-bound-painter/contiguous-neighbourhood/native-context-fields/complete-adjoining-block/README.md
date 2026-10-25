@@ -1,0 +1,3 @@
+Written by AI on 2026-10-25 by model GPT-6.
+
+HELD legacy common-context observation and generated roof drawing. SourceCollection omitted inverse Y/Z conversion for true ECEF RTC deltas; within-leaf source shapes survive but neighbouring context/occlusion is wrong. No roof candidate from this directory was imported. The bake stopped before export because the partial cold frontage handoff was incorrectly used as full base. Preserve these records as diagnostic evidence; use contiguous-neighbourhood-aligned for corrected block observations. Accepted complete frontage geometry/UV atlas remains valid and unchanged.
