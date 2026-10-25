@@ -4,7 +4,7 @@ These observations identify conservative pane interiors across the four retained
 
 The existing northern observations are retained in their original source frame. New shared observations use the source collection anchor. `prepare-neighbourhood-aperture-emission.py` transforms those registered cameras into each original leaf frame, then the depth-tested pane assembler writes only the separate emission channel into the original UVs. The original source geometry, RTC, matrix, identities and current daytime artwork are retained. Roof triangles cannot receive this channel.
 
-The current daytime input is the art handoff `shared-neighbourhood/model-fields/bound-shared-neighbourhood-pixel-centres`. Source photographs and depth are in its parent model-fields directory. `source-view-registration.json` pins the observed cameras and raw image/depth hashes. `observations.json` pins the six-source fingerprint and pane vectors. The art checkout retains the original six B3DM inputs and photographs.
+The current daytime input is the art handoff `shared-neighbourhood/model-fields/bound-shared-neighbourhood-composition-priority`. Source photographs and depth are in its parent model-fields directory. `source-view-registration.json` pins the observed cameras and raw image/depth hashes. `observations.json` pins the six-source fingerprint and pane vectors. The art checkout retains the original six B3DM inputs and photographs.
 
 Warm emission illustrates glazing at night. It does not describe occupancy, household activity, opening hours or measured real-time lights. Unobserved areas remain dark. Common-city day/dusk/night and opposing phone inspection is required after any reassembly; successful compilation is not visual acceptance.
 
