@@ -755,6 +755,13 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       }
       tiles.group.visible = visible;
       if (visible) tiles.update();
+      // The renderer only cancels queued tiles. Navigation can leave obsolete
+      // downloads and parses ahead of the new neighbourhood in its shared queues.
+      // Keep hierarchy documents and loaded context; cancel only unused models.
+      for (const tile of [...tiles.loadingTiles]) {
+        if (tile.internal.hasRenderableContent && (!visible ||
+            (!tiles.usedSet.has(tile) && !tile.traversal.inFrustum))) tiles.lruCache.remove(tile);
+      }
     }
     // Restore/resolve the older source first, then let exact visible artwork
     // replace either municipal edition. Neighbours retain their real surfaces.
