@@ -1,4 +1,5 @@
 import { createTrafficCoordinator } from './traffic-coordinator.js';
+import { projectSourceRoadSurface } from './traffic-surface-projection.js';
 import * as THREE from 'three';
 import { journeyLaneOffset, safeStep, routeFollowingGap, speedForRoadClass, applyReviewedRoadGeometry, applySurfaceProfiles } from './traffic-motion.js';
 import { createJourneyPlanner } from './traffic-journeys.js';
@@ -118,11 +119,11 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     sourceNetwork = network; roads = []; cars = []; lastTime = null; unroutableOrigins.clear();
     for (const source of network.roads) {
       if (source.coordinates.length < 2 || ![1, 2, 3].includes(source.direction)) continue;
-      const points = source.coordinates.map(([longitude, latitude]) => place(latitude, longitude, .2, { source: 'NWB', roadId: source.id, roadClass: source.roadClass }));
+      const { points, coordinates } = projectSourceRoadSurface(source, place);
       const distances = [0];
       for (let index = 1; index < points.length; index++) distances.push(distances.at(-1) + Math.hypot(points[index].x - points[index - 1].x, points[index].z - points[index - 1].z));
       if (distances.at(-1) < .1) continue;
-      const road = { ...source, sourceIndex: roads.length, points, distances, length: distances.at(-1), bounds: new THREE.Box3().setFromPoints(points).expandByScalar(5) };
+      const road = { ...source, sourceCoordinates: source.coordinates, coordinates, sourceIndex: roads.length, points, distances, length: distances.at(-1), bounds: new THREE.Box3().setFromPoints(points).expandByScalar(5) };
       roads.push(road);
     }
     planner = createJourneyPlanner(roads,{turnRestrictions:bicycles?[]:(network.turnRestrictions||[])});
