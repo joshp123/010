@@ -23,14 +23,15 @@ if (params.has('elevation')) style.elevationDegrees = Number(params.get('elevati
 if (params.get('style') === 'photo') Object.assign(style, { pixelArt: false, outlines: false });
 if (params.has('detail')) style.groundPhotoDetail = Number(params.get('detail'));
 if (params.get('roofs') === 'model') style.orthoRoofs = false;
-const miniature = new Miniature(canvas, { sceneBase, manifest, style });
+const miniature = new Miniature(canvas, { sceneBase, manifest, area: params.get('area') ?? 'core', style });
 window.miniature = miniature;
 
 if (params.get('capture') === '1') {
   // Offline renderer for the pyramid builder: load once, then render any
   // exact window on the global art-pixel grid and hand back a PNG.
   await miniature.loadAll();
-  window.renderWindow = (left, top, width, height, bearing, metresPerPixel) => {
+  window.renderWindow = (left, top, width, height, bearing, metresPerPixel, dataOverlay = false) => {
+    miniature.style.dataOverlay = dataOverlay;
     miniature.setScreenWindow(left, top, width, height, bearing, metresPerPixel);
     miniature.render();
     return canvas.toDataURL('image/png');

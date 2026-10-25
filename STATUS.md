@@ -4,28 +4,27 @@ Written by AI on 2026-10-25 by model Claude Opus 5.5. Kept under one page. Josh'
 
 **Goal.** A pixel-art isometric miniature of the whole gemeente Rotterdam, at the quality of isometric.nyc and tiny.london, fast on a phone, alive with live transit, simulated traffic, weather and a lit night. Built from one reusable 3D model of the city.
 
-**Now: M0, the comparison.** On one neighbourhood, build the city model and three ways of showing it, judge them side by side, publish the best, and ask Josh to choose.
+**Now: M0, the comparison.** One neighbourhood, one city model, three ways of drawing it, judged side by side.
 
-- Neighbourhood: **Historic Delfshaven around Aelbrechtskolk** (51.9103 N, 4.4475 E). Core block 1 × 1 km first, then out to Lloydkwartier and the Euromast.
-- T1: the 3D model live in the browser with a pixel-art shader. Rotates freely.
-- T2: the same shader rendered offline into an image pyramid, at one bearing and at four.
-- T3: T2 repainted by ChatGPT's image tool, with everything that exists as data composited back from data.
+- Neighbourhood: **Historic Delfshaven around Aelbrechtskolk**, a 1 × 1 km block (RD x 89750–90750, y 435750–436750). The scene is also built out to Lloydkwartier and the Euromast (54 tiles); the pages show the 1 km block.
+- **T1, live 3D**: the scene drawn in the browser with a pixel-art shader. Rotates freely. `?style=photo` shows the same scene unpixelated at full resolution.
+- **T2, pixel pyramid**: the same shader rendered offline into image tiles, four bearings (35°, 125°, 215°, 305°). About 10 s of MacBook time and 4 MB per bearing per km².
+- **T3, painted pyramid**: T2 repainted square by square by ChatGPT's image tool, overlaps blended, rails and road markings stamped back from data. One bearing (35°).
 
-**Owners.** Claude Opus 5.5: product, renderer and shader, pages, judging, publishing, talking to Josh. GPT-6.1 Sol (medium, Codex background runs): bounded backend pieces.
+**Owners.** Claude Opus 5.5: renderer, shader, pages, judging, publishing. GPT-6.1 Sol (Codex background runs): scene builders, web bake, speed script, paint batches.
 
-| Piece | Owner | State |
-|---|---|---|
-| Steering file complete | Opus | done |
-| Buildings, bridges, trees, lamps → scene | Sol | running |
-| Ground, water, rails, markings → scene | Sol | running |
-| Renderer and pixel shader (T1) | Opus | next |
-| Pyramid builder (T2) | Sol, after the shader | waiting |
-| Paint pass (T3) | Codex image tool | waiting |
-| Speed measurement script | Sol | waiting |
-| Publish at 010.jjpcodes.com | Opus via Codex Sites | waiting |
+**Where I departed from the plan, and why.**
+- T2 is not a separate renderer: it is the live renderer capturing exact windows, so T1 and T2 give the same pixels at the same view and one shader decides the look.
+- Roofs come from the 2026 aerial by planar projection in the shader, not baked roof textures. Simpler; tall buildings show some roof lean.
+- No whole-gemeente low-resolution render yet: the scene exists only for M0. It is the first job of M1.
+- The plan's per-roof structure checks are not built; tonight's judgement is by eye against the aerial.
 
-**Where the plan was changed, and why.** None yet.
+**Known problems.**
+- Façades: 87% of façade area in the block has a 2018 photo, 72% across the full area. Elsewhere walls are plain.
+- The painter changes façade colours (grey plaster often becomes brick) and fills empty background with water; two paints of the same place differ in palette.
+- Rotterdam's road-marking register publishes no licence. The markings are used and flagged.
+- 3% of non-building ground has no valid height in the municipal model; a flat underlay at street height fills it.
 
-**Open decisions for Josh** (sent once, after M0 has pictures): which target or hybrid; rotation; what to draw where no façade photo exists; whether a model paint pass earns its place.
+**Open decisions for Josh**: sent once, with links and the comparison table.
 
-**Josh should look at next:** nothing yet.
+**Josh should look at next:** the comparison page on 010.jjpcodes.com once published.

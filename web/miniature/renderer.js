@@ -12,6 +12,7 @@ import { buildPalette, surfaceClassColours } from './palette.js';
 
 const TILE_METRES = 250;
 const CAMERA_DISTANCE = 4000;
+const STREET_HEIGHT = 3; // NAP metres; the point under the screen centre is at street level
 
 export const defaultStyle = {
   elevationDegrees: 40,
@@ -101,15 +102,19 @@ function withTilePosition(material, tileOffset, extraUniforms, fragmentPatch) {
         vTileUv = vec2(tileLocal.x / ${TILE_METRES.toFixed(1)}, 1.0 + tileLocal.z / ${TILE_METRES.toFixed(1)});
         vWorldNormalMini = normalize(mat3(modelMatrix) * objectNormal);`);
     shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', `#include <common>\nvarying vec2 vTileUv;\nvarying vec3 vWorldNormalMini;\n${fragmentPatch.declarations}`)
-      .replace('#include <map_fragment>', `#include <map_fragment>\n${fragmentPatch.body}`);
+      .replace('#include <common>', `#include <common>\nvarying vec2 vTileUv;\nvarying vec3 vWorldNormalMini;\nuniform float dataOverlay;\nvec3 overlayCode = vec3(0.0);\n${fragmentPatch.declarations}`)
+      .replace('#include <map_fragment>', `#include <map_fragment>\n${fragmentPatch.body}`)
+      .replace('#include <opaque_fragment>', `#include <opaque_fragment>\n${fragmentPatch.overlay ?? ''}`);
   };
   material.customProgramCacheKey = () => fragmentPatch.key;
   return material;
 }
 
+const overlayOutput = 'if (dataOverlay > 0.5) gl_FragColor = vec4(overlayCode, 1.0);';
+
 const groundPatch = {
   key: 'mini-ground',
+  overlay: overlayOutput,
   declarations: `
     uniform sampler2D classTexture;
     uniform sampler2D classColours;
@@ -145,6 +150,11 @@ const groundPatch = {
     if ((lines & 8) != 0) groundColour = mix(groundColour, vec3(0.80, 0.78, 0.72), 0.7);
     if ((lines & 4) != 0) groundColour = vec3(0.93, 0.92, 0.86);
     if ((lines & 3) != 0) groundColour = vec3(0.30, 0.29, 0.30);
+    // Data overlay: which line features are at this pixel, as pure colours,
+    // for compositing data back over a painted image.
+    if ((lines & 8) != 0) overlayCode = vec3(0.0, 0.0, 1.0);
+    if ((lines & 4) != 0) overlayCode = vec3(0.0, 1.0, 0.0);
+    if ((lines & 3) != 0) overlayCode = vec3(1.0, 0.0, 0.0);
     if (surfaceClass == 8.0) {
       // Water: lighter towards quays, with drawn ripples on a 5 m grid.
       vec2 metres = vTileUv * ${TILE_METRES.toFixed(1)};
@@ -158,6 +168,7 @@ const groundPatch = {
 
 const buildingPatch = {
   key: 'mini-building',
+  overlay: overlayOutput,
   declarations: `
     uniform sampler2D orthoTexture;
     uniform float orthoRoofs;
@@ -292,6 +303,7 @@ export class Miniature {
     this.palette = paletteTexture();
     this.normalMaterial = new THREE.MeshNormalMaterial();
     this.tiles = new Map();
+    this.overlayUniform = { value: 0 };
     this.view = { x: 0, y: 0, bearing: 0, metresPerPixel: 0.3, width: 256, height: 256 };
     this.setupPost();
   }
@@ -351,6 +363,7 @@ export class Miniature {
       texelsPerArtPixel: { value: this.view.metresPerPixel / 0.1 },
       classTexture: { value: classTexture },
       classColours: { value: this.classColours },
+      dataOverlay: this.overlayUniform,
     };
     if (classTexture) {
       const groundMaterial = withTilePosition(new THREE.MeshLambertMaterial({ color: 0xffffff }), offset, shared, groundPatch);
@@ -403,6 +416,12 @@ export class Miniature {
   treeMesh(trees, offset) {
     const clump = new THREE.IcosahedronGeometry(0.5, 1);
     const material = new THREE.MeshLambertMaterial({ color: 0xffffff, flatShading: true });
+    material.onBeforeCompile = (shader) => {
+      shader.uniforms.dataOverlay = this.overlayUniform;
+      shader.fragmentShader = shader.fragmentShader
+        .replace('#include <common>', '#include <common>\nuniform float dataOverlay;')
+        .replace('#include <opaque_fragment>', '#include <opaque_fragment>\nif (dataOverlay > 0.5) gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);');
+    };
     const clumpsPerTree = 5;
     const mesh = new THREE.InstancedMesh(clump, material, trees.length * clumpsPerTree);
     const matrix = new THREE.Matrix4();
@@ -438,8 +457,19 @@ export class Miniature {
     return mesh;
   }
 
-  async loadAll(onTile = () => {}) {
-    await Promise.all(this.tileList.map((tile) => this.loadTile(tile).then(() => onTile(tile))));
+  // Nearest tiles first, a few at a time, so the view under the user arrives
+  // before bandwidth is spent on tiles off screen.
+  async loadAll(onTile = () => {}, near = { x: this.view.x, y: this.view.y }, concurrency = 3) {
+    const distance = (t) => Math.hypot(t.x_min + TILE_METRES / 2 - near.x, t.y_min + TILE_METRES / 2 - near.y);
+    const queue = [...this.tileList].sort((a, b) => distance(a) - distance(b));
+    const worker = async () => {
+      while (queue.length) {
+        const tile = queue.shift();
+        await this.loadTile(tile);
+        onTile(tile);
+      }
+    };
+    await Promise.all(Array.from({ length: concurrency }, worker));
   }
 
   tileAt(x, y) {
@@ -456,7 +486,7 @@ export class Miniature {
   setView({ x, y, bearing = this.view.bearing, metresPerPixel = this.view.metresPerPixel, width, height }) {
     Object.assign(this.view, { x, y, bearing, metresPerPixel, width, height });
     const { right, up, view } = screenAxes(bearing, this.style.elevationDegrees);
-    const centre = this.worldFromRd(x, y, 0);
+    const centre = this.worldFromRd(x, y, STREET_HEIGHT);
     const centreSx = Math.round(centre.dot(right) / metresPerPixel);
     const centreSy = Math.round(centre.dot(up) / metresPerPixel);
     this.setScreenWindow(centreSx - Math.floor(width / 2), centreSy + Math.floor(height / 2), width, height, bearing, metresPerPixel);
@@ -533,8 +563,11 @@ export class Miniature {
 
   render() {
     const u = this.postMaterial.uniforms;
-    u.pixelArt.value = this.style.pixelArt ? 1 : 0;
-    u.outlines.value = this.style.outlines ? 1 : 0;
+    const overlay = Boolean(this.style.dataOverlay);
+    this.overlayUniform.value = overlay ? 1 : 0;
+    this.scene.background.set(overlay ? 0x000000 : 0xc9d3dd);
+    u.pixelArt.value = this.style.pixelArt && !overlay ? 1 : 0;
+    u.outlines.value = this.style.outlines && !overlay ? 1 : 0;
     u.dither.value = this.style.dither;
     this.renderer.setRenderTarget(this.colourTarget);
     this.renderer.render(this.scene, this.camera);
