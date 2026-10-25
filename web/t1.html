@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>010 · live 3D</title>
+<link rel="stylesheet" href="./miniature/page.css">
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three/build/three.module.js",
+  "three/addons/": "./vendor/three/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<canvas id="map"></canvas>
+<div class="controls">
+  <button id="rotate-left" aria-label="Rotate left">⟲</button>
+  <button id="rotate-right" aria-label="Rotate right">⟳</button>
+  <button id="style" aria-label="Toggle pixel art">px</button>
+</div>
+<div class="label" id="label">Delfshaven · live 3D</div>
+<script type="module" src="./t1.js"></script>
+</body>
+</html>
