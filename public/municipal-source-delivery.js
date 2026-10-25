@@ -9,9 +9,10 @@ function visibleMipDemand(tiles, model) {
   const uv = [new THREE.Vector2(), new THREE.Vector2(), new THREE.Vector2()];
   model.updateWorldMatrix(true, true);
   for (const camera of tiles.cameras) {
+    if (demand > 1) break;
     const size = tiles.cameraMap.get(camera), projection = new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
     model.traverse(mesh => {
-      if (!mesh.isMesh || !mesh.visible) return;
+      if (demand > 1 || !mesh.isMesh || !mesh.visible) return;
       const geometry = mesh.geometry, position = geometry.getAttribute('position'), texcoord = geometry.getAttribute('uv');
       if (!texcoord) return;
       const matrix = new THREE.Matrix4().copy(mesh.matrixWorld);
@@ -41,6 +42,7 @@ function visibleMipDemand(tiles, model) {
           const c = (dy1 * dv2 - dy2 * dv1) / determinant, d = (dy2 * du1 - dy1 * du2) / determinant;
           const trace = a*a+b*b+c*c+d*d, area = a*d-b*c;
           demand = Math.max(demand, 2 * Math.sqrt((trace + Math.sqrt(Math.max(0, trace*trace-4*area*area))) / 2));
+          if (demand > 1) return;
         }
       }
     });
