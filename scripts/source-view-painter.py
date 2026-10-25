@@ -20,7 +20,9 @@ class SourceCollection:
    rotation=np.array(source.doc['nodes'][0]['matrix']).reshape(4,4,order='F')[:3,:3];relative_rotation=anchor_rotation.T@rotation;relative_centre=anchor_rotation.T@ecef_to_gltf@(np.array(source.feature['RTC_CENTER'])-anchor_centre)
    for triangle in source.triangles:
     original_identity=str(source.batch['id'][triangle['batch']])
-    if not original_identity.startswith('BAG_') or (included_identities is not None and triangle['identity'] not in included_identities):continue
+    is_building=original_identity.startswith('BAG_')
+    if not is_building and not definition.get('includeNonBagContext',False):continue
+    if is_building and included_identities is not None and triangle['identity'] not in included_identities:continue
     self.triangles.append({**triangle,'positions':triangle['positions']@relative_rotation.T+relative_centre,'image':triangle['image']+image_start})
   self.positions=np.array([t['positions'] for t in self.triangles]);self.normals=np.cross(self.positions[:,1]-self.positions[:,0],self.positions[:,2]-self.positions[:,0]);self.areas=np.linalg.norm(self.normals,axis=1)/2;self.normals/=np.maximum(self.areas[:,None]*2,1e-12)
   self.raw='\n'.join(m.digest(s.raw) for s in self.sources).encode();self.anchor_rotation=anchor_rotation;self.anchor_centre=anchor_centre
@@ -212,7 +214,7 @@ def align_frontage_field(folder):
   x0,x1=part['sourceX'];ys=part['sourceFloorDatums'];vs=part['drawnFloorDatums'];y0,y1=min(ys),max(ys);xx,yy=np.meshgrid(np.arange(x0,x1),np.arange(y0,y1));u=np.interp(xx+.5,part['sourceX'],part['drawnX']);v=np.interp(yy+.5,ys,vs);u=np.floor(u).astype(int).clip(0,drawing.shape[1]-1);v=np.floor(v).astype(int).clip(0,drawing.shape[0]-1);result[y0:y1,x0:x1,:3]=drawing[v,u];result[y0:y1,x0:x1,3]=255
  Image.fromarray(result).save(folder/'aligned-substrate.png')
 
-def apply_source_registered_field(source,images,c,drawing,identities,triangle_indices=None,painted_masks=None):
+def apply_source_registered_field(source,images,c,drawing,identities,triangle_indices=None,painted_masks=None,preserve_painted=False):
  """Bind a source-camera RGBA drawing using original geometry, UVs and occlusion."""
  _,depth=render(source,c);size=c['size'];toward=np.asarray(c['basis'])[:,2]
  for index,triangle in enumerate(source.triangles):
@@ -220,7 +222,11 @@ def apply_source_registered_field(source,images,c,drawing,identities,triangle_in
   if triangle['identity'] not in identities or source.normals[index]@toward<.1:continue
   image=images[triangle['image']];height,width=image.shape[:2]
   for x0,y0,x1,y1,weights,inside in m.raster_triangle(triangle['uv']*[width,height],width,height):
-   q,xy=project(weights@triangle['positions'],c);pixels=np.floor(xy).astype(int);valid=inside&(pixels[:,:,0]>=0)&(pixels[:,:,0]<size)&(pixels[:,:,1]>=0)&(pixels[:,:,1]<size);pixels=pixels.clip(0,size-1);normal=source.normals[index]@np.asarray(c['basis']);delta=(pixels+.5-xy)/c['scale'];expected=q[:,:,2]-(normal[0]*delta[:,:,0]-normal[1]*delta[:,:,1])/normal[2];valid&=(abs(expected-depth[pixels[:,:,1],pixels[:,:,0]])<.12)&(drawing[pixels[:,:,1],pixels[:,:,0],3]>0);image[y0:y1+1,x0:x1+1][valid]=drawing[pixels[:,:,1][valid],pixels[:,:,0][valid],:3]
+   q,xy=project(weights@triangle['positions'],c);pixels=np.floor(xy).astype(int);valid=inside&(pixels[:,:,0]>=0)&(pixels[:,:,0]<size)&(pixels[:,:,1]>=0)&(pixels[:,:,1]<size);pixels=pixels.clip(0,size-1);normal=source.normals[index]@np.asarray(c['basis']);delta=(pixels+.5-xy)/c['scale'];expected=q[:,:,2]-(normal[0]*delta[:,:,0]-normal[1]*delta[:,:,1])/normal[2];valid&=(abs(expected-depth[pixels[:,:,1],pixels[:,:,0]])<.12)&(drawing[pixels[:,:,1],pixels[:,:,0],3]>0)
+   if preserve_painted:
+    assert painted_masks is not None
+    valid&=~painted_masks[triangle['image']][y0:y1+1,x0:x1+1]
+   image[y0:y1+1,x0:x1+1][valid]=drawing[pixels[:,:,1][valid],pixels[:,:,0][valid],:3]
    if painted_masks is not None:painted_masks[triangle['image']][y0:y1+1,x0:x1+1]|=valid
 
 def bake_frontage_field(source,folder):
