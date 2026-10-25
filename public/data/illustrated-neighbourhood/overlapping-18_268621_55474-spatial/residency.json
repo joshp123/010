@@ -1,0 +1,72 @@
+{
+  "nativeTexels": true,
+  "source": "/Users/josh/code/010-rescue-local/public/data/illustrated-neighbourhood/overlapping-18_268621_55474",
+  "sourceGLBSha256": "64772cf10d6373f3fc12522d9deb34efa5378d30d00329792c1c561e18b0ff7d",
+  "buildings": [
+    {
+      "bagId": "0599100000670795",
+      "sourceSha256": "64772cf10d6373f3fc12522d9deb34efa5378d30d00329792c1c561e18b0ff7d",
+      "output": "bag0599100000670795.glb",
+      "atlasSize": [
+        525,
+        263
+      ],
+      "decodedRgbaBytesIncludingMips": 734700,
+      "layout": "packed-islands",
+      "islands": 7,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000767287",
+      "sourceSha256": "64772cf10d6373f3fc12522d9deb34efa5378d30d00329792c1c561e18b0ff7d",
+      "output": "bag0599100000767287.glb",
+      "atlasSize": [
+        436,
+        1132
+      ],
+      "decodedRgbaBytesIncludingMips": 2631516,
+      "layout": "packed-islands",
+      "islands": 19,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000690502",
+      "sourceSha256": "64772cf10d6373f3fc12522d9deb34efa5378d30d00329792c1c561e18b0ff7d",
+      "output": "bag0599100000690502.glb",
+      "atlasSize": [
+        126,
+        631
+      ],
+      "decodedRgbaBytesIncludingMips": 422936,
+      "layout": "packed-islands",
+      "islands": 7,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100110002041",
+      "sourceSha256": "64772cf10d6373f3fc12522d9deb34efa5378d30d00329792c1c561e18b0ff7d",
+      "output": "bag0599100110002041.glb",
+      "atlasSize": [
+        272,
+        705
+      ],
+      "decodedRgbaBytesIncludingMips": 1022292,
+      "layout": "packed-islands",
+      "islands": 31,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100110002040",
+      "sourceSha256": "64772cf10d6373f3fc12522d9deb34efa5378d30d00329792c1c561e18b0ff7d",
+      "output": "bag0599100110002040.glb",
+      "atlasSize": [
+        404,
+        443
+      ],
+      "decodedRgbaBytesIncludingMips": 953404,
+      "layout": "packed-islands",
+      "islands": 26,
+      "emissionCrops": []
+    }
+  ]
+}

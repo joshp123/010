@@ -1,0 +1,59 @@
+{
+  "nativeTexels": true,
+  "source": "/Users/josh/code/010-rescue-local/public/data/illustrated-neighbourhood/overlapping-18_268621_55470",
+  "sourceGLBSha256": "6b0a81131adbc9d33a4102108f2668162d3953cab74daf236b0536d0f621e29f",
+  "buildings": [
+    {
+      "bagId": "0599100000650048",
+      "sourceSha256": "6b0a81131adbc9d33a4102108f2668162d3953cab74daf236b0536d0f621e29f",
+      "output": "bag0599100000650048.glb",
+      "atlasSize": [
+        532,
+        795
+      ],
+      "decodedRgbaBytesIncludingMips": 2254152,
+      "layout": "packed-islands",
+      "islands": 11,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000650041",
+      "sourceSha256": "6b0a81131adbc9d33a4102108f2668162d3953cab74daf236b0536d0f621e29f",
+      "output": "bag0599100000650041.glb",
+      "atlasSize": [
+        312,
+        1231
+      ],
+      "decodedRgbaBytesIncludingMips": 2047248,
+      "layout": "packed-islands",
+      "islands": 11,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000650043",
+      "sourceSha256": "6b0a81131adbc9d33a4102108f2668162d3953cab74daf236b0536d0f621e29f",
+      "output": "bag0599100000650043.glb",
+      "atlasSize": [
+        1166,
+        403
+      ],
+      "decodedRgbaBytesIncludingMips": 2503220,
+      "layout": "packed-islands",
+      "islands": 11,
+      "emissionCrops": []
+    },
+    {
+      "bagId": "0599100000650045",
+      "sourceSha256": "6b0a81131adbc9d33a4102108f2668162d3953cab74daf236b0536d0f621e29f",
+      "output": "bag0599100000650045.glb",
+      "atlasSize": [
+        512,
+        779
+      ],
+      "decodedRgbaBytesIncludingMips": 2126076,
+      "layout": "packed-islands",
+      "islands": 11,
+      "emissionCrops": []
+    }
+  ]
+}

@@ -15,7 +15,7 @@
       ]
     },
     {
-      "uri": "contiguous-18_268618_55472-spatial/tileset.json",
+      "uri": "overlapping-18_268618_55472-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000638395",
@@ -30,7 +30,7 @@
       ]
     },
     {
-      "uri": "contiguous-18_268618_55473-spatial/tileset.json",
+      "uri": "overlapping-18_268618_55473-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000675909"
@@ -43,7 +43,7 @@
       ]
     },
     {
-      "uri": "contiguous-18_268619_55471-spatial/tileset.json",
+      "uri": "overlapping-18_268619_55471-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000752498"
@@ -56,7 +56,7 @@
       ]
     },
     {
-      "uri": "contiguous-night-18_268619_55472-spatial/tileset.json",
+      "uri": "overlapping-night-18_268619_55472-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000671740",
@@ -79,7 +79,7 @@
       ]
     },
     {
-      "uri": "contiguous-night-18_268619_55473-spatial/tileset.json",
+      "uri": "overlapping-night-18_268619_55473-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000688699",
@@ -119,7 +119,7 @@
       ]
     },
     {
-      "uri": "contiguous-18_268619_55474-spatial/tileset.json",
+      "uri": "overlapping-18_268619_55474-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100010036583",
@@ -147,7 +147,7 @@
       ]
     },
     {
-      "uri": "contiguous-18_268620_55471-spatial/tileset.json",
+      "uri": "overlapping-18_268620_55471-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000752501",
@@ -161,7 +161,7 @@
       ]
     },
     {
-      "uri": "contiguous-night-18_268620_55472-spatial/tileset.json",
+      "uri": "overlapping-night-18_268620_55472-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000656926",
@@ -191,7 +191,7 @@
       ]
     },
     {
-      "uri": "contiguous-night-18_268620_55473-spatial/tileset.json",
+      "uri": "overlapping-night-18_268620_55473-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100100019945",
@@ -235,7 +235,7 @@
       ]
     },
     {
-      "uri": "contiguous-18_268620_55474-spatial/tileset.json",
+      "uri": "overlapping-18_268620_55474-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100100019939",
@@ -265,7 +265,7 @@
       ]
     },
     {
-      "uri": "contiguous-18_268621_55470-spatial/tileset.json",
+      "uri": "overlapping-18_268621_55470-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000650041",
@@ -281,7 +281,7 @@
       ]
     },
     {
-      "uri": "contiguous-18_268621_55471-spatial/tileset.json",
+      "uri": "overlapping-18_268621_55471-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000650090",
@@ -312,7 +312,7 @@
       ]
     },
     {
-      "uri": "contiguous-night-18_268621_55472-spatial/tileset.json",
+      "uri": "overlapping-night-18_268621_55472-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000767277",
@@ -336,7 +336,7 @@
       ]
     },
     {
-      "uri": "contiguous-night-18_268621_55473-spatial/tileset.json",
+      "uri": "overlapping-night-18_268621_55473-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000671811",
@@ -364,7 +364,7 @@
       ]
     },
     {
-      "uri": "contiguous-18_268621_55474-spatial/tileset.json",
+      "uri": "overlapping-18_268621_55474-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100110002041",
@@ -381,7 +381,7 @@
       ]
     },
     {
-      "uri": "contiguous-18_268622_55471-spatial/tileset.json",
+      "uri": "overlapping-18_268622_55471-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000760345",
@@ -397,7 +397,7 @@
       ]
     },
     {
-      "uri": "contiguous-18_268622_55472-spatial/tileset.json",
+      "uri": "overlapping-18_268622_55472-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000760361",
@@ -422,7 +422,7 @@
       ]
     },
     {
-      "uri": "contiguous-18_268622_55473-spatial/tileset.json",
+      "uri": "overlapping-18_268622_55473-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000671659",
@@ -437,7 +437,7 @@
       ]
     },
     {
-      "uri": "contiguous-18_268623_55473-spatial/tileset.json",
+      "uri": "overlapping-18_268623_55473-spatial/tileset.json",
       "namespace": "BAG",
       "identities": [
         "0599100000631930",
