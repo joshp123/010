@@ -19,8 +19,8 @@ def restore_observed_road_paint(source,runtime):
     source.images[source.context['groundImage']][paint]=[222,219,200]
 
 
-def bind(source,folder,runtime,angle,drawing_path,previous_state=None,pixels_per_metre=6):
-    views=json.loads((folder/'views.json').read_text())['views']
+def bind(source,folder,runtime,angle,drawing_path,previous_state=None,pixels_per_metre=6,views_path=None,revise_visible=False,tree_drawing_path=None):
+    views=json.loads((views_path or folder/'views.json').read_text())['views']
     view=next(v for v in views if v['camera']['angle']==angle);camera=view['camera']
     painted=[np.zeros(image.shape[:2],bool) for image in source.images]
     if previous_state:
@@ -30,9 +30,16 @@ def bind(source,folder,runtime,angle,drawing_path,previous_state=None,pixels_per
     drawing=Image.open(drawing_path).convert('RGBA')
     authored_side=round(camera['size']/camera['scale']*pixels_per_metre)
     drawing=drawing.resize((authored_side,authored_side),Image.Resampling.BOX).resize((camera['size'],camera['size']),Image.Resampling.NEAREST)
+    if tree_drawing_path:
+        tree_drawing=Image.open(tree_drawing_path).convert('RGBA').resize((authored_side,authored_side),Image.Resampling.BOX).resize((camera['size'],camera['size']),Image.Resampling.NEAREST)
+        tree_image_indices={triangle['image'] for triangle in source.triangles if triangle.get('contextKind')=='tree'}
+        original_images=source.images
+        source.images=[np.full_like(image,255 if index in tree_image_indices else 0) for index,image in enumerate(original_images)]
+        support,_=painter.render(source,camera);source.images=original_images
+        registered=np.asarray(drawing).copy();visible_tree=np.all(support==255,axis=2);registered[visible_tree]=np.asarray(tree_drawing)[visible_tree];drawing=Image.fromarray(registered)
     drawing.save(folder/f'scene-{angle}-registered.png')
     identities={triangle['identity'] for triangle in source.triangles}
-    painter.apply_source_registered_field(source,source.images,camera,np.asarray(drawing),identities,painted_masks=painted,preserve_painted=previous_state is not None)
+    painter.apply_source_registered_field(source,source.images,camera,np.asarray(drawing),identities,painted_masks=painted,preserve_painted=previous_state is not None and not revise_visible)
     restore_observed_road_paint(source,runtime)
     painter.pad_painted_uv_charts(source,source.images,painted)
     state=folder/f'scene-{angle}-bound-state.npz'
@@ -46,7 +53,7 @@ def bind(source,folder,runtime,angle,drawing_path,previous_state=None,pixels_per
         supported=np.all(labels==255,axis=2)
         Image.fromarray(np.repeat((supported.astype(np.uint8)*255)[:,:,None],3,axis=2)).save(folder/f'scene-{angle}-authored-support-view-{target_angle}.png')
         source.images=originals
-    painter.m.save_json(folder/f'scene-{angle}-binding.json',{'authorship':'Written by AI on 2026-10-25 by model GPT-6','status':'Actual original-geometry complete-scene bake; not art acceptance','drawing':str(drawing_path.resolve()),'drawingSha256':painter.m.digest(drawing_path.read_bytes()),'camera':camera,'drawingPixelsPerMetre':pixels_per_metre,'previousState':str(previous_state) if previous_state else None,'alreadyAuthoredTexels':'Preserved unchanged' if previous_state else 'First authored view','unseenSurfaces':'Original source material, not claimed illustrated','context':source.context})
+    painter.m.save_json(folder/f'scene-{angle}-binding.json',{'authorship':'Written by AI on 2026-10-25 by model GPT-6','status':'Actual original-geometry complete-scene bake; not art acceptance','drawing':str(drawing_path.resolve()),'drawingSha256':painter.m.digest(drawing_path.read_bytes()),'camera':camera,'drawingPixelsPerMetre':pixels_per_metre,'previousState':str(previous_state) if previous_state else None,'alreadyAuthoredTexels':'Visible surfaces revised coherently; occluded prior artwork retained' if revise_visible else ('Preserved unchanged' if previous_state else 'First authored view'),'unseenSurfaces':'Original source material or retained previous drawing; not claimed newly illustrated','context':source.context})
     print(state,flush=True)
 
 
@@ -82,9 +89,9 @@ def export_context(source,painted,folder):
 
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('buildings',type=Path);parser.add_argument('runtime',type=Path);parser.add_argument('folder',type=Path);parser.add_argument('angle',type=int);parser.add_argument('drawing',type=Path);parser.add_argument('--previous-state',type=Path);parser.add_argument('--export',action='store_true');args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('buildings',type=Path);parser.add_argument('runtime',type=Path);parser.add_argument('folder',type=Path);parser.add_argument('angle',type=int);parser.add_argument('drawing',type=Path);parser.add_argument('--previous-state',type=Path);parser.add_argument('--views',type=Path);parser.add_argument('--export',action='store_true');args=parser.parse_args()
     source=composition.compose(args.buildings,args.runtime,args.folder)
-    bind(source,args.folder,args.runtime,args.angle,args.drawing,args.previous_state)
+    bind(source,args.folder,args.runtime,args.angle,args.drawing,args.previous_state,views_path=args.views)
     if args.export:
         saved=np.load(args.folder/f'scene-{args.angle}-bound-state.npz');painted=[saved[f'painted_{i}'] for i in range(len(source.images))]
         source.export_handoff(source.images,{t['identity'] for t in source.triangles},args.folder/'bound-complete-scene-buildings')

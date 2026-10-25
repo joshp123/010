@@ -1,0 +1,6292 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "status": "Actual original-geometry complete-scene bake; not art acceptance",
+  "drawing": "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/contiguous-neighbourhood-aligned/complete-neighbourhood-context/native-map-composition/scene120-clean.png",
+  "drawingSha256": "6815c347551c29b415a1df3115b8ba10707f48717cd2d4a64964ba29dcfc40f6",
+  "camera": {
+    "centre": [
+      78.65844383252124,
+      -0.000525284556427863,
+      -22.936775287711697
+    ],
+    "basis": [
+      [
+        -0.5005188838516768,
+        -0.49944335676094226,
+        0.707133071136709
+      ],
+      [
+        0.00016027449649821495,
+        0.8167562146646506,
+        0.5769828941301094
+      ],
+      [
+        -0.8657256038837928,
+        0.28890416956844617,
+        -0.4087218609103372
+      ]
+    ],
+    "scale": 11.846153846153847,
+    "mid": [
+      0,
+      0
+    ],
+    "size": 2304,
+    "angle": 120,
+    "elevation": 35.264389682754654,
+    "runtimeFocus": {
+      "lat": 51.9102632881,
+      "lon": 4.4475160231,
+      "height": 0
+    },
+    "runtimeVerticalSpan": 144,
+    "runtimeAspect": 1.3506493506493507,
+    "runtimeOrigin": [
+      51.915,
+      4.49
+    ],
+    "runtimeCropBounds": [
+      0.0,
+      299.0769230769231,
+      2304.0,
+      2004.923076923077
+    ]
+  },
+  "drawingPixelsPerMetre": 6,
+  "previousState": "source-data/source-bound-painter/contiguous-neighbourhood-aligned/complete-neighbourhood-context/scene-300-bound-state.npz",
+  "alreadyAuthoredTexels": "Visible surfaces revised coherently; occluded prior artwork retained",
+  "unseenSurfaces": "Original source material or retained previous drawing; not claimed newly illustrated",
+  "context": {
+    "buildingTriangleCount": 12074,
+    "groundTriangles": 9598,
+    "groundImage": 145,
+    "groundBoundsRD": [
+      90185,
+      435996,
+      90441,
+      436252
+    ],
+    "groundSourceSha256": "2c625dbdfbea8fae4627b725c90e2caf95d43a526e76fb4fc937f67453dcdeb1",
+    "orthophotoSha256": "f641d23d2c81772422ad4c814ff3df52ed0da8578c3e369a6b68150a57138923",
+    "treeInstances": [
+      {
+        "identity": "bm_83730_K",
+        "prototype": "proto_1.glb",
+        "part": "kruin",
+        "originalInstance": 0,
+        "image": 146,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Hibiscus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2007,
+          "Beheerobjectomschrijving": "4897.bm10",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 4,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Hibiscus syriacus cv",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "altheastruik (cv) -NIET toepassen",
+          "Boom_id": 83730,
+          "trunkDiameter": 10,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.045,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3931065.9795529107,
+          305696.8604562447,
+          4996569.773266193
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.35072094202041626,
+            1.8451645374298096,
+            3.134376287460327
+          ],
+          [
+            3.984466552734375,
+            0.1434880644083023,
+            0.29567384719848633
+          ],
+          [
+            0.031940437853336334,
+            2.3610968589782715,
+            -2.467440366744995
+          ]
+        ]
+      },
+      {
+        "identity": "bm_83728_K",
+        "prototype": "proto_1.glb",
+        "part": "kruin",
+        "originalInstance": 1,
+        "image": 147,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Hibiscus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2015,
+          "Beheerobjectomschrijving": "4897.bm8",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 1,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Hibiscus syriacus cv",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "altheastruik (cv) -NIET toepassen",
+          "Boom_id": 83728,
+          "trunkDiameter": 8,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.21,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3931057.273609522,
+          305705.43926146335,
+          4996576.26146334
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.08768113702535629,
+            1.8451604843139648,
+            0.783595085144043
+          ],
+          [
+            0.996116578578949,
+            0.14349207282066345,
+            0.07391854375600815
+          ],
+          [
+            0.007983960211277008,
+            2.3610999584198,
+            -0.6168588399887085
+          ]
+        ]
+      },
+      {
+        "identity": "bm_83727_K",
+        "prototype": "proto_1.glb",
+        "part": "kruin",
+        "originalInstance": 2,
+        "image": 148,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Hibiscus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2015,
+          "Beheerobjectomschrijving": "4897.bm7",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 1,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Hibiscus syriacus cv",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "altheastruik (cv) -NIET toepassen",
+          "Boom_id": 83727,
+          "trunkDiameter": 8,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.2,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3931053.500175479,
+          305705.31432059204,
+          4996579.201266499
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.08768116682767868,
+            1.845158576965332,
+            0.7835955619812012
+          ],
+          [
+            0.996116578578949,
+            0.14349202811717987,
+            0.07391858100891113
+          ],
+          [
+            0.007983934134244919,
+            2.3611013889312744,
+            -0.6168582439422607
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81242_K",
+        "prototype": "proto_1.glb",
+        "part": "kruin",
+        "originalInstance": 3,
+        "image": 149,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Styphnolobium",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1987,
+          "Beheerobjectomschrijving": "4994.bm6",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 3,
+          "crownDiameter": 15,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Styphnolobium japonicum",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Noordschans",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "Japanse honingboom",
+          "Boom_id": 81242,
+          "trunkDiameter": 46,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.7,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3930954.218936446,
+          305678.1445944915,
+          4996660.344991226
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -1.3151932954788208,
+            4.920297145843506,
+            11.754120826721191
+          ],
+          [
+            14.941750526428223,
+            0.3826112747192383,
+            1.108794927597046
+          ],
+          [
+            0.11979272216558456,
+            6.296370506286621,
+            -9.252633094787598
+          ]
+        ]
+      },
+      {
+        "identity": "bm_83726_K",
+        "prototype": "proto_1.glb",
+        "part": "kruin",
+        "originalInstance": 4,
+        "image": 150,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Hibiscus",
+          "Brondatum": "2023-11-12",
+          "Aanlegjaar": 2007,
+          "Beheerobjectomschrijving": "4897.bm6",
+          "Ontwikkeling": "Nog niet bepaald",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-12-01",
+          "Boomsortiment": "Hibiscus syriacus cv",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-11-10",
+          "Boomsortiment_nederlands": "altheastruik (cv) -NIET toepassen",
+          "Boom_id": 83726,
+          "trunkDiameter": 11,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.29,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3931046.5650415807,
+          305705.6835278859,
+          4996584.714686808
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17536254227161407,
+            1.8451552391052246,
+            1.567192792892456
+          ],
+          [
+            1.992233157157898,
+            0.143492192029953,
+            0.1478373110294342
+          ],
+          [
+            0.01596762426197529,
+            2.3611040115356445,
+            -1.23371422290802
+          ]
+        ]
+      },
+      {
+        "identity": "bm_83729_K",
+        "prototype": "proto_4.glb",
+        "part": "kruin",
+        "originalInstance": 14,
+        "image": 151,
+        "sourceTriangles": 236,
+        "sourceAttributes": {
+          "Geslacht": "Malus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2022,
+          "Beheerobjectomschrijving": "4897.bm9",
+          "Ontwikkeling": "",
+          "Stamlengte": 3,
+          "crownDiameter": 1,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Malus tschonoskii",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "sierappel",
+          "Boom_id": 83729,
+          "trunkDiameter": 6,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.14,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3931060.8164797435,
+          305696.71375600825,
+          4996575.204943923
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.08768027275800705,
+            1.2301077842712402,
+            0.7835947871208191
+          ],
+          [
+            0.9961166381835938,
+            0.09565863013267517,
+            0.07391852140426636
+          ],
+          [
+            0.00798507034778595,
+            1.574065923690796,
+            -0.6168591380119324
+          ]
+        ]
+      },
+      {
+        "identity": "bm_102571_K",
+        "prototype": "proto_4.glb",
+        "part": "kruin",
+        "originalInstance": 17,
+        "image": 152,
+        "sourceTriangles": 236,
+        "sourceAttributes": {
+          "Geslacht": "Malus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1996,
+          "Beheerobjectomschrijving": "4881.bm2",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 5,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Malus 'Winter Gold'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "1e Schansstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "sierappel (cv) -NIET toepassen",
+          "Boom_id": 102571,
+          "trunkDiameter": 20,
+          "Buurt": "Bospolder - 20",
+          "Hoogte": 3.29,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3931072.763744564,
+          305611.06633096817,
+          4996569.989837491
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.43835991621017456,
+            3.690335273742676,
+            3.917970895767212
+          ],
+          [
+            4.980586528778076,
+            0.2868955731391907,
+            0.36959248781204224
+          ],
+          [
+            0.03997863084077835,
+            4.722193717956543,
+            -3.0842995643615723
+          ]
+        ]
+      },
+      {
+        "identity": "bm_102570_K",
+        "prototype": "proto_4.glb",
+        "part": "kruin",
+        "originalInstance": 21,
+        "image": 153,
+        "sourceTriangles": 236,
+        "sourceAttributes": {
+          "Geslacht": "Malus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1996,
+          "Beheerobjectomschrijving": "4881.bm6",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 7,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Malus 'Winter Gold'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "1e Schansstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "sierappel (cv) -NIET toepassen",
+          "Boom_id": 102570,
+          "trunkDiameter": 30,
+          "Buurt": "Bospolder - 20",
+          "Hoogte": 3.35,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3931075.159029526,
+          305604.2091096361,
+          4996568.612130922
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.6136991381645203,
+            3.690337657928467,
+            5.4851579666137695
+          ],
+          [
+            6.972821235656738,
+            0.28688913583755493,
+            0.5174294114112854
+          ],
+          [
+            0.05597615987062454,
+            4.722192764282227,
+            -4.318021297454834
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81205_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 2,
+        "image": 154,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm14",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 4,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 21,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81205,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.6616666666666666,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930989.34836347,
+          305807.03279163805,
+          4996621.194506752
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.018415214493870735,
+            1.4145987033843994,
+            0.16455645859241486
+          ],
+          [
+            0.20918431878089905,
+            0.11004716902971268,
+            0.015523012727499008
+          ],
+          [
+            0.001673853606916964,
+            1.8101933002471924,
+            -0.129538431763649
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81175_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 21,
+        "image": 155,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4997.bm4",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 20,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81175,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.85,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930995.7232776377,
+          305813.52874036774,
+          4996616.063080797
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.017538411542773247,
+            1.4146010875701904,
+            0.15672026574611664
+          ],
+          [
+            0.19922314584255219,
+            0.11004950851202011,
+            0.014783807098865509
+          ],
+          [
+            0.0015940007288008928,
+            1.8101913928985596,
+            -0.12337016314268112
+          ]
+        ]
+      },
+      {
+        "identity": "bm_404111_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 22,
+        "image": 156,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Gleditsia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2012,
+          "Beheerobjectomschrijving": "4897.bm11",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": "3",
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Gleditsia triacanthos 'Skyline'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 15,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "Amerikaanse gleditsia (cv)",
+          "Boom_id": 404111,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.03,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3931015.7997253374,
+          305698.82679484243,
+          4996606.305424582
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.013152137398719788,
+            2.029655694961548,
+            0.11754000931978226
+          ],
+          [
+            0.14941750466823578,
+            0.1578379124403,
+            0.011087846010923386
+          ],
+          [
+            0.0011976480018347502,
+            2.59722638130188,
+            -0.09252787381410599
+          ]
+        ]
+      },
+      {
+        "identity": "bm_79532_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 27,
+        "image": 157,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Aesculus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1907,
+          "Beheerobjectomschrijving": "4745.bm29",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "3",
+          "crownDiameter": 15,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Aesculus hippocastanum",
+          "Boomstatus": "Uniciteit",
+          "Stamdiameter": 71,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Voorhaven",
+          "Wijk": "Delfshaven",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "witte paardenkastanje -NIET toepassen",
+          "Boom_id": 79532,
+          "trunkDiameter": 0,
+          "Buurt": "Delfshaven - 00",
+          "Hoogte": 3.205,
+          "height": 14
+        },
+        "originalPositionECEF": [
+          3931031.948500801,
+          305806.08770885784,
+          4996587.391805905
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.06226060539484024,
+            2.0296640396118164,
+            0.5563538074493408
+          ],
+          [
+            0.7072421908378601,
+            0.1578933149576187,
+            0.0524822473526001
+          ],
+          [
+            0.005659634713083506,
+            2.5972163677215576,
+            -0.43796807527542114
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520861_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 32,
+        "image": 158,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm20",
+          "Ontwikkeling": "",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 6,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520861,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.43,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930993.4044403755,
+          305726.8921644923,
+          4996622.607919432
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.005261028651148081,
+            1.4146003723144531,
+            0.04701615124940872
+          ],
+          [
+            0.0597669817507267,
+            0.11001833528280258,
+            0.0044351499527692795
+          ],
+          [
+            0.00047883743536658585,
+            1.8101940155029297,
+            -0.037010956555604935
+          ]
+        ]
+      },
+      {
+        "identity": "bm_83726_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 33,
+        "image": 159,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Hibiscus",
+          "Brondatum": "2023-11-12",
+          "Aanlegjaar": 2007,
+          "Beheerobjectomschrijving": "4897.bm6",
+          "Ontwikkeling": "Nog niet bepaald",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-12-01",
+          "Boomsortiment": "Hibiscus syriacus cv",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 11,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-11-10",
+          "Boomsortiment_nederlands": "altheastruik (cv) -NIET toepassen",
+          "Boom_id": 83726,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.29,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3931045.3327992675,
+          305705.5859311818,
+          4996583.140215152
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.009644939564168453,
+            1.414618968963623,
+            0.08619560301303864
+          ],
+          [
+            0.10957282036542892,
+            0.11001067608594894,
+            0.008131052367389202
+          ],
+          [
+            0.0008782193181104958,
+            1.810179591178894,
+            -0.06785428524017334
+          ]
+        ]
+      },
+      {
+        "identity": "bm_404110_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 43,
+        "image": 160,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Gleditsia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2012,
+          "Beheerobjectomschrijving": "4897.bm3",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": "4",
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Gleditsia triacanthos 'Skyline'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 15,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "Amerikaanse gleditsia (cv)",
+          "Boom_id": 404110,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 2.98,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3931023.9571984434,
+          305699.0840009155,
+          4996599.851407644
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.013152129016816616,
+            2.6447086334228516,
+            0.11753986030817032
+          ],
+          [
+            0.14941750466823578,
+            0.20566776394844055,
+            0.011087832972407341
+          ],
+          [
+            0.0011976566165685654,
+            3.384260654449463,
+            -0.09252806007862091
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81242_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 66,
+        "image": 161,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Styphnolobium",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1987,
+          "Beheerobjectomschrijving": "4994.bm6",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "3",
+          "crownDiameter": 15,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Styphnolobium japonicum",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 46,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Noordschans",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "Japanse honingboom",
+          "Boom_id": 81242,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.7,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3930952.3753719386,
+          305677.9990844587,
+          4996657.982970932
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.04033259302377701,
+            2.0296225547790527,
+            0.36045971512794495
+          ],
+          [
+            0.4582136869430542,
+            0.15782715380191803,
+            0.03400304540991783
+          ],
+          [
+            0.003673643572255969,
+            2.59725284576416,
+            -0.28374743461608887
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81200_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 68,
+        "image": 162,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1990,
+          "Beheerobjectomschrijving": "4995.bm9",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 20,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81200,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.410909090909091,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930988.5779354544,
+          305767.04023804073,
+          4996623.913481345
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.017537539824843407,
+            1.4145985841751099,
+            0.15672053396701813
+          ],
+          [
+            0.19922322034835815,
+            0.11003278195858002,
+            0.014783834107220173
+          ],
+          [
+            0.0015951277455314994,
+            1.8101943731307983,
+            -0.12336982786655426
+          ]
+        ]
+      },
+      {
+        "identity": "bm_83725_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 69,
+        "image": 163,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Ulmus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1993,
+          "Beheerobjectomschrijving": "4897.bm5",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": "5",
+          "crownDiameter": 6,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Ulmus \u00d7 hollandica 'Dampieri'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 28,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-08-15",
+          "Boomsortiment_nederlands": "Hollandse iep (cv) -NIET toepassen",
+          "Boom_id": 83725,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.1,
+          "height": 14
+        },
+        "originalPositionECEF": [
+          3931002.649576562,
+          305698.21667811094,
+          4996616.704509041
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.024550674483180046,
+            3.2597389221191406,
+            0.21940846741199493
+          ],
+          [
+            0.27891263365745544,
+            0.2534967362880707,
+            0.020697351545095444
+          ],
+          [
+            0.0022355900146067142,
+            4.171311378479004,
+            -0.1727181077003479
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520858_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 78,
+        "image": 164,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm16",
+          "Ontwikkeling": "",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 6,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520858,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.61,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930994.1673151753,
+          305759.0788128481,
+          4996620.286289769
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.00526121212169528,
+            1.4146004915237427,
+            0.047016121447086334
+          ],
+          [
+            0.059766966849565506,
+            0.1100299134850502,
+            0.004435147624462843
+          ],
+          [
+            0.0004786006757058203,
+            1.8101928234100342,
+            -0.03701099008321762
+          ]
+        ]
+      },
+      {
+        "identity": "bm_229323_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 86,
+        "image": 165,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Robinia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1996,
+          "Beheerobjectomschrijving": "4856.bm33",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "5",
+          "crownDiameter": 10,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Robinia pseudoacacia 'Unifoliola'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 35,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Rosier Faassenstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "eenbladige robinia",
+          "Boom_id": 229323,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 10",
+          "Hoogte": 3.3,
+          "height": 14
+        },
+        "originalPositionECEF": [
+          3931029.652323186,
+          305605.1798580911,
+          4996601.514579996
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.030685143545269966,
+            3.259761333465576,
+            0.2742597758769989
+          ],
+          [
+            0.348641037940979,
+            0.2534196078777313,
+            0.025871630758047104
+          ],
+          [
+            0.0027985922060906887,
+            4.171298980712891,
+            -0.21589864790439606
+          ]
+        ]
+      },
+      {
+        "identity": "bm_399728_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 89,
+        "image": 166,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm1",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 23,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 399728,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.83,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930990.141451133,
+          305816.5075455863,
+          4996620.2181734955
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.020169250667095184,
+            1.414599061012268,
+            0.18022845685482025
+          ],
+          [
+            0.2291066199541092,
+            0.11005057394504547,
+            0.01700139231979847
+          ],
+          [
+            0.0018330025486648083,
+            1.8101929426193237,
+            -0.1418754905462265
+          ]
+        ]
+      },
+      {
+        "identity": "bm_80441_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 90,
+        "image": 167,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Corylus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1990,
+          "Beheerobjectomschrijving": "4894.bm2",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "5",
+          "crownDiameter": 6,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Corylus colurna",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 25,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schans",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "boomhazelaar",
+          "Boom_id": 80441,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.28,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3931018.6472877087,
+          305748.4137331197,
+          4996601.384023804
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.02192140370607376,
+            3.259752035140991,
+            0.19589979946613312
+          ],
+          [
+            0.24902905523777008,
+            0.2535383701324463,
+            0.018479719758033752
+          ],
+          [
+            0.0019945644307881594,
+            4.171298980712891,
+            -0.15421338379383087
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520859_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 93,
+        "image": 168,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm17",
+          "Ontwikkeling": "",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 6,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520859,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.47,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930994.1068894486,
+          305751.63778133824,
+          4996620.604165713
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.005261169746518135,
+            1.4146004915237427,
+            0.04701612889766693
+          ],
+          [
+            0.059766970574855804,
+            0.1100272387266159,
+            0.004435147624462843
+          ],
+          [
+            0.0004786555073224008,
+            1.8101931810379028,
+            -0.037010982632637024
+          ]
+        ]
+      },
+      {
+        "identity": "bm_426095_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 96,
+        "image": 169,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Gleditsia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2013,
+          "Beheerobjectomschrijving": "4991.bm16",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": "4",
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Gleditsia triacanthos 'Skyline'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 10,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Jan Kruijffstraat",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "Amerikaanse gleditsia (cv)",
+          "Boom_id": 426095,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.54,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3930956.5900663766,
+          305631.84554818034,
+          4996657.290455482
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.008767510764300823,
+            2.644662618637085,
+            0.07836080342531204
+          ],
+          [
+            0.09961170703172684,
+            0.20562252402305603,
+            0.007391967810690403
+          ],
+          [
+            0.0007991899619810283,
+            3.3842990398406982,
+            -0.061684221029281616
+          ]
+        ]
+      },
+      {
+        "identity": "bm_79530_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 107,
+        "image": 170,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Carpinus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2005,
+          "Beheerobjectomschrijving": "4745.bm27",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 5,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Carpinus betulus",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 16,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Voorhaven",
+          "Wijk": "Delfshaven",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "haagbeuk",
+          "Boom_id": 79530,
+          "trunkDiameter": 0,
+          "Buurt": "Delfshaven - 00",
+          "Hoogte": 2.96,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3931051.994735637,
+          305806.7636224918,
+          4996571.367452506
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.014030537568032742,
+            1.4146215915679932,
+            0.12537512183189392
+          ],
+          [
+            0.1593785285949707,
+            0.11004709452390671,
+            0.011826951988041401
+          ],
+          [
+            0.0012754325289279222,
+            1.8101755380630493,
+            -0.09869753569364548
+          ]
+        ]
+      },
+      {
+        "identity": "bm_80443_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 125,
+        "image": 171,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Corylus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1992,
+          "Beheerobjectomschrijving": "4894.bm4",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "5",
+          "crownDiameter": 6,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Corylus colurna",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 22,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schans",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "boomhazelaar",
+          "Boom_id": 80443,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.43,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3931054.9858091096,
+          305748.4197146563,
+          4996573.172533761
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.019290758296847343,
+            3.259782552719116,
+            0.17239084839820862
+          ],
+          [
+            0.21914558112621307,
+            0.2535383701324463,
+            0.01626206934452057
+          ],
+          [
+            0.0017553039360791445,
+            4.171275615692139,
+            -0.1357090175151825
+          ]
+        ]
+      },
+      {
+        "identity": "bm_83729_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 129,
+        "image": 172,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Malus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2022,
+          "Beheerobjectomschrijving": "4897.bm9",
+          "Ontwikkeling": "",
+          "Stamlengte": "3",
+          "crownDiameter": 1,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Malus tschonoskii",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 6,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "sierappel",
+          "Boom_id": 83729,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.14,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3931058.9739070726,
+          305696.57175555045,
+          4996572.843305104
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.0052608163096010685,
+            2.0296778678894043,
+            0.047015685588121414
+          ],
+          [
+            0.059766996651887894,
+            0.15783673524856567,
+            0.004435111302882433
+          ],
+          [
+            0.00047910420107655227,
+            2.5972087383270264,
+            -0.03701154887676239
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520860_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 141,
+        "image": 173,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm19",
+          "Ontwikkeling": "",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 6,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520860,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.38,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930993.6914625773,
+          305734.5664759289,
+          4996621.852964065
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.005261072423309088,
+            1.4146004915237427,
+            0.047016143798828125
+          ],
+          [
+            0.0597669780254364,
+            0.11002110689878464,
+            0.004435149021446705
+          ],
+          [
+            0.00047878106124699116,
+            1.8101937770843506,
+            -0.03701096773147583
+          ]
+        ]
+      },
+      {
+        "identity": "bm_229324_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 144,
+        "image": 174,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Robinia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1996,
+          "Beheerobjectomschrijving": "4856.bm34",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "5",
+          "crownDiameter": 9,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Robinia pseudoacacia 'Unifoliola'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 35,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Rosier Faassenstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "eenbladige robinia",
+          "Boom_id": 229324,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 10",
+          "Hoogte": 3.3766666666666665,
+          "height": 14
+        },
+        "originalPositionECEF": [
+          3931024.9089036393,
+          305622.62201876857,
+          4996604.256260014
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.03068573959171772,
+            3.2597575187683105,
+            0.27425992488861084
+          ],
+          [
+            0.3486410081386566,
+            0.25343406200408936,
+            0.025871641933918
+          ],
+          [
+            0.002797823864966631,
+            4.171301364898682,
+            -0.21589848399162292
+          ]
+        ]
+      },
+      {
+        "identity": "bm_499635_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 146,
+        "image": 175,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1990,
+          "Beheerobjectomschrijving": "88926.bm4",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 15,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Oud Mathenesse",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 499635,
+          "trunkDiameter": 0,
+          "Buurt": "Oud Mathenesse - 31",
+          "Hoogte": 3.73,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930994.764019226,
+          305798.44330510416,
+          4996617.5786678875
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.01315359491854906,
+            1.4146007299423218,
+            0.11754024028778076
+          ],
+          [
+            0.14941738545894623,
+            0.11004408448934555,
+            0.011087859980762005
+          ],
+          [
+            0.0011957769747823477,
+            1.8101919889450073,
+            -0.09252757579088211
+          ]
+        ]
+      },
+      {
+        "identity": "bm_80442_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 149,
+        "image": 176,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Corylus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1992,
+          "Beheerobjectomschrijving": "4894.bm3",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "5",
+          "crownDiameter": 6,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Corylus colurna",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 26,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schans",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "boomhazelaar",
+          "Boom_id": 80442,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.32,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3931036.601281758,
+          305748.294102388,
+          4996587.408834973
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.022798210382461548,
+            3.2597670555114746,
+            0.20373521745204926
+          ],
+          [
+            0.25899022817611694,
+            0.25353825092315674,
+            0.01921886019408703
+          ],
+          [
+            0.002074401592835784,
+            4.1712870597839355,
+            -0.16038264334201813
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81196_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 155,
+        "image": 177,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm5",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 18,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81196,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.2947727272727274,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930988.0567635614,
+          305735.08088807506,
+          4996626.110231174
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.015783237293362617,
+            1.4145984649658203,
+            0.14104856550693512
+          ],
+          [
+            0.1793009489774704,
+            0.11002128571271896,
+            0.013305459171533585
+          ],
+          [
+            0.0014363208319991827,
+            1.8101952075958252,
+            -0.11103274673223495
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81198_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 165,
+        "image": 178,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1985,
+          "Beheerobjectomschrijving": "4995.bm7",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 5,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 24,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81198,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.320923076923077,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930988.40421149,
+          305752.17013809417,
+          4996624.838727398
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.02104470506310463,
+            1.4145985841751099,
+            0.18806467950344086
+          ],
+          [
+            0.23906788229942322,
+            0.11002743244171143,
+            0.017740605399012566
+          ],
+          [
+            0.0019145914120599627,
+            1.810194730758667,
+            -0.14804372191429138
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520863_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 169,
+        "image": 179,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm22",
+          "Ontwikkeling": "",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 6,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520863,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.28,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930993.011673152,
+          305710.9872587167,
+          4996623.692103456
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.005260937847197056,
+            1.4146002531051636,
+            0.04701616242527962
+          ],
+          [
+            0.0597669892013073,
+            0.11001260578632355,
+            0.004435151349753141
+          ],
+          [
+            0.0004789544618688524,
+            1.8101942539215088,
+            -0.03701093792915344
+          ]
+        ]
+      },
+      {
+        "identity": "bm_499634_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 171,
+        "image": 180,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1990,
+          "Beheerobjectomschrijving": "88926.bm3",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 15,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Oud Mathenesse",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 499634,
+          "trunkDiameter": 0,
+          "Buurt": "Oud Mathenesse - 31",
+          "Hoogte": 3.69625,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930994.877317464,
+          305805.9680781262,
+          4996616.994003205
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.013153702020645142,
+            1.4146007299423218,
+            0.11754023283720016
+          ],
+          [
+            0.14941737055778503,
+            0.11004679650068283,
+            0.01108785904943943
+          ],
+          [
+            0.0011956385569646955,
+            1.8101918697357178,
+            -0.0925275981426239
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81180_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 185,
+        "image": 181,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm2",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 20,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81180,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.5342857142857143,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930994.2050812542,
+          305774.6786602579,
+          4996619.202105745
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.01753767393529415,
+            1.4146006107330322,
+            0.1567203849554062
+          ],
+          [
+            0.19922320544719696,
+            0.11003552377223969,
+            0.014783821068704128
+          ],
+          [
+            0.0015949523076415062,
+            1.810192584991455,
+            -0.12337001413106918
+          ]
+        ]
+      },
+      {
+        "identity": "bm_499636_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 190,
+        "image": 182,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1990,
+          "Beheerobjectomschrijving": "88926.bm5",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 15,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Oud Mathenesse",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 499636,
+          "trunkDiameter": 0,
+          "Buurt": "Oud Mathenesse - 31",
+          "Hoogte": 3.665,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930994.454337377,
+          305790.7450675212,
+          4996618.2087434195
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.013153485022485256,
+            1.4146007299423218,
+            0.11754026263952255
+          ],
+          [
+            0.14941740036010742,
+            0.11004132032394409,
+            0.011087862774729729
+          ],
+          [
+            0.0011959185358136892,
+            1.8101921081542969,
+            -0.09252755343914032
+          ]
+        ]
+      },
+      {
+        "identity": "bm_102570_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 195,
+        "image": 183,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Malus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1996,
+          "Beheerobjectomschrijving": "4881.bm6",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 7,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Malus 'Winter Gold'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 30,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "1e Schansstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "sierappel (cv) -NIET toepassen",
+          "Boom_id": 102570,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 20",
+          "Hoogte": 3.35,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3931073.9292744333,
+          305604.1151445792,
+          4996567.036392767
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.026301391422748566,
+            1.4146294593811035,
+            0.23507821559906006
+          ],
+          [
+            0.29883521795272827,
+            0.10997416079044342,
+            0.02217554673552513
+          ],
+          [
+            0.00239897845312953,
+            1.8101738691329956,
+            -0.18505807220935822
+          ]
+        ]
+      },
+      {
+        "identity": "bm_309913_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 197,
+        "image": 184,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Robinia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2001,
+          "Beheerobjectomschrijving": "4856.bm6",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "6",
+          "crownDiameter": 8,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Robinia pseudoacacia 'Unifoliola'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 29,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Rosier Faassenstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "eenbladige robinia",
+          "Boom_id": 309913,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 10",
+          "Hoogte": 3.26,
+          "height": 17
+        },
+        "originalPositionECEF": [
+          3931019.4630350196,
+          305620.5404440375,
+          4996608.490821699
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.02542528696358204,
+            3.874800682067871,
+            0.22724412381649017
+          ],
+          [
+            0.28887397050857544,
+            0.30124977231025696,
+            0.021436519920825958
+          ],
+          [
+            0.002318253740668297,
+            4.958343505859375,
+            -0.17888705432415009
+          ]
+        ]
+      },
+      {
+        "identity": "bm_102571_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 198,
+        "image": 185,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Malus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1996,
+          "Beheerobjectomschrijving": "4881.bm2",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 5,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Malus 'Winter Gold'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 20,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "1e Schansstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "sierappel (cv) -NIET toepassen",
+          "Boom_id": 102571,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 20",
+          "Hoogte": 3.29,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3931071.5349050127,
+          305610.96998550394,
+          4996568.415747311
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.017534395679831505,
+            1.414628505706787,
+            0.15671883523464203
+          ],
+          [
+            0.19922345876693726,
+            0.109976626932621,
+            0.014783699996769428
+          ],
+          [
+            0.0015991453547030687,
+            1.8101742267608643,
+            -0.12337198108434677
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81227_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 206,
+        "image": 186,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Acer",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1995,
+          "Beheerobjectomschrijving": "4991.bm15",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "6",
+          "crownDiameter": 8,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Acer saccharinum 'Pyramidale'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 35,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Jan Kruijffstraat",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "witte esdoorn (cv)",
+          "Boom_id": 81227,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.6,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3930955.162508583,
+          305655.7657129778,
+          4996657.029343099
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.030687088146805763,
+            3.874737024307251,
+            0.27426278591156006
+          ],
+          [
+            0.34864088892936707,
+            0.30128446221351624,
+            0.0258718803524971
+          ],
+          [
+            0.0027961304876953363,
+            4.9583916664123535,
+            -0.21589481830596924
+          ]
+        ]
+      },
+      {
+        "identity": "bm_79535_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 212,
+        "image": 187,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Aesculus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1935,
+          "Beheerobjectomschrijving": "4744.bm22",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 16,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Aesculus hippocastanum",
+          "Boomstatus": "Uniciteit",
+          "Stamdiameter": 66,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Voorhaven",
+          "Wijk": "Delfshaven",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "witte paardenkastanje -NIET toepassen",
+          "Boom_id": 79535,
+          "trunkDiameter": 0,
+          "Buurt": "Delfshaven - 00",
+          "Hoogte": 2.64,
+          "height": 22
+        },
+        "originalPositionECEF": [
+          3931053.0446326393,
+          305847.1629205768,
+          4996567.683497367
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.05787850543856621,
+            1.4146219491958618,
+            0.5171719789505005
+          ],
+          [
+            0.6574363112449646,
+            0.11006162315607071,
+            0.048786137253046036
+          ],
+          [
+            0.005257890559732914,
+            1.8101742267608643,
+            -0.40712782740592957
+          ]
+        ]
+      },
+      {
+        "identity": "bm_102576_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 231,
+        "image": 188,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Toona",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2019,
+          "Beheerobjectomschrijving": "4881.bm11",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 1,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Toona sinensis",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 8,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "1e Schansstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "Chinese mahonieboom",
+          "Boom_id": 102576,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 20",
+          "Hoogte": 3.23,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3931090.183794919,
+          305605.41911955446,
+          4996554.105653468
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.007013700902462006,
+            1.4146353006362915,
+            0.06268735975027084
+          ],
+          [
+            0.0796893835067749,
+            0.10997462272644043,
+            0.005913464818149805
+          ],
+          [
+            0.0006397290271706879,
+            1.8101692199707031,
+            -0.049349021166563034
+          ]
+        ]
+      },
+      {
+        "identity": "bm_309914_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 240,
+        "image": 189,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Robinia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2001,
+          "Beheerobjectomschrijving": "4856.bm7",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "5",
+          "crownDiameter": 7,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Robinia pseudoacacia 'Unifoliola'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 25,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Rosier Faassenstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "eenbladige robinia",
+          "Boom_id": 309914,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 10",
+          "Hoogte": 3.28,
+          "height": 14
+        },
+        "originalPositionECEF": [
+          3931024.2140077823,
+          305603.1521171893,
+          4996605.856992447
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.021917924284934998,
+            3.259756565093994,
+            0.19590002298355103
+          ],
+          [
+            0.24902933835983276,
+            0.2534179091453552,
+            0.01847975142300129
+          ],
+          [
+            0.001999041996896267,
+            4.171302795410156,
+            -0.1542131006717682
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81199_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 244,
+        "image": 190,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1985,
+          "Beheerobjectomschrijving": "4995.bm8",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 5,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 25,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81199,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.373333333333333,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930988.4193179216,
+          305759.5812619211,
+          4996624.441382468
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.02192174457013607,
+            1.4145985841751099,
+            0.19590069353580475
+          ],
+          [
+            0.2490290403366089,
+            0.11003009974956512,
+            0.01847979426383972
+          ],
+          [
+            0.001994138350710273,
+            1.8101946115493774,
+            -0.15421225130558014
+          ]
+        ]
+      },
+      {
+        "identity": "bm_418562_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 245,
+        "image": 191,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Gleditsia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2013,
+          "Beheerobjectomschrijving": "4991.bm17",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": "4",
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Gleditsia triacanthos 'Skyline'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 15,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Jan Kruijffstraat",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "Amerikaanse gleditsia (cv)",
+          "Boom_id": 418562,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.5,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3930969.7553215837,
+          305639.59761959256,
+          4996646.4826733805
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.013151357881724834,
+            2.644671678543091,
+            0.11754095554351807
+          ],
+          [
+            0.14941754937171936,
+            0.20562775433063507,
+            0.011087929829955101
+          ],
+          [
+            0.001198663841933012,
+            3.384291648864746,
+            -0.09252666682004929
+          ]
+        ]
+      },
+      {
+        "identity": "bm_79534_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 246,
+        "image": 192,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Ulmus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1975,
+          "Beheerobjectomschrijving": "4745.bm31",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "4",
+          "crownDiameter": 16,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Ulmus minor",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 67,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Voorhaven",
+          "Wijk": "Delfshaven",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "gladde iep -NIET toepassen",
+          "Boom_id": 79534,
+          "trunkDiameter": 0,
+          "Buurt": "Delfshaven - 00",
+          "Hoogte": 3.55,
+          "height": 22
+        },
+        "originalPositionECEF": [
+          3931013.2845044634,
+          305817.29710841534,
+          4996601.730281529
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.058753807097673416,
+            2.6447010040283203,
+            0.525011420249939
+          ],
+          [
+            0.6673975586891174,
+            0.20574729144573212,
+            0.049525629729032516
+          ],
+          [
+            0.00533972168341279,
+            3.3842616081237793,
+            -0.41329196095466614
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81202_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 247,
+        "image": 193,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm11",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 4,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 20,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81202,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.548571428571429,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930988.774319066,
+          305783.0169222553,
+          4996622.965529869
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.01753784343600273,
+            1.4145987033843994,
+            0.15672050416469574
+          ],
+          [
+            0.19922320544719696,
+            0.11003853380680084,
+            0.0147838294506073
+          ],
+          [
+            0.0015947355423122644,
+            1.8101938962936401,
+            -0.12336987257003784
+          ]
+        ]
+      },
+      {
+        "identity": "bm_80444_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 254,
+        "image": 194,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Corylus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1992,
+          "Beheerobjectomschrijving": "4894.bm5",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": "5",
+          "crownDiameter": 10,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Corylus colurna",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 40,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schans",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "boomhazelaar",
+          "Boom_id": 80444,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.39,
+          "height": 14
+        },
+        "originalPositionECEF": [
+          3931073.166399634,
+          305748.4496223392,
+          4996558.913527123
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.035074036568403244,
+            3.2597978115081787,
+            0.31343701481819153
+          ],
+          [
+            0.39844653010368347,
+            0.25353842973709106,
+            0.02956732176244259
+          ],
+          [
+            0.0031915404833853245,
+            4.171263694763184,
+            -0.24674482643604279
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81203_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 261,
+        "image": 195,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm12",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 4,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 19,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81203,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.634583333333333,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930988.8498512246,
+          305791.00825513084,
+          4996622.528450446
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.01666109450161457,
+            1.4145985841751099,
+            0.14888446033000946
+          ],
+          [
+            0.1892620176076889,
+            0.11004139482975006,
+            0.01404463592916727
+          ],
+          [
+            0.001514812232926488,
+            1.8101937770843506,
+            -0.11720138788223267
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520862_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 262,
+        "image": 196,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm21",
+          "Ontwikkeling": "",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 6,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520862,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.3,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930993.2458228427,
+          305718.8170901045,
+          4996623.056351568
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.005260982550680637,
+            1.4146002531051636,
+            0.04701615497469902
+          ],
+          [
+            0.059766985476017,
+            0.11001543700695038,
+            0.004435150884091854
+          ],
+          [
+            0.00047889689449220896,
+            1.8101940155029297,
+            -0.03701094910502434
+          ]
+        ]
+      },
+      {
+        "identity": "bm_83728_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 265,
+        "image": 197,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Hibiscus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2015,
+          "Beheerobjectomschrijving": "4897.bm8",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 1,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Hibiscus syriacus cv",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 8,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "altheastruik (cv) -NIET toepassen",
+          "Boom_id": 83728,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.21,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3931056.0432593273,
+          305705.34068818187,
+          4996574.688120851
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.0070144906640052795,
+            1.4146230220794678,
+            0.06268760561943054
+          ],
+          [
+            0.07968932390213013,
+            0.11001058667898178,
+            0.005913483444601297
+          ],
+          [
+            0.0006387167959474027,
+            1.8101766109466553,
+            -0.049348704516887665
+          ]
+        ]
+      },
+      {
+        "identity": "bm_83730_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 272,
+        "image": 198,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Hibiscus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2007,
+          "Beheerobjectomschrijving": "4897.bm10",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 4,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Hibiscus syriacus cv",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 10,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "altheastruik (cv) -NIET toepassen",
+          "Boom_id": 83730,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.045,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3931064.752117189,
+          305696.76316472114,
+          4996568.2000457775
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.008768023923039436,
+            1.414626121520996,
+            0.07835941016674042
+          ],
+          [
+            0.09961166232824326,
+            0.11000751703977585,
+            0.007391846273094416
+          ],
+          [
+            0.0007985109696164727,
+            1.8101741075515747,
+            -0.06168600916862488
+          ]
+        ]
+      },
+      {
+        "identity": "bm_418563_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 273,
+        "image": 199,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Gleditsia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2013,
+          "Beheerobjectomschrijving": "4991.bm18",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": "3",
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Gleditsia triacanthos 'Skyline'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 10,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Jan Kruijffstraat",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "Amerikaanse gleditsia (cv)",
+          "Boom_id": 418563,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.49,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3930957.511558709,
+          305642.09790188447,
+          4996655.888395513
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.008767607621848583,
+            2.029625415802002,
+            0.07836078107357025
+          ],
+          [
+            0.09961169958114624,
+            0.15780861675739288,
+            0.0073919654823839664
+          ],
+          [
+            0.0007990649901330471,
+            2.5972518920898438,
+            -0.061684250831604004
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81195_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 284,
+        "image": 200,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-11-12",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm4",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 5,
+          "creationDate": "2023-12-01",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 20,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-11-10",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81195,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.387142857142857,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930988.04165713,
+          305727.35274280916,
+          4996626.717601282
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.01753678172826767,
+            1.4145984649658203,
+            0.1567206233739853
+          ],
+          [
+            0.19922327995300293,
+            0.11001849919557571,
+            0.014783846214413643
+          ],
+          [
+            0.0015961017925292253,
+            1.8101953268051147,
+            -0.12336969375610352
+          ]
+        ]
+      },
+      {
+        "identity": "bm_499637_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 288,
+        "image": 201,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1990,
+          "Beheerobjectomschrijving": "88926.bm6",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 15,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Oud Mathenesse",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 499637,
+          "trunkDiameter": 0,
+          "Buurt": "Oud Mathenesse - 31",
+          "Hoogte": 3.54578947368421,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930994.1068894486,
+          305782.747753109,
+          4996618.816113527
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.013153371401131153,
+            1.4146004915237427,
+            0.11754027754068375
+          ],
+          [
+            0.14941740036010742,
+            0.11003843694925308,
+            0.011087864637374878
+          ],
+          [
+            0.001196065335534513,
+            1.810192346572876,
+            -0.09252752363681793
+          ]
+        ]
+      },
+      {
+        "identity": "bm_83722_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 298,
+        "image": 202,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Ulmus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1975,
+          "Beheerobjectomschrijving": "4897.bm2",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "6",
+          "crownDiameter": 15,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Ulmus minor",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 58,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "gladde iep -NIET toepassen",
+          "Boom_id": 83722,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.213333333333333,
+          "height": 22
+        },
+        "originalPositionECEF": [
+          3931032.945525292,
+          305698.97633325704,
+          4996593.1249256125
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.05085483938455582,
+            3.874814510345459,
+            0.45448678731918335
+          ],
+          [
+            0.577747642993927,
+            0.301327109336853,
+            0.042872898280620575
+          ],
+          [
+            0.0046310038305819035,
+            4.9583282470703125,
+            -0.3577759861946106
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81201_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 303,
+        "image": 203,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm10",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 4,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 16,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81201,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.43,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930988.49485008,
+          305774.9657740139,
+          4996623.521812771
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.014030151069164276,
+            1.4145985841751099,
+            0.12537641823291779
+          ],
+          [
+            0.1593785583972931,
+            0.11003562808036804,
+            0.011827065609395504
+          ],
+          [
+            0.0012759461533278227,
+            1.8101942539215088,
+            -0.09869586676359177
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520877_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 305,
+        "image": 204,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm18",
+          "Ontwikkeling": "",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 6,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520877,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.41,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930994.001144427,
+          305742.55780880444,
+          4996621.160448615
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.005261118058115244,
+            1.4146004915237427,
+            0.04701613634824753
+          ],
+          [
+            0.0597669743001461,
+            0.11002397537231445,
+            0.0044351485557854176
+          ],
+          [
+            0.00047872232971712947,
+            1.810193419456482,
+            -0.03701097518205643
+          ]
+        ]
+      },
+      {
+        "identity": "bm_83727_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 307,
+        "image": 205,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Hibiscus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2015,
+          "Beheerobjectomschrijving": "4897.bm7",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 1,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Hibiscus syriacus cv",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 8,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "altheastruik (cv) -NIET toepassen",
+          "Boom_id": 83727,
+          "trunkDiameter": 0,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.2,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3931052.2742046234,
+          305705.2210574502,
+          4996577.628473335
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.007014492992311716,
+            1.4146215915679932,
+            0.06268764287233353
+          ],
+          [
+            0.07968932390213013,
+            0.1100105494260788,
+            0.005913486238569021
+          ],
+          [
+            0.0006387147004716098,
+            1.8101776838302612,
+            -0.04934865981340408
+          ]
+        ]
+      },
+      {
+        "identity": "bm_79533_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 310,
+        "image": 206,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Aesculus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1907,
+          "Beheerobjectomschrijving": "4745.bm30",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "3",
+          "crownDiameter": 15,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Aesculus hippocastanum",
+          "Boomstatus": "Uniciteit",
+          "Stamdiameter": 94,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Voorhaven",
+          "Wijk": "Delfshaven",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "witte paardenkastanje -NIET toepassen",
+          "Boom_id": 79533,
+          "trunkDiameter": 0,
+          "Buurt": "Delfshaven - 00",
+          "Hoogte": 3.35,
+          "height": 22
+        },
+        "originalPositionECEF": [
+          3931024.606775006,
+          305808.6896772717,
+          4996593.147631037
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.08242983371019363,
+            2.029660224914551,
+            0.7365819811820984
+          ],
+          [
+            0.9363488554954529,
+            0.15789464116096497,
+            0.06948361545801163
+          ],
+          [
+            0.007492661010473967,
+            2.597219467163086,
+            -0.5798439979553223
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520857_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 313,
+        "image": 207,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm15",
+          "Ontwikkeling": "",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 20,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520857,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.46,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930994.273060197,
+          305766.68134584575,
+          4996619.54836347
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.017537521198391914,
+            1.4146004915237427,
+            0.15672039985656738
+          ],
+          [
+            0.19922322034835815,
+            0.11003264784812927,
+            0.014783822000026703
+          ],
+          [
+            0.0015951490495353937,
+            1.8101928234100342,
+            -0.12336999177932739
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81204_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 315,
+        "image": 208,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm13",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 20,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81204,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.644871794871795,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930989.0009155413,
+          305798.98762493324,
+          4996621.932433051
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.017538147047162056,
+            1.4145987033843994,
+            0.15672045946121216
+          ],
+          [
+            0.19922317564487457,
+            0.11004427075386047,
+            0.014783824793994427
+          ],
+          [
+            0.0015943434555083513,
+            1.8101935386657715,
+            -0.12336992472410202
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81197_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 318,
+        "image": 209,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm6",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "2",
+          "crownDiameter": 5,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 20,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81197,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.3398765432098765,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930988.2002746626,
+          305743.21577782865,
+          4996625.57097734
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.017537085339426994,
+            1.4145984649658203,
+            0.1567205935716629
+          ],
+          [
+            0.19922326505184174,
+            0.11002420634031296,
+            0.01478384155780077
+          ],
+          [
+            0.0015957122668623924,
+            1.810194969177246,
+            -0.1233697459101677
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81174_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 329,
+        "image": 210,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Aesculus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "92167.bm1",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": "3",
+          "crownDiameter": 13,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Aesculus hippocastanum",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 42,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "witte paardenkastanje -NIET toepassen",
+          "Boom_id": 81174,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.8,
+          "height": 14
+        },
+        "originalPositionECEF": [
+          3931005.610437171,
+          305822.10626382846,
+          4996607.747219043
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.03683096915483475,
+            2.0296499729156494,
+            0.3291119933128357
+          ],
+          [
+            0.4183685779571533,
+            0.1579015552997589,
+            0.03104594722390175
+          ],
+          [
+            0.003347004298120737,
+            2.597226858139038,
+            -0.2590780258178711
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520878_S",
+        "prototype": "proto_2.glb",
+        "part": "stam",
+        "originalInstance": 335,
+        "image": 211,
+        "sourceTriangles": 44,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm23",
+          "Ontwikkeling": "",
+          "Stamlengte": "2",
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "Stamdiameter": 6,
+          "tree_part": "stam",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520878,
+          "trunkDiameter": 0,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.33,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930992.717097734,
+          305702.8344243534,
+          4996624.481116961
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.005260891281068325,
+            1.4146000146865845,
+            0.047016169875860214
+          ],
+          [
+            0.059766992926597595,
+            0.11000968515872955,
+            0.004435152281075716
+          ],
+          [
+            0.00047901441575959325,
+            1.8101946115493774,
+            -0.037010930478572845
+          ]
+        ]
+      },
+      {
+        "identity": "bm_102576_K",
+        "prototype": "proto_5.glb",
+        "part": "kruin",
+        "originalInstance": 0,
+        "image": 212,
+        "sourceTriangles": 22,
+        "sourceAttributes": {
+          "Geslacht": "Toona",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2019,
+          "Beheerobjectomschrijving": "4881.bm11",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 1,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Toona sinensis",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "1e Schansstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "Chinese mahonieboom",
+          "Boom_id": 102576,
+          "trunkDiameter": 8,
+          "Buurt": "Bospolder - 20",
+          "Hoogte": 3.23,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3931091.4129549097,
+          305605.5131609064,
+          4996555.676462959
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.08767126500606537,
+            1.8451764583587646,
+            0.7835919857025146
+          ],
+          [
+            0.996117353439331,
+            0.14344516396522522,
+            0.07391831278800964
+          ],
+          [
+            0.007996613159775734,
+            2.3610901832580566,
+            -0.6168627738952637
+          ]
+        ]
+      },
+      {
+        "identity": "bm_499637_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 5,
+        "image": 213,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1990,
+          "Beheerobjectomschrijving": "88926.bm6",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Oud Mathenesse",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 499637,
+          "trunkDiameter": 15,
+          "Buurt": "Oud Mathenesse - 31",
+          "Hoogte": 3.54578947368421,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930995.3369649807,
+          305782.84345769434,
+          4996620.391180285
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17537827789783478,
+            1.8451311588287354,
+            1.5672036409378052
+          ],
+          [
+            1.9922319650650024,
+            0.14352840185165405,
+            0.14783819019794464
+          ],
+          [
+            0.015947537496685982,
+            2.3611204624176025,
+            -1.2337002754211426
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81198_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 12,
+        "image": 214,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1985,
+          "Beheerobjectomschrijving": "4995.bm7",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 5,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81198,
+          "trunkDiameter": 24,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.320923076923077,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930989.634760052,
+          305752.2658426795,
+          4996626.411932555
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.43843135237693787,
+            3.6902570724487305,
+            3.9180140495300293
+          ],
+          [
+            4.980581283569336,
+            0.28702807426452637,
+            0.3695959448814392
+          ],
+          [
+            0.03988732025027275,
+            4.722247123718262,
+            -3.0842444896698
+          ]
+        ]
+      },
+      {
+        "identity": "bm_499634_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 25,
+        "image": 215,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1990,
+          "Beheerobjectomschrijving": "88926.bm3",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Oud Mathenesse",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 499634,
+          "trunkDiameter": 15,
+          "Buurt": "Oud Mathenesse - 31",
+          "Hoogte": 3.69625,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930996.1042801556,
+          305806.0637827115,
+          4996618.570687419
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17538268864154816,
+            1.8451313972473145,
+            1.5672030448913574
+          ],
+          [
+            1.9922316074371338,
+            0.14353929460048676,
+            0.14783811569213867
+          ],
+          [
+            0.01594184711575508,
+            2.3611197471618652,
+            -1.233701229095459
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520858_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 36,
+        "image": 216,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm16",
+          "Ontwikkeling": "",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520858,
+          "trunkDiameter": 6,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.61,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930995.397146563,
+          305759.17451743345,
+          4996621.857846952
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17537374794483185,
+            1.8451311588287354,
+            1.567204236984253
+          ],
+          [
+            1.992232322692871,
+            0.14351728558540344,
+            0.14783824980258942
+          ],
+          [
+            0.01595335640013218,
+            2.361121416091919,
+            -1.2336996793746948
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81204_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 53,
+        "image": 217,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm13",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81204,
+          "trunkDiameter": 20,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.644871794871795,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930990.2365758754,
+          305799.08332951856,
+          4996623.507133593
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.2630721926689148,
+            3.6902575492858887,
+            2.350806951522827
+          ],
+          [
+            2.9883475303649902,
+            0.2870720326900482,
+            0.22175738215446472
+          ],
+          [
+            0.02391515113413334,
+            4.7222442626953125,
+            -1.8505487442016602
+          ]
+        ]
+      },
+      {
+        "identity": "bm_499635_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 57,
+        "image": 218,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1990,
+          "Beheerobjectomschrijving": "88926.bm4",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Oud Mathenesse",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 499635,
+          "trunkDiameter": 15,
+          "Buurt": "Oud Mathenesse - 31",
+          "Hoogte": 3.73,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930995.9989623865,
+          305798.53900968947,
+          4996619.152788586
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17538125813007355,
+            1.8451313972473145,
+            1.567203164100647
+          ],
+          [
+            1.9922317266464233,
+            0.1435357630252838,
+            0.14783813059329987
+          ],
+          [
+            0.01594369299709797,
+            2.3611199855804443,
+            -1.2337009906768799
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520861_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 58,
+        "image": 219,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm20",
+          "Ontwikkeling": "",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520861,
+          "trunkDiameter": 6,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.43,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930994.6298313877,
+          305726.9878690776,
+          4996624.180544747
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17536762356758118,
+            1.8451309204101562,
+            1.5672050714492798
+          ],
+          [
+            1.9922327995300293,
+            0.14350217580795288,
+            0.14783833920955658
+          ],
+          [
+            0.01596124842762947,
+            2.3611226081848145,
+            -1.2336986064910889
+          ]
+        ]
+      },
+      {
+        "identity": "bm_79535_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 64,
+        "image": 220,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Aesculus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1935,
+          "Beheerobjectomschrijving": "4744.bm22",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 16,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Aesculus hippocastanum",
+          "Boomstatus": "Uniciteit",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Voorhaven",
+          "Wijk": "Delfshaven",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "witte paardenkastanje -NIET toepassen",
+          "Boom_id": 79535,
+          "trunkDiameter": 66,
+          "Buurt": "Delfshaven - 00",
+          "Hoogte": 2.64,
+          "height": 22
+        },
+        "originalPositionECEF": [
+          3931054.277302205,
+          305847.2586251621,
+          4996569.257587548
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -1.4031152725219727,
+            12.301061630249023,
+            12.53750228881836
+          ],
+          [
+            15.937849044799805,
+            0.9570575952529907,
+            1.1826941967010498
+          ],
+          [
+            0.12746401131153107,
+            15.740646362304688,
+            -9.869765281677246
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520857_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 66,
+        "image": 221,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm15",
+          "Ontwikkeling": "",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520857,
+          "trunkDiameter": 20,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.46,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930995.502464332,
+          305766.77705043106,
+          4996621.121660181
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17537520825862885,
+            3.6902623176574707,
+            1.5672039985656738
+          ],
+          [
+            1.9922322034835815,
+            0.28704169392585754,
+            0.14783822000026703
+          ],
+          [
+            0.01595149002969265,
+            4.72224235534668,
+            -1.233699917793274
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520859_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 70,
+        "image": 222,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm17",
+          "Ontwikkeling": "",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520859,
+          "trunkDiameter": 6,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.47,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930995.3369649807,
+          305751.73348592356,
+          4996622.177431907
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17537233233451843,
+            1.8451311588287354,
+            1.5672043561935425
+          ],
+          [
+            1.9922324419021606,
+            0.14351379871368408,
+            0.1478382647037506
+          ],
+          [
+            0.015955183655023575,
+            2.361121654510498,
+            -1.2336994409561157
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81203_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 74,
+        "image": 223,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm12",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 4,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81203,
+          "trunkDiameter": 19,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.634583333333333,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930990.078599222,
+          305791.10395971616,
+          4996624.100648508
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.350759893655777,
+            3.6902570724487305,
+            3.1344096660614014
+          ],
+          [
+            3.984463691711426,
+            0.2870645225048065,
+            0.2956765592098236
+          ],
+          [
+            0.031890783458948135,
+            4.722244739532471,
+            -2.467397689819336
+          ]
+        ]
+      },
+      {
+        "identity": "bm_79533_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 77,
+        "image": 224,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Aesculus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1907,
+          "Beheerobjectomschrijving": "4745.bm30",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 3,
+          "crownDiameter": 15,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Aesculus hippocastanum",
+          "Boomstatus": "Uniciteit",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Voorhaven",
+          "Wijk": "Delfshaven",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "witte paardenkastanje -NIET toepassen",
+          "Boom_id": 79533,
+          "trunkDiameter": 94,
+          "Buurt": "Delfshaven - 00",
+          "Hoogte": 3.35,
+          "height": 22
+        },
+        "originalPositionECEF": [
+          3931026.458365759,
+          305808.8332341497,
+          4996595.50920882
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -1.315369725227356,
+            11.685921669006348,
+            11.75396728515625
+          ],
+          [
+            14.941737174987793,
+            0.9090903401374817,
+            1.108781099319458
+          ],
+          [
+            0.1195637434720993,
+            14.95368766784668,
+            -9.252829551696777
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81227_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 102,
+        "image": 225,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Acer",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1995,
+          "Beheerobjectomschrijving": "4991.bm15",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 6,
+          "crownDiameter": 8,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Acer saccharinum 'Pyramidale'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Jan Kruijffstraat",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "witte esdoorn (cv)",
+          "Boom_id": 81227,
+          "trunkDiameter": 35,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.6,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3930958.8518806743,
+          305656.0528267338,
+          4996661.748897536
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.7014191746711731,
+            3.075188159942627,
+            6.268863677978516
+          ],
+          [
+            7.968935012817383,
+            0.2391146421432495,
+            0.5913572907447815
+          ],
+          [
+            0.0639115571975708,
+            3.9352312088012695,
+            -4.934738636016846
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520878_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 103,
+        "image": 226,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm23",
+          "Ontwikkeling": "",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520878,
+          "trunkDiameter": 6,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.33,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930993.9452658882,
+          305702.93012893875,
+          4996626.052399482
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17536304891109467,
+            1.8451305627822876,
+            1.5672056674957275
+          ],
+          [
+            1.992233157157898,
+            0.14349089562892914,
+            0.14783841371536255
+          ],
+          [
+            0.015967147424817085,
+            2.3611233234405518,
+            -1.233697772026062
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81200_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 104,
+        "image": 227,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1990,
+          "Beheerobjectomschrijving": "4995.bm9",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81200,
+          "trunkDiameter": 20,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.410909090909091,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930989.807782101,
+          305767.1359426261,
+          4996625.487418937
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.26306307315826416,
+            3.6902570724487305,
+            2.3508079051971436
+          ],
+          [
+            2.9883482456207275,
+            0.2870420515537262,
+            0.22175750136375427
+          ],
+          [
+            0.02392691746354103,
+            4.722246170043945,
+            -1.8505473136901855
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520877_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 123,
+        "image": 228,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm18",
+          "Ontwikkeling": "",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520877,
+          "trunkDiameter": 6,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.41,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930995.2316472116,
+          305742.6535133898,
+          4996622.736705577
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17537060379981995,
+            1.8451311588287354,
+            1.5672045946121216
+          ],
+          [
+            1.9922325611114502,
+            0.14350953698158264,
+            0.147838294506073
+          ],
+          [
+            0.015957411378622055,
+            2.361121892929077,
+            -1.2336992025375366
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81197_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 124,
+        "image": 229,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm6",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 5,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81197,
+          "trunkDiameter": 20,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.3398765432098765,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930989.4241245138,
+          305743.31148241396,
+          4996627.142412451
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.4384270906448364,
+            3.6902568340301514,
+            3.9180147647857666
+          ],
+          [
+            4.980581283569336,
+            0.28701967000961304,
+            0.36959603428840637
+          ],
+          [
+            0.039892807602882385,
+            4.722248077392578,
+            -3.0842435359954834
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81202_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 126,
+        "image": 230,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm11",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 4,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81202,
+          "trunkDiameter": 20,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.548571428571429,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930990.003372244,
+          305783.1126268406,
+          4996624.540077821
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.35075685381889343,
+            3.6902575492858887,
+            3.1344099044799805
+          ],
+          [
+            3.984463930130005,
+            0.2870570421218872,
+            0.295676589012146
+          ],
+          [
+            0.031894709914922714,
+            4.722245216369629,
+            -2.467397451400757
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81195_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 131,
+        "image": 231,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-11-12",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm4",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 5,
+          "creationDate": "2023-12-01",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-11-10",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81195,
+          "trunkDiameter": 20,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.387142857142857,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930989.273670558,
+          305727.44844739453,
+          4996628.289494163
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.43841955065727234,
+            3.6902568340301514,
+            3.918015718460083
+          ],
+          [
+            4.980582237243652,
+            0.2870047986507416,
+            0.3695961534976959
+          ],
+          [
+            0.039902545511722565,
+            4.7222490310668945,
+            -3.084242343902588
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81196_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 135,
+        "image": 232,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm5",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81196,
+          "trunkDiameter": 18,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.2947727272727274,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930989.2887159535,
+          305735.1765926604,
+          4996627.684565499
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.2630539536476135,
+            3.6902568340301514,
+            2.350809097290039
+          ],
+          [
+            2.988348960876465,
+            0.2870120406150818,
+            0.2217576503753662
+          ],
+          [
+            0.023938678205013275,
+            4.722248554229736,
+            -1.8505457639694214
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81199_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 138,
+        "image": 233,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1985,
+          "Beheerobjectomschrijving": "4995.bm8",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 5,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81199,
+          "trunkDiameter": 25,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.373333333333333,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930989.6498054476,
+          305759.67696650646,
+          4996626.012451362
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.438434898853302,
+            3.6902570724487305,
+            3.91801381111145
+          ],
+          [
+            4.980580806732178,
+            0.2870350480079651,
+            0.36959588527679443
+          ],
+          [
+            0.03988276794552803,
+            4.7222466468811035,
+            -3.084244966506958
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81201_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 139,
+        "image": 234,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm10",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 4,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81201,
+          "trunkDiameter": 16,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.43,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930989.7250324255,
+          305775.0614785992,
+          4996625.099351492
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.3507537841796875,
+            3.6902570724487305,
+            3.1344103813171387
+          ],
+          [
+            3.984464168548584,
+            0.28704947233200073,
+            0.29567664861679077
+          ],
+          [
+            0.031898654997348785,
+            4.722246170043945,
+            -2.4673967361450195
+          ]
+        ]
+      },
+      {
+        "identity": "bm_499636_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 140,
+        "image": 235,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1990,
+          "Beheerobjectomschrijving": "88926.bm5",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Oud Mathenesse",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 499636,
+          "trunkDiameter": 15,
+          "Buurt": "Oud Mathenesse - 31",
+          "Hoogte": 3.665,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930995.6905317768,
+          305790.8407721065,
+          4996619.780544747
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17537979781627655,
+            1.8451313972473145,
+            1.567203402519226
+          ],
+          [
+            1.992231845855713,
+            0.1435321569442749,
+            0.14783816039562225
+          ],
+          [
+            0.01594557985663414,
+            2.3611202239990234,
+            -1.2337006330490112
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81180_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 143,
+        "image": 236,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm2",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81180,
+          "trunkDiameter": 20,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.5342857142857143,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930995.434760052,
+          305774.7743648432,
+          4996620.77924773
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17537672817707062,
+            3.69026255607605,
+            1.5672038793563843
+          ],
+          [
+            1.992232084274292,
+            0.28704920411109924,
+            0.14783820509910583
+          ],
+          [
+            0.015949523076415062,
+            4.7222418785095215,
+            -1.233700156211853
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520863_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 147,
+        "image": 237,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm22",
+          "Ontwikkeling": "",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520863,
+          "trunkDiameter": 6,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.28,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930994.2386511024,
+          305711.08296330203,
+          4996625.264850843
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17536459863185883,
+            1.8451306819915771,
+            1.5672054290771484
+          ],
+          [
+            1.9922330379486084,
+            0.14349471032619476,
+            0.14783838391304016
+          ],
+          [
+            0.01596514880657196,
+            2.3611230850219727,
+            -1.2336980104446411
+          ]
+        ]
+      },
+      {
+        "identity": "bm_399728_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 151,
+        "image": 238,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm1",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 399728,
+          "trunkDiameter": 23,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.83,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930991.3725032425,
+          305816.60325017164,
+          4996621.7950713355
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.2630771994590759,
+            3.690258502960205,
+            2.3508059978485107
+          ],
+          [
+            2.988347291946411,
+            0.28708845376968384,
+            0.22175729274749756
+          ],
+          [
+            0.02390872687101364,
+            4.72224235534668,
+            -1.8505499362945557
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81174_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 163,
+        "image": 239,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Aesculus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "92167.bm1",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 3,
+          "crownDiameter": 13,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Aesculus hippocastanum",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "witte paardenkastanje -NIET toepassen",
+          "Boom_id": 81174,
+          "trunkDiameter": 42,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.8,
+          "height": 14
+        },
+        "originalPositionECEF": [
+          3931007.4560311283,
+          305822.2498207065,
+          4996610.11309987
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -1.140006184577942,
+            6.765500545501709,
+            10.186800003051758
+          ],
+          [
+            12.949503898620605,
+            0.526338517665863,
+            0.9609460234642029
+          ],
+          [
+            0.10359775274991989,
+            8.65742301940918,
+            -8.019082069396973
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520862_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 165,
+        "image": 240,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm21",
+          "Ontwikkeling": "",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520862,
+          "trunkDiameter": 6,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.3,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930994.4718547342,
+          305718.9127946899,
+          4996624.631387808
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.1753660887479782,
+            1.8451306819915771,
+            1.5672051906585693
+          ],
+          [
+            1.9922329187393188,
+            0.14349839091300964,
+            0.14783836901187897
+          ],
+          [
+            0.015963230282068253,
+            2.3611226081848145,
+            -1.2336983680725098
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81205_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 166,
+        "image": 241,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4995.bm14",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 4,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81205,
+          "trunkDiameter": 21,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.6616666666666666,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930990.582619974,
+          305807.1284962234,
+          4996622.770946822
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.35076600313186646,
+            3.6902575492858887,
+            3.134408712387085
+          ],
+          [
+            3.9844632148742676,
+            0.2870795726776123,
+            0.29567644000053406
+          ],
+          [
+            0.03188292682170868,
+            4.722243309020996,
+            -2.4673988819122314
+          ]
+        ]
+      },
+      {
+        "identity": "bm_81175_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 169,
+        "image": 242,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1983,
+          "Beheerobjectomschrijving": "4997.bm4",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 81175,
+          "trunkDiameter": 20,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.85,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3930996.9543450065,
+          305813.62444495305,
+          4996617.634760052
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17538411915302277,
+            3.6902637481689453,
+            1.5672026872634888
+          ],
+          [
+            1.9922314882278442,
+            0.2870856821537018,
+            0.1478380709886551
+          ],
+          [
+            0.01594000682234764,
+            4.722238540649414,
+            -1.2337015867233276
+          ]
+        ]
+      },
+      {
+        "identity": "bm_520860_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 175,
+        "image": 243,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Tilia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2023,
+          "Beheerobjectomschrijving": "4995.bm19",
+          "Ontwikkeling": "",
+          "Stamlengte": 2,
+          "crownDiameter": 2,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Tilia cordata 'B\u00f6hlje'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schiedamseweg",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-07-07",
+          "Boomsortiment_nederlands": "winterlinde (cv)",
+          "Boom_id": 520860,
+          "trunkDiameter": 6,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.38,
+          "height": 5
+        },
+        "originalPositionECEF": [
+          3930994.923216602,
+          305734.66218051425,
+          4996623.427237354
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.17536908388137817,
+            1.8451311588287354,
+            1.5672048330307007
+          ],
+          [
+            1.9922326803207397,
+            0.14350579679012299,
+            0.1478383094072342
+          ],
+          [
+            0.015959369018673897,
+            2.3611223697662354,
+            -1.2336989641189575
+          ]
+        ]
+      },
+      {
+        "identity": "bm_79532_K",
+        "prototype": "proto_6.glb",
+        "part": "kruin",
+        "originalInstance": 176,
+        "image": 244,
+        "sourceTriangles": 308,
+        "sourceAttributes": {
+          "Geslacht": "Aesculus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1907,
+          "Beheerobjectomschrijving": "4745.bm29",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 3,
+          "crownDiameter": 15,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Aesculus hippocastanum",
+          "Boomstatus": "Uniciteit",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Voorhaven",
+          "Wijk": "Delfshaven",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "witte paardenkastanje -NIET toepassen",
+          "Boom_id": 79532,
+          "trunkDiameter": 71,
+          "Buurt": "Delfshaven - 00",
+          "Hoogte": 3.205,
+          "height": 14
+        },
+        "originalPositionECEF": [
+          3931033.792996109,
+          305806.23126573587,
+          4996589.750972763
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -1.315364956855774,
+            6.765546798706055,
+            11.75395393371582
+          ],
+          [
+            14.941737174987793,
+            0.5263110399246216,
+            1.1087799072265625
+          ],
+          [
+            0.11956974864006042,
+            8.657387733459473,
+            -9.252846717834473
+          ]
+        ]
+      },
+      {
+        "identity": "bm_229324_K",
+        "prototype": "proto_7.glb",
+        "part": "kruin",
+        "originalInstance": 12,
+        "image": 245,
+        "sourceTriangles": 212,
+        "sourceAttributes": {
+          "Geslacht": "Robinia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1996,
+          "Beheerobjectomschrijving": "4856.bm34",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 5,
+          "crownDiameter": 9,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Robinia pseudoacacia 'Unifoliola'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Rosier Faassenstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "eenbladige robinia",
+          "Boom_id": 229324,
+          "trunkDiameter": 35,
+          "Buurt": "Bospolder - 10",
+          "Hoogte": 3.3766666666666665,
+          "height": 14
+        },
+        "originalPositionECEF": [
+          3931027.9864347293,
+          305622.8586404211,
+          4996608.195468071
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.7890619039535522,
+            5.535437107086182,
+            7.052398204803467
+          ],
+          [
+            8.965054512023926,
+            0.43035972118377686,
+            0.6652708053588867
+          ],
+          [
+            0.07194404304027557,
+            7.083341598510742,
+            -5.551675319671631
+          ]
+        ]
+      },
+      {
+        "identity": "bm_309913_K",
+        "prototype": "proto_7.glb",
+        "part": "kruin",
+        "originalInstance": 14,
+        "image": 246,
+        "sourceTriangles": 212,
+        "sourceAttributes": {
+          "Geslacht": "Robinia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2001,
+          "Beheerobjectomschrijving": "4856.bm6",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 6,
+          "crownDiameter": 8,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Robinia pseudoacacia 'Unifoliola'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Rosier Faassenstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "eenbladige robinia",
+          "Boom_id": 309913,
+          "trunkDiameter": 29,
+          "Buurt": "Bospolder - 10",
+          "Hoogte": 3.26,
+          "height": 17
+        },
+        "originalPositionECEF": [
+          3931023.1565270466,
+          305620.83141832607,
+          4996613.208972305
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.7013872265815735,
+            6.765524864196777,
+            6.268803596496582
+          ],
+          [
+            7.968937397003174,
+            0.525991678237915,
+            0.5913522839546204
+          ],
+          [
+            0.06395182758569717,
+            8.657424926757812,
+            -4.934815406799316
+          ]
+        ]
+      },
+      {
+        "identity": "bm_80443_K",
+        "prototype": "proto_7.glb",
+        "part": "kruin",
+        "originalInstance": 16,
+        "image": 247,
+        "sourceTriangles": 212,
+        "sourceAttributes": {
+          "Geslacht": "Corylus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1992,
+          "Beheerobjectomschrijving": "4894.bm4",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 5,
+          "crownDiameter": 6,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Corylus colurna",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schans",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "boomhazelaar",
+          "Boom_id": 80443,
+          "trunkDiameter": 22,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.43,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3931058.061966888,
+          305748.6624093996,
+          4996577.107347219
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.5261116027832031,
+            3.690319776535034,
+            4.701568603515625
+          ],
+          [
+            5.97669792175293,
+            0.2870245575904846,
+            0.4435110092163086
+          ],
+          [
+            0.04787192493677139,
+            4.722198963165283,
+            -3.701155185699463
+          ]
+        ]
+      },
+      {
+        "identity": "bm_80444_K",
+        "prototype": "proto_7.glb",
+        "part": "kruin",
+        "originalInstance": 19,
+        "image": 248,
+        "sourceTriangles": 212,
+        "sourceAttributes": {
+          "Geslacht": "Corylus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1992,
+          "Beheerobjectomschrijving": "4894.bm5",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": 5,
+          "crownDiameter": 10,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Corylus colurna",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schans",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "boomhazelaar",
+          "Boom_id": 80444,
+          "trunkDiameter": 40,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.39,
+          "height": 14
+        },
+        "originalPositionECEF": [
+          3931076.240955215,
+          305748.6900282292,
+          4996562.85053788
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.8768508434295654,
+            5.535505294799805,
+            7.835925102233887
+          ],
+          [
+            9.961162567138672,
+            0.4305369257926941,
+            0.7391830682754517
+          ],
+          [
+            0.07978850603103638,
+            7.083277225494385,
+            -6.168620586395264
+          ]
+        ]
+      },
+      {
+        "identity": "bm_229323_K",
+        "prototype": "proto_7.glb",
+        "part": "kruin",
+        "originalInstance": 23,
+        "image": 249,
+        "sourceTriangles": 212,
+        "sourceAttributes": {
+          "Geslacht": "Robinia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1996,
+          "Beheerobjectomschrijving": "4856.bm33",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 5,
+          "crownDiameter": 10,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Robinia pseudoacacia 'Unifoliola'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Rosier Faassenstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "eenbladige robinia",
+          "Boom_id": 229323,
+          "trunkDiameter": 35,
+          "Buurt": "Bospolder - 10",
+          "Hoogte": 3.3,
+          "height": 14
+        },
+        "originalPositionECEF": [
+          3931032.7272297246,
+          305605.4201113909,
+          4996605.445181964
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.8767184019088745,
+            5.5354437828063965,
+            7.835993766784668
+          ],
+          [
+            9.961173057556152,
+            0.4303351640701294,
+            0.7391894459724426
+          ],
+          [
+            0.07995977997779846,
+            7.083337783813477,
+            -6.168532848358154
+          ]
+        ]
+      },
+      {
+        "identity": "bm_80442_K",
+        "prototype": "proto_7.glb",
+        "part": "kruin",
+        "originalInstance": 27,
+        "image": 250,
+        "sourceTriangles": 212,
+        "sourceAttributes": {
+          "Geslacht": "Corylus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1992,
+          "Beheerobjectomschrijving": "4894.bm3",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 5,
+          "crownDiameter": 6,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Corylus colurna",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schans",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "boomhazelaar",
+          "Boom_id": 80442,
+          "trunkDiameter": 26,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.32,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3931039.6735637444,
+          305748.53536278324,
+          4996591.345845731
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.5261125564575195,
+            3.6903023719787598,
+            4.701581954956055
+          ],
+          [
+            5.97669792175293,
+            0.28702443838119507,
+            0.4435121417045593
+          ],
+          [
+            0.047870807349681854,
+            4.722211837768555,
+            -3.7011380195617676
+          ]
+        ]
+      },
+      {
+        "identity": "bm_80441_K",
+        "prototype": "proto_7.glb",
+        "part": "kruin",
+        "originalInstance": 34,
+        "image": 251,
+        "sourceTriangles": 212,
+        "sourceAttributes": {
+          "Geslacht": "Corylus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1990,
+          "Beheerobjectomschrijving": "4894.bm2",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 5,
+          "crownDiameter": 6,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Corylus colurna",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Schans",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "boomhazelaar",
+          "Boom_id": 80441,
+          "trunkDiameter": 25,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.28,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3931021.7218127716,
+          305748.6513618677,
+          4996605.320668345
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.5261136889457703,
+            3.6902852058410645,
+            4.701595306396484
+          ],
+          [
+            5.9766974449157715,
+            0.2870245575904846,
+            0.44351327419281006
+          ],
+          [
+            0.047869548201560974,
+            4.722225189208984,
+            -3.7011213302612305
+          ]
+        ]
+      },
+      {
+        "identity": "bm_309914_K",
+        "prototype": "proto_7.glb",
+        "part": "kruin",
+        "originalInstance": 35,
+        "image": 252,
+        "sourceTriangles": 212,
+        "sourceAttributes": {
+          "Geslacht": "Robinia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2001,
+          "Beheerobjectomschrijving": "4856.bm7",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 5,
+          "crownDiameter": 7,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Robinia pseudoacacia 'Unifoliola'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Rosier Faassenstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "eenbladige robinia",
+          "Boom_id": 309914,
+          "trunkDiameter": 25,
+          "Buurt": "Bospolder - 10",
+          "Hoogte": 3.28,
+          "height": 14
+        },
+        "originalPositionECEF": [
+          3931027.291355764,
+          305603.3873655299,
+          4996609.792172122
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.6137018799781799,
+            5.535435676574707,
+            5.485200881958008
+          ],
+          [
+            6.972821235656738,
+            0.4303323030471802,
+            0.5174330472946167
+          ],
+          [
+            0.055973175913095474,
+            7.083344459533691,
+            -4.317966938018799
+          ]
+        ]
+      },
+      {
+        "identity": "bm_418562_K",
+        "prototype": "proto_8.glb",
+        "part": "kruin",
+        "originalInstance": 1,
+        "image": 253,
+        "sourceTriangles": 324,
+        "sourceAttributes": {
+          "Geslacht": "Gleditsia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2013,
+          "Beheerobjectomschrijving": "4991.bm17",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": 4,
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Gleditsia triacanthos 'Skyline'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Jan Kruijffstraat",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "Amerikaanse gleditsia (cv)",
+          "Boom_id": 418562,
+          "trunkDiameter": 15,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.5,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3930972.212451362,
+          305639.7849546044,
+          4996649.634744793
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.2630271315574646,
+            4.30527925491333,
+            2.3508191108703613
+          ],
+          [
+            2.9883508682250977,
+            0.33474284410476685,
+            0.22175857424736023
+          ],
+          [
+            0.02397327683866024,
+            5.509311676025391,
+            -1.8505332469940186
+          ]
+        ]
+      },
+      {
+        "identity": "bm_426095_K",
+        "prototype": "proto_8.glb",
+        "part": "kruin",
+        "originalInstance": 2,
+        "image": 254,
+        "sourceTriangles": 324,
+        "sourceAttributes": {
+          "Geslacht": "Gleditsia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2013,
+          "Beheerobjectomschrijving": "4991.bm16",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": 4,
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Gleditsia triacanthos 'Skyline'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Jan Kruijffstraat",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "Amerikaanse gleditsia (cv)",
+          "Boom_id": 426095,
+          "trunkDiameter": 10,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.54,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3930959.0539559014,
+          305632.0344853895,
+          4996660.437628748
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.26302531361579895,
+            4.305264472961426,
+            2.3508241176605225
+          ],
+          [
+            2.9883511066436768,
+            0.33473432064056396,
+            0.22175902128219604
+          ],
+          [
+            0.02397570013999939,
+            5.509323596954346,
+            -1.8505265712738037
+          ]
+        ]
+      },
+      {
+        "identity": "bm_83722_K",
+        "prototype": "proto_8.glb",
+        "part": "kruin",
+        "originalInstance": 3,
+        "image": 255,
+        "sourceTriangles": 324,
+        "sourceAttributes": {
+          "Geslacht": "Ulmus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1975,
+          "Beheerobjectomschrijving": "4897.bm2",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 6,
+          "crownDiameter": 15,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Ulmus minor",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "gladde iep -NIET toepassen",
+          "Boom_id": 83722,
+          "trunkDiameter": 58,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.213333333333333,
+          "height": 22
+        },
+        "originalPositionECEF": [
+          3931036.6357976655,
+          305699.26030365453,
+          4996597.843030442
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -1.315211296081543,
+            9.840797424316406,
+            11.753969192504883
+          ],
+          [
+            14.941749572753906,
+            0.7652750611305237,
+            1.1087818145751953
+          ],
+          [
+            0.11976733803749084,
+            12.592578887939453,
+            -9.252826690673828
+          ]
+        ]
+      },
+      {
+        "identity": "bm_418563_K",
+        "prototype": "proto_8.glb",
+        "part": "kruin",
+        "originalInstance": 6,
+        "image": 256,
+        "sourceTriangles": 324,
+        "sourceAttributes": {
+          "Geslacht": "Gleditsia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2013,
+          "Beheerobjectomschrijving": "4991.bm18",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": 3,
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Gleditsia triacanthos 'Skyline'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Jan Kruijffstraat",
+          "Wijk": "Tussendijken",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "Amerikaanse gleditsia (cv)",
+          "Boom_id": 418563,
+          "trunkDiameter": 10,
+          "Buurt": "Tussendijken - 31",
+          "Hoogte": 3.49,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3930959.350713359,
+          305642.2417486839,
+          4996658.247058824
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.26302820444107056,
+            4.920303821563721,
+            2.350823402404785
+          ],
+          [
+            2.9883508682250977,
+            0.38256633281707764,
+            0.22175896167755127
+          ],
+          [
+            0.02397194877266884,
+            6.29636812210083,
+            -1.8505275249481201
+          ]
+        ]
+      },
+      {
+        "identity": "bm_404111_K",
+        "prototype": "proto_8.glb",
+        "part": "kruin",
+        "originalInstance": 8,
+        "image": 257,
+        "sourceTriangles": 324,
+        "sourceAttributes": {
+          "Geslacht": "Gleditsia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2012,
+          "Beheerobjectomschrijving": "4897.bm11",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": 3,
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Gleditsia triacanthos 'Skyline'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "Amerikaanse gleditsia (cv)",
+          "Boom_id": 404111,
+          "trunkDiameter": 15,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.03,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3931017.643320363,
+          305698.9683527886,
+          4996608.667338064
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.26304274797439575,
+            3.0752360820770264,
+            2.350800037384033
+          ],
+          [
+            2.9883499145507812,
+            0.2391483634710312,
+            0.22175690531730652
+          ],
+          [
+            0.02395295910537243,
+            3.9351916313171387,
+            -1.8505573272705078
+          ]
+        ]
+      },
+      {
+        "identity": "bm_83725_K",
+        "prototype": "proto_8.glb",
+        "part": "kruin",
+        "originalInstance": 9,
+        "image": 258,
+        "sourceTriangles": 324,
+        "sourceAttributes": {
+          "Geslacht": "Ulmus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1993,
+          "Beheerobjectomschrijving": "4897.bm5",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": 5,
+          "crownDiameter": 6,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Ulmus \u00d7 hollandica 'Dampieri'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-08-15",
+          "Boomsortiment_nederlands": "Hollandse iep (cv) -NIET toepassen",
+          "Boom_id": 83725,
+          "trunkDiameter": 28,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 3.1,
+          "height": 14
+        },
+        "originalPositionECEF": [
+          3931005.7258106354,
+          305698.45606164646,
+          4996620.637811856
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.5260858535766602,
+            5.53540563583374,
+            4.7016096115112305
+          ],
+          [
+            5.976699352264404,
+            0.4304661452770233,
+            0.4435146450996399
+          ],
+          [
+            0.04790549725294113,
+            7.0833587646484375,
+            -3.7011022567749023
+          ]
+        ]
+      },
+      {
+        "identity": "bm_404110_K",
+        "prototype": "proto_8.glb",
+        "part": "kruin",
+        "originalInstance": 12,
+        "image": 259,
+        "sourceTriangles": 324,
+        "sourceAttributes": {
+          "Geslacht": "Gleditsia",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2012,
+          "Beheerobjectomschrijving": "4897.bm3",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": 4,
+          "crownDiameter": 3,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Gleditsia triacanthos 'Skyline'",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Watergeusstraat",
+          "Wijk": "Bospolder",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "Amerikaanse gleditsia (cv)",
+          "Boom_id": 404110,
+          "trunkDiameter": 15,
+          "Buurt": "Bospolder - 30",
+          "Hoogte": 2.98,
+          "height": 8
+        },
+        "originalPositionECEF": [
+          3931026.417898833,
+          305699.27682917524,
+          4996603.00077821
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.2630425691604614,
+            2.4601938724517822,
+            2.350797176361084
+          ],
+          [
+            2.9883499145507812,
+            0.1913188397884369,
+            0.22175666689872742
+          ],
+          [
+            0.023953132331371307,
+            3.1481494903564453,
+            -1.8505611419677734
+          ]
+        ]
+      },
+      {
+        "identity": "bm_79530_K",
+        "prototype": "proto_8.glb",
+        "part": "kruin",
+        "originalInstance": 13,
+        "image": 260,
+        "sourceTriangles": 324,
+        "sourceAttributes": {
+          "Geslacht": "Carpinus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 2005,
+          "Beheerobjectomschrijving": "4745.bm27",
+          "Ontwikkeling": "Tijdelijke Kroon",
+          "Stamlengte": 2,
+          "crownDiameter": 5,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Carpinus betulus",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Voorhaven",
+          "Wijk": "Delfshaven",
+          "Laatste_mutatie": "2023-06-08",
+          "Boomsortiment_nederlands": "haagbeuk",
+          "Boom_id": 79530,
+          "trunkDiameter": 16,
+          "Buurt": "Delfshaven - 00",
+          "Hoogte": 2.96,
+          "height": 11
+        },
+        "originalPositionECEF": [
+          3931053.227237354,
+          305806.85796902416,
+          4996572.9433737695
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -0.4384543001651764,
+            5.535475730895996,
+            3.9179725646972656
+          ],
+          [
+            4.980579376220703,
+            0.4306190609931946,
+            0.3695922791957855
+          ],
+          [
+            0.03985726833343506,
+            7.083295822143555,
+            -3.0842981338500977
+          ]
+        ]
+      },
+      {
+        "identity": "bm_79534_K",
+        "prototype": "proto_8.glb",
+        "part": "kruin",
+        "originalInstance": 18,
+        "image": 261,
+        "sourceTriangles": 324,
+        "sourceAttributes": {
+          "Geslacht": "Ulmus",
+          "Brondatum": "2023-10-15",
+          "Aanlegjaar": 1975,
+          "Beheerobjectomschrijving": "4745.bm31",
+          "Ontwikkeling": "Blijvende Kroon",
+          "Stamlengte": 4,
+          "crownDiameter": 16,
+          "creationDate": "2023-10-18",
+          "Boomsortiment": "Ulmus minor",
+          "Boomstatus": "Niet van toepassing",
+          "tree_part": "kruin",
+          "Thema": "Bomen",
+          "Straat": "Voorhaven",
+          "Wijk": "Delfshaven",
+          "Laatste_mutatie": "2023-08-14",
+          "Boomsortiment_nederlands": "gladde iep -NIET toepassen",
+          "Boom_id": 79534,
+          "trunkDiameter": 67,
+          "Buurt": "Delfshaven - 00",
+          "Hoogte": 3.55,
+          "height": 22
+        },
+        "originalPositionECEF": [
+          3931015.7481193254,
+          305817.4893873503,
+          4996604.87534905
+        ],
+        "prototypeToECEFLinear": [
+          [
+            -1.403075933456421,
+            11.070840835571289,
+            12.537586212158203
+          ],
+          [
+            15.937851905822754,
+            0.8612676858901978,
+            1.182701587677002
+          ],
+          [
+            0.1275157332420349,
+            14.166675567626953,
+            -9.869658470153809
+          ]
+        ]
+      }
+    ],
+    "treeSourceSha256": "ac82ce5557aae7ab45a888dc129b09584733208d2ffbef38de17fee5d4481d72",
+    "prototypes": {
+      "proto_1.glb": "074e7f9a5e6f9d8352d682e74f8d869ea0cfc77089fb8abccfa7c9820b497808",
+      "proto_4.glb": "6867eb5f0c6d11dcdec3922125e059d469d0bb70eddea597aa531f239bd16049",
+      "proto_2.glb": "3df0225077a1fee5ed567515231903a6deae7c0b6db8595e13c52acfc506f672",
+      "proto_5.glb": "19413a4d69f2640f83560180f1a1249edd983c94db06c57e12b9854e039268f0",
+      "proto_6.glb": "0e9060557708d4b7ca6cdd748e8ec14b3b2d213690dccf337a0bb13ed9080ea1",
+      "proto_7.glb": "5f4a9289eb9a3eb0ec763424d02ea6b27ad09188ccc2b609db05c2385ac1401c",
+      "proto_8.glb": "bbdf6b83dd8090d040320254e778d0849d3a79ee43a5ab80d91f35c088e8f67b"
+    }
+  },
+  "treeDrawing": "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/contiguous-neighbourhood-aligned/complete-neighbourhood-context/native-map-composition/scene120-drawn.png",
+  "treeSupport": "Exact original inventory geometry visible in same source camera; pre-cleanup drawing used only on those tree pixels"
+}
