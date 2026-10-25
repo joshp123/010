@@ -82,7 +82,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
   const transform = new THREE.Object3D(), color = new THREE.Color(), position = new THREE.Vector3(), tangent = new THREE.Vector3();
   const frustum = new THREE.Frustum(), cameraMatrix = new THREE.Matrix4();
   let restrictionStatus=bicycles?'not-applicable':'not-loaded';
-  let geometryStatus=bicycles?'original-bicycle-network':'not-loaded';
+  let geometryStatus='not-loaded';
   let surfaceProfileStatus='not-loaded';
   let sourceNetwork = null, roads = [], planner = null, candidates = [], cars = [];
   const unregisterTraffic = coordinator.register(() => paused || !group.visible ? [] : cars);
@@ -249,8 +249,10 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
         if(data.version!==1 || data.mode!=='motorcar' || !Array.isArray(data.rules))throw new Error('Unsupported turn restriction format');
         network.turnRestrictions=data.rules;restrictionStatus=`loaded:${data.rules.length}`;
       } catch(error) {restrictionStatus=`unavailable:${error.message}`;}
+    }
+    {
       try {
-        const response=await fetch('./data/traffic/road-geometry.json');
+        const response=await fetch(bicycles?'./data/traffic/cycle-geometry.json':'./data/traffic/road-geometry.json');
         if(!response.ok)throw new Error(`HTTP ${response.status}`);
         geometryStatus=`reviewed:${applyReviewedRoadGeometry(network,await response.json())}`;
       } catch(error) {geometryStatus=`original:${error.message}`;}

@@ -42,6 +42,8 @@ export function featureColor(kind, attributes, fallbackIdentifier) {
 }
 
 export function streetColor(kind) {
+  const surveyedBridgeColor = { 'bridge-footway': '#b8b9ad', 'bridge-divider': '#737a72', 'bridge-track-bed': '#8b887a', 'bridge-edge-paint': '#d7d6c7', 'rail-groove': '#454b49', 'rail-steel': '#b2b7ae' }[kind];
+  if (surveyedBridgeColor) return new THREE.Color(surveyedBridgeColor);
   return kind === 'rail' ? new THREE.Color('#777e73') : GROUND_COLORS[kind] || GROUND_COLORS.road;
 }
 

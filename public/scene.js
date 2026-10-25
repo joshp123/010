@@ -204,6 +204,12 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
   let groundArtworkPending = groundArtworkEnabled, groundArtworkFailed = false;
   groundArtwork.ready.then(() => { groundArtworkPending = false; groundArtworkFailed = Boolean(groundArtwork.diagnostics().error); requestRender(); });
   Object.assign(materials.bridgeSurfaces, { polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+  for (const [name, units] of [['bridgeRailGroove', -5], ['bridgeRailSteel', -8], ['bridgeEdgePaint', -5]]) {
+    materials[name] = materials.bridgeSurfaces.clone();
+    materials[name].onBeforeCompile = materials.bridgeSurfaces.onBeforeCompile;
+    materials[name].customProgramCacheKey = materials.bridgeSurfaces.customProgramCacheKey;
+    materials[name].polygonOffsetUnits = units;
+  }
   const seaGeometry = new THREE.PlaneGeometry(180000, 180000, 96, 96);
   const seaVertices = seaGeometry.getAttribute('position');
   for (let i = 0; i < seaVertices.count; i++) seaVertices.setZ(i, -((seaVertices.getX(i) ** 2 + seaVertices.getY(i) ** 2) / (2 * 6371000)));
@@ -485,6 +491,9 @@ export async function createScene({ canvas, municipalityData, onViewChange = () 
       }
       mesh.geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
       mesh.material = materials[kind];
+      if (kind === 'bridgeSurfaces' && mesh.userData.surfaceKind === 'rail-groove') mesh.material = materials.bridgeRailGroove;
+      if (kind === 'bridgeSurfaces' && mesh.userData.surfaceKind === 'rail-steel') mesh.material = materials.bridgeRailSteel;
+      if (kind === 'bridgeSurfaces' && mesh.userData.surfaceKind === 'bridge-edge-paint') mesh.material = materials.bridgeEdgePaint;
       mesh.castShadow = !['ground', 'greenTerrain', 'industrialTerrain', 'streets', 'yards', 'bridgeSurfaces'].includes(kind);
       mesh.receiveShadow = true;
       if (kind === 'streets') mesh.renderOrder = -10;

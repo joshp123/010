@@ -146,18 +146,22 @@ def build(review):
     box=[float(centre[0]),float(-centre[2]),float(centre[1]),float(half[0]),0,0,0,float(half[2]),0,0,0,float(half[1])]
     return {'name':review['name'],'nativeSource':review['url'],'nativeSha256':review['sha256'],'transportSha256':hashlib.sha256(transport_bytes).hexdigest(),'features':records,'triangles':sum(len(vertices)//9 for vertices in vertices_by_kind.values()),'bytes':len(glb),'box':box}
 
-results=[build(review) for review in reviews['reviews']]
-latitude,longitude=np.deg2rad([51.915,4.49])
-east=np.array([-np.sin(longitude),np.cos(longitude),0])
-up=np.array([np.cos(latitude)*np.cos(longitude),np.cos(latitude)*np.sin(longitude),np.sin(latitude)])
-north=np.cross(up,east)
-origin=np.array(Transformer.from_crs(4979,4978,always_xy=True).transform(4.49,51.915,0))
-matrix=np.eye(4);matrix[:3,0]=east;matrix[:3,1]=north;matrix[:3,2]=up;matrix[:3,3]=origin
-# Root region is geographic/ECEF; children boxes use the ENU root transform.
-children=[{'boundingVolume':{'box':result['box']},'geometricError':0,'content':{'uri':result['name']+'.glb'}} for result in results]
-# Conservative root box encloses the full municipality; empty parent has no coarse content.
-tileset={'asset':{'version':'1.1'},'geometricError':100000,'root':{'transform':matrix.flatten(order='F').tolist(),'boundingVolume':{'box':[-15000,0,30,30000,0,0,0,15000,0,0,0,200]},'geometricError':100000,'refine':'ADD','children':children}}
-(output/'tileset.json').write_text(json.dumps(tileset,separators=(',',':'))+'\n')
-manifest={'writtenBy':'AI, GPT-6, 2026-10-24','coordinateFrame':{'latitude':51.915,'longitude':4.49,'glTF':'X east, Y up, Z south','tiles':'X east, Y north, Z up'},'method':'Intersect surveyed bridge-tagged BRT polygons with explicit hash-pinned native deck triangles; barycentric native height. No structure geometry. No display offset baked in.','interpretation':'Double tram centreline uses existing street stage 6 m ribbon; single track 3.2 m. Unknown deck strips remain native. BRT was simplified 1 m upstream; original API responses remain cached.','license':'BRT CC BY 4.0 Kadaster / PDOK; native geometry public domain, credit Gemeente Rotterdam.', 'sourceReferences':['https://api.pdok.nl/brt/top10nl/ogc/v1/','https://data.overheid.nl/dataset/10230-rotterdam-3d'],'reviews':'source-data/bridge-decks.json','omissions':reviews['omissions'],'models':results}
-(output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
-print(json.dumps({'models':len(results),'triangles':sum(r['triangles'] for r in results),'bytes':sum(r['bytes'] for r in results),'omitted':len(reviews['omissions'])}))
+def main():
+    results=[build(review) for review in reviews['reviews']]
+    latitude,longitude=np.deg2rad([51.915,4.49])
+    east=np.array([-np.sin(longitude),np.cos(longitude),0])
+    up=np.array([np.cos(latitude)*np.cos(longitude),np.cos(latitude)*np.sin(longitude),np.sin(latitude)])
+    north=np.cross(up,east)
+    origin=np.array(Transformer.from_crs(4979,4978,always_xy=True).transform(4.49,51.915,0))
+    matrix=np.eye(4);matrix[:3,0]=east;matrix[:3,1]=north;matrix[:3,2]=up;matrix[:3,3]=origin
+    # Root region is geographic/ECEF; children boxes use the ENU root transform.
+    children=[{'boundingVolume':{'box':result['box']},'geometricError':0,'content':{'uri':result['name']+'.glb'}} for result in results]
+    # Conservative root box encloses the full municipality; empty parent has no coarse content.
+    tileset={'asset':{'version':'1.1'},'geometricError':100000,'root':{'transform':matrix.flatten(order='F').tolist(),'boundingVolume':{'box':[-15000,0,30,30000,0,0,0,15000,0,0,0,200]},'geometricError':100000,'refine':'ADD','children':children}}
+    (output/'tileset.json').write_text(json.dumps(tileset,separators=(',',':'))+'\n')
+    manifest={'writtenBy':'AI, GPT-6, 2026-10-24','coordinateFrame':{'latitude':51.915,'longitude':4.49,'glTF':'X east, Y up, Z south','tiles':'X east, Y north, Z up'},'method':'Intersect surveyed bridge-tagged BRT polygons with explicit hash-pinned native deck triangles; barycentric native height. No structure geometry. No display offset baked in.','interpretation':'Double tram centreline uses existing street stage 6 m ribbon; single track 3.2 m. Unknown deck strips remain native. BRT was simplified 1 m upstream; original API responses remain cached.','license':'BRT CC BY 4.0 Kadaster / PDOK; native geometry public domain, credit Gemeente Rotterdam.', 'sourceReferences':['https://api.pdok.nl/brt/top10nl/ogc/v1/','https://data.overheid.nl/dataset/10230-rotterdam-3d'],'reviews':'source-data/bridge-decks.json','omissions':reviews['omissions'],'models':results}
+    (output/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+    print(json.dumps({'models':len(results),'triangles':sum(r['triangles'] for r in results),'bytes':sum(r['bytes'] for r in results),'omitted':len(reviews['omissions'])}))
+
+if __name__ == '__main__':
+    main()

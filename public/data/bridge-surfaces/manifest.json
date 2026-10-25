@@ -7,7 +7,7 @@
     "tiles": "X east, Y north, Z up"
   },
   "method": "Intersect surveyed bridge-tagged BRT polygons with explicit hash-pinned native deck triangles; barycentric native height. No structure geometry. No display offset baked in.",
-  "interpretation": "Double tram centreline uses existing street stage 6 m ribbon; single track 3.2 m. Unknown deck strips remain native. BRT was simplified 1 m upstream; original API responses remain cached.",
+  "interpretation": "Erasmus: exact BGT level3 road/walk/cycle/divider footprints and individual tram axes on original surveyed native deck. Other bridges retain reviewed BRT interpretation.",
   "license": "BRT CC BY 4.0 Kadaster / PDOK; native geometry public domain, credit Gemeente Rotterdam.",
   "sourceReferences": [
     "https://api.pdok.nl/brt/top10nl/ogc/v1/",
@@ -29,99 +29,163 @@
       "transportSha256": "7d17c78f70bd4c51a0083f74d94a0568e2aab1f68e69f74754acff5efa3e91a6",
       "features": [
         {
-          "sourceId": "124693661",
+          "sourceId": "G0599.170ade244fca72d73e050210a7e24429",
           "surfaceKind": "cycleway",
-          "areaSquareMetres": 2750.528444150223,
-          "physicalForm": "op vast deel van brug",
-          "railRibbonWidthMetres": null
+          "areaSquareMetres": 1428.3129018776579
         },
         {
-          "sourceId": "116753165",
+          "sourceId": "G0599.170ade244fca82d73e050210a7e24429",
+          "surfaceKind": "bridge-footway",
+          "areaSquareMetres": 1840.5148063440038
+        },
+        {
+          "sourceId": "G0599.170ade24469b62d73e050210a7e24429",
+          "surfaceKind": "road",
+          "areaSquareMetres": 3455.4169591241193
+        },
+        {
+          "sourceId": "G0599.170ade24469f62d73e050210a7e24429",
+          "surfaceKind": "road",
+          "areaSquareMetres": 3162.876054103151
+        },
+        {
+          "sourceId": "G0599.170ade2446a2d2d73e050210a7e24429",
+          "surfaceKind": "bridge-footway",
+          "areaSquareMetres": 3.8286671494523126
+        },
+        {
+          "sourceId": "G0599.170ade24469b52d73e050210a7e24429",
+          "surfaceKind": "bridge-footway",
+          "areaSquareMetres": 468.88194039386593
+        },
+        {
+          "sourceId": "G0599.170ade2446a7e2d73e050210a7e24429",
           "surfaceKind": "cycleway",
-          "areaSquareMetres": 330.3696079486491,
-          "physicalForm": "op vast deel van brug",
-          "railRibbonWidthMetres": null
+          "areaSquareMetres": 474.27974097943104
         },
         {
-          "sourceId": "124693685",
-          "surfaceKind": "road",
-          "areaSquareMetres": 3746.1081037798012,
-          "physicalForm": "op vast deel van brug",
-          "railRibbonWidthMetres": null
-        },
-        {
-          "sourceId": "117045953",
+          "sourceId": "G0599.170ade24469162d73e050210a7e24429",
           "surfaceKind": "cycleway",
-          "areaSquareMetres": 344.5552686579996,
-          "physicalForm": "op beweegbaar deel van brug",
-          "railRibbonWidthMetres": null
+          "areaSquareMetres": 397.9186728684547
         },
         {
-          "sourceId": "117052310",
+          "sourceId": "G0599.170ade24469172d73e050210a7e24429",
+          "surfaceKind": "bridge-footway",
+          "areaSquareMetres": 576.8865984554687
+        },
+        {
+          "sourceId": "G0599.170ade24468b92d73e050210a7e24429",
           "surfaceKind": "road",
-          "areaSquareMetres": 318.4304917688247,
-          "physicalForm": "op vast deel van brug",
-          "railRibbonWidthMetres": null
+          "areaSquareMetres": 1579.4462652408113
         },
         {
-          "sourceId": "116995443",
+          "sourceId": "G0599.170ade2446a7f2d73e050210a7e24429",
           "surfaceKind": "road",
-          "areaSquareMetres": 367.3474338918582,
-          "physicalForm": "op beweegbaar deel van brug",
-          "railRibbonWidthMetres": null
+          "areaSquareMetres": 1035.3116670655043
         },
         {
-          "sourceId": "117047616",
+          "sourceId": "G0599.170ade24469f52d73e050210a7e24429",
+          "surfaceKind": "bridge-track-bed",
+          "areaSquareMetres": 3803.5818462703214
+        },
+        {
+          "sourceId": "G0599.170ade244fc442d73e050210a7e24429",
+          "surfaceKind": "bridge-track-bed",
+          "areaSquareMetres": 1412.2790926135795
+        },
+        {
+          "sourceId": "G0599.170ade244fc452d73e050210a7e24429",
           "surfaceKind": "cycleway",
-          "areaSquareMetres": 215.82723818437822,
-          "physicalForm": "op beweegbaar deel van brug",
-          "railRibbonWidthMetres": null
+          "areaSquareMetres": 1392.929291705285
         },
         {
-          "sourceId": "117055605",
-          "surfaceKind": "road",
-          "areaSquareMetres": 3995.970619326579,
-          "physicalForm": "op vast deel van brug",
-          "railRibbonWidthMetres": null
+          "sourceId": "G0599.170ade244fca62d73e050210a7e24429",
+          "surfaceKind": "bridge-footway",
+          "areaSquareMetres": 1672.8270180710738
         },
         {
-          "sourceId": "117046638",
-          "surfaceKind": "road",
-          "areaSquareMetres": 302.63299233170534,
-          "physicalForm": "op beweegbaar deel van brug",
-          "railRibbonWidthMetres": null
+          "sourceId": "G0599.16fd016cce8decac9e050210a7e24119",
+          "surfaceKind": "bridge-divider",
+          "areaSquareMetres": 714.8793164476912
         },
         {
-          "sourceId": "117047564",
-          "surfaceKind": "cycleway",
-          "areaSquareMetres": 276.8693101888174,
-          "physicalForm": "op vast deel van brug",
-          "railRibbonWidthMetres": null
+          "sourceId": "G0599.16fd016cceb1acac9e050210a7e24119",
+          "surfaceKind": "bridge-divider",
+          "areaSquareMetres": 797.2190041604619
         },
         {
-          "sourceId": "116992186",
-          "surfaceKind": "road",
-          "areaSquareMetres": 418.97306838355655,
-          "physicalForm": "op vast deel van brug",
-          "railRibbonWidthMetres": null
+          "sourceId": "G0599.16fd016cce8d3cac9e050210a7e24119",
+          "surfaceKind": "bridge-divider",
+          "areaSquareMetres": 230.25697766134337
         },
         {
-          "sourceId": "124693634",
-          "surfaceKind": "cycleway",
-          "areaSquareMetres": 3651.26966173864,
-          "physicalForm": "op vast deel van brug",
-          "railRibbonWidthMetres": null
+          "sourceId": "G0599.16fd016cce8d4cac9e050210a7e24119",
+          "surfaceKind": "bridge-divider",
+          "areaSquareMetres": 403.40412831362397
         },
         {
-          "sourceId": "105522540",
-          "surfaceKind": "rail",
-          "areaSquareMetres": 4006.532773552873,
-          "physicalForm": "op vast deel van brug",
-          "railRibbonWidthMetres": 6
+          "sourceId": "G0599.170ade24469b62d73e050210a7e24429",
+          "surfaceKind": "bridge-edge-paint",
+          "areaSquareMetres": 80.96151721598562
+        },
+        {
+          "sourceId": "G0599.170ade24469f62d73e050210a7e24429",
+          "surfaceKind": "bridge-edge-paint",
+          "areaSquareMetres": 77.9964339539438
+        },
+        {
+          "sourceId": "G0599.170ade24468b92d73e050210a7e24429",
+          "surfaceKind": "bridge-edge-paint",
+          "areaSquareMetres": 11.445847076357529
+        },
+        {
+          "sourceId": "G0599.170ade2446a7f2d73e050210a7e24429",
+          "surfaceKind": "bridge-edge-paint",
+          "areaSquareMetres": 26.750683691247385
+        },
+        {
+          "sourceId": "G0599.16fd017991b5ccac9e050210a7e24119",
+          "surfaceKind": "rail-groove",
+          "areaSquareMetres": 156.52267873862982
+        },
+        {
+          "sourceId": "G0599.16fd017991b5ccac9e050210a7e24119",
+          "surfaceKind": "rail-steel",
+          "areaSquareMetres": 64.03200492820008
+        },
+        {
+          "sourceId": "G0599.16fd017991b5ccac9e050210a7e24119",
+          "surfaceKind": "rail-groove",
+          "areaSquareMetres": 156.72283613859625
+        },
+        {
+          "sourceId": "G0599.16fd017991b5ccac9e050210a7e24119",
+          "surfaceKind": "rail-steel",
+          "areaSquareMetres": 64.11388750223242
+        },
+        {
+          "sourceId": "G0599.3908358b8466489da3ea408b37bd0a32",
+          "surfaceKind": "rail-groove",
+          "areaSquareMetres": 157.00335718787727
+        },
+        {
+          "sourceId": "G0599.3908358b8466489da3ea408b37bd0a32",
+          "surfaceKind": "rail-steel",
+          "areaSquareMetres": 64.22864610969403
+        },
+        {
+          "sourceId": "G0599.3908358b8466489da3ea408b37bd0a32",
+          "surfaceKind": "rail-groove",
+          "areaSquareMetres": 157.2035155660688
+        },
+        {
+          "sourceId": "G0599.3908358b8466489da3ea408b37bd0a32",
+          "surfaceKind": "rail-steel",
+          "areaSquareMetres": 64.31052906657024
         }
       ],
-      "triangles": 1592,
-      "bytes": 58852,
+      "triangles": 81395,
+      "bytes": 2934240,
       "box": [
         -265.90105030986774,
         -593.923762796094,
@@ -135,7 +199,27 @@
         0,
         0,
         5.506917302590352
-      ]
+      ],
+      "surfaceSource": "Exact retained BGT level3 features",
+      "sourceHashes": {
+        "wegdeel": "7f23974e5e0dc4f432a1961dd158cae4bd372b221d2a6b6ac78aef1734e5cbe1",
+        "spoor": "ebb47487f7128d79583d975c474063920936ea4f51f347ac9d6c56ca236dc6dc",
+        "ondersteunendwegdeel": "25a6d2e247d99cd5cf302e50576b65caad86298ea9e59e793f89adbe9e7e93b5"
+      },
+      "trackInterpretation": {
+        "axisSource": "BGT spoor: centre between the two steel rails",
+        "gaugeMetres": 1.435,
+        "grooveDrawingWidthMetres": 0.22,
+        "steelDrawingWidthMetres": 0.09,
+        "gaugeReference": "https://kennisbank.crow.nl/public/gastgebruiker/VMGT/Karakteristieken_van_voertuigen_en_mensen/Tram/15023",
+        "limitation": "Rail head/groove stroke widths are drawing, not surveyed sections; no invented sleepers, poles or barriers."
+      },
+      "roadEdgePaintInterpretation": {
+        "evidence": "Retained 2026 official aerial: continuous white boundary between motor carriageway and cycle corridor",
+        "placement": "22cm inside corresponding BGT motor carriageway boundary beside cycle footprints",
+        "drawingWidthMetres": 0.15,
+        "limitation": "Illustrated edge stroke; no inferred dashed lanes, arrows, crossings or symbols"
+      }
     },
     {
       "name": "willems",

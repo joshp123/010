@@ -47,10 +47,10 @@ export function speedForRoadClass(roadClass) {
   return roadClass === 'ERF' ? 3.5 : 7;
 }
 
-// Frozen, source-reviewed motor corridor interpretation. Validate the complete
-// group before changing anything: a lone shifted edge would disconnect a node.
+// Source-reviewed corridor interpretation. Keep existing junction endpoints,
+// or reconcile every connected edge together at an explicitly reviewed junction.
 export function applyReviewedRoadGeometry(network,data) {
-  if(data.version!==1||data.mode!=='motorcar'||!Array.isArray(data.patches))throw new Error('Unsupported road geometry review');
+  if(data.version!==1||!['motorcar','bicycle'].includes(data.mode)||!Array.isArray(data.patches))throw new Error('Unsupported road geometry review');
   const replacements=new Map();
   for(const patch of data.patches) {
     const matches=network.roads.filter(road=>road.id===patch.roadId);
@@ -61,6 +61,14 @@ export function applyReviewedRoadGeometry(network,data) {
       road.coordinates.some((point,i)=>point.some((v,j)=>Math.abs(v-patch.expectedCoordinates[i][j])>1.01e-7)))throw new Error('Road geometry source changed');
     if(!Array.isArray(patch.coordinates)||patch.coordinates.length<2||patch.coordinates.some(p=>p.length!==2||p.some(v=>!Number.isFinite(v))))throw new Error('Invalid reviewed coordinates');
     replacements.set(road.id,{...road,originalCoordinates:road.coordinates,coordinates:patch.coordinates,geometryEvidence:data.sourceSurface});
+  }
+  if(data.sharedJunction===undefined) {
+    for(const [id,replacement] of replacements) {
+      const road=network.roads.find(road=>road.id===id);
+      if([0,-1].some(index=>replacement.coordinates.at(index).some((v,j)=>Math.abs(v-road.coordinates.at(index)[j])>1.01e-7)))throw new Error('Reviewed corridor changed a source junction');
+    }
+    network.roads=network.roads.map(road=>replacements.get(road.id)||road);
+    return replacements.size;
   }
   let endpoint=null;
   for(const road of network.roads.filter(road=>road.start===data.sharedJunction||road.end===data.sharedJunction)) {
