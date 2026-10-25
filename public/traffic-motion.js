@@ -122,11 +122,14 @@ export function createJunctionArbitrator() {
     clear() { reservations.clear(); waiting.clear(); },
     update(cars,occupants,delta) {
       const active=new Set(cars), heads=new Map();
-      for(const [junction,claim] of reservations) {
-        const car=claim.car;
-        let travelled=(car.direction===1?car.distance:car.road.length-car.distance)-claim.progress;
-        for(let i=claim.step;i<car.journeyIndex;i++)travelled+=car.journey.path[i].road.length;
-        if(!active.has(car)||travelled>=claim.clearance)reservations.delete(junction);
+      for(const [junction,claims] of reservations) {
+        const retained=claims.filter(claim=>{
+          const car=claim.car;
+          let travelled=(car.direction===1?car.distance:car.road.length-car.distance)-claim.progress;
+          for(let i=claim.step;i<car.journeyIndex;i++)travelled+=car.journey.path[i].road.length;
+          return active.has(car)&&travelled<claim.clearance;
+        });
+        if(retained.length)reservations.set(junction,retained);else reservations.delete(junction);
       }
       for(const car of waiting.keys())if(!active.has(car))waiting.delete(car);
       for(const car of cars) {
@@ -147,14 +150,25 @@ export function createJunctionArbitrator() {
         heads.get(junction).push({car,remaining});
       }
       for(const [junction,candidates] of heads) {
-        if(reservations.has(junction))continue;
+        const claims=reservations.get(junction)||[];
         candidates.sort((a,b)=>(a.remaining<3?0:1)-(b.remaining<3?0:1)||
           waiting.get(b.car)-waiting.get(a.car)||a.remaining-b.remaining||a.car.vehicleId-b.car.vehicleId);
-        const {car,remaining}=candidates[0];
-        reservations.set(junction,{car,step:car.journeyIndex,progress:car.road.length-remaining,clearance:remaining+5.5});
-        waiting.delete(car);
+        for(const {car,remaining} of candidates) {
+          if(claims.some(claim=>claim.car===car))continue;
+          const incoming=car.journey.path[car.journeyIndex],outgoing=car.next;
+          // Reverse journeys over the same pair of two-way source edges use
+          // opposite drawn lanes. Serialising these creates a circular wait on
+          // short connectors; crossing and merging movements remain exclusive.
+          const oppositeLanes=claim=>incoming.road.direction===3&&outgoing.road.direction===3&&
+            incoming.road.id===claim.outgoing.road.id&&outgoing.road.id===claim.incoming.road.id&&
+            incoming.direction===-claim.outgoing.direction&&outgoing.direction===-claim.incoming.direction;
+          if(claims.some(claim=>!oppositeLanes(claim)))continue;
+          claims.push({car,incoming,outgoing,step:car.journeyIndex,progress:car.road.length-remaining,clearance:remaining+5.5});
+          waiting.delete(car);
+        }
+        if(claims.length)reservations.set(junction,claims);
       }
-      return new Map([...reservations].map(([junction,claim])=>[junction,claim.car]));
+      return new Map([...reservations].map(([junction,claims])=>[junction,new Set(claims.map(claim=>claim.car))]));
     },
   };
 }
