@@ -140,9 +140,26 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
     selectRoads(!preserveCars); render();
   }
 
+  function visibleRoadLength(road) {
+    if(!hasView)return road.length;
+    let length=0;
+    for(let index=1;index<road.points.length;index++) {
+      const start=road.points[index-1],end=road.points[index];
+      let enter=0,leave=1;
+      for(const plane of frustum.planes) {
+        const from=plane.distanceToPoint(start),to=plane.distanceToPoint(end);
+        if(from<0&&to<0){leave=0;break;}
+        if(from<0)enter=Math.max(enter,from/(from-to));
+        else if(to<0)leave=Math.min(leave,from/(from-to));
+      }
+      length+=Math.max(0,leave-enter)*(road.distances[index]-road.distances[index-1]);
+    }
+    return length;
+  }
+
   function selectRoads(allowInterior = true) {
     candidates = roads.filter(road => !hasView || frustum.intersectsBox(road.bounds));
-    desiredCount = Math.min(maximumVehicles, Math.round(candidates.reduce((length, road) => length + road.length, 0) * vehiclesPerKilometre / 1000));
+    desiredCount = Math.min(maximumVehicles, Math.round(candidates.reduce((length, road) => length + visibleRoadLength(road), 0) * vehiclesPerKilometre / 1000));
     cars = cars.filter(car => { locate(car.road, car.distance); return inside(position); }).slice(0, desiredCount);
     populate(allowInterior); seeded = true;
   }
@@ -309,7 +326,7 @@ export function createSimulatedTraffic({ project, localPosition, requestRender =
         if(Number.isFinite(gap))targetSpeed=Math.min(targetSpeed,Math.max(0,(gap-5.5)/1.4));
         const junction = car.direction === 1 ? car.road.end : car.road.start;
         if (junction && endDistance < 10 && !car.ending) {
-          if (junctionReservations.get(junction)!==car) targetSpeed = Math.min(targetSpeed, Math.max(0, (endDistance - 3) * .6));
+          if (!junctionReservations.get(junction)?.has(car)) targetSpeed = Math.min(targetSpeed, Math.max(0, (endDistance - 3) * .6));
         }
         car.speed += THREE.MathUtils.clamp(targetSpeed - car.speed, -6 * delta, 2 * delta);
         let remaining = delta * car.speed;
