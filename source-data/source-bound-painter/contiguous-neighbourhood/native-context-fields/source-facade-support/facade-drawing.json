@@ -1,0 +1,991 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "meaning": "Source-observed material masses and upper gable openings, not inferred repetition. Existing exact lower-storey observation is a separate layer. Candidate requires raw-source and rendered comparison.",
+  "sourceSupport": "source-facade-support.json",
+  "palette": {
+    "stone": [
+      207,
+      201,
+      176
+    ],
+    "glass": [
+      58,
+      77,
+      78
+    ]
+  },
+  "regions": [
+    {
+      "id": "left-pale",
+      "bagId": "0599100000671684",
+      "triangles": [
+        8801,
+        8802
+      ],
+      "visibleMask": "left-pale-surface-1291-visible-mask.png",
+      "wallRgb": [
+        190,
+        183,
+        159
+      ],
+      "sourceVerticalExtent": [
+        621,
+        696
+      ]
+    },
+    {
+      "id": "broad-brown",
+      "bagId": "0599100000767277",
+      "triangles": [
+        8847,
+        8848,
+        8849,
+        8850,
+        8851
+      ],
+      "visibleMask": "broad-brown-surface-3240-visible-mask.png",
+      "wallRgb": [
+        174,
+        163,
+        142
+      ],
+      "sourceVerticalExtent": [
+        568,
+        691
+      ]
+    },
+    {
+      "id": "narrow-grey",
+      "bagId": "0599100000671632",
+      "triangles": [
+        8956,
+        8957,
+        8958
+      ],
+      "visibleMask": "narrow-grey-surface-1244-visible-mask.png",
+      "wallRgb": [
+        172,
+        173,
+        154
+      ],
+      "sourceVerticalExtent": [
+        586,
+        690
+      ]
+    },
+    {
+      "id": "stepped-brown",
+      "bagId": "0599100000671619",
+      "triangles": [
+        9055,
+        9056
+      ],
+      "visibleMask": "stepped-brown-surface-1224-visible-mask.png",
+      "wallRgb": [
+        175,
+        154,
+        130
+      ],
+      "sourceVerticalExtent": [
+        615,
+        690
+      ]
+    },
+    {
+      "id": "narrow-right",
+      "bagId": "0599100000671599",
+      "triangles": [
+        9322,
+        9323
+      ],
+      "visibleMask": "narrow-right-surface-1209-visible-mask.png",
+      "wallRgb": [
+        171,
+        154,
+        133
+      ],
+      "sourceVerticalExtent": [
+        608,
+        686
+      ]
+    },
+    {
+      "id": "ornate-grey",
+      "bagId": "0599100000760366",
+      "triangles": [
+        8837,
+        8838,
+        8839
+      ],
+      "visibleMask": "ornate-grey-surface-2827-visible-mask.png",
+      "wallRgb": [
+        168,
+        164,
+        145
+      ],
+      "sourceVerticalExtent": [
+        552,
+        691
+      ]
+    },
+    {
+      "id": "ornate-right",
+      "bagId": "0599100000760365",
+      "triangles": [
+        8792,
+        8793,
+        8794
+      ],
+      "visibleMask": "ornate-right-surface-2811-visible-mask.png",
+      "wallRgb": [
+        173,
+        163,
+        141
+      ],
+      "sourceVerticalExtent": [
+        552,
+        691
+      ]
+    }
+  ],
+  "features": [
+    {
+      "id": "left",
+      "polygon": [
+        [
+          510,
+          661
+        ],
+        [
+          570,
+          661
+        ],
+        [
+          570,
+          663
+        ],
+        [
+          510,
+          663
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "brown-upper",
+      "polygon": [
+        [
+          571,
+          618
+        ],
+        [
+          676,
+          618
+        ],
+        [
+          676,
+          620
+        ],
+        [
+          571,
+          620
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "brown-mid",
+      "polygon": [
+        [
+          571,
+          651
+        ],
+        [
+          676,
+          651
+        ],
+        [
+          676,
+          653
+        ],
+        [
+          571,
+          653
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "brown-base",
+      "polygon": [
+        [
+          571,
+          684
+        ],
+        [
+          676,
+          684
+        ],
+        [
+          676,
+          686
+        ],
+        [
+          571,
+          686
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "grey-mid",
+      "polygon": [
+        [
+          676,
+          651
+        ],
+        [
+          730,
+          651
+        ],
+        [
+          730,
+          653
+        ],
+        [
+          676,
+          653
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "step-mid",
+      "polygon": [
+        [
+          730,
+          651
+        ],
+        [
+          782,
+          651
+        ],
+        [
+          782,
+          653
+        ],
+        [
+          730,
+          653
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "bay-mid",
+      "polygon": [
+        [
+          782,
+          663
+        ],
+        [
+          840,
+          663
+        ],
+        [
+          840,
+          665
+        ],
+        [
+          782,
+          665
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "ornate-mid",
+      "polygon": [
+        [
+          840,
+          653
+        ],
+        [
+          898,
+          653
+        ],
+        [
+          898,
+          655
+        ],
+        [
+          840,
+          655
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "right-mid",
+      "polygon": [
+        [
+          898,
+          653
+        ],
+        [
+          958,
+          653
+        ],
+        [
+          958,
+          655
+        ],
+        [
+          898,
+          655
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "brown-top-frame",
+      "polygon": [
+        [
+          612,
+          578
+        ],
+        [
+          620,
+          578
+        ],
+        [
+          620,
+          589
+        ],
+        [
+          612,
+          589
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "brown-top-glass",
+      "polygon": [
+        [
+          614,
+          580
+        ],
+        [
+          618,
+          580
+        ],
+        [
+          618,
+          588
+        ],
+        [
+          614,
+          588
+        ]
+      ],
+      "material": "glass"
+    },
+    {
+      "id": "brown-gable-left-frame",
+      "polygon": [
+        [
+          595,
+          601
+        ],
+        [
+          604,
+          601
+        ],
+        [
+          604,
+          610
+        ],
+        [
+          595,
+          610
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "brown-gable-left-glass",
+      "polygon": [
+        [
+          597,
+          603
+        ],
+        [
+          602,
+          603
+        ],
+        [
+          602,
+          609
+        ],
+        [
+          597,
+          609
+        ]
+      ],
+      "material": "glass"
+    },
+    {
+      "id": "brown-gable-left-pair-frame",
+      "polygon": [
+        [
+          606,
+          601
+        ],
+        [
+          613,
+          601
+        ],
+        [
+          613,
+          610
+        ],
+        [
+          606,
+          610
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "brown-gable-left-pair-glass",
+      "polygon": [
+        [
+          608,
+          603
+        ],
+        [
+          611,
+          603
+        ],
+        [
+          611,
+          609
+        ],
+        [
+          608,
+          609
+        ]
+      ],
+      "material": "glass"
+    },
+    {
+      "id": "brown-gable-right-frame",
+      "polygon": [
+        [
+          630,
+          601
+        ],
+        [
+          638,
+          601
+        ],
+        [
+          638,
+          610
+        ],
+        [
+          630,
+          610
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "brown-gable-right-glass",
+      "polygon": [
+        [
+          632,
+          603
+        ],
+        [
+          636,
+          603
+        ],
+        [
+          636,
+          609
+        ],
+        [
+          632,
+          609
+        ]
+      ],
+      "material": "glass"
+    },
+    {
+      "id": "brown-gable-right-pair-frame",
+      "polygon": [
+        [
+          639,
+          601
+        ],
+        [
+          646,
+          601
+        ],
+        [
+          646,
+          610
+        ],
+        [
+          639,
+          610
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "brown-gable-right-pair-glass",
+      "polygon": [
+        [
+          641,
+          603
+        ],
+        [
+          644,
+          603
+        ],
+        [
+          644,
+          609
+        ],
+        [
+          641,
+          609
+        ]
+      ],
+      "material": "glass"
+    },
+    {
+      "id": "grey-gable-left-frame",
+      "polygon": [
+        [
+          687,
+          602
+        ],
+        [
+          697,
+          602
+        ],
+        [
+          697,
+          620
+        ],
+        [
+          687,
+          620
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "grey-gable-left-glass",
+      "polygon": [
+        [
+          689,
+          604
+        ],
+        [
+          695,
+          604
+        ],
+        [
+          695,
+          619
+        ],
+        [
+          689,
+          619
+        ]
+      ],
+      "material": "glass"
+    },
+    {
+      "id": "grey-gable-right-frame",
+      "polygon": [
+        [
+          699,
+          602
+        ],
+        [
+          709,
+          602
+        ],
+        [
+          709,
+          620
+        ],
+        [
+          699,
+          620
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "grey-gable-right-glass",
+      "polygon": [
+        [
+          701,
+          604
+        ],
+        [
+          707,
+          604
+        ],
+        [
+          707,
+          619
+        ],
+        [
+          701,
+          619
+        ]
+      ],
+      "material": "glass"
+    },
+    {
+      "id": "step-gable-frame",
+      "polygon": [
+        [
+          737,
+          608
+        ],
+        [
+          750,
+          608
+        ],
+        [
+          750,
+          618
+        ],
+        [
+          737,
+          618
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "step-gable-glass",
+      "polygon": [
+        [
+          739,
+          610
+        ],
+        [
+          748,
+          610
+        ],
+        [
+          748,
+          617
+        ],
+        [
+          739,
+          617
+        ]
+      ],
+      "material": "glass"
+    },
+    {
+      "id": "ornate-top-frame",
+      "polygon": [
+        [
+          863,
+          576
+        ],
+        [
+          872,
+          576
+        ],
+        [
+          872,
+          588
+        ],
+        [
+          863,
+          588
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "ornate-top-glass",
+      "polygon": [
+        [
+          865,
+          578
+        ],
+        [
+          870,
+          578
+        ],
+        [
+          870,
+          587
+        ],
+        [
+          865,
+          587
+        ]
+      ],
+      "material": "glass"
+    },
+    {
+      "id": "ornate-gable-left-frame",
+      "polygon": [
+        [
+          850,
+          602
+        ],
+        [
+          861,
+          602
+        ],
+        [
+          861,
+          620
+        ],
+        [
+          850,
+          620
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "ornate-gable-left-glass",
+      "polygon": [
+        [
+          852,
+          604
+        ],
+        [
+          859,
+          604
+        ],
+        [
+          859,
+          619
+        ],
+        [
+          852,
+          619
+        ]
+      ],
+      "material": "glass"
+    },
+    {
+      "id": "ornate-gable-right-frame",
+      "polygon": [
+        [
+          865,
+          602
+        ],
+        [
+          876,
+          602
+        ],
+        [
+          876,
+          620
+        ],
+        [
+          865,
+          620
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "ornate-gable-right-glass",
+      "polygon": [
+        [
+          867,
+          604
+        ],
+        [
+          874,
+          604
+        ],
+        [
+          874,
+          619
+        ],
+        [
+          867,
+          619
+        ]
+      ],
+      "material": "glass"
+    },
+    {
+      "id": "right-top-frame",
+      "polygon": [
+        [
+          921,
+          576
+        ],
+        [
+          929,
+          576
+        ],
+        [
+          929,
+          588
+        ],
+        [
+          921,
+          588
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "right-top-glass",
+      "polygon": [
+        [
+          923,
+          578
+        ],
+        [
+          927,
+          578
+        ],
+        [
+          927,
+          587
+        ],
+        [
+          923,
+          587
+        ]
+      ],
+      "material": "glass"
+    },
+    {
+      "id": "right-gable-left-frame",
+      "polygon": [
+        [
+          910,
+          602
+        ],
+        [
+          922,
+          602
+        ],
+        [
+          922,
+          620
+        ],
+        [
+          910,
+          620
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "right-gable-left-glass",
+      "polygon": [
+        [
+          912,
+          604
+        ],
+        [
+          920,
+          604
+        ],
+        [
+          920,
+          619
+        ],
+        [
+          912,
+          619
+        ]
+      ],
+      "material": "glass"
+    },
+    {
+      "id": "right-gable-right-frame",
+      "polygon": [
+        [
+          926,
+          602
+        ],
+        [
+          938,
+          602
+        ],
+        [
+          938,
+          620
+        ],
+        [
+          926,
+          620
+        ]
+      ],
+      "material": "stone"
+    },
+    {
+      "id": "right-gable-right-glass",
+      "polygon": [
+        [
+          928,
+          604
+        ],
+        [
+          936,
+          604
+        ],
+        [
+          936,
+          619
+        ],
+        [
+          928,
+          619
+        ]
+      ],
+      "material": "glass"
+    }
+  ],
+  "exclusions": [
+    {
+      "polygon": [
+        [
+          782,
+          550
+        ],
+        [
+          840,
+          550
+        ],
+        [
+          840,
+          627
+        ],
+        [
+          782,
+          627
+        ]
+      ],
+      "reason": "Bay gable/ornament not yet interpreted; retain current artwork, do not fabricate."
+    }
+  ],
+  "status": "REJECTED diagnostic: full-wall flat fill loses ornate architectural drawing. Do not integrate."
+}

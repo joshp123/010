@@ -141,6 +141,59 @@ def observed_plane_transforms(plan,out):
   for face in observation['triangles']:transforms[face]=(observation['view'],homography)
  return transforms,observations
 
+def prepare_facade_support(source,observation_path,out):
+ """Expose visible connected source faces; opening inventory rectangles are seeds only."""
+ from PIL import ImageDraw
+ observations=json.loads(observation_path.read_text());plan=json.loads(Path(observations['views']).read_text());view=next(v for v in plan['views'] if v['name']==observations['view']);c=view['camera'];size=c['size'];out.mkdir(parents=True,exist_ok=True)
+ depth=np.full((size,size),-np.inf);face_image=np.full((size,size),-1,np.int32)
+ for face,triangle in enumerate(source.triangles):
+  q,xy=project(triangle['positions'],c)
+  for x0,y0,x1,y1,weights,inside in m.raster_triangle(xy,size,size):
+   z=weights@q[:,2];visible=inside&(z>depth[y0:y1+1,x0:x1+1]);depth[y0:y1+1,x0:x1+1][visible]=z[visible];face_image[y0:y1+1,x0:x1+1][visible]=face
+ groups=m.Source.surfaces(source,normal_cosine=math.cos(math.radians(5)));face_group=np.full(len(source.triangles),-1,np.int32)
+ for index,faces in enumerate(groups):face_group[faces]=index
+ group_image=np.full_like(face_image,-1);visible=face_image>=0;group_image[visible]=face_group[face_image[visible]]
+ raw=Image.open(observations['sourceImage']).convert('RGB');overlay=raw.copy();draw=ImageDraw.Draw(overlay);records=[]
+ for facade in observations['facades']:
+  seed=Image.new('1',(size,size));ImageDraw.Draw(seed).polygon([tuple(p) for p in facade['replacementPolygon']],fill=1);indices,counts=np.unique(group_image[np.asarray(seed,dtype=bool)],return_counts=True);candidates=[]
+  for group_index,count in sorted(zip(indices,counts),key=lambda row:-row[1]):
+   if group_index<0:continue
+   faces=groups[group_index];normal=np.average(source.normals[faces],axis=0,weights=source.areas[faces]);normal/=np.linalg.norm(normal)
+   if abs(normal[1])>.25 or normal@np.asarray(c['basis'])[:,2]<.4:continue
+   mask=group_image==group_index;ys,xs=np.nonzero(mask);bounds=[int(xs.min()),int(ys.min()),int(xs.max()+1),int(ys.max()+1)];key=f'{facade["id"]}-surface-{group_index}';Image.fromarray(mask.astype(np.uint8)*255).save(out/(key+'-visible-mask.png'))
+   projected=[project(source.positions[face],c)[1].tolist() for face in faces]
+   candidates.append({'surfaceId':key,'bagId':source.triangles[faces[0]]['identity'],'triangles':faces,'normal':normal.tolist(),'seedVisiblePixels':int(count),'visibleBounds':bounds,'projectedTriangles':projected,'visibleMask':key+'-visible-mask.png'})
+  records.append({'openingObservation':facade['id'],'candidateSurfaces':candidates,'judgement':'Unreviewed source support; no wall fill or architectural boundary inferred from seed rectangle.'})
+  if candidates:
+   best=candidates[0];draw.rectangle(best['visibleBounds'],outline='#ed2568');draw.text((best['visibleBounds'][0],best['visibleBounds'][1]-10),facade['id']+':'+best['bagId'][-7:],fill='#ed2568')
+ overlay.save(out/'source-facade-support.png');m.save_json(out/'source-facade-support.json',{'authorship':'Written by AI on 2026-10-25 by model GPT-6','sourceSha256':m.digest(source.raw),'openingObservations':str(observation_path.resolve()),'camera':c,'meaning':'Exact connected source geometry and depth-visible masks. Candidate ranking uses seed overlap, not model judgement; projected triangles include occluded portions and masks do not authorize erasing unobserved openings.','facades':records})
+
+def compose_facade_drawing(observation_path):
+ """Paint explicit architectural observations within retained visible wall support."""
+ from PIL import ImageDraw
+ observations=json.loads(observation_path.read_text());folder=observation_path.parent;support=json.loads((folder/observations['sourceSupport']).read_text());size=support['camera']['size'];rgba=np.zeros((size,size,4),np.uint8)
+ for region in observations['regions']:
+  mask=np.asarray(Image.open(folder/region['visibleMask']))>0;top,bottom=region['sourceVerticalExtent'];mask[:top]=False;mask[bottom:]=False;rgba[mask]=[*region['wallRgb'],255]
+ image=Image.fromarray(rgba);drawing=ImageDraw.Draw(image)
+ for feature in observations['features']:
+  layer=Image.new('1',(size,size));ImageDraw.Draw(layer).polygon([tuple(point) for point in feature['polygon']],fill=1);mask=np.asarray(layer)&(rgba[:,:,3]>0);rgba[mask]=[*observations['palette'][feature['material']],255]
+ for exclusion in observations.get('exclusions',[]):
+  layer=Image.new('1',(size,size));ImageDraw.Draw(layer).polygon([tuple(point) for point in exclusion['polygon']],fill=1);rgba[np.asarray(layer),3]=0
+ Image.fromarray(rgba).save(folder/'facade-substrate.png')
+
+def apply_architectural_patches(source,images,plan,out,observations):
+ """Register explicitly corresponding straight architectural parts, not image edges."""
+ from PIL import ImageDraw
+ for observation in observations:
+  view=next(v for v in plan['views'] if v['name']==observation['view']);c=view['camera'];size=c['size'];original=np.asarray(observation['sourceAnchors']);drawn=np.asarray(observation['drawnAnchors']);equations=[];targets=[]
+  for (x,y),(u,v) in zip(original,drawn):equations.extend([[x,y,1,0,0,0,-u*x,-u*y],[0,0,0,x,y,1,-v*x,-v*y]]);targets.extend([u,v])
+  transform=np.r_[np.linalg.lstsq(equations,targets,rcond=None)[0],1].reshape(3,3);region=Image.new('1',(size,size));ImageDraw.Draw(region).polygon([tuple(p) for p in observation['sourceRegion']],fill=1);region=np.asarray(region);paint=np.asarray(Image.open(out/view['paint']).convert('RGB').resize((size,size),Image.Resampling.NEAREST));depth=np.load(out/view['depth'])
+  for index in observation['triangles']:
+   triangle=source.triangles[index];image=images[triangle['image']];height,width=image.shape[:2]
+   for x0,y0,x1,y1,weights,inside in m.raster_triangle(triangle['uv']*[width,height],width,height):
+    q,xy=project(weights@triangle['positions'],c);pixels=np.floor(xy).astype(int);valid=inside&(pixels[:,:,0]>=0)&(pixels[:,:,0]<size)&(pixels[:,:,1]>=0)&(pixels[:,:,1]<size);pixels=pixels.clip(0,size-1);normal=source.normals[index]@np.asarray(c['basis']);delta=(pixels+.5-xy)/c['scale'];expected=q[:,:,2]-(normal[0]*delta[:,:,0]-normal[1]*delta[:,:,1])/normal[2];valid&=(abs(expected-depth[pixels[:,:,1],pixels[:,:,0]])<.12)&region[pixels[:,:,1],pixels[:,:,0]]
+    mapped=np.dstack([xy,np.ones(xy.shape[:2])])@transform.T;drawn_pixels=np.floor(mapped[:,:,:2]/mapped[:,:,2,None]).astype(int);valid&=(drawn_pixels[:,:,0]>=0)&(drawn_pixels[:,:,0]<size)&(drawn_pixels[:,:,1]>=0)&(drawn_pixels[:,:,1]<size);drawn_pixels=drawn_pixels.clip(0,size-1);image[y0:y1+1,x0:x1+1][valid]=paint[drawn_pixels[:,:,1][valid],drawn_pixels[:,:,0][valid]]
+
 def pad_painted_uv_charts(source,images,painted_masks):
  """Supply sampling gutters outside UV charts, never inside unseen surfaces."""
  for image_index,image in enumerate(images):

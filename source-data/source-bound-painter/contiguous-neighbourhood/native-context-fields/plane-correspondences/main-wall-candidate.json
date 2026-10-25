@@ -1,0 +1,73 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "parts": [
+    {
+      "view": "context-120-28-0",
+      "triangles": [
+        1558,
+        1559,
+        1834,
+        1835,
+        1836,
+        1837,
+        1838
+      ],
+      "sourceAnchors": [
+        [
+          762.95,
+          969.79
+        ],
+        [
+          840.76,
+          992.42
+        ],
+        [
+          840.76,
+          1075.19
+        ],
+        [
+          762.95,
+          1051.32
+        ]
+      ],
+      "drawnAnchors": [
+        [
+          765.74,
+          973.51
+        ],
+        [
+          841.07,
+          995.52
+        ],
+        [
+          841.07,
+          1068.68
+        ],
+        [
+          765.74,
+          1055.04
+        ]
+      ],
+      "sourceRegion": [
+        [
+          762.95,
+          969.79
+        ],
+        [
+          840.76,
+          992.42
+        ],
+        [
+          840.76,
+          1075.19
+        ],
+        [
+          762.95,
+          1051.32
+        ]
+      ],
+      "judgement": "Candidate matching the visible main-wall cornice and base, independently from gable cap and adjoining lower face. Requires exact rendered comparison."
+    }
+  ],
+  "status": "REJECTED as production improvement: straight main-wall registration alone is marginal and not worth a packaging cycle."
+}
