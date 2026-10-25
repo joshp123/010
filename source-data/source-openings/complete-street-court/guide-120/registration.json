@@ -1,0 +1,12 @@
+{
+  "authorship": "Written by AI on 2026-10-25 by model GPT-6",
+  "views": "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/contiguous-neighbourhood-aligned/complete-street-court/views.json",
+  "view": "view-120-28",
+  "observationPaths": [
+    "source-data/source-openings/complete-frontage-openings.json",
+    "source-data/source-openings/complete-adjoining-block/rear-openings.json",
+    "source-data/source-openings/complete-adjoining-block/corner-openings.json",
+    "source-data/source-openings/complete-adjoining-block/side-openings.json"
+  ],
+  "meaning": "Blue marks source-observed frame/glass extents projected through original same-identity geometry and clipped to actual corrected scene depth. Hidden source apertures are retained in observations, not exposed in guide. No inferred openings."
+}
