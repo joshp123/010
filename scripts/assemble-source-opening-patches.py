@@ -32,7 +32,9 @@ def assemble(arguments):
     assert painter.m.digest(source.raw) == observations.get('sourceCollectionSha256', views['sourceSha256'])
     view = next(value for value in views['views'] if value['name'] == observations['view'])
     assert digest(Path(observations['sourceImage'])) == observations['sourceSha256']
-    camera = view['camera']
+    camera = dict(view['camera'])
+    if 'cameraTranslation' in observations:
+        camera['centre'] = (np.array(camera['centre']) + observations['cameraTranslation']).tolist()
     size = camera['size']
     depth = np.load(views_path.parent / view['depth'])
     toward = np.array(camera['basis'])[:, 2]

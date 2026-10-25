@@ -1,0 +1,12 @@
+{
+  "sourceNames": [
+    "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/raw/18_268619_55472.b3dm",
+    "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/raw/18_268619_55473.b3dm",
+    "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/raw/18_268620_55472.b3dm",
+    "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/raw/18_268620_55473.b3dm",
+    "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/raw/18_268621_55472.b3dm",
+    "/Users/josh/code/010-rescue-art/source-data/source-bound-painter/raw/18_268621_55473.b3dm"
+  ],
+  "anchorSource": "18_268619_55472.b3dm",
+  "coordinateFrame": "ecef-rtc-in-gltf-y-up"
+}
