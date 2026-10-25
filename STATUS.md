@@ -11,7 +11,7 @@ Written by AI on 2026-10-25 by model Claude Opus 5.5. Kept under one page. Josh'
 - **T2, pixel pyramid**: the same shader rendered offline into image tiles, four bearings (35°, 125°, 215°, 305°). About 10 s of MacBook time and 4 MB per bearing per km².
 - **T3, painted pyramid**: T2 repainted square by square by ChatGPT's image tool (54 squares, median 43 s a call, three runs in parallel, no limit hit), each square aligned back onto the render, overlaps blended, rails and road markings stamped back from data. One bearing (35°).
 
-**Published** at 010.jjpcodes.com: home page is T2; `compare.html` links all three. Measured on the phone profile against the live site: T1 4.4 s to a picture and 13 s complete (30 MB), T2 1.5 s cold and 0.7 s warm before the inlining and service worker went in.
+**Published** at 010.jjpcodes.com: home page is T2; `compare.html` links all three. Phone profile (20 Mbit/s, 80 ms, 4× CPU) against the live site: T1 4.4 s to a picture, 13 s complete (30 MB for the km²); T2 0.9 s first visit, 0.3 s return visit, 8 ms pan frames; T3 1.5 s and 0.4 s before its page was inlined. Targets are about 0.35 s and 0.1 s: not met yet. The page HTML still comes from the network on return visits.
 
 **Owners.** Claude Opus 5.5: renderer, shader, pages, judging, publishing. GPT-6.1 Sol (Codex background runs): scene builders, web bake, speed script, paint batches.
 
@@ -25,9 +25,10 @@ Written by AI on 2026-10-25 by model Claude Opus 5.5. Kept under one page. Josh'
 - Façades: 87% of façade area in the block has a 2018 photo, 72% across the full area. Elsewhere walls are plain.
 - The painter changes façade colours (grey plaster often becomes brick), fills empty background with invented city or water, and sometimes shifts or warps a square by up to ~40 px. The compositor masks background, re-aligns squares and drops the few it cannot align; two paints of the same place differ in palette.
 - Sites serves every file with `max-age=0`; a service worker now caches tiles per deploy.
+- From the cold review: T3 is soft at the two closest zooms (the painting is smooth, not pixel-crisp); the painter draws ballast and sleepers under tram rails; it gives façades generic window grids; private gardens in courtyards are flat grey (BGT records them as yards); a thin dark line crosses the Schie in all three (source not yet found); round tree blobs everywhere; nothing moves yet, no night, no share button.
 - Rotterdam's road-marking register publishes no licence. The markings are used and flagged.
 - 3% of non-building ground has no valid height in the municipal model; a flat underlay at street height fills it.
 
 **Open decisions for Josh**: sent once, with links and the comparison table.
 
-**Josh should look at next:** the comparison page on 010.jjpcodes.com once published.
+**Josh should look at next:** https://010.jjpcodes.com/compare.html on his phone.
