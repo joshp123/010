@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "vinext dev --port 8781",
-    "build": "vinext build && node scripts/build-browser-app.mjs && node scripts/compress-model-assets.mjs",
+    "build": "vinext build && node scripts/build-browser-app.mjs && node scripts/share-model-textures.mjs && node scripts/compress-model-assets.mjs",
     "start": "node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1 --inspector-port 0"
   },
   "dependencies": {
@@ -24,6 +24,7 @@
     "@vitejs/plugin-react": "6.0.2",
     "@vitejs/plugin-rsc": "0.5.26",
     "react-server-dom-webpack": "19.2.6",
+    "sharp": "0.35.4",
     "typescript": "5.9.3",
     "vinext": "1.0.0-beta.5",
     "vite": "8.0.13",
