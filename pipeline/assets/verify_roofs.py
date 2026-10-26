@@ -85,6 +85,13 @@ def verify(directory, config_path=CONFIG, tile_id=None):
     if classes.ndim == 3:
         classes = classes[..., 0]
     config = json.loads(config_path.read_text())
+    semantic_path = directory / 'semantic-review.json'
+    semantic = json.loads(semantic_path.read_text()) if semantic_path.exists() else None
+    if semantic is not None:
+        if (semantic['source_sha256'] != digest(source_path)
+                or semantic['generated_roof_sha256'] != digest(directory / 'roof.webp')):
+            raise ValueError('Roof semantic review does not match current source and generated roof')
+    semantic_flags = {str(flag['bag_id']): flag for flag in (semantic or {}).get('feature_flags', [])}
     annotation_path = directory / 'occlusions.json'
     annotation = json.loads(annotation_path.read_text())
     if annotation['reference_sha256'] != digest(source_path):
@@ -133,7 +140,9 @@ def verify(directory, config_path=CONFIG, tile_id=None):
         geometry_count = int(geometry.sum())
         colour = float(differences[visible].mean()) if visible_count else None
         enough = visible_count >= config['minimum_evidence_pixels']
-        passed = colour <= config['mean_ciede2000_max'] if enough else None
+        numeric_passed = colour <= config['mean_ciede2000_max'] if enough else None
+        semantic_flag = semantic_flags.get(str(feature['bag_id']))
+        passed = False if semantic_flag is not None else numeric_passed
         records[feature['bag_id']] = {
             'bag_id': feature['bag_id'], 'feature_index': feature_index,
             'geometry_area_m2': geometry_areas.get(feature_index, 0),
@@ -145,9 +154,11 @@ def verify(directory, config_path=CONFIG, tile_id=None):
             'outside_building_class_pixels': int((geometry & (classes != 11)).sum()),
             'evidence_share': visible_count / geometry_count if geometry_count else 0,
             'verified_share': visible_count / geometry_count if geometry_count and passed else 0,
-            'interpreted_share': 1 - visible_count / geometry_count if geometry_count else 1,
-            'checks': {'mean_ciede2000': colour, 'passed': passed,
-                       'status': 'pass' if passed else 'fail' if enough else 'insufficient-evidence'},
+            'interpreted_share': 1 - (visible_count / geometry_count if geometry_count and passed else 0),
+            'checks': {'mean_ciede2000': colour, 'numeric_passed': numeric_passed, 'passed': passed,
+                       'semantic_status': 'mismatch-observed' if semantic_flag else 'no-mismatch-flagged' if semantic else 'not-reviewed',
+                       'status': 'semantic-mismatch' if semantic_flag else 'pass' if passed else 'fail' if enough else 'insufficient-evidence'},
+            'semantic_flag': semantic_flag,
             'mean_ciede2000': colour, 'passed': passed,
             'evidence': [str(source_path), str(tile / 'classes.png'), str(tile / 'buildings.glb')],
             'regions': {'roof_ids_mask': str(directory / 'roof-ids.png'), 'mask_value': feature_index+1,
@@ -165,7 +176,9 @@ def verify(directory, config_path=CONFIG, tile_id=None):
     checked = [record for record in records.values() if record['passed'] is not None]
     aggregate = {'mean_ciede2000': float(differences[evidence_union].mean()) if evidence_union.any() else None,
                  'roofs_passed': sum(record['passed'] for record in checked), 'roofs_checked': len(checked),
-                 'roofs_insufficient_evidence': len(records)-len(checked),
+                 'roofs_insufficient_evidence': sum(record['checks']['numeric_passed'] is None for record in records.values()),
+                 'roofs_semantic_mismatch': sum(record['semantic_flag'] is not None for record in records.values()),
+                 'roofs_numeric_passed': sum(record['checks']['numeric_passed'] is True for record in records.values()),
                  'evidence_pixels': int(evidence_union.sum())}
     generation['verification'] = {
         'method': 'per-feature-upward-source-mesh-projection-intersect-class11-source-occlusion-mask-ciede2000-v1',
@@ -174,6 +187,8 @@ def verify(directory, config_path=CONFIG, tile_id=None):
         'source_only_occlusion_assessment': str(annotation_path), 'occlusions_sha256': digest(annotation_path),
         'source_sha256': digest(source_path),
         'class_raster_sha256': digest(tile / 'classes.png'),
+        'semantic_review': str(semantic_path) if semantic else None,
+        'semantic_review_sha256': digest(semantic_path) if semantic else None,
         'note': 'Classes encode building coverage, not BAG IDs. BAG identity comes from retained mesh feature IDs. Roof pixels outside class 11, aerial frame or source-visible roof evidence cannot be verified. Photograph shadows remain in the comparison; conservative canopy envelopes are excluded.',
     }
     generation['output'] = str(directory / 'roof.webp')
