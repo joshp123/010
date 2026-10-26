@@ -8,8 +8,8 @@
 # lean per tile (roof outlines line up with strong edges in the photo when
 # shifted by height x k), then per building fine-tunes the shift, samples the
 # roof's colour away from edges and registered tree crowns, and names its
-# material from slope and colour. It also keeps the roof's fittings (plant,
-# hatches, solar panels, skylights) as flat-colour shapes in roof-detail.png.
+# material from slope and colour. It also keeps flat roofs' fittings (plant,
+# hatches, vents) as flat-colour shapes in roof-detail.png.
 # Output: scene/v1/tiles/<tile>/roofs.json and roof-detail.png.
 # Usage: python3 tools/roof-facts.py TILE [TILE ...]
 import json, sys
@@ -148,9 +148,8 @@ def facts(tile):
             material = "pantiles" if a > 12 and b > 8 else "slate" if L < 48 and chroma < 10 else "tiles"
         rgb = np.median(photo[ys[clear], xs[clear]][(lightness >= lo) & (lightness <= hi)], axis=0)
         solar = float(np.mean((pixels[:, 2] < -4) & (pixels[:, 0] < 40)))
-        # Fittings: small parts of the roof clearly brighter than it (plant,
-        # hatches, vents) or blue glass (solar panels, skylights). Dark neutral
-        # blobs are shadows and are left out. Each is one flat colour.
+        # Fittings: small compact parts of a flat roof clearly brighter than
+        # it. Each is drawn as one flat colour.
         sl = objects[index]
         roof_mask = ndimage.binary_erosion(label[sl] == index + 1, iterations=3)
         ry, rx = np.nonzero(roof_mask)
@@ -160,8 +159,13 @@ def facts(tile):
         fitted = 0
         if len(ry) > 50:
             local_lab = lab(photo[fy, fx])
-            bright = (local_lab[:, 0] > L + 16) & is_flat  # on a pitched roof the sunlit face is brighter, not a fitting
-            glass = (local_lab[:, 2] < b - 8) & (local_lab[:, 0] < L + 5)
+            # Neutral and bright on a flat roof: plant, hatches, vents. Not on
+            # pitched roofs (a sunlit face is brighter), not coloured (that is
+            # a neighbouring roof bleeding in), and no "glass" rule: blue-dark
+            # pixels in the aerial are mostly shadow.
+            chroma = np.hypot(local_lab[:, 1], local_lab[:, 2])
+            bright = (local_lab[:, 0] > L + 16) & (chroma < 12) & is_flat
+            glass = np.zeros_like(bright)
             grid = np.zeros(roof_mask.shape, bool)
             grid[ry, rx] = (bright | glass) & ~trees[fy, fx]
             parts, count = ndimage.label(grid)

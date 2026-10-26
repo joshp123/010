@@ -207,7 +207,8 @@ const groundPatch = {
     if ((surfaceClass == 5.0 || surfaceClass == 14.0) && photoGreen > 0.02) {
       groundColour = texture2D(classColours, vec2(6.5 / 32.0, 0.5)).rgb * 0.95;
     } else if (surfaceClass == 5.0 && trackBedColour.r >= 0.0) {
-      groundColour = trackBedColour; // the tile's tram bed as measured in the aerial
+      // The tile's tram bed as measured in the aerial (sunlit), its colour restored from the haze.
+      groundColour = mix(vec3(dot(trackBedColour, vec3(0.2126, 0.7152, 0.0722))), trackBedColour, 1.6);
     }
     float deep = 1.0 - smoothstep(1.0, 2.0, texelsPerArtPixel); // 1 at 0.1 m per pixel and finer
     if (deep > 0.0) {
@@ -259,7 +260,7 @@ const groundPatch = {
     nightGlow = groundColour * vec3(1.0, 0.80, 0.55) * lampLight * 1.3;
     if (surfaceClass == 8.0) nightGlow += vec3(1.0, 0.75, 0.45) * lampLight * 0.25;
     // At night water holds the dark blue sky, so it stays apart from the streets.
-    if (surfaceClass == 8.0) diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.13, 0.20, 0.34), night * 0.75);`,
+    if (surfaceClass == 8.0) diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.05, 0.07, 0.12), night * 0.85);`,
 };
 
 const buildingPatch = {
@@ -642,6 +643,7 @@ export class Miniature {
     const rails = await fetch(`${base}/rails.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const roofFacts = await fetch(`${base}/roofs.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const bikeParking = await fetch(`${base}/bikes.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+    const lights = await fetch(`${base}/lights.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const parkingSlots = await fetch(`${base}/parking.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const markings = await loadRawImageTexture(`${base}/markings.png`).catch(() => null);
     const roofDetail = await loadRawImageTexture(`${base}/roof-detail.png`).then((t) => { t.colorSpace = THREE.SRGBColorSpace; return t; }).catch(() => null);
@@ -712,16 +714,6 @@ export class Miniature {
     if (objects?.trees?.length) group.add(this.treeMesh(objects.trees, offset, rails?.tracks ?? []));
     const sampler = ground && classTexture ? this.groundSampler(offset, ground.scene, classTexture) : null;
     if (sampler && orthoTexture) {
-      // Where the aerial is green a track is grass track: no sleepers show.
-      const photo = new OffscreenCanvas(sampler.width, sampler.height).getContext('2d', { willReadFrequently: true });
-      photo.drawImage(orthoTexture.image, 0, 0, sampler.width, sampler.height);
-      const pixels = photo.getImageData(0, 0, sampler.width, sampler.height).data;
-      sampler.greenAt = (x, y) => {
-        const px = Math.floor((x - sampler.tileX) / TILE_METRES * sampler.width), py = Math.floor((sampler.tileY + TILE_METRES - y) / TILE_METRES * sampler.height);
-        if (px < 0 || py < 0 || px >= sampler.width || py >= sampler.height) return false;
-        const i = (py * sampler.width + px) * 4;
-        return pixels[i + 1] - Math.max(pixels[i], pixels[i + 2]) > 5;
-      };
       const bed = this.trackBedColour(sampler, orthoTexture);
       if (bed) shared.trackBedColour.value.set(...bed);
     }
@@ -729,9 +721,15 @@ export class Miniature {
     if (sampler) group.add(await this.vehicleMesh(tile, sampler, rails?.tracks ?? [], bikeParking, parkingSlots));
     group.updateMatrixWorld(true);
     this.scene.add(group);
-    const record = { group, shared, lamps: objects?.lamps ?? [] };
-    if (objects?.lamps?.length) group.add(this.lampHeads(objects.lamps, offset));
-    if (objects?.lamps?.length && sampler) group.add(this.mastMesh(objects.lamps, rails?.tracks ?? [], sampler));
+    // Street lights: the lighting register (tools/build-lights.py) when the
+    // tile has it, standing on the ground mesh; else the scene's lamp list.
+    const fallbackHeight = (objects?.lamps ?? [])[0]?.z ?? 0;
+    const lamps = lights?.lights && sampler
+      ? lights.lights.map((light) => ({ ...light, z: sampler.heightAt(light.x, light.y) ?? fallbackHeight }))
+      : objects?.lamps ?? [];
+    const record = { group, shared, lamps };
+    if (lamps.length) group.add(this.lampHeads(lamps, offset));
+    if (lamps.length && sampler) group.add(this.mastMesh(lamps.filter((lamp) => lamp.type !== ''), rails?.tracks ?? [], sampler));
     this.tiles.set(tile.id, record);
     return record;
   }
@@ -764,7 +762,7 @@ export class Miniature {
       const hit = ray.intersectObjects(meshes, false)[0];
       return hit ? hit.point.y : null;
     };
-    return { tileX, tileY, classes, width: canvas.width, height: canvas.height, classAt, heightAt, greenAt: () => false };
+    return { tileX, tileY, classes, width: canvas.width, height: canvas.height, classAt, heightAt };
   }
 
   // The colour of a tile's tram bed in the 2026 aerial: the median of its
@@ -865,8 +863,7 @@ export class Miniature {
           for (const side of [-0.7175, 0.7175]) {
             railParts.push({ x: mx + nx * side, y: my + ny * side, z: h, angle: Math.atan2(uy, ux), length: step, street });
           }
-          // Ballast shows sleepers: train and metro beds, and tram beds where the aerial is not grass.
-          const ballast = surface === 14 || surface === 16 || (surface === 5 && !ground.greenAt(mx, my));
+          const ballast = surface === 14 || surface === 16; // tram beds here are paved or grass, not ballast
           if (ballast) {
             for (let k = 0.3; k < step; k += 0.6) {
               const sx = x0 + ux * (s + k), sy = y0 + uy * (s + k);
@@ -909,9 +906,14 @@ export class Miniature {
     const hash = (a, b) => Math.abs(Math.sin(a * 12.9898 + b * 78.233) * 43758.5453) % 1;
     const placed = { hatchback: [], estate: [], suv: [], cyclist: [], tram: [], hoop: [], bike: [], locker: [] };
     const shapes = ['hatchback', 'hatchback', 'estate', 'suv']; // compacts are the commonest
+    const carSpots = [];
     const put = (kind, x, y, heading, colour, lift = 0) => {
       const h = heightAt(x, y);
-      if (kind === 'car') kind = shapes[Math.floor(hash(y * 1.3, x * 0.7) * shapes.length)];
+      if (kind === 'car') {
+        if (carSpots.some(([cx, cy]) => Math.hypot(cx - x, cy - y) < 3)) return; // one car per place
+        carSpots.push([x, y]);
+        kind = shapes[Math.floor(hash(y * 1.3, x * 0.7) * shapes.length)];
+      }
       if (h !== null) placed[kind].push({ x, y, z: h + lift, heading, colour });
     };
     // Dutch car colours, roughly by share of the fleet.
@@ -1013,8 +1015,8 @@ export class Miniature {
       };
       const carDensity = { primary: 1 / 22, secondary: 1 / 22, tertiary: 1 / 35, residential: 1 / 70, unclassified: 1 / 70, living_street: 1 / 120 };
       if (networks.cars) along(networks.cars, (c) => carDensity[c] ?? 0, (c) => c in carDensity, 1.6, [1, 5, 12, 15], 'car', carColour);
-      const clothes = [0x2b2f3a, 0x3a4a6b, 0x6b2f2f, 0x1e1e22, 0x56604a, 0x8a8f96, 0xb5763a];
-      if (networks.bikes) along(networks.bikes, (c) => (c === 'cycleway' ? 1 / 35 : 1 / 140), () => true, 0.7, [1, 2, 10, 15], 'cyclist', (r) => clothes[Math.floor(r * clothes.length)]);
+      const clothes = [0x2b2f3a, 0x3a5a8b, 0x9b3030, 0x1e1e22, 0x56704a, 0xc8ccd2, 0xd08a3a, 0xe0d6c0];
+      if (networks.bikes) along(networks.bikes, (c) => (c === 'cycleway' ? 1 / 18 : 1 / 90), () => true, 0.7, [1, 2, 10, 15], 'cyclist', (r) => clothes[Math.floor(r * clothes.length)]);
       // One tram on the longest tram track, running on the right: its other
       // track lies to its left.
       const trams = tracks.filter((t) => t.function === 'tram');
@@ -1248,8 +1250,12 @@ export class Miniature {
       const crown = Math.max(2.0, tree.crown_m >= 1.5 ? tree.crown_m : height * form.ratio);
       const x = tree.x - this.origin.x - offset.x;
       const z = -(tree.y - this.origin.y) - offset.z;
+      let seed = Math.abs(Math.sin(tree.x * 12.9898 + tree.y * 78.233) * 43758.5453) % 1;
+      const random = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+      const tone = random() - 0.5;
+      const grown = 0.82 + 0.36 * random(); // trees of one register class still differ
       let crownHeight = form.columnar ? height * 0.85 : Math.min(height * 0.8, Math.max(crown * 1.05, height * 0.55));
-      let width = form.columnar ? Math.min(crown, height * 0.3) : crown;
+      let width = (form.columnar ? Math.min(crown, height * 0.3) : crown) * grown;
       let crownBase = tree.z + height - crownHeight;
       // Trees beside a track are pruned clear of trams, trains and their wires.
       const fromTrack = Miniature.distanceToTracks(tree.x, tree.y, tracks);
@@ -1258,9 +1264,6 @@ export class Miniature {
         crownHeight = Math.max(1.6, tree.z + height - crownBase);
         width = Math.min(width, Math.max(1.2, 2 * (fromTrack + 0.6)));
       }
-      let seed = Math.abs(Math.sin(tree.x * 12.9898 + tree.y * 78.233) * 43758.5453) % 1;
-      const random = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
-      const tone = random() - 0.5;
       // Trees of one kind do not turn on the same day: up to a week either way.
       const { leaves, turned } = Miniature.leafState(form, dayOfYear + Math.round((random() - 0.5) * 14));
       const turnedHere = Math.min(1, Math.max(0, turned + (random() - 0.5) * 0.4));
@@ -1282,8 +1285,9 @@ export class Miniature {
           const crownScale = 0.65 + 0.35 * leaves;
           clumps.push({ position: [x, crownBase + crownHeight * 0.48, z], scale: [width * crownScale, crownHeight * 0.92 * crownScale, width * crownScale], colour: shown(0.2) });
           const lobe = Math.min(width, crownHeight) * (form.airy ? 0.42 : 0.5) * crownScale;
-          for (let k = 0; k < 3; k++) {
-            const a = (k / 3 + random() * 0.2) * Math.PI * 2;
+          const lobes = 2 + Math.floor(random() * 3);
+          for (let k = 0; k < lobes; k++) {
+            const a = (k / lobes + random() * 0.25) * Math.PI * 2;
             clumps.push({ position: [x + Math.cos(a) * width * 0.22, crownBase + crownHeight * (0.62 + 0.12 * random()), z + Math.sin(a) * width * 0.22], size: lobe, colour: shown(0.55 + 0.3 * random()) });
           }
         }
@@ -1357,14 +1361,14 @@ export class Miniature {
     const size = 256, scale = size / TILE_METRES;
     const data = new Float32Array(size * size * 4);
     for (const lamp of lamps) {
-      const radius = Math.min(6.5, Math.max(1.5, 0.5 * (lamp.height_m ?? 6))); // a pool about the mast's height across
+      const radius = Math.min(10, Math.max(2, 0.9 * (lamp.height_m ?? 6))); // a street light lights about twice its height across
       const cx = (lamp.x - tile.x_min) * scale, cy = (tile.y_min + TILE_METRES - lamp.y) * scale;
       const reach = radius * 2 * scale;
       if (cx < -reach || cy < -reach || cx > size + reach || cy > size + reach) continue;
       for (let y = Math.max(0, Math.floor(cy - reach)); y < Math.min(size, Math.ceil(cy + reach)); y++) {
         for (let x = Math.max(0, Math.floor(cx - reach)); x < Math.min(size, Math.ceil(cx + reach)); x++) {
           const d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy) / scale / radius;
-          data[(y * size + x) * 4] += Math.exp(-d * d * 3.0);
+          data[(y * size + x) * 4] += Math.exp(-d * d * 2.0);
         }
       }
     }
@@ -1386,8 +1390,10 @@ export class Miniature {
   // For offline rendering of large areas: every lamp up front (small), so any
   // tile's light can be built when it is loaded.
   async loadAllLamps() {
-    const lists = await Promise.all(this.tileList.map((tile) => fetch(`${this.sceneBase}/tiles/${tile.id}/objects.json`)
-      .then((r) => (r.ok ? r.json() : null)).then((o) => o?.lamps ?? []).catch(() => [])));
+    const lists = await Promise.all(this.tileList.map((tile) => fetch(`${this.sceneBase}/tiles/${tile.id}/lights.json`)
+      .then((r) => (r.ok ? r.json() : null)).then((l) => l?.lights ?? null).catch(() => null)
+      .then((lights) => lights ?? fetch(`${this.sceneBase}/tiles/${tile.id}/objects.json`)
+        .then((r) => (r.ok ? r.json() : null)).then((o) => o?.lamps ?? []).catch(() => []))));
     this.allLamps = lists.flat();
   }
 

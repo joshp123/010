@@ -148,6 +148,20 @@ def draw_tile(tile, lines, areas, points, roads):
                 hd.line([(c, 0), (c + 250 * PX, 250 * PX)], fill=255, width=3)
             image.paste(255, (0, 0), Image.fromarray(np.minimum(np.asarray(mask), np.asarray(hatch))))
         drawn["areas"] += 1
+    # Zebra stripes and shark teeth come in rows across the road. A row's own
+    # line gives the road direction (perpendicular to it) more reliably than
+    # the nearest road, which at a junction may be the cross street.
+    row_kinds = ("Zebrastreep", "Haaientand")
+    rows = [f for f in points if any(k in (f["attributes"]["TYPE"] or "") for k in row_kinds)
+            and "x" in (f.get("geometry") or {}) and inside(f["geometry"]["x"], f["geometry"]["y"], 8)]
+    row_xy = np.array([[f["geometry"]["x"], f["geometry"]["y"]] for f in rows]) if rows else np.zeros((0, 2))
+    row_direction = {}
+    for i, f in enumerate(rows):
+        near = row_xy[np.hypot(*(row_xy - row_xy[i]).T) < 4.0]
+        if len(near) >= 3:
+            centred = near - near.mean(axis=0)
+            line = np.linalg.svd(centred, full_matrices=False)[2][0]  # the row's direction
+            row_direction[f["attributes"]["ID"]] = (-line[1], line[0])  # the road runs across the row
     for f in points:
         kind = f["attributes"]["TYPE"] or ""
         geometry = f.get("geometry") or {}
@@ -158,6 +172,9 @@ def draw_tile(tile, lines, areas, points, roads):
         if road is None:
             continue
         ux, uy = road
+        if f["attributes"]["ID"] in row_direction:
+            rx, ry = row_direction[f["attributes"]["ID"]]
+            ux, uy = (rx, ry) if rx * ux + ry * uy >= 0 else (-rx, -ry)  # keep the traffic sense from the road
         vx, vy = -uy, ux
         size = re.search(r"(\d\.\d\d)x(\d\.\d\d)", kind)
         if "Zebrastreep" in kind:

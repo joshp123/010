@@ -89,7 +89,8 @@ export function citadisTram() {
     // Roof: light grey, with a long equipment fairing on the cab and centre sections.
     group.add(box(len - 0.1, 0.06, width - 0.1, mat(0xd5d8dc), cx, height + 0.03, 0));
     if (len > 5) group.add(box(len - 1.6, 0.34, width - 0.7, mat(0xe3e5e7), cx, height + 0.2, 0, 0.12));
-    if (i < lengths.length - 1) group.add(box(joint, height - 0.4, width - 0.15, skirt, x + len + joint / 2, 0.3 + (height - 0.4) / 2, 0));
+    // Articulation: dark bellows between sections, full height, so the sections read from above.
+    if (i < lengths.length - 1) group.add(box(joint + 0.1, height - 0.2, width - 0.1, palette.bogie, x + len + joint / 2, 0.3 + (height - 0.2) / 2, 0));
     x += len + joint;
   });
   for (const sign of [-1, 1]) {
@@ -97,6 +98,8 @@ export function citadisTram() {
     // Rounded nose, black mask with windscreen, destination display, lamps, logo.
     group.add(box(1.0, height - 0.4, width - 0.04, silver, nx - sign * 0.2, 0.3 + (height - 0.4) / 2, 0, 0.45));
     group.add(box(0.08, 2.15, width - 0.35, mat(0x111316), nx + sign * 0.31, 1.95, 0));
+    // The windscreen wraps up onto the cab roof: a black cap seen from above.
+    group.add(box(0.9, 0.08, width - 0.3, mat(0x111316), nx - sign * 0.1, height - 0.02, 0));
     group.add(box(0.09, 0.28, width - 0.8, mat(0x3a2a10), nx + sign * 0.32, 2.85, 0));
     group.add(box(0.09, 0.2, 0.8, red, nx + sign * 0.31, 0.62, 0));
     for (const s of [-0.85, 0.85]) group.add(box(0.06, 0.16, 0.22, palette.lamp, nx + sign * 0.31, 0.75, s));
