@@ -241,7 +241,9 @@ const groundPatch = {
     float lampLight = texture2D(lampTexture, groundUv).r;
     if (surfaceClass == 6.0 || surfaceClass == 7.0) lampLight *= 0.35; // grass and shrubs take little light
     nightGlow = groundColour * vec3(1.0, 0.80, 0.55) * lampLight * 1.3;
-    if (surfaceClass == 8.0) nightGlow += vec3(1.0, 0.75, 0.45) * lampLight * 0.25;`,
+    if (surfaceClass == 8.0) nightGlow += vec3(1.0, 0.75, 0.45) * lampLight * 0.25;
+    // At night water holds the dark blue sky, so it stays apart from the streets.
+    if (surfaceClass == 8.0) diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.13, 0.20, 0.34), night * 0.75);`,
 };
 
 const buildingPatch = {
@@ -641,7 +643,7 @@ export class Miniature {
       });
       group.add(buildings.scene);
     }
-    if (objects?.trees?.length) group.add(this.treeMesh(objects.trees, offset));
+    if (objects?.trees?.length) group.add(this.treeMesh(objects.trees, offset, rails?.tracks ?? []));
     const sampler = ground && classTexture ? this.groundSampler(offset, ground.scene, classTexture) : null;
     if (rails?.tracks?.length && sampler) group.add(this.railMesh(rails.tracks, sampler));
     if (sampler) group.add(await this.vehicleMesh(tile, sampler, rails?.tracks ?? []));
@@ -703,7 +705,7 @@ export class Miniature {
           for (const side of [-0.7175, 0.7175]) {
             railParts.push({ x: mx + nx * side, y: my + ny * side, z: h, angle: Math.atan2(uy, ux), length: step, street });
           }
-          const ballast = surface === 5 || surface === 14 || surface === 16;
+          const ballast = surface === 14 || surface === 16; // BGT says nothing about a tram bed's surface: no sleepers there
           if (ballast) {
             for (let k = 0.3; k < step; k += 0.6) {
               const sx = x0 + ux * (s + k), sy = y0 + uy * (s + k);
@@ -997,7 +999,20 @@ export class Miniature {
     return { leaves: Math.min(1, 1.6 * (1 - t)), turned: Math.min(1, t * 1.7) };
   }
 
-  treeMesh(trees, offset) {
+  static distanceToTracks(x, y, tracks) {
+    let best = Infinity;
+    for (const track of tracks) {
+      const pts = track.points;
+      for (let i = 1; i < pts.length; i++) {
+        const [x0, y0] = pts[i - 1], dx = pts[i][0] - x0, dy = pts[i][1] - y0, l2 = dx * dx + dy * dy || 1e-9;
+        const t = Math.max(0, Math.min(1, ((x - x0) * dx + (y - y0) * dy) / l2));
+        best = Math.min(best, Math.hypot(x - x0 - t * dx, y - y0 - t * dy));
+      }
+    }
+    return best;
+  }
+
+  treeMesh(trees, offset, tracks = []) {
     const group = new THREE.Group();
     const clump = new THREE.IcosahedronGeometry(0.5, 1);
     // Leaf clumps get a leaf-sized texture; twig clumps (bare crowns) are a
@@ -1033,9 +1048,16 @@ export class Miniature {
       const crown = Math.max(2.0, tree.crown_m >= 1.5 ? tree.crown_m : height * form.ratio);
       const x = tree.x - this.origin.x - offset.x;
       const z = -(tree.y - this.origin.y) - offset.z;
-      const crownHeight = form.columnar ? height * 0.85 : Math.min(height * 0.8, Math.max(crown * 1.05, height * 0.55));
-      const width = form.columnar ? Math.min(crown, height * 0.3) : crown;
-      const crownBase = tree.z + height - crownHeight;
+      let crownHeight = form.columnar ? height * 0.85 : Math.min(height * 0.8, Math.max(crown * 1.05, height * 0.55));
+      let width = form.columnar ? Math.min(crown, height * 0.3) : crown;
+      let crownBase = tree.z + height - crownHeight;
+      // Trees beside a track are pruned clear of trams, trains and their wires.
+      const fromTrack = Miniature.distanceToTracks(tree.x, tree.y, tracks);
+      if (fromTrack < 3.5) {
+        crownBase = Math.max(crownBase, tree.z + 3.8);
+        crownHeight = Math.max(1.6, tree.z + height - crownBase);
+        width = Math.min(width, Math.max(1.2, 2 * (fromTrack + 0.6)));
+      }
       let seed = Math.abs(Math.sin(tree.x * 12.9898 + tree.y * 78.233) * 43758.5453) % 1;
       const random = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
       const tone = random() - 0.5;

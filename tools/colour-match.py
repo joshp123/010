@@ -3,7 +3,7 @@
 # brick). This pass keeps its drawing and moves each wall's mean colour back to
 # the photo's, in CIELAB: hue and chroma fully, lightness halfway (the photo's
 # lightness carries 2018 shade). Only walls with photo evidence are matched.
-# Runs after stitching and the lettering pass; keeps generated-raw-before-colour.png
+# Runs after stitching and the lettering pass (walls without settled lettering wait); keeps generated-raw-before-colour.png
 # and always starts from it, so a rerun gives the same result.
 # Usage: python3 tools/colour-match.py TILE [--report]
 import json, sys
@@ -70,8 +70,14 @@ tile, report = sys.argv[1], "--report" in sys.argv
 walls = []
 inventory = json.load(open(DATA / f"assets/v1/tiles/{tile}/elevations-inventory.json"))["elevations"]
 for d in sorted({Path(g["directory"]) for g in inventory}):
-    if (d / "generated-raw.png").exists() and (d / "photo-mask.png").exists():
+    if not ((d / "generated-raw.png").exists() and (d / "photo-mask.png").exists() and (d / "lettering.json").exists()):
+        continue
+    lettering = json.load(open(d / "lettering.json"))
+    if lettering.get("applied") or all(item.get("keep") for item in lettering.get("items", [])):  # lettering settled first
         walls += match(d, report)
+if not walls:
+    print(f"{tile}: no walls ready to match")
+    sys.exit()
 pixels = np.array([w["pixels"] for w in walls], float)
 weighted = lambda k: float((np.array([w[k] for w in walls]) * pixels).sum() / pixels.sum())
 print(f"{len(walls)} walls: photo chroma {weighted('photo_chroma'):.1f}, model chroma {weighted('model_chroma'):.1f}, "

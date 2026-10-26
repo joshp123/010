@@ -49,6 +49,8 @@ else:
         if not f.exists():
             continue
         decisions = json.load(open(f))
+        if decisions.get("applied"):  # once only: later passes (colour) edit the result
+            continue
         if not any(not item.get("keep") for item in decisions.get("items", [])):
             kept += len(decisions.get("items", []))
             continue
