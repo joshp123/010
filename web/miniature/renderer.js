@@ -242,12 +242,19 @@ const groundPatch = {
     if ((lines & 4) != 0) overlayCode = vec3(0.0, 1.0, 0.0);
     if ((lines & 3) != 0) overlayCode = vec3(1.0, 0.0, 0.0);
     if (surfaceClass == 8.0) {
-      // Water: lighter towards quays, with drawn ripples on a 5 m grid.
+      // Water: broad wind bands of slightly darker and lighter water, and
+      // ripple strokes of varying length and strength across them.
+      // Periods divide the 250 m tile, so tile edges fall on band edges.
       vec2 metres = vTileUv * ${TILE_METRES.toFixed(1)};
-      vec2 cell = floor(metres / vec2(2.5, 1.25));
-      float pick = fract(sin(dot(cell, vec2(12.9898, 78.233))) * 43758.5453);
-      float dash = step(0.86, pick) * step(fract(metres.x / 2.5), 0.6) * step(fract(metres.y / 1.25), 0.3);
-      groundColour = mix(groundColour, vec3(0.52, 0.62, 0.68), dash * 0.6);
+      vec2 band = floor(metres / vec2(25.0, 12.5));
+      float bandPick = fract(sin(dot(band, vec2(41.31, 17.77))) * 43758.5453);
+      groundColour *= 0.94 + 0.1 * bandPick;
+      float row = floor(metres.y / 1.0);
+      float strokeLength = 0.8 + 2.2 * fract(sin(row * 91.7) * 43758.5453);
+      float along = metres.x / strokeLength + fract(sin(row * 13.1) * 43758.5453);
+      float pick = fract(sin(dot(vec2(row, floor(along)), vec2(12.9898, 78.233))) * 43758.5453);
+      float stroke = step(0.78 - 0.12 * bandPick, pick) * step(fract(along), 0.55) * step(fract(metres.y / 1.0), 0.2);
+      groundColour = mix(groundColour, vec3(0.55, 0.65, 0.71), stroke * (0.35 + 0.35 * fract(pick * 7.3)));
     }
     diffuseColor.rgb = groundColour;
     // Class codes for measurement (tools/measure-classes.py).
