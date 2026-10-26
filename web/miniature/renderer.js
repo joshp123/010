@@ -451,6 +451,7 @@ const postFragment = `
 export class Miniature {
   constructor(canvas, { sceneBase, assetBase = null, manifest, area = 'core', style = {} }) {
     this.assetBase = assetBase;
+    this.assetFile = style.assetFile ?? null; // e.g. buildings-provenance.glb
     this.canvas = canvas;
     this.sceneBase = sceneBase;
     this.manifest = manifest;
@@ -550,7 +551,7 @@ export class Miniature {
       optional(retrying(() => loader.loadAsync(`${base}/ground.glb`))),
       // A tile's building assets (made by the asset maker, pipeline/assets)
       // replace its raw buildings when they exist.
-      (this.assetBase ? loader.loadAsync(`${this.assetBase}/tiles/${tile.id}/buildings.glb`).catch(() => null) : Promise.resolve(null))
+      (this.assetBase ? loader.loadAsync(`${this.assetBase}/tiles/${tile.id}/${this.assetFile ?? 'buildings.glb'}`).catch(() => null) : Promise.resolve(null))
         .then((assets) => assets ?? optional(retrying(() => loader.loadAsync(`${base}/buildings.glb`)))),
       optional(retrying(() => loadRawImageTexture(`${base}/classes.png`))),
       optional(retrying(() => loadPhotoTexture(`${base}/ortho.jpg`))),

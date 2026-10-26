@@ -41,6 +41,11 @@ with sync_playwright() as p:
     browser, page = page_for(p, "&light=night")
     night = render(page, 0.3, 1024)
     browser.close()
+    provenance = None
+    if "assets=" in extra and os.path.exists(f"{DATA}/assets/v1/tiles/x90250_y436000/buildings-provenance.glb"):
+        browser, page = page_for(p, "&assetFile=buildings-provenance.glb")
+        provenance = render(page, 0.075, 1024)
+        browser.close()
 
 ortho = Image.open(f"{DATA}/scene/v1/tiles/x90250_y436000/ortho.jpg").convert("RGB")
 # The same ground as the deep view, top-down, north up (2500 px = 250 m).
@@ -48,9 +53,12 @@ ox, oy = (X - 90250) * 10, (436250 - Y) * 10
 aerial = ortho.crop((ox - 400, oy - 400, ox + 400, oy + 400)).resize((1024, 1024))
 tiny = Image.open(f"{DATA}/renders/reference/tiny-london-day-deep.png").convert("RGB").resize((1024, 1024))
 W = 1024 + 20
-sheet = Image.new("RGB", (3 * W, 2 * (1024 + 40)), (28, 30, 40))
+rows = 3 if provenance is not None else 2
+sheet = Image.new("RGB", (3 * W, rows * (1024 + 40)), (28, 30, 40))
 panels = [(deep, "010, 7.5 cm per pixel, bearing 35"), (overview, "010, 0.3 m per pixel"), (night, "010 at night, 0.3 m per pixel"),
           (second, "010, 7.5 cm per pixel, bearing 215"), (aerial, "2026 aerial, same place, top-down"), (tiny, "tiny.london, closest zoom (0.29 m per pixel)")]
+if provenance is not None:
+    panels.append((provenance, "010, 7.5 cm, magenta = interpreted (no photo evidence)"))
 for i, (image, label) in enumerate(panels):
     x, y = (i % 3) * W, (i // 3) * (1024 + 40) + 40
     sheet.paste(image, (x, y))
@@ -71,6 +79,10 @@ for label, image, classes in [("deep", deep, deep_classes), ("overview", overvie
     out = subprocess.run([sys.executable, f"{here}/measure-classes.py", f"{work}/{label}.png", "--codes", f"{work}/{label}-classes.png"], capture_output=True, text=True)
     numbers[label] = json.loads(out.stdout)
 numbers["tiny.london"] = json.load(open(f"{DATA}/renders/reference/tiny-london-classes.json"))
+assembly = f"{DATA}/assets/v1/tiles/x90250_y436000/buildings.assembly.json"
+if "assets=" in extra and os.path.exists(assembly):
+    a = json.load(open(assembly))
+    numbers["assets"] = {k: a.get(k) for k in ("area_routes_m2", "wall_route_areas_m2", "verified_fractions", "interpreted_fractions", "features") if k in a}
 json.dump(numbers, open(f"{work}/numbers.json", "w"), indent=1)
 classes_order = ["roof", "wall", "asphalt", "paving", "grass", "tree", "water"]
 print("class      " + "".join(f"{k:>18}" for k in numbers))
