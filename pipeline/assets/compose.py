@@ -5,6 +5,7 @@ Compose drawn miniature parts at measured positions at native 5 cm pixels.
 No model calls; Claude owns generated-raw.png and generation.json.
 """
 import argparse
+import fcntl
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 import hashlib
@@ -174,6 +175,10 @@ def elevation_groups(assets_root, tile):
 
 def compose(facts_root, assets_root, walls_path, tile=TILE):
     start = time.monotonic()
+    directory=assets_root/'tiles'/tile/'composed'
+    directory.mkdir(parents=True,exist_ok=True)
+    composition_lock=(directory/'composition.lock').open('a')
+    fcntl.flock(composition_lock,fcntl.LOCK_EX)
     source_path = ROOT/'scene/v1/tiles'/tile/'buildings.glb'
     if (not walls_path.exists() or
             read_json(walls_path).get('source',{}).get('sha256') != sha(source_path)):
