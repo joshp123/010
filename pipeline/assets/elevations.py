@@ -5,6 +5,7 @@ file; source triangles, UVs and the metric projection stay traceable. No model
 calls or scene writes occur here.
 """
 import os
+import re
 os.environ['OPENBLAS_NUM_THREADS'] = '1'
 
 import argparse
@@ -29,7 +30,15 @@ ROOT = Path('/Volumes/Josh Extreme Pro USB4 4TB/010')
 TILE = os.environ.get('ASSET_TILE', 'x90250_y436000')  # other tiles: set ASSET_TILE
 
 
+def tile_origin(tile):
+    match = re.fullmatch(r'x(\d+)_y(\d+)', tile)
+    if match is None:
+        raise ValueError(f'Invalid tile ID: {tile}')
+    return tuple(map(int, match.groups()))
+
+
 def walls_from_tile(path):
+    origin_x, origin_y = tile_origin(path.parent.name)
     raw = path.read_bytes()
     document, binary = unpack_glb(raw)
     features = document['extras']['features']
@@ -59,7 +68,7 @@ def walls_from_tile(path):
             if normal[0] < 0 or (abs(normal[0]) < 1e-8 and normal[2] < 0):
                 normal *= -1
             key = (feature_index, *np.rint(normal[[0, 2]] * 100).astype(int), round(float(local[index, 0] @ normal) * 4))
-            rd = np.column_stack((90250 + local[index, :, 0], 436000 - local[index, :, 2], local[index, :, 1]))
+            rd = np.column_stack((origin_x + local[index, :, 0], origin_y - local[index, :, 2], local[index, :, 1]))
             uv = uvs[index]
             edges = uv[1:] - uv[0]
             uv_valid = abs(float(np.linalg.det(edges))) > 2e-10
@@ -137,9 +146,9 @@ def rasterize_triangle(projected, uv, image, width, height):
 
 def prepare(selection_path, output_root, row_data=None):
     selection = json.loads(selection_path.read_text())
-    if selection['tile'] != TILE:
-        raise ValueError('This first pass is restricted to x90250_y436000')
-    source = ROOT / 'scene/v1/tiles' / TILE / 'buildings.glb'
+    tile = selection['tile']
+    tile_origin(tile)
+    source = ROOT / 'scene/v1/tiles' / tile / 'buildings.glb'
     if row_data is None:
         walls, images, source_hash, features = walls_from_tile(source)
         row, origin, normal, tangent = select_row(walls, selection)
@@ -197,7 +206,7 @@ def prepare(selection_path, output_root, row_data=None):
     Image.fromarray(wall_ids).save(output / 'wall-ids.png')
     Image.fromarray(photo_mask).save(output / 'photo-mask.png')
     metadata = {'written_by': 'AI, GPT-6 Astra, 2026-10-26', 'stage': 'elevation-evidence-v1', 'date': datetime.now(timezone.utc).isoformat(),
-                'id': selection['id'], 'tile': TILE, 'image': str(image_path), 'image_size_px': [width, height],
+                'id': selection['id'], 'tile': tile, 'image': str(image_path), 'image_size_px': [width, height],
                 'pixel_size_m': .05, 'crs': {'horizontal': 'EPSG:28992', 'vertical': 'NAP'},
                 'elevation_plane_rd_nap': {'point': origin.tolist(), 'outward_normal': normal.tolist(), 'right_axis': tangent.tolist(), 'up_axis': [0, 0, 1]},
                 'pixel_transform': {'pixel_corner_origin_rd_nap': image_origin.tolist(), 'u_axis_m_per_px': (tangent / scale).tolist(), 'v_axis_m_per_px': [0, 0, -.05], 'sample': 'pixel centres'},

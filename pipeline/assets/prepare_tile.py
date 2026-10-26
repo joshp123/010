@@ -1,7 +1,7 @@
 """Written by AI on 2026-10-26 by model GPT-6 Astra.
 
-Prepare exterior elevations for the one authorised tile, without model calls.
-Shared wall triangles hidden below an adjacent mesh roof retain original material.
+Prepare exterior elevation evidence for a requested tile, without model calls.
+Shared wall triangles below an adjacent mesh roof are excluded from generation.
 """
 import os
 os.environ['OPENBLAS_NUM_THREADS'] = '1'
@@ -15,10 +15,11 @@ from PIL import Image
 import numpy as np
 from shapely import STRtree, union_all
 from shapely.geometry import Point, Polygon
-from elevations import ROOT, TILE, accessor, unpack_glb, walls_from_tile, prepare
+from elevations import ROOT, TILE, accessor, unpack_glb, walls_from_tile, prepare, tile_origin
 
 
 def roof_geometry(source):
+    origin_x, origin_y = tile_origin(source.parent.name)
     document, binary = unpack_glb(source.read_bytes())
     by_feature = defaultdict(list)
     for primitive in document['meshes'][0]['primitives']:
@@ -26,7 +27,7 @@ def roof_geometry(source):
         points = accessor(document, binary, attributes['POSITION']).reshape(-1, 3, 3).astype(float)
         identifiers = accessor(document, binary, attributes['_FEATURE_ID_0']).reshape(-1, 3)[:, 0].astype(int)
         for triangle, feature in zip(points, identifiers):
-            rd = np.column_stack((90250 + triangle[:, 0], 436000 - triangle[:, 2], triangle[:, 1]))
+            rd = np.column_stack((origin_x + triangle[:, 0], origin_y - triangle[:, 2], triangle[:, 1]))
             polygon = Polygon(rd[:, :2])
             if polygon.area > .01:
                 by_feature[int(feature)].append((polygon, rd))
@@ -192,7 +193,7 @@ def plan_model_batches(output, target_share=.85):
         selected.append(entry)
         selected_area += entry['area_m2']
     selected_ids = {entry['id'] for entry in selected}
-    protected = {'aelbrechtskolk-quay-first-v1', f'{TILE}-elevation-001'}
+    protected = {'aelbrechtskolk-quay-first-v1', f'{TILE}-elevation-001'} if TILE == 'x90250_y436000' else set()
     # Fixed membership keeps crop rectangles and batch IDs stable on a resume.
     pending = [entry for entry in selected if entry['id'] not in protected]
     batches = []
@@ -224,15 +225,20 @@ def run(output, inventory_only=False, workers=12, diagnostic=False):
     source = ROOT / 'scene/v1/tiles' / TILE / 'buildings.glb'
     walls, images, source_hash, features = walls_from_tile(source)
     accepted_directory = output / 'elevations/aelbrechtskolk-quay-first-v1'
-    accepted = json.loads((accepted_directory / 'reference.json').read_text())
-    accepted_triangles = {(t['primitive_index'], t['triangle_index']) for wall in accepted['walls'] for t in wall['triangles']}
+    accepted_path = accepted_directory / 'reference.json'
+    accepted = json.loads(accepted_path.read_text()) if accepted_path.exists() else None
+    if accepted is not None and accepted['tile'] != TILE:
+        accepted = None
+    accepted_triangles = {(t['primitive_index'], t['triangle_index'])
+                          for wall in (accepted['walls'] if accepted else []) for t in wall['triangles']}
     roofs, footprints = roof_geometry(source)
     exterior, excluded = exposed_walls(walls, roofs, footprints, accepted_triangles)
     rows = grouped_rows(exterior)
     SHARED_TILE_DATA = images, source_hash, features
     selections = output / 'tiles' / TILE / 'selections'
     selections.mkdir(parents=True, exist_ok=True)
-    entries = [{'id': accepted['id'], 'directory': str(accepted_directory), 'wall_count': len(accepted['walls']), 'triangle_count': len(accepted_triangles), 'existing_accepted': True}]
+    entries = ([{'id': accepted['id'], 'directory': str(accepted_directory), 'wall_count': len(accepted['walls']), 'triangle_count': len(accepted_triangles), 'existing_accepted': True}]
+               if accepted else [])
     jobs = []
     for index, (row, origin, normal, tangent) in enumerate(rows, 1):
         elevation_id = f'{TILE}-elevation-{index:03d}'
@@ -274,12 +280,15 @@ def run(output, inventory_only=False, workers=12, diagnostic=False):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--tile', default=TILE)
     parser.add_argument('--output', type=Path, default=ROOT / 'assets/v1')
     parser.add_argument('--inventory-only', action='store_true')
     parser.add_argument('--workers', type=int, default=12)
     parser.add_argument('--diagnostic', action='store_true')
     parser.add_argument('--plan-model-batches', action='store_true')
     arguments = parser.parse_args()
+    TILE = arguments.tile
+    tile_origin(TILE)
     if arguments.plan_model_batches:
         plan_model_batches(arguments.output)
     else:
