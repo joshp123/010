@@ -6,6 +6,7 @@
 # 1 m gap, 10 cm wide). Points (zebra stripes, shark teeth, arrows, letters
 # such as "3" "0") carry no rotation; they take the direction of the nearest
 # road in the OSM graph, and arrows and letters face traffic on the right.
+# Paint the register lacks (a painted "30") is added from the aerial.
 # The register states no licence (see its manifest): a decision for Josh
 # before publication.
 # Usage: python3 tools/build-markings.py TILE [TILE ...]
@@ -13,6 +14,7 @@ import glob, json, math, re, sys
 from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw
+from scipy import ndimage
 from scipy.spatial import cKDTree
 
 DATA = Path("/Volumes/Josh Extreme Pro USB4 4TB/010")
@@ -199,8 +201,24 @@ def draw_tile(tile, lines, areas, points, tree, dirs, mids, twoway):
         else:
             continue
         drawn["points"] += 1
+    # Paint the register lacks but the aerial shows (painted "30", worn
+    # dashes): small bright neutral shapes on road surfaces, brighter than
+    # the road around them. Car-sized blobs (white roofs) are left out.
+    photo = np.asarray(Image.open(DATA / f"scene/v1/tiles/{tile}/ortho.jpg").convert("RGB")).astype(float)
+    classes = np.asarray(Image.open(DATA / f"scene/v1/tiles/{tile}/classes.png").convert("RGB"))[..., 0]
+    luma = photo @ np.array([0.299, 0.587, 0.114])
+    chroma = photo.max(-1) - photo.min(-1)
+    road = np.isin(classes, (1, 2, 4, 15))
+    local = ndimage.median_filter(luma, size=21)
+    paint = road & (luma - local > 38) & (chroma < 40) & (luma > 120)
+    labels, count = ndimage.label(paint)
+    sizes = ndimage.sum(paint, labels, range(1, count + 1))
+    keep = np.zeros(count + 1, bool)
+    keep[1:] = (sizes >= 4) & (sizes <= 250)  # 4 cm² .. 2.5 m²
+    found = keep[labels]
+    image = Image.fromarray(np.maximum(np.asarray(image), found.astype(np.uint8) * 255))
     image.save(DATA / f"scene/v1/tiles/{tile}/markings.png", optimize=True)
-    print(f"{tile}: {drawn['lines']} lines, {drawn['areas']} areas, {drawn['points']} points")
+    print(f"{tile}: {drawn['lines']} lines, {drawn['areas']} areas, {drawn['points']} points from the register; {int(found.sum())} px of paint from the aerial")
 
 
 data = load()
