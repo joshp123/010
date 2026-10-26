@@ -250,8 +250,8 @@ export class LiveLayer {
     return { px: sx - viewLeft, py: viewTop - sy, sx, sy, depth: dot(ax.view) + CAMERA_DISTANCE };
   }
 
-  depthTile(level, column, row) {
-    const key = `${this.view.bearing}/${level}/${column}_${row}`;
+  depthTile(column, row) {
+    const key = `${this.view.bearing}/${column}_${row}`;
     let tile = this.depthTiles.get(key);
     if (tile) return tile.data;
     tile = { data: null };
@@ -263,25 +263,29 @@ export class LiveLayer {
       context.drawImage(image, 0, 0);
       tile.data = context.getImageData(0, 0, image.width, image.height).data;
     };
-    image.src = `${this.depthBase}/b${this.view.bearing}/d${level}/${column}_${row}.png`;
+    image.src = `${this.depthBase}/b${this.view.bearing}/dd/${column}_${row}.png`;
     return null;
   }
 
   // Hidden if the pyramid shows something nearer the camera at that pixel.
+  // Depth is packed at level-0 scale: one file per 1024 x 1024 level-0
+  // pixels, one sample per 4 x 4 pixels (tools/pack-depth.py).
   hidden(point) {
-    const { level, levelInfo } = this.view;
-    if (level > 1) return false;
-    const fx = point.sx - levelInfo.left, fy = levelInfo.top - point.sy;
-    const column = Math.floor(fx / 512), row = Math.floor(fy / 512);
-    if (column < 0 || row < 0 || column >= levelInfo.columns || row >= levelInfo.rows) return false;
-    const data = this.depthTile(level, column, row);
+    const { m, levelInfo } = this.view;
+    const level0 = m.levels[0];
+    const scale = levelInfo.metres_per_pixel / level0.metres_per_pixel;
+    if (scale > 2) return false;
+    const fx = point.sx * scale - level0.left, fy = level0.top - point.sy * scale;
+    const column = Math.floor(fx / 1024), row = Math.floor(fy / 1024);
+    if (column < 0 || row < 0 || column * 2 >= level0.columns || row * 2 >= level0.rows) return false;
+    const data = this.depthTile(column, row);
     if (!data) return false;
-    const x = Math.floor((fx - column * 512) / 2), y = Math.floor((fy - row * 512) / 2);
+    const x = Math.floor((fx - column * 1024) / 4), y = Math.floor((fy - row * 1024) / 4);
     if (x < 0 || y < 0 || x >= 256 || y >= 256) return false;
     const i = (y * 256 + x) * 4;
     const units = data[i] * 256 + data[i + 1];
     if (units === 0) return false;
-    return units / 10 + 1000 < point.depth - 1.2;
+    return units / 10 + 1000 < point.depth - 1.5;
   }
 
   // A vehicle as a small box: roof and the two sides facing the camera.
