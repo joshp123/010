@@ -100,7 +100,8 @@ async function draw() {
   if (thisGeneration !== generation) return;
   if (!firstViewMarked) {
     firstViewMarked = true;
-    performance.mark('map-first-view');
+    document.getElementById('first-view')?.remove();
+    if (!performance.getEntriesByName('map-first-view').length) performance.mark('map-first-view');
     performance.mark('map-complete');
     window.mapReady = true;
   }
