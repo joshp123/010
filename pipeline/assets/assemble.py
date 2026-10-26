@@ -196,6 +196,7 @@ def assemble(assets_root, target=None, quality=86, provenance_tint=False, tile=D
     target = target or assets_root / 'tiles' / tile / 'buildings.glb'
     source = ROOT / 'scene/v1/tiles' / tile / 'buildings.glb'
     source_bytes = source.read_bytes()
+    source_hash = hashlib.sha256(source_bytes).hexdigest()
     original, binary = unpack_glb(source_bytes)
     document = deepcopy(original)
     document.update(accessors=[], bufferViews=[], images=[], buffers=[{'byteLength': 0}])
@@ -258,6 +259,10 @@ def assemble(assets_root, target=None, quality=86, provenance_tint=False, tile=D
         if reference.get('tile') != tile:
             continue
         raw_path = directory / 'generated-raw.png'
+        if reference.get('source', {}).get('sha256') != source_hash:
+            if raw_path.exists():
+                pending_elevations.append({'id': directory.name, 'reason': 'source_geometry_changed_since_reference'})
+            continue
         chunks = sorted(path for path in (directory / 'chunks').glob('*') if path.is_dir())
         if chunks and any(not (chunk / 'generated-raw.png').exists() for chunk in chunks):
             pending_elevations.append({'id': directory.name, 'reason': 'generation_chunks_incomplete'})
@@ -534,7 +539,7 @@ def assemble(assets_root, target=None, quality=86, provenance_tint=False, tile=D
         failed_area = sum(w['area_m2'] * w.get('failed_evidence_fraction', 0) for w in walls)
         feature['asset'] = {
             'provenance': {'method': 'tier1-generated-tier2-drawn-parts-v3', 'assembled_at': now,
-                           'source': str(source), 'source_sha256': hashlib.sha256(source_bytes).hexdigest(),
+                           'source': str(source), 'source_sha256': source_hash,
                            'evidence': sorted(set(evidence for wall in walls for evidence in wall['evidence']))
                                        + ([str(ROOT / 'scene/v1/tiles' / tile / 'ortho.jpg')]
                                           if feature_generated_roof_area[feature_index] else []),
