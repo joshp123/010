@@ -50,7 +50,7 @@ def run_step(script, tile, log, *arguments):
         raise RuntimeError(f'{script}: {result.stdout[-2000:].strip()}')
 
 
-def process_tile(tile, render=False):
+def process_tile(tile, render=False, preserve_existing=False):
     directory = ROOT / 'assets/v1/tiles' / tile
     directory.mkdir(parents=True, exist_ok=True)
     state_path = directory / 'buildings.pipeline.json'
@@ -58,6 +58,21 @@ def process_tile(tile, render=False):
     log = directory / 'buildings.pipeline.log'
     result = {'tile': tile, 'date': datetime.now(timezone.utc).isoformat()}
     try:
+        if preserve_existing:
+            report = json.loads((directory / 'buildings.assembly.json').read_text())
+            result.update(status='preserved-existing', bytes=report['bytes'],
+                          pending_elevations=len(report['pending_elevations']),
+                          wall_area_fractions=report['wall_area_fractions'],
+                          roof_area_fractions=report['building_roof_area_fractions'],
+                          original_materials=report['original_materials'],
+                          retained_original=report['area_routes_m2']['retained_original'])
+            if render:
+                capture = directory / 'check-oblique.json'
+                captured = json.loads(capture.read_text()) if capture.exists() else {}
+                if captured.get('glb_sha256') != report['sha256'] or not (directory / 'check-oblique.png').exists():
+                    run_step('check_render.py', tile, log)
+                result['rendered'] = True
+            return result
         # These commands cache source-stable outputs. Neither invokes a model.
         run_step('wall_facts.py', tile, log)
         run_step('compose.py', tile, log)
@@ -130,6 +145,8 @@ def main():
     scope.add_argument('--tile')
     scope.add_argument('--block', choices=['delfshaven'])
     parser.add_argument('--render', action='store_true')
+    parser.add_argument('--preserve-existing', action='append', default=[], metavar='TILE',
+                        help='Read and render this tile without rebuilding its accepted assets')
     parser.add_argument('--watch', action='store_true', help='Repeat until interrupted; model work remains external')
     parser.add_argument('--interval', type=float, default=60)
     args = parser.parse_args()
@@ -137,7 +154,7 @@ def main():
     while True:
         records = []
         for tile in tiles:
-            result = process_tile(tile, args.render)
+            result = process_tile(tile, args.render, tile in args.preserve_existing)
             records.append(result)
             print(json.dumps(result), flush=True)
         if args.block:
