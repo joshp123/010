@@ -30,6 +30,14 @@ def report():
             record = load(generation)
             if record.get('tool') == 'image_gen.imagegen':
                 counts[tile]['wall'] += record.get('call_count', 1)
+    # Extracted elevations record zero calls; count their shared generation once.
+    for reference in (ROOT / 'assets/v1/batches').glob('*/reference.json'):
+        tile = load(reference).get('tile')
+        generation = reference.parent / 'generation.json'
+        if tile in counts and generation.exists() and (reference.parent/'generated-raw.png').exists():
+            record = load(generation)
+            if record.get('tool') == 'image_gen.imagegen':
+                counts[tile]['wall'] += record.get('call_count', 1)
     records = []
     for tile in TILES:
         directory = ROOT / 'assets/v1/tiles' / tile
@@ -55,7 +63,7 @@ def report():
     directory = ROOT / 'assets/v1/blocks/delfshaven'
     directory.mkdir(parents=True, exist_ok=True)
     result = {'written_by': 'AI, GPT-6 Astra, 2026-10-26', 'date': datetime.now(timezone.utc).isoformat(),
-              'image_calls_scope': 'Completed per-tile roof and wall-generation calls with saved raw images and metadata. Stitches are excluded. Shared parts/comparison calls and C3 text-model perception are excluded.',
+              'image_calls_scope': 'Recorded per-tile roof, wall, and shared batch generation calls with saved raw images and metadata. Stitches are excluded. Shared parts/comparison calls and C3 text-model perception are excluded.',
               'verification_scope': 'Numerical source-visible checks; interpreted includes unmeasured synthetic styling. No all-component semantic certification.',
               'tiles': records}
     (directory / 'buildings-report.json').write_text(json.dumps(result, indent=2)+'\n')
