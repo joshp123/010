@@ -16,7 +16,9 @@ const STREET_HEIGHT = 3; // NAP metres; the point under the screen centre is at 
 
 export const defaultStyle = {
   elevationDegrees: 40,
-  sunAzimuthDegrees: 215,
+  // Sun azimuth relative to the view: from behind the viewer and to one side,
+  // so the walls facing the viewer read lit and their sides shaded at every bearing.
+  sunAzimuthRelative: 205,
   sunElevationDegrees: 42,
   pixelArt: true,
   outlines: true,
@@ -27,9 +29,10 @@ export const defaultStyle = {
   facadeWindowRatio: 0.7,
   facadeRadius: 1.0,
   roofRadius: 1.0,
-  ambient: 1.25,
-  saturation: 1.2,
-  sun: 4.2,
+  ambient: 0.85,
+  saturation: 1.0,
+  midtones: 1.22,
+  sun: 4.8,
 };
 
 // Screen axes for a bearing (degrees clockwise from north at the top of the
@@ -225,7 +228,7 @@ const groundPatch = {
       vec2 cell = floor(metres / vec2(2.5, 1.25));
       float pick = fract(sin(dot(cell, vec2(12.9898, 78.233))) * 43758.5453);
       float dash = step(0.86, pick) * step(fract(metres.x / 2.5), 0.6) * step(fract(metres.y / 1.25), 0.3);
-      groundColour = mix(groundColour, vec3(0.55, 0.72, 0.80), dash * 0.6);
+      groundColour = mix(groundColour, vec3(0.52, 0.62, 0.68), dash * 0.6);
     }
     diffuseColor.rgb = groundColour;
     // Street lamps from the municipal register light pools on the ground.
@@ -319,7 +322,7 @@ const buildingPatch = {
         }
       #endif
     }
-    if (vWorldNormalMini.y > 0.55) diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 1.15, 0.5);`,
+`,
 };
 
 const postFragment = `
@@ -336,6 +339,8 @@ const postFragment = `
   uniform float depthScale;
   uniform float metresPerPixel;
   uniform float saturation;
+  uniform float midtones;
+  uniform vec3 sunView;
   uniform float depthOutput;
   uniform vec3 background;
   uniform float transparentBackground;
@@ -396,13 +401,20 @@ const postFragment = `
         // are not an object edge; anything taller than a storey is.
         bool parallelStep = dot(normal, neighbourNormal) > 0.98 && neighbourDepth - depth < edgeDepth + 1.0;
         if (neighbourDepth - depth > edgeDepth && !parallelStep) silhouette = 1.0;
-        if (metresPerPixel < 1.0 && dot(normal, neighbourNormal) < 0.75 && abs(neighbourDepth - depth) < edgeDepth) crease = 1.0;
+        if (metresPerPixel < 1.0 && dot(normal, neighbourNormal) < 0.75 && abs(neighbourDepth - depth) < edgeDepth) {
+          // A fold: the face turned towards the sun gets a highlight line,
+          // the face turned away a shade line, as a pixel artist draws edges.
+          crease = dot(normal, sunView) > dot(neighbourNormal, sunView) + 0.15 ? 2.0 : max(crease, 1.0);
+        }
       }
-      if (silhouette > 0.5) colour = colour * vec3(0.36, 0.36, 0.44);
-      else if (crease > 0.5) colour = colour * 0.80;
+      if (silhouette > 0.5) colour = mix(colour * 0.35, vec3(0.08, 0.08, 0.11), 0.5);
+      else if (crease > 1.5) colour = min(colour * 1.28 + 0.04, vec3(1.0));
+      else if (crease > 0.5) colour = colour * 0.78;
     }
     float grey = dot(colour, vec3(0.299, 0.587, 0.114));
     colour = clamp(mix(vec3(grey), colour, saturation), 0.0, 1.0);
+    // Tone: darker midtones, highlights kept (measured against tiny.london).
+    colour = pow(colour, vec3(midtones));
     if (pixelArt > 0.5) {
       vec3 target = toOklab(clamp(colour + dither * 0.06 * bayer4(gl_FragCoord.xy), 0.0, 1.0));
       float best = 1e9;
@@ -485,7 +497,9 @@ export class Miniature {
         dither: { value: 0.35 },
         depthScale: { value: CAMERA_DISTANCE * 2 },
         metresPerPixel: { value: 0.3 },
-        saturation: { value: 1.2 },
+        saturation: { value: 1.0 },
+        midtones: { value: 1.22 },
+        sunView: { value: new THREE.Vector3(0, 0, 1) },
         depthOutput: { value: 0 },
         background: { value: new THREE.Vector3(0xc9 / 255, 0xd3 / 255, 0xdd / 255) },
         transparentBackground: { value: 0 },
@@ -820,6 +834,7 @@ export class Miniature {
 
   // Exact screen window: left column and top row in art pixels on the global grid.
   setScreenWindow(left, top, width, height, bearing, metresPerPixel) {
+    this.view.bearing = bearing; // the sun follows the view
     const { right, up, view } = screenAxes(bearing, this.style.elevationDegrees);
     this.camera.position.copy(view).multiplyScalar(-CAMERA_DISTANCE);
     this.camera.up.copy(up);
@@ -844,7 +859,7 @@ export class Miniature {
     // Move along the view ray down to the ground plane.
     const t = -centre.y / view.y;
     centre.add(view.clone().multiplyScalar(t));
-    const az = THREE.MathUtils.degToRad(this.style.sunAzimuthDegrees);
+    const az = THREE.MathUtils.degToRad(this.view.bearing + this.style.sunAzimuthRelative);
     const el = THREE.MathUtils.degToRad(this.style.sunElevationDegrees);
     const toSun = new THREE.Vector3(Math.sin(az) * Math.cos(el), Math.sin(el), -Math.cos(az) * Math.cos(el));
     const reach = Math.ceil((Math.max(width, height) * metresPerPixel * 0.85 + 40) / 16) * 16;
@@ -899,7 +914,7 @@ export class Miniature {
     scene.add(holder, this.hemisphere.clone(), this.sun.clone(), this.sun.target.clone());
     const sun = scene.children[2];
     sun.castShadow = false;
-    const az = THREE.MathUtils.degToRad(this.style.sunAzimuthDegrees), el = THREE.MathUtils.degToRad(this.style.sunElevationDegrees);
+    const az = THREE.MathUtils.degToRad(bearing + this.style.sunAzimuthRelative), el = THREE.MathUtils.degToRad(this.style.sunElevationDegrees);
     sun.position.set(Math.sin(az) * Math.cos(el) * 100, Math.sin(el) * 100, -Math.cos(az) * Math.cos(el) * 100);
     sun.target = scene.children[3];
     sun.target.position.set(0, 0, 0);
@@ -949,6 +964,9 @@ export class Miniature {
     u.outlines.value = this.style.outlines && !overlay ? 1 : 0;
     u.dither.value = this.style.dither;
     u.saturation.value = this.style.saturation;
+    u.midtones.value = this.style.midtones;
+    // Sun direction in view space, for edge highlights (normals are view space).
+    u.sunView.value.copy(this.sun.position).sub(this.sun.target.position).normalize().transformDirection(this.camera.matrixWorldInverse);
     u.depthOutput.value = this.style.depthOutput ? 1 : 0;
     this.renderer.setRenderTarget(this.colourTarget);
     this.renderer.render(this.scene, this.camera);
