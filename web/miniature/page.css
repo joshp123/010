@@ -4,7 +4,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #c9d3dd; tou
 .controls { position: fixed; right: max(10px, env(safe-area-inset-right)); bottom: max(12px, env(safe-area-inset-bottom)); display: flex; gap: 6px; }
 .controls button { width: 40px; height: 40px; border: 0; border-radius: 0; background: rgba(28, 30, 40, 0.78); color: #f4f1e6; font: 600 16px/40px ui-monospace, Menlo, monospace; padding: 0; box-shadow: 2px 2px 0 rgba(0,0,0,0.25); }
 .controls button:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 rgba(0,0,0,0.25); }
-.label { position: fixed; left: max(10px, env(safe-area-inset-left)); bottom: max(12px, env(safe-area-inset-bottom)); padding: 6px 8px; background: rgba(28, 30, 40, 0.78); color: #f4f1e6; font: 600 11px/1 ui-monospace, Menlo, monospace; letter-spacing: 0.04em; pointer-events: none; }
+.label { position: fixed; left: max(10px, env(safe-area-inset-left)); top: max(10px, env(safe-area-inset-top)); padding: 6px 8px; background: rgba(28, 30, 40, 0.78); color: #f4f1e6; font: 600 11px/1 ui-monospace, Menlo, monospace; letter-spacing: 0.04em; pointer-events: none; }
 .label a { color: #f4f1e6; pointer-events: auto; text-decoration: underline; text-underline-offset: 2px; }
 body.night, body.night .pyramid { background: #161c2c; }
 .controls button.on { background: rgba(200, 50, 45, 0.9); }
