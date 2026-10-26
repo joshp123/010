@@ -84,37 +84,40 @@ with sync_playwright() as p:
             rows = -(-(bounds["top"] - bounds["bottom"]) // TILE)
             meta["levels"].append({"level": level, "metres_per_pixel": mpp, "left": bounds["left"], "top": bounds["top"], "columns": columns, "rows": rows})
             os.makedirs(os.path.join(folder, str(level)), exist_ok=True)
-            for row in range(rows):
-                for column in range(columns):
-                    path = os.path.join(folder, str(level), f"{column}_{row}.webp")
-                    depth_path = os.path.join(folder, f"d{level}", f"{column}_{row}.png")
-                    want_depth = args.depth and abs(mpp - args.depth_mpp) < 1e-6
-                    if os.path.exists(path) and (not want_depth or os.path.exists(depth_path)):
-                        continue
-                    left = bounds["left"] + column * TILE - MARGIN
-                    top = bounds["top"] - row * TILE + MARGIN
-                    size = TILE + 2 * MARGIN
-                    for attempt in range(3):
+            # Visit tiles in 12 x 12 blocks so consecutive windows need the same
+            # scene tiles (the renderer keeps a bounded set loaded).
+            order = [(c, r) for br in range(0, rows, 12) for bc in range(0, columns, 12)
+                     for r in range(br, min(rows, br + 12)) for c in range(bc, min(columns, bc + 12))]
+            for column, row in order:
+                path = os.path.join(folder, str(level), f"{column}_{row}.webp")
+                depth_path = os.path.join(folder, f"d{level}", f"{column}_{row}.png")
+                want_depth = args.depth and abs(mpp - args.depth_mpp) < 1e-6
+                if os.path.exists(path) and (not want_depth or os.path.exists(depth_path)):
+                    continue
+                left = bounds["left"] + column * TILE - MARGIN
+                top = bounds["top"] - row * TILE + MARGIN
+                size = TILE + 2 * MARGIN
+                for attempt in range(3):
+                    try:
+                        image = capture(page, left, top, size, bearing, mpp)
+                        depth = capture(page, left, top, size, bearing, mpp, True) if want_depth else None
+                        break
+                    except Exception as error:
+                        print(f"restarting browser after: {str(error)[:120]}")
                         try:
-                            image = capture(page, left, top, size, bearing, mpp)
-                            depth = capture(page, left, top, size, bearing, mpp, True) if want_depth else None
-                            break
-                        except Exception as error:
-                            print(f"restarting browser after: {str(error)[:120]}")
-                            try:
-                                browser.close()
-                            except Exception:
-                                pass
-                            browser, page = open_page(p)
-                    else:
-                        raise SystemExit(f"tile {level}/{column}_{row} failed three times")
-                    image.crop((MARGIN, MARGIN, MARGIN + TILE, MARGIN + TILE)).save(path, quality=args.quality, method=6)
-                    if depth is not None:
-                        # Depth for live layers, at half resolution: enough to
-                        # hide a vehicle behind a building at pixel-art scale.
-                        os.makedirs(os.path.dirname(depth_path), exist_ok=True)
-                        depth.crop((MARGIN, MARGIN, MARGIN + TILE, MARGIN + TILE)).resize((TILE // 2, TILE // 2), Image.NEAREST).save(depth_path, optimize=True)
-                    count += 1
+                            browser.close()
+                        except Exception:
+                            pass
+                        browser, page = open_page(p)
+                else:
+                    raise SystemExit(f"tile {level}/{column}_{row} failed three times")
+                image.crop((MARGIN, MARGIN, MARGIN + TILE, MARGIN + TILE)).save(path, quality=args.quality, method=6)
+                if depth is not None:
+                    # Depth for live layers, at half resolution: enough to
+                    # hide a vehicle behind a building at pixel-art scale.
+                    os.makedirs(os.path.dirname(depth_path), exist_ok=True)
+                    depth.crop((MARGIN, MARGIN, MARGIN + TILE, MARGIN + TILE)).resize((TILE // 2, TILE // 2), Image.NEAREST).save(depth_path, optimize=True)
+                count += 1
         with open(os.path.join(folder, "meta.json"), "w") as f:
             json.dump(meta, f, indent=1)
         print(f"bearing {bearing}: {count} tiles in {time.time() - started:.1f}s", flush=True)
