@@ -287,7 +287,8 @@ const buildingPatch = {
         float pitch = office ? 1.8 : 2.7, width = office ? 1.5 : 1.1;
         bool windowRow = h > 0.6 && height - h > 0.9 && inStorey > 0.9 && inStorey < 2.2;
         bool windowColumn = mod(along, pitch) < width;
-        if (height > 0.0 && windowRow && windowColumn) wall = mix(wall, vec3(0.20, 0.24, 0.30), 0.5);
+        // Subtle: the rhythm is a fact (storeys), the exact windows are not.
+        if (height > 0.0 && windowRow && windowColumn) wall = mix(wall, vec3(0.20, 0.24, 0.30), 0.22);
         diffuseColor.rgb = wall;
         if (night > 0.0 && vWorldNormalMini.y < 0.3) {
           float pick = fract(sin(dot(vec2(floor(along / pitch), floor(h / storey)) + vFeature.xy, vec2(12.9898, 78.233))) * 43758.5453);
