@@ -98,7 +98,7 @@ function withTilePosition(material, tileOffset, extraUniforms, fragmentPatch) {
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, extraUniforms, { tileOffset: { value: tileOffset } });
     shader.vertexShader = shader.vertexShader
-      .replace('#include <common>', '#include <common>\nuniform vec3 tileOffset;\nvarying vec2 vTileUv;\nvarying vec3 vWorldNormalMini;')
+      .replace('#include <common>', `#include <common>\nuniform vec3 tileOffset;\nvarying vec2 vTileUv;\nvarying vec3 vWorldNormalMini;\n${fragmentPatch.vertexDeclarations ?? ''}`)
       .replace('#include <worldpos_vertex>', `#include <worldpos_vertex>
         vec4 miniWorld = modelMatrix * vec4(transformed, 1.0);
         #ifdef USE_INSTANCING
@@ -106,7 +106,8 @@ function withTilePosition(material, tileOffset, extraUniforms, fragmentPatch) {
         #endif
         vec3 tileLocal = miniWorld.xyz - tileOffset;
         vTileUv = vec2(tileLocal.x / ${TILE_METRES.toFixed(1)}, 1.0 + tileLocal.z / ${TILE_METRES.toFixed(1)});
-        vWorldNormalMini = normalize(mat3(modelMatrix) * objectNormal);`);
+        vWorldNormalMini = normalize(mat3(modelMatrix) * objectNormal);
+        ${fragmentPatch.vertexBody ?? ''}`);
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <common>', `#include <common>\nvarying vec2 vTileUv;\nvarying vec3 vWorldNormalMini;\nuniform float dataOverlay;\nvec3 overlayCode = vec3(0.0);\n${fragmentPatch.declarations}`)
       .replace('#include <map_fragment>', `#include <map_fragment>\n${fragmentPatch.body}`)
@@ -208,7 +209,18 @@ const groundPatch = {
 const buildingPatch = {
   key: 'mini-building',
   overlay: overlayOutput,
+  vertexDeclarations: `
+    attribute float _feature_id_0;
+    uniform sampler2D featureTexture;
+    uniform float featureCount;
+    varying vec4 vFeature;
+    varying vec3 vWorldPosMini;`,
+  vertexBody: `
+    vFeature = texture2D(featureTexture, vec2((_feature_id_0 + 0.5) / max(1.0, featureCount), 0.5));
+    vWorldPosMini = miniWorld.xyz;`,
   declarations: `
+    varying vec4 vFeature;
+    varying vec3 vWorldPosMini;
     uniform sampler2D orthoTexture;
     uniform float orthoRoofs;
     uniform float facadeDetail;
@@ -227,8 +239,25 @@ const buildingPatch = {
         vec3 wall = 1.0 - pow(1.0 - bestMean, vec3(1.5));
         diffuseColor.rgb = mix(vec3(dot(wall, luma)), wall, 1.3);
       #else
-        // No photo: a plain wall, deliberately plainer than photographed ones.
-        diffuseColor.rgb = vec3(0.78, 0.73, 0.66);
+        // No photo: a facade from facts only, deliberately plainer than a
+        // photographed one. Construction year sets the storey height and the
+        // material family; use sets the window rhythm. Nothing else is drawn.
+        float base = vFeature.x, height = vFeature.y, year = vFeature.z, use = vFeature.w;
+        vec3 wall = year <= 0.0 ? vec3(0.74, 0.70, 0.64)
+          : year < 1945.0 ? vec3(0.58, 0.36, 0.28)
+          : year < 1975.0 ? vec3(0.73, 0.71, 0.65)
+          : vec3(0.67, 0.60, 0.53);
+        float storey = (year > 0.0 && year < 1945.0) ? 3.3 : 2.9;
+        float h = vWorldPosMini.y - base;
+        vec2 along2 = normalize(vec2(-vWorldNormalMini.z, vWorldNormalMini.x));
+        float along = dot(vWorldPosMini.xz, along2);
+        float inStorey = mod(h, storey);
+        bool office = abs(use - 2.0) < 0.5;
+        float pitch = office ? 1.8 : 2.7, width = office ? 1.5 : 1.1;
+        bool windowRow = h > 0.6 && height - h > 0.9 && inStorey > 0.9 && inStorey < 2.2;
+        bool windowColumn = mod(along, pitch) < width;
+        if (height > 0.0 && windowRow && windowColumn) wall = mix(wall, vec3(0.20, 0.24, 0.30), 0.5);
+        diffuseColor.rgb = wall;
       #endif
     }
     if (vWorldNormalMini.y > 0.55) diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 1.15, 0.5);`,
@@ -451,6 +480,7 @@ export class Miniature {
       group.add(underlay);
     }
     if (buildings) {
+      Object.assign(shared, this.featureTexture(buildings));
       buildings.scene.traverse((node) => {
         if (!node.isMesh) return;
         const source = node.material;
@@ -472,6 +502,36 @@ export class Miniature {
 
   // Each tree is a few overlapping leaf clumps placed by a hash of its
   // position, so the same tree always looks the same. Size comes from data.
+  // Per-building facts for the shader: base height, height, construction
+  // year and use, one texel per feature in the tile's feature table.
+  featureTexture(buildings) {
+    const features = buildings.parser.json.extras?.features ?? [];
+    const count = Math.max(1, features.length);
+    const data = new Float32Array(count * 4);
+    const useCodes = { woonfunctie: 1, kantoorfunctie: 2, winkelfunctie: 3, industriefunctie: 4 };
+    features.forEach((feature, i) => {
+      const uses = Array.isArray(feature.use) ? feature.use : feature.use ? [feature.use] : [];
+      const use = uses.map((u) => useCodes[u] ?? 5).sort()[0] ?? 0;
+      data.set([1e9, feature.height_m ?? 0, feature.year ?? 0, use], i * 4);
+    });
+    buildings.scene.updateMatrixWorld(true);
+    const point = new THREE.Vector3();
+    buildings.scene.traverse((node) => {
+      const ids = node.geometry?.attributes?._feature_id_0;
+      if (!node.isMesh || !ids) return;
+      const positions = node.geometry.attributes.position;
+      for (let v = 0; v < positions.count; v++) {
+        const id = Math.round(ids.getX(v));
+        point.fromBufferAttribute(positions, v).applyMatrix4(node.matrixWorld);
+        if (id < count && point.y < data[id * 4]) data[id * 4] = point.y;
+      }
+    });
+    for (let i = 0; i < count; i++) if (data[i * 4] > 1e8) data[i * 4] = 0;
+    const texture = new THREE.DataTexture(data, count, 1, THREE.RGBAFormat, THREE.FloatType);
+    texture.needsUpdate = true;
+    return { featureTexture: { value: texture }, featureCount: { value: count } };
+  }
+
   treeMesh(trees, offset) {
     const clump = new THREE.IcosahedronGeometry(0.5, 1);
     const material = new THREE.MeshLambertMaterial({ color: 0xffffff, flatShading: true });
