@@ -343,7 +343,7 @@ def main():
                 fact=load(path)
                 if (fact.get('openings') or fact.get('rejected_openings') or fact.get('material_sample_boxes_px')) and fact['provenance'].get('opening_definition')!='outer_masonry_aperture_v2':
                     eligible.append(wall)
-    eligible.sort(key=lambda w:-w['area_m2'])
+    eligible.sort(key=lambda w:(not (10 <= w['area_m2'] <= 100 and w.get('photo_fraction',0) >= .6), -w['area_m2']))
     batches=[eligible[i:i+args.batch_size] for i in range(args.start,len(eligible),args.batch_size)]
     if args.max_calls is not None:batches=batches[:args.max_calls]
     print(json.dumps({'cached_measurements':reused,'pending_walls':len(eligible),'batches':len(batches),'workers':args.workers}),flush=True)
