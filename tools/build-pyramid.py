@@ -21,6 +21,7 @@ parser.add_argument("out")
 parser.add_argument("--bearings", type=float, nargs="+", default=[0])
 parser.add_argument("--quality", type=int, default=90)
 parser.add_argument("--depth", action="store_true", help="also write depth tiles for live layers (levels 0 and 1)")
+parser.add_argument("--render-levels", type=int, default=len(LEVELS), help="render this many finest levels; coarser ones are downsampled 2x from the level below (much faster for large areas)")
 args = parser.parse_args()
 
 def open_page(p):
@@ -57,6 +58,23 @@ with sync_playwright() as p:
         started = time.time()
         count = 0
         for level, mpp in enumerate(LEVELS):
+            if level >= args.render_levels:
+                # Coarse levels: each tile is four tiles of the level below,
+                # halved. Same grid, origin halved.
+                below = meta["levels"][level - 1]
+                columns, rows = -(-below["columns"] // 2), -(-below["rows"] // 2)
+                meta["levels"].append({"level": level, "metres_per_pixel": mpp, "left": below["left"] / 2, "top": below["top"] / 2, "columns": columns, "rows": rows})
+                os.makedirs(os.path.join(folder, str(level)), exist_ok=True)
+                for row in range(rows):
+                    for column in range(columns):
+                        mosaic = Image.new("RGB", (2 * TILE, 2 * TILE), (0xc9, 0xd3, 0xdd))
+                        for dy in (0, 1):
+                            for dx in (0, 1):
+                                source = os.path.join(folder, str(level - 1), f"{2 * column + dx}_{2 * row + dy}.webp")
+                                if os.path.exists(source):
+                                    mosaic.paste(Image.open(source).convert("RGB"), (dx * TILE, dy * TILE))
+                        mosaic.resize((TILE, TILE), Image.BOX).save(os.path.join(folder, str(level), f"{column}_{row}.webp"), quality=args.quality, method=6)
+                continue
             bounds = page.evaluate(f"window.screenBounds({bearing}, {mpp})")
             columns = -(-(bounds["right"] - bounds["left"]) // TILE)
             rows = -(-(bounds["top"] - bounds["bottom"]) // TILE)
