@@ -83,7 +83,7 @@ def process_tile(tile, render=False, preserve_existing=False):
         if not all(path.exists() for path in quadrant_inputs):
             result.update(status='pending-roofs', missing_roof_inputs=[str(p) for p in quadrant_inputs if not p.exists()])
             return result
-        roof_dependencies = quadrant_inputs + [roof / 'reference.json', roof / 'occlusions.json',
+        roof_dependencies = quadrant_inputs + [roof / 'reference.json', roof / 'occlusions.json', roof / 'semantic-review.json',
             ROOT / 'scene/v1/tiles' / tile / 'ortho.jpg', ROOT / 'scene/v1/tiles' / tile / 'classes.png',
             ROOT / 'scene/v1/tiles' / tile / 'buildings.glb', SCRIPTS / 'roofs.py',
             SCRIPTS / 'verify_roofs.py', SCRIPTS / 'verification-config.json']
