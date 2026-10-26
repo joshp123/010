@@ -14,6 +14,8 @@ import subprocess
 import sys
 import time
 
+from PIL import Image, ImageDraw, ImageOps
+
 ROOT = Path('/Volumes/Josh Extreme Pro USB4 4TB/010')
 REPOSITORY = Path(__file__).resolve().parents[2]
 SCRIPTS = Path(__file__).resolve().parent
@@ -147,6 +149,23 @@ def process_tile(tile, render=False, preserve_existing=False):
     return result
 
 
+def write_contact_sheet(tiles, target):
+    canvas = Image.new('RGB', (2400, 2560), 'white')
+    painter = ImageDraw.Draw(canvas)
+    for index, tile in enumerate(tiles):
+        left, top = (index // 4) * 600, (index % 4) * 640
+        painter.text((left + 15, top + 10), tile, fill='black')
+        capture = ROOT / 'assets/v1/tiles' / tile / 'check-oblique.png'
+        if capture.exists():
+            with Image.open(capture) as image:
+                canvas.paste(ImageOps.contain(image.convert('RGB'), (600, 600)), (left, top + 40))
+        else:
+            painter.text((left + 15, top + 100), 'Pending', fill='black')
+    pending = target.with_name('.' + target.stem + '.pending.png')
+    canvas.save(pending)
+    pending.replace(target)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     scope = parser.add_mutually_exclusive_group(required=True)
@@ -169,6 +188,8 @@ def main():
             path = ROOT / 'assets/v1/blocks/delfshaven/buildings.json'
             path.parent.mkdir(parents=True, exist_ok=True)
             save_json(path, {'written_by': 'AI, GPT-6 Astra, 2026-10-26', 'tiles': records})
+            if args.render:
+                write_contact_sheet(tiles, path.with_name('buildings-contact-sheet.png'))
         if not args.watch:
             return int(any(record['status'] == 'blocked' for record in records))
         time.sleep(max(1, args.interval))
