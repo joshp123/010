@@ -28,9 +28,9 @@ for kind in cars bikes transit; do
 done
 cp "$data/renders/compare/og.jpg" "$dist/og.jpg"
 # The home page: viewer code and first metadata inlined, first tiles preloaded.
-esbuild "$repo/web/pyramid.js" --bundle --minify --format=esm --target=es2022 --outfile="$TMPDIR/010-pyramid.bundle.js" --log-level=warning
-python3 "$repo/tools/inline-first-view.py" "$dist" index.html "$TMPDIR/010-pyramid.bundle.js" pyramids/t2 35
-python3 "$repo/tools/inline-first-view.py" "$dist" t2.html "$TMPDIR/010-pyramid.bundle.js" pyramids/t2 35
+esbuild "$repo/web/pyramid.js" --bundle --minify --format=esm --target=es2022 --outfile="${TMPDIR:-/tmp}/010-pyramid.bundle.js" --log-level=warning
+python3 "$repo/tools/inline-first-view.py" "$dist" index.html "${TMPDIR:-/tmp}/010-pyramid.bundle.js" pyramids/t2 35
+python3 "$repo/tools/inline-first-view.py" "$dist" t2.html "${TMPDIR:-/tmp}/010-pyramid.bundle.js" pyramids/t2 35
 python3 "$repo/tools/pack-tiles.py" "$dist/pyramids"
 build_id="$(git -C "$repo" rev-parse --short HEAD)-$(date +%Y%m%d%H%M%S)"
 export SITE_BUILD="$build_id"
