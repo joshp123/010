@@ -10,6 +10,8 @@ from datetime import datetime, timezone
 import hashlib
 import io
 import json
+import os
+import re
 from pathlib import Path
 import struct
 import sys
@@ -21,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'buildings'))
 from build import accessor, unpack_glb
 
 ROOT = Path('/Volumes/Josh Extreme Pro USB4 4TB/010')
-TILE = 'x90250_y436000'
+DEFAULT_TILE = os.environ.get('ASSET_TILE', 'x90250_y436000')
 
 
 class BinaryWriter:
@@ -186,8 +188,13 @@ def write_provenance_tint(document, binary, masks, target):
     return {'path':str(target),'bytes':len(output),'sha256':hashlib.sha256(output).hexdigest(),'tinted_texels':changed,'blend':.45,'colour':'#ff00ff','encoding':'Lossless PNG of decoded delivery texels; only interpreted pixels changed'}
 
 
-def assemble(assets_root, target, quality=86, provenance_tint=False):
-    source = ROOT / 'scene/v1/tiles' / TILE / 'buildings.glb'
+def assemble(assets_root, target=None, quality=86, provenance_tint=False, tile=DEFAULT_TILE):
+    match = re.fullmatch(r'x(\d+)_y(\d+)', tile)
+    if not match:
+        raise ValueError(f'Invalid tile identifier: {tile}')
+    origin_x, origin_y = map(int, match.groups())
+    target = target or assets_root / 'tiles' / tile / 'buildings.glb'
+    source = ROOT / 'scene/v1/tiles' / tile / 'buildings.glb'
     source_bytes = source.read_bytes()
     original, binary = unpack_glb(source_bytes)
     document = deepcopy(original)
@@ -248,10 +255,16 @@ def assemble(assets_root, target, quality=86, provenance_tint=False):
     for sidecar_path in sorted((assets_root / 'elevations').glob('*/reference.json')):
         directory = sidecar_path.parent
         reference = json.loads(sidecar_path.read_text())
-        if reference.get('tile') != TILE:
+        if reference.get('tile') != tile:
             continue
         raw_path = directory / 'generated-raw.png'
+        chunks = sorted(path for path in (directory / 'chunks').glob('*') if path.is_dir())
+        if chunks and any(not (chunk / 'generated-raw.png').exists() for chunk in chunks):
+            pending_elevations.append({'id': directory.name, 'reason': 'generation_chunks_incomplete'})
+            continue
         if not raw_path.exists():
+            if chunks:
+                pending_elevations.append({'id': directory.name, 'reason': 'awaiting_stitched_generation'})
             continue
         verification_path = directory / 'verification.json'
         if not verification_path.exists():
@@ -326,7 +339,7 @@ def assemble(assets_root, target, quality=86, provenance_tint=False):
                     'failed_evidence_fraction': check.get('failed_evidence_share', 0),
                     'interpreted': bool(check.get('interpreted_share',1)) or check.get('checks',{}).get('passed') is not True,
                     'semantic_verified_fraction': 0.})
-    composition_path = assets_root / 'tiles' / TILE / 'composed/composition.json'
+    composition_path = assets_root / 'tiles' / tile / 'composed/composition.json'
     composition_bytes = composition_path.read_bytes() if composition_path.exists() else b'{}'
     composition_hash = hashlib.sha256(composition_bytes).hexdigest()
     composition = json.loads(composition_bytes)
@@ -359,8 +372,8 @@ def assemble(assets_root, target, quality=86, provenance_tint=False):
                 'occluded_fraction': wall.get('interpreted_fraction', wall.get('occluded_fraction', 1)),
                 'failed_evidence_fraction': wall.get('failed_evidence_fraction', 0),
                 'check': wall.get('verification', {}), 'provenance': wall.get('provenance', {})})
-    reuse_plan_path = assets_root / 'tiles' / TILE / 'reuse/reuse-plan.json'
-    roof_path = assets_root / 'roofs' / TILE / 'roof.webp'
+    reuse_plan_path = assets_root / 'tiles' / tile / 'reuse/reuse-plan.json'
+    roof_path = assets_root / 'roofs' / tile / 'roof.webp'
     roof_generation_path = roof_path.with_name('generation.json')
     roof_generation = json.loads(roof_generation_path.read_text()) if roof_generation_path.exists() else {}
     if not roof_path.exists():
@@ -523,7 +536,7 @@ def assemble(assets_root, target, quality=86, provenance_tint=False):
             'provenance': {'method': 'tier1-generated-tier2-drawn-parts-v3', 'assembled_at': now,
                            'source': str(source), 'source_sha256': hashlib.sha256(source_bytes).hexdigest(),
                            'evidence': sorted(set(evidence for wall in walls for evidence in wall['evidence']))
-                                       + ([str(ROOT / 'scene/v1/tiles' / TILE / 'ortho.jpg')]
+                                       + ([str(ROOT / 'scene/v1/tiles' / tile / 'ortho.jpg')]
                                           if feature_generated_roof_area[feature_index] else []),
                            'generations': list({wall['generation']['id']:wall['generation'] for wall in walls if 'generation' in wall}.values()),
                            'composition': str(composition_path) if any(w['route'] == 'tier2-composed' for w in walls) else None,
@@ -556,7 +569,7 @@ def assemble(assets_root, target, quality=86, provenance_tint=False):
         feature['asset']['provenance']['evidence_count'] = len(feature['asset']['provenance'].pop('evidence'))
         feature['asset']['provenance']['evidence_record'] = {'path':str(feature_provenance_path),'feature_index':feature_index}
         feature['asset']['check_numbers'] = {'record':str(feature_provenance_path), 'feature_index':feature_index, 'wall_records':len(walls), 'roof_checks':roof_checks.get(str(feature.get('bag_id')),{}).get('checks',{})}
-    feature_provenance_bytes = (json.dumps({'written_by':'AI, GPT-6 Astra, 2026-10-26','tile':TILE,'features':full_feature_provenance},indent=2)+'\n').encode()
+    feature_provenance_bytes = (json.dumps({'written_by':'AI, GPT-6 Astra, 2026-10-26','tile':tile,'features':full_feature_provenance},indent=2)+'\n').encode()
     document['extras']['asset_provenance'] = {'record':str(feature_provenance_path),'sha256':hashlib.sha256(feature_provenance_bytes).hexdigest()}
     writer.binary = remove_unused_resources(document, writer.binary)
     if any(not material.get('extras',{}).get('asset') for material in document['materials']):
@@ -570,8 +583,6 @@ def assemble(assets_root, target, quality=86, provenance_tint=False):
     output = struct.pack('<III', 0x46546C67, 2, 12 + 8 + len(json_bytes) + 8 + len(binary_bytes))
     output += struct.pack('<II', len(json_bytes), 0x4E4F534A) + json_bytes
     output += struct.pack('<II', len(binary_bytes), 0x004E4942) + binary_bytes
-    if len(output) >= 25_000_000:
-        raise ValueError(f'GLB exceeds the 25 MB budget: {len(output):,} bytes (JSON {len(json_bytes):,}; binary {len(binary_bytes):,}; textures {sum(t["bytes"] for t in texture_statistics):,})')
     serialized_document, serialized_binary = unpack_glb(output)
     if geometry_triangles(original, binary) != geometry_triangles(serialized_document, serialized_binary):
         raise ValueError('Serialized output changed the source triangle geometry or feature IDs')
@@ -598,8 +609,9 @@ def assemble(assets_root, target, quality=86, provenance_tint=False):
     tint_report = None
     if provenance_tint:
         tint_report = write_provenance_tint(document, writer.binary, interpreted_texture_masks, target.with_name('buildings-provenance.glb'))
-    report = {'written_by': 'AI, GPT-6 Astra, 2026-10-26', 'date': now, 'tile': TILE,
+    report = {'written_by': 'AI, GPT-6 Astra, 2026-10-26', 'date': now, 'tile': tile,
               'original_materials': 0,
+              'delivery_budget': {'target_bytes': 25_000_000, 'within_budget': len(output) < 25_000_000, 'policy': 'Preserve source detail; report oversized tiles without downsampling'},
               'wall_area_fractions': {'basis': 'Assigned triangle area weighted 48-step barycentric mask samples; numeric verification only', 'area_m2': wall_total, 'verified': wall_verified/wall_total, 'interpreted': wall_interpreted/wall_total, 'verified_area_m2': wall_verified, 'interpreted_area_m2': wall_interpreted},
               'building_roof_area_fractions': {'area_m2':building_roof_total,'verified':building_roof_verified/building_roof_total,'interpreted':1-building_roof_verified/building_roof_total,'verified_area_m2':building_roof_verified,'interpreted_area_m2':building_roof_total-building_roof_verified},
               'roof_area_fractions': {'scope':'All upward asset surfaces including bridge deck', 'area_m2': roof_total, 'verified': roof_verified/roof_total, 'interpreted': roof_interpreted/roof_total, 'verified_area_m2': roof_verified, 'interpreted_area_m2': roof_interpreted, 'basis': 'Triangle area weighted 48-step barycentric mask sampling; all exterior padding interpreted'},
@@ -623,7 +635,7 @@ def assemble(assets_root, target, quality=86, provenance_tint=False):
               'composition_sha256': composition_hash, 'composition_input_fingerprint': composition.get('input_fingerprint'),
               'texture_encoding': {'tier2':'WebP quality 95; photo-free parts atlases retained on disk; no spatial downsampling', 'other':f'WebP quality {quality}'},
               'geometry_verification': 'All source triangles retained once, positions, normals and feature IDs byte-identical; primitive groups reordered.',
-              'axes': {'x': 'RD x minus 90250', 'y': 'NAP metres', 'z': 'negative RD y offset from 436000'}}
+              'axes': {'x': f'RD x minus {origin_x}', 'y': 'NAP metres', 'z': f'negative RD y offset from {origin_y}'}}
     target.with_suffix('.assembly.json').write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps({key: report[key] for key in ('path', 'bytes', 'features', 'triangles', 'elevations', 'generated_wall_triangles', 'wall_routes')}))
     return report
@@ -631,10 +643,10 @@ def assemble(assets_root, target, quality=86, provenance_tint=False):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--tile', default=TILE, choices=[TILE])
+    parser.add_argument('--tile', default=DEFAULT_TILE)
     parser.add_argument('--assets-root', type=Path, default=ROOT / 'assets/v1')
-    parser.add_argument('--output', type=Path, default=ROOT / 'assets/v1/tiles' / TILE / 'buildings.glb')
+    parser.add_argument('--output', type=Path, help='Default: assets-root/tiles/<tile>/buildings.glb')
     parser.add_argument('--quality', type=int, default=86)
     parser.add_argument('--provenance-tint', action='store_true', help='Also write buildings-provenance.glb with interpreted texels blended 45 percent toward magenta')
     args = parser.parse_args()
-    assemble(args.assets_root, args.output, args.quality, args.provenance_tint)
+    assemble(args.assets_root, args.output, args.quality, args.provenance_tint, args.tile)

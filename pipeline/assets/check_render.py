@@ -92,7 +92,11 @@ def render(glb, output):
                     process.wait(timeout=5)
                 except subprocess.TimeoutExpired:
                     process.kill()
-                    process.wait()
+                    try:
+                        process.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        # The screenshot is complete; a kernel-stalled browser exit must not block other tiles.
+                        pass
     finally:
         server.shutdown()
     output.with_suffix('.json').write_text(json.dumps({
@@ -106,7 +110,9 @@ def render(glb, output):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--glb', type=Path, default=ROOT / 'assets/v1/tiles/x90250_y436000/buildings.glb')
-    parser.add_argument('--output', type=Path, default=ROOT / 'assets/v1/tiles/x90250_y436000/check-oblique.png')
+    parser.add_argument('--tile', default=os.environ.get('ASSET_TILE', 'x90250_y436000'))
+    parser.add_argument('--glb', type=Path)
+    parser.add_argument('--output', type=Path)
     args = parser.parse_args()
-    render(args.glb, args.output)
+    tile_directory = ROOT / 'assets/v1/tiles' / args.tile
+    render(args.glb or tile_directory / 'buildings.glb', args.output or tile_directory / 'check-oblique.png')
