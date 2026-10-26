@@ -970,7 +970,7 @@ export class Miniature {
     this.sun.intensity = this.style.sun * (1 - night) + 0.7 * night;
     this.sun.color.setHex(night > 0.5 ? 0x9fb4ff : 0xfff0d8);
     this.hemisphere.intensity = this.style.ambient * (1 - night) + 1.4 * night;
-    this.hemisphere.color.setHex(night > 0.5 ? 0x5a6ca0 : 0xdfe8ff);
+    this.hemisphere.color.setHex(night > 0.5 ? 0x58627f : 0xdfe8ff);
     this.hemisphere.groundColor.setHex(night > 0.5 ? 0x2c3346 : 0x6f6450);
     // Depth tiles leave out tree crowns: a tram under street trees should
     // still show on the map.
