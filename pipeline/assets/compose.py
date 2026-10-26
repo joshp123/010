@@ -91,7 +91,7 @@ def texture_wall(wall, fact, inherited_sample, library):
             trims.append({'kind':component['kind'],'rectangle_px':rectangle,'method':method,
                           'source_review_component':component,'verified_fraction':0,'interpreted_fraction':1})
     draw_components('background')
-    for opening in accepted_openings(fact)+fact.get('source_review_additions', []):
+    for opening in accepted_openings(fact)+fact.get('source_review_additions', [])+fact.get('source_partial_openings', []):
         rectangle = opening['box_px']
         if not valid_rectangle(rectangle, size):
             rejected.append({'opening': opening, 'reason': 'rectangle_outside_wall'})
@@ -111,8 +111,18 @@ def texture_wall(wall, fact, inherited_sample, library):
             if lx <= (left+right)/2 <= rx and top <= ry < bottom and ly < top+max(1,(bottom-top)/2):
                 top = max(top,ry)
         rectangle = [left,top,right,bottom]
-        part, method = opening_part((right-left,bottom-top), opening['kind'], opening.get('type'),
+        clipped = opening.get('clip_edges',[])
+        part_width,part_height = right-left,bottom-top
+        extended_width = part_width*(2 if any(e in clipped for e in ['left','right']) else 1)
+        extended_height = part_height*(2 if any(e in clipped for e in ['top','bottom']) else 1)
+        part, method = opening_part((extended_width,extended_height), opening['kind'], opening.get('type'),
                                     wall['wall_id']+str(rectangle), library)
+        if clipped:
+            crop_left = part_width if 'left' in clipped else 0
+            crop_top = part_height if 'top' in clipped else 0
+            part = part.crop((crop_left,crop_top,crop_left+part_width,crop_top+part_height))
+            method += '-source-clipped-visible-extent'
+
         canvas.paste(part, (left,top))
         drawn.append({'kind': opening['kind'], 'rectangle_px': rectangle,
                       'source_fact': opening, 'measured_outer_rectangle_px':measured_outer_rectangle, 'method': method,

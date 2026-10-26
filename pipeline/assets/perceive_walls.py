@@ -165,6 +165,18 @@ def measure(wall,result,inv,provenance):
     total=max(int(geometry.sum()),1)
     record={key:wall[key] for key in ['wall_id','street_facing','area_m2','wall_plane_rd_nap','pixel_transform','image_size_px','triangles']}
     record.update({'material':result.get('material','other') if colour and result.get('material') in MATERIALS else 'other','mean_colour_srgb':colour,'material_sample_boxes_px':material_boxes,'rejected_material_sample_boxes':rejected_material_boxes,'window_rows':[{**row,'window_indices':[i for i in row.get('window_indices',[]) if i in {o['source_index'] for o in openings}]} for row in result.get('window_rows',[])],'openings':openings,'rejected_openings':rejected,'doors':[o for o in openings if o['kind']=='door'],'shop_fronts':[o for o in openings if o['kind']=='shop_front'],'cornice':normalise_cornice(result.get('cornice',{}),inv),'gable_type':result.get('gable_type','unknown'),'roof':normalise_roof(result.get('roof',{}),inv),'occlusion_mask':str(folder/'interpreted-mask.png'),'evidence_mask':str(folder/'evidence-mask.png'),'photo':wall['reference'],'verified_fraction':0.,'visible_evidence_fraction':int(visible.sum())/total,'occluded_fraction':int(interpreted.sum())/total,'verification_status':'machine_edge_checked_not_independently_verified','note':result.get('note',''),'provenance':provenance})
+    partials=[]
+    for opening in rejected:
+        rectangle=opening.get('box_px')
+        if (not opening.get('partial') or not rectangle or opening.get('edge_agreement',0)<.5
+                or opening.get('evidence_fraction',0)<.85):
+            continue
+        x0,y0,x1,y1=rectangle
+        clipped=[edge for edge,condition in [('left',x0==0),('top',y0==0),('right',x1==width),('bottom',y1==height)] if condition]
+        if clipped:
+            partials.append(dict(opening,clip_edges=clipped,drawing_status='source-visible-partial-interpreted',
+                                 note='Only visible extent is drawn; cropped edges omit an invented complete outer frame.'))
+    record['source_partial_openings']=partials
     # A model selection plus edge support does not establish semantic truth of an entire wall.
     save(folder/'perception.json',record)
     return record
