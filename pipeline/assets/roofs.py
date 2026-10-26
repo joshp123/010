@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import tempfile
 from pathlib import Path
 from PIL import Image
 
@@ -36,6 +37,13 @@ def prepare(tile=DEFAULT_TILE):
     return manifest
 
 
+def save_webp(image, destination):
+    with tempfile.NamedTemporaryFile(dir=destination.parent, suffix='.webp', delete=False) as temporary:
+        pending = Path(temporary.name)
+    image.save(pending, format='WEBP', quality=90, method=6)
+    pending.replace(destination)
+
+
 def assemble(tile=DEFAULT_TILE):
     output = ROOT / 'assets/v1/roofs' / tile
     manifest=json.loads((output/'reference.json').read_text())
@@ -43,9 +51,9 @@ def assemble(tile=DEFAULT_TILE):
     for record in manifest['quadrants']:
         raw=output/record['id']/'generated-raw.png'
         resized=Image.open(raw).convert('RGB').resize((1250,1250), Image.Resampling.LANCZOS)
-        resized.save(raw.parent/'generated.webp',format='WEBP',quality=90,method=6)
+        save_webp(resized, raw.parent/'generated.webp')
         canvas.paste(resized,tuple(record['rectangle_px'][:2]))
-    canvas.save(output/'roof.webp',format='WEBP',quality=90,method=6)
+    save_webp(canvas, output/'roof.webp')
     return str(output/'roof.webp')
 
 

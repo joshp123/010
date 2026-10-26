@@ -1,8 +1,48 @@
-# Building assets: test tile
+# Building assets
 
 Written by AI on 2026-10-26 by GPT-6 Astra.
 
-Run from the repository root in order:
+For the 16-tile Delfshaven block, run from the repository root:
+
+```sh
+.devenv/profile/bin/python pipeline/assets/block.py --block delfshaven --render --preserve-existing x90250_y436000
+.devenv/profile/bin/python pipeline/assets/block.py --block delfshaven --render --preserve-existing x90250_y436000 --watch
+.devenv/profile/bin/python pipeline/assets/report_block.py
+```
+
+The first command builds every ready tile. The watch command repeats as Claude's
+wall generation and source facts arrive. `--preserve-existing` reads and renders
+the accepted test tile without replacing its three delivery files. Omit it only
+when intentionally rerunning that tile. A single tile uses `--tile <tile>`.
+Each tile records pending elevations, roof inputs, errors and render hashes.
+Missing or incomplete generation uses interpreted composition. Every material is
+an asset material; no original photograph texture is retained.
+
+Roof preparation is `.devenv/profile/bin/python pipeline/assets/roofs.py prepare
+--tile <tile>`. Make four native image-tool calls using each quadrant reference
+and the read-only `prompts/roofs.md`, then persist the outputs with
+`record_call.py`. `roofs.py assemble --tile <tile>` and `verify_roofs.py --tile
+<tile>` use that tile's aerial and source-only occlusions. Semantic review flags
+remain separate from colour scores. The accepted test roof is preserved.
+
+`wall_facts.py --tile <tile>` prepares honest merged planes, BGT-facing
+classification and rectified references. `perceive_walls.py --tile <tile>` uses
+native ChatGPT contact sheets, measured photo colours and source-edge checks;
+it requires existing ChatGPT authentication and makes no paid API calls.
+Tile-local facts avoid overwriting a shared BAG record when a building spans a
+tile boundary. Unmeasured or occluded openings are not extrapolated into grids.
+Composition can use an explicitly interpreted adjacent-tile measured palette
+when a tile has no usable material photo; the source measurement is retained.
+
+Roof and wall numeric verified fractions do not certify every architectural
+component. Provisional composition remains interpreted, even where its layout
+uses photo measurements. Pending tier-1 work and perception coverage are quality
+limits, not a publication acceptance claim. The 25 MB normal delivery target is
+reported; larger tiles retain detail. Generated assets stay on the SSD, outside
+code commits.
+
+Individual accepted-test commands:
+
 
 ```sh
 pipeline/assets/verify.py --tile x90250_y436000
@@ -14,7 +54,7 @@ pipeline/assets/compare_composition.py
 Verification aligns generated elevations and checks visible source edges,
 measured window boundaries and CIEDE2000. Missing source assessment stays
 interpreted. Numerical checks do not certify every architectural component.
-Unchanged inputs reuse derived outputs. Generator-owned `generated-raw.png`,
+Unchanged inputs reuse derived outputs. Elevation-generator-owned `generated-raw.png`,
 `generation.json` and `prompts/` are read-only to these commands.
 
 Composition uses model-made parts under `assets/v1/parts/`, scalar measured
@@ -34,7 +74,7 @@ Assembly replaces every source material, including rejected generation,
 low-evidence walls and triangles outside the facade inventory. Roofs use the
 roof asset; areas beyond aerial coverage are interpreted. Every asset material
 has `extras.asset: true`. Positions, normals, feature IDs and feature metadata
-are preserved. The normal GLB is checked against the 25 MB budget.
+are preserved. The normal GLB reports whether it meets the 25 MB target.
 
 `--provenance-tint` also writes `buildings-provenance.glb`. It retains geometry
 and materials, blending interpreted texels 45% towards #ff00ff. Those images use
