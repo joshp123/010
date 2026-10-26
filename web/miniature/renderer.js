@@ -702,6 +702,7 @@ export class Miniature {
     this.scene.add(group);
     const record = { group, shared, lamps: objects?.lamps ?? [] };
     if (objects?.lamps?.length) group.add(this.lampHeads(objects.lamps, offset));
+    if (objects?.lamps?.length && sampler) group.add(this.mastMesh(objects.lamps, rails?.tracks ?? [], sampler));
     this.tiles.set(tile.id, record);
     return record;
   }
@@ -759,6 +760,60 @@ export class Miniature {
     const median = [0, 1, 2].map((c) => sunlit.map((p) => p[c]).sort((a, b) => a - b)[sunlit.length >> 1]);
     const colour = new THREE.Color().setRGB(median[0] / 255, median[1] / 255, median[2] / 255, THREE.SRGBColorSpace);
     return [colour.r, colour.g, colour.b];
+  }
+
+  // Lamp masts from the lighting register, drawn by day too: tram masts
+  // (type TRAMMAST) in Rotterdam black-blue with an arm to the nearest tram
+  // track; the tram's contact wire runs 5.6 m above every tram track.
+  mastMesh(lamps, tracks, ground) {
+    const { tileX, tileY, heightAt } = ground;
+    const trams = tracks.filter((t) => t.function === 'tram');
+    const poles = [], arms = [], wires = [];
+    for (const lamp of lamps) {
+      const tram = /TRAMMAST/i.test(lamp.type ?? '');
+      const lph = Number((lamp.type ?? '').match(/LPH\s*([\d,]+)M/i)?.[1]?.replace(',', '.'));
+      const height = tram ? (lph || 10) : (lamp.height_m ?? lph ?? 6);
+      poles.push({ x: lamp.x, y: lamp.y, z: lamp.z, height, radius: tram ? 0.13 : 0.07, tram });
+      if (!tram || !trams.length) continue;
+      let best = null;
+      for (const track of trams) for (let i = 1; i < track.points.length; i++) {
+        const [x0, y0] = track.points[i - 1], dx = track.points[i][0] - x0, dy = track.points[i][1] - y0, l2 = dx * dx + dy * dy || 1e-9;
+        const t = Math.max(0, Math.min(1, ((lamp.x - x0) * dx + (lamp.y - y0) * dy) / l2));
+        const px = x0 + t * dx, py = y0 + t * dy, d = Math.hypot(lamp.x - px, lamp.y - py);
+        if (!best || d < best.d) best = { d, px, py };
+      }
+      if (best && best.d < 14) arms.push({ from: [lamp.x, lamp.y, lamp.z + 6.2], to: [best.px, best.py, lamp.z + 6.0] });
+    }
+    for (const track of trams) for (let i = 1; i < track.points.length; i += 4) {
+      const [x0, y0] = track.points[i - 1], [x1, y1] = track.points[Math.min(i + 3, track.points.length - 1)];
+      const h = heightAt((x0 + x1) / 2, (y0 + y1) / 2);
+      if (h !== null) wires.push({ from: [x0, y0, h + 5.6], to: [x1, y1, h + 5.6] });
+    }
+    const group = new THREE.Group();
+    const local = (x, y, z) => new THREE.Vector3(x - tileX, z, -(y - tileY));
+    const matrix = new THREE.Matrix4(), unit = new THREE.Quaternion(), turn = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0);
+    const poleMesh = new THREE.InstancedMesh(new THREE.CylinderGeometry(1, 1, 1, 6).translate(0, 0.5, 0), new THREE.MeshLambertMaterial({ color: 0xffffff }), poles.length);
+    const colour = new THREE.Color();
+    poles.forEach((pole, i) => {
+      matrix.compose(local(pole.x, pole.y, pole.z), unit, new THREE.Vector3(pole.radius, pole.height, pole.radius));
+      poleMesh.setMatrixAt(i, matrix);
+      poleMesh.setColorAt(i, colour.setHex(pole.tram ? 0x26304a : 0x6b6f73));
+    });
+    poleMesh.castShadow = true;
+    group.add(poleMesh);
+    const lineMesh = (segments, thickness, hex) => {
+      const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0), new THREE.MeshLambertMaterial({ color: hex }), segments.length);
+      segments.forEach((segment, i) => {
+        const a = local(...segment.from), b = local(...segment.to), along = b.clone().sub(a);
+        turn.setFromUnitVectors(up, along.clone().normalize());
+        matrix.compose(a, turn, new THREE.Vector3(thickness, along.length(), thickness));
+        mesh.setMatrixAt(i, matrix);
+      });
+      return mesh;
+    };
+    if (arms.length) group.add(lineMesh(arms, 0.08, 0x26304a));
+    if (wires.length) group.add(lineMesh(wires, 0.05, 0x2a2c30));
+    return group;
   }
 
   railMesh(tracks, ground) {
