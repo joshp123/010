@@ -2,16 +2,16 @@
 # The numbers Josh asks first, for one tile's building assets: how much wall
 # and roof area is checked against a photo versus interpreted, and what the
 # assets cost in image calls and time per building.
-# Usage: python3 tools/tile-numbers.py TILE   (prints JSON)
+# Usage: python3 tools/tile-numbers.py TILE [SNAPSHOT_DIR]   (prints JSON)
 import glob, json, sys
 from pathlib import Path
 
 DATA = Path("/Volumes/Josh Extreme Pro USB4 4TB/010")
 
 
-def tile_numbers(tile):
-    assembly = json.load(open(DATA / f"assets/v1/tiles/{tile}/buildings.assembly.json"))
-    buildings = len(json.load(open(DATA / f"assets/v1/tiles/{tile}/buildings.feature-provenance.json")).get("features", [])) or None
+def tile_numbers(tile, assets=DATA / "assets/v1"):
+    assembly = json.load(open(assets / f"tiles/{tile}/buildings.assembly.json"))
+    buildings = len(json.load(open(assets / f"tiles/{tile}/buildings.feature-provenance.json")).get("features", [])) or None
     walls, roofs = assembly["wall_area_fractions"], assembly["building_roof_area_fractions"]
     wall_calls = len(glob.glob(str(DATA / f"assets/v1/elevations/{tile}-elevation-*/chunks/*/generated-raw.png")))
     roof_calls = len(glob.glob(str(DATA / f"assets/v1/roofs/{tile}/*/generated-raw.png")))
@@ -35,4 +35,5 @@ def tile_numbers(tile):
 
 
 if __name__ == "__main__":
-    print(json.dumps(tile_numbers(sys.argv[1]), indent=1))
+    # Optional second argument: a pinned asset snapshot folder (tools/snapshot-assets.py).
+    print(json.dumps(tile_numbers(sys.argv[1], Path(sys.argv[2]) if len(sys.argv) > 2 else DATA / "assets/v1"), indent=1))

@@ -21,10 +21,13 @@ def render(page, mpp, size, bearing=BEARING, classes=False):
     data = page.evaluate(f"window.renderWindow({left}, {top}, {size}, {size}, {bearing}, {mpp}, false, false, {'true' if classes else 'false'})")
     return Image.open(io.BytesIO(base64.b64decode(data.split(",", 1)[1]))).convert("RGB")
 
+snapshot = None
 if "assets=./assets" in extra:
-    # Render from a settled copy: the asset pipeline may be rewriting tiles.
-    subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "snapshot-assets.py")], check=True)
-    extra = extra.replace("assets=./assets", "assets=./assets-snapshot")
+    # Render from a pinned snapshot: the asset pipeline may be rewriting tiles.
+    snapshot = subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "snapshot-assets.py")],
+                              check=True, capture_output=True, text=True).stdout.strip()
+    extra = extra.replace("assets=./assets", f"assets=./assets-snapshots/{snapshot}")
+    print("assets snapshot", snapshot)
 
 
 def page_for(p, light):
@@ -87,9 +90,11 @@ for label, image, classes in [("deep", deep, deep_classes), ("overview", overvie
 numbers["tiny.london"] = json.load(open(f"{DATA}/renders/reference/tiny-london-classes.json"))
 assembly = f"{DATA}/assets/v1/tiles/x90250_y436000/buildings.assembly.json"
 if "assets=" in extra and os.path.exists(assembly):
-    out = subprocess.run([sys.executable, f"{here}/tile-numbers.py", "x90250_y436000"], capture_output=True, text=True, check=True)
+    numbers_args = [f"{DATA}/builds/dev/assets-snapshots/{snapshot}"] if snapshot else []
+    out = subprocess.run([sys.executable, f"{here}/tile-numbers.py", "x90250_y436000", *numbers_args], capture_output=True, text=True, check=True)
     numbers["assets"] = json.loads(out.stdout)
     print(json.dumps(numbers["assets"], indent=1))
+numbers["assets_snapshot"] = snapshot
 json.dump(numbers, open(f"{work}/numbers.json", "w"), indent=1)
 classes_order = ["roof", "wall", "asphalt", "paving", "grass", "tree", "water"]
 print("class      " + "".join(f"{k:>18}" for k in numbers if k != "assets"))
