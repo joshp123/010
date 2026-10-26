@@ -132,7 +132,10 @@ def process_tile(tile, render=False, preserve_existing=False):
                 run_step('check_render.py', tile, log)
             result['rendered'] = True
     except (RuntimeError, ValueError, OSError) as error:
-        result.update(status='blocked', error=str(error), log=str(log))
+        if 'No measured tile material exists' in str(error):
+            result.update(status='pending-facts', reason='Awaiting tile material measurement from perception', log=str(log))
+        else:
+            result.update(status='blocked', error=str(error), log=str(log))
     finally:
         state.update(written_by='AI, GPT-6 Astra, 2026-10-26', result=result)
         save_json(state_path, state)
