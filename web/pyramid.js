@@ -137,7 +137,7 @@ async function draw() {
     if (!performance.getEntriesByName('map-first-view').length) performance.mark('map-first-view');
     // Simulated traffic needs the road and cycle networks; fetch them only
     // once the map is on screen so they never delay the first view.
-    if (params.get('live') !== 'off') setTimeout(() => { live.loadNetworks('./networks'); live.loadTransitShapes('./networks/transit.json'); }, 300);
+    if (params.get('live') !== 'off') setTimeout(() => { live.loadNetworks('./networks'); live.loadTransitShapes('./networks/transit.json'); live.loadSprites('./sprites'); }, 300);
     performance.mark('map-complete');
     window.mapReady = true;
   }

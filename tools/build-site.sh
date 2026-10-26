@@ -22,6 +22,7 @@ done
 if [ -n "${BEARINGS:-}" ]; then
   for page in index.html t2.html; do perl -pi -e "s#<body>#<body data-bearings=\"$BEARINGS\">#" "$dist/$page"; done
 fi
+rsync -a --delete "$data/assets/v1/sprites/" "$dist/sprites/"
 mkdir -p "$dist/networks"
 for kind in cars bikes transit; do
   [ -f "$data/scene/v1/networks/$kind.json" ] && cp "$data/scene/v1/networks/$kind.json" "$dist/networks/"

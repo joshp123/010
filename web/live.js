@@ -46,6 +46,47 @@ export class LiveLayer {
 
   setView(view) { this.view = view; }
 
+  // Vehicle sprites (tools/build-sprites.py): one sheet per vehicle kind and
+  // colour variant, map bearing and scale, with 16 headings in a row.
+  async loadSprites(base) {
+    try {
+      this.spriteMeta = await fetch(`${base}/sprites.json`).then((r) => r.json());
+      this.spriteBase = base;
+      this.sheets = new Map();
+    } catch { /* no sprites: boxes */ }
+  }
+
+  sheet(kind, variant) {
+    if (!this.spriteMeta) return null;
+    const scales = this.spriteMeta.scales;
+    const mpp = this.view.levelInfo.metres_per_pixel;
+    const scale = scales.reduce((best, s) => (Math.abs(Math.log(s / mpp)) < Math.abs(Math.log(best / mpp)) ? s : best), scales[0]);
+    if (Math.abs(Math.log(scale / mpp)) > 0.2) return null;
+    const size = this.spriteMeta.cells[`${kind}/${scale}`];
+    if (!size) return null;
+    const key = `${kind}${variant}/b${this.view.bearing}/${scale}`;
+    let entry = this.sheets.get(key);
+    if (!entry) {
+      entry = { image: new Image(), size };
+      entry.image.src = `${this.spriteBase}/${key}.png`;
+      this.sheets.set(key, entry);
+    }
+    return entry.image.complete && entry.image.naturalWidth ? entry : null;
+  }
+
+  drawSprite(item) {
+    const s = this.sheet(item.spriteKind, item.variant ?? 0);
+    if (!s) return false;
+    const origin = this.project(item.x, item.y, item.z ?? STREET_HEIGHT);
+    const centre = this.project(item.x, item.y, (item.z ?? STREET_HEIGHT) + 1.5);
+    if (!item.xray && this.hidden(centre)) return true;
+    const n = this.spriteMeta.headings;
+    const index = ((Math.round(item.heading / (2 * Math.PI) * n) % n) + n) % n;
+    this.context.drawImage(s.image, index * s.size, 0, s.size, s.size,
+      Math.round(origin.px - s.size / 2), Math.round(origin.py - s.size / 2), s.size, s.size);
+    return true;
+  }
+
   // --- data -----------------------------------------------------------------
 
   async pollTransit() {
@@ -168,7 +209,7 @@ export class LiveLayer {
         if (Math.random() * 6 > graph.weights[edge]) continue;
         const node = graph.nodes[graph.edges[edge][0]];
         if (!this.nearView(node[0], node[1], 1.6)) continue;
-        this.agents.push({ kind, edge, along: Math.random(), wait: 0, colour: carColours[Math.floor(Math.random() * carColours.length)], pace: 0.85 + Math.random() * 0.3 });
+        this.agents.push({ kind, edge, along: Math.random(), wait: 0, variant: Math.floor(Math.random() * (kind === 'cars' ? 6 : 4)), colour: carColours[Math.floor(Math.random() * carColours.length)], pace: 0.85 + Math.random() * 0.3 });
         count++;
       }
       while (count > want[kind] * 1.2) {
@@ -405,13 +446,15 @@ export class LiveLayer {
     for (const agent of this.agents) {
       const p = this.agentPosition(agent);
       const style = agent.kind === 'cars' ? modeStyle.car : modeStyle.bike;
-      items.push({ ...p, style, top: agent.kind === 'cars' ? agent.colour[0] : style.top, side: agent.kind === 'cars' ? agent.colour[1] : style.side });
+      items.push({ ...p, style, top: agent.kind === 'cars' ? agent.colour[0] : style.top, side: agent.kind === 'cars' ? agent.colour[1] : style.side,
+        spriteKind: agent.kind === 'cars' ? 'car' : 'bike', variant: agent.variant });
     }
     for (const vehicle of this.transit.values()) {
       const style = modeStyle[vehicle.mode] ?? modeStyle.bus;
       const p = this.transitPosition(vehicle, now);
       if (p.tunnel && !this.cutaway) continue; // underground, out of sight
-      items.push({ ...p, z: p.z ?? STREET_HEIGHT, style, top: style.top, side: style.side, xray: p.tunnel });
+      items.push({ ...p, z: p.z ?? STREET_HEIGHT, style, top: style.top, side: style.side, xray: p.tunnel,
+        spriteKind: { tram: 'tram', metro: 'metro', train: 'train', bus: 'bus' }[vehicle.mode] ?? 'bus', variant: 0 });
     }
     // Only what is on screen, far to near, so nearer vehicles cover farther ones.
     for (let i = items.length - 1; i >= 0; i--) {
@@ -422,7 +465,9 @@ export class LiveLayer {
     items.sort((a, b) => b.depth - a.depth);
     this.drawn = items.length;
     if (this.cutaway) this.drawTunnels();
-    for (const item of items) this.drawBox(item.x, item.y, item.z ?? STREET_HEIGHT, item.heading, item.style, item.top, item.side, item.xray);
+    for (const item of items) {
+      if (!this.drawSprite(item)) this.drawBox(item.x, item.y, item.z ?? STREET_HEIGHT, item.heading, item.style, item.top, item.side, item.xray);
+    }
   }
 
   // Current weather over Rotterdam (Open-Meteo, free, CC BY 4.0). Rain is

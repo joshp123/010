@@ -25,7 +25,7 @@ if (params.has('detail')) style.groundPhotoDetail = Number(params.get('detail'))
 if (params.get('light') === 'night') style.night = 1;
 for (const key of ['facadeRadius', 'roofRadius', 'ambient', 'sun', 'dither', 'elevationDegrees', 'saturation']) if (params.has(key)) style[key] = Number(params.get(key));
 if (params.get('roofs') === 'model') style.orthoRoofs = false;
-const miniature = new Miniature(canvas, { sceneBase, manifest, area: params.get('area') ?? 'core', style });
+const miniature = new Miniature(canvas, { sceneBase, assetBase: params.get('assets'), manifest, area: params.get('area') ?? 'core', style });
 window.miniature = miniature;
 
 if (params.get('capture') === '1') {

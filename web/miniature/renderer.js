@@ -420,7 +420,8 @@ const postFragment = `
   }`;
 
 export class Miniature {
-  constructor(canvas, { sceneBase, manifest, area = 'core', style = {} }) {
+  constructor(canvas, { sceneBase, assetBase = null, manifest, area = 'core', style = {} }) {
+    this.assetBase = assetBase;
     this.canvas = canvas;
     this.sceneBase = sceneBase;
     this.manifest = manifest;
@@ -509,7 +510,10 @@ export class Miniature {
     const optional = (promise) => promise.catch((error) => { console.warn(error.message ?? error); return null; });
     const [ground, buildings, classTexture, orthoTexture, objects] = await Promise.all([
       optional(loader.loadAsync(`${base}/ground.glb`)),
-      optional(loader.loadAsync(`${base}/buildings.glb`)),
+      // A tile's building assets (made by the asset maker, pipeline/assets)
+      // replace its raw buildings when they exist.
+      (this.assetBase ? loader.loadAsync(`${this.assetBase}/tiles/${tile.id}/buildings.glb`).catch(() => null) : Promise.resolve(null))
+        .then((assets) => assets ?? optional(loader.loadAsync(`${base}/buildings.glb`))),
       optional(loadRawImageTexture(`${base}/classes.png`)),
       optional(loadPhotoTexture(`${base}/ortho.jpg`)),
       optional(fetch(`${base}/objects.json`).then((r) => (r.ok ? r.json() : null))),
@@ -562,7 +566,13 @@ export class Miniature {
         const source = node.material;
         const material = new THREE.MeshLambertMaterial({ color: source.map ? 0xffffff : 0xd9cfc0, map: source.map ?? null });
         if (material.map) material.map.colorSpace = THREE.SRGBColorSpace;
-        node.material = orthoTexture ? withTilePosition(material, offset, shared, buildingPatch) : material;
+        if (source.userData?.asset) {
+          // Asset textures are already clean and stylised: draw them as they are.
+          material.map.minFilter = THREE.LinearMipmapLinearFilter;
+          node.material = material;
+        } else {
+          node.material = orthoTexture ? withTilePosition(material, offset, shared, buildingPatch) : material;
+        }
         node.castShadow = true;
         node.receiveShadow = true;
       });
