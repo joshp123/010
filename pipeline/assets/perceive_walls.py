@@ -3,6 +3,7 @@
 C3: native ChatGPT contact-sheet perception, source-only masks and edge checks.
 """
 import argparse
+import fcntl
 from collections import defaultdict
 from datetime import datetime, timezone
 import hashlib
@@ -313,6 +314,9 @@ def main():
     TILE=args.tile
     TILE_X,TILE_Y=map(int,TILE[1:].split('_y'))
     WORK=ROOT/'facts/v1/work'/TILE
+    WORK.mkdir(parents=True,exist_ok=True)
+    tile_lock=(WORK/'perception.lock').open('a')
+    fcntl.flock(tile_lock,fcntl.LOCK_EX)
     from wall_facts import prepare_walls
     prepare_walls(TILE)
     ALL_WALLS=load(WORK/'walls.json')['walls']
@@ -355,6 +359,23 @@ def main():
                 for pending in futures:pending.cancel()
                 break
     publish()
+    measured=[wall for wall in ALL_WALLS if valid_measurement(wall)]
+    pending=[wall for wall in ALL_WALLS if wall['street_facing'] and wall['photo_pixels']>0 and not valid_measurement(wall)]
+    measurements=[load(Path(wall['reference']).parent/'perception.json') for wall in measured]
+    calls=[load(path) for path in (WORK/'perception-batches').glob('*/call.json')]
+    save(WORK/'perception-report.json',{'written_by':'AI, GPT-6 Astra, 2026-10-26',
+         'tile':TILE,'source_sha256':load(WORK/'walls.json')['source']['sha256'],
+         'walls_measured':len(measured),'street_photo_walls_pending':len(pending),
+         'material_measured_walls':sum(bool(fact.get('mean_colour_srgb')) for fact in measurements),
+         'accepted_complete_openings':sum(len(fact.get('openings',[])) for fact in measurements),
+         'source_visible_partial_openings':sum(len(fact.get('source_partial_openings',[])) for fact in measurements),
+         'street_photo_walls':sum(wall['street_facing'] and wall['photo_pixels']>0 for wall in ALL_WALLS),
+         'tier2_photo_walls_pending':sum(10<=wall['area_m2']<=100 and wall.get('photo_fraction',0)>=.6 for wall in pending),
+         'pending_wall_ids':[wall['wall_id'] for wall in pending],
+         'native_visual_calls':len(calls),'image_generation_calls':0,
+         'native_visual_seconds':sum(call.get('seconds',0) for call in calls),
+         'rate_limited':any(call.get('rate_limited',False) for call in calls),
+         'status':'stopped' if STOP.is_set() else 'complete' if not pending else 'partial'})
     if STOP.is_set():
         raise SystemExit(75)
 
