@@ -19,17 +19,16 @@ esbuild "$repo/web/t1.js" --bundle --minify --format=esm --target=es2022 \
   --alias:three/addons="$repo/web/vendor/three/examples/jsm" \
   --legal-comments=eof --outfile="$dist/t1.js"
 perl -0pi -e 's#<script type="importmap">.*?</script>\n##s' "$dist/t1.html"
-for name in t2 t3; do
+for name in t2; do
   if [ -d "$data/pyramids/$name-live" ]; then rsync -a --delete "$data/pyramids/$name-live/" "$dist/pyramids/$name/"; fi
 done
 mkdir -p "$dist/compare"
-cp "$data/renders/compare/"t[123].webp "$dist/compare/"
+cp "$data/renders/compare/"t[12].webp "$dist/compare/"
 cp "$data/renders/compare/og.jpg" "$dist/og.jpg"
 # The home page: viewer code and first metadata inlined, first tiles preloaded.
 esbuild "$repo/web/pyramid.js" --bundle --minify --format=esm --target=es2022 --outfile="$out/pyramid.bundle.js" --log-level=warning
 python3 "$repo/tools/inline-first-view.py" "$dist" index.html "$out/pyramid.bundle.js" pyramids/t2 35
 python3 "$repo/tools/inline-first-view.py" "$dist" t2.html "$out/pyramid.bundle.js" pyramids/t2 35
-if [ -d "$dist/pyramids/t3" ]; then python3 "$repo/tools/inline-first-view.py" "$dist" t3.html "$out/pyramid.bundle.js" pyramids/t3 35; fi
 build_id="$(git -C "$repo" rev-parse --short HEAD)-$(date +%Y%m%d%H%M%S)"
 perl -pi -e "s/__BUILD__/$build_id/" "$dist/sw.js"
 mkdir -p "$out/.openai"

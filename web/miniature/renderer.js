@@ -20,10 +20,16 @@ export const defaultStyle = {
   sunElevationDegrees: 42,
   pixelArt: true,
   outlines: true,
-  dither: 0.2,
+  dither: 0.0,
   orthoRoofs: true,
   groundPhotoDetail: 0.0,
   facadeDetail: 0.6,
+  facadeWindowRatio: 0.7,
+  facadeRadius: 1.0,
+  roofRadius: 1.0,
+  ambient: 1.25,
+  saturation: 1.2,
+  sun: 4.2,
 };
 
 // Screen axes for a bearing (degrees clockwise from north at the top of the
@@ -110,6 +116,30 @@ function withTilePosition(material, tileOffset, extraUniforms, fragmentPatch) {
   return material;
 }
 
+
+const kuwaharaGlsl = `
+    // Edge-preserving flattening (Kuwahara): of the four quadrants around the
+    // sample, return the mean of the calmest one. Noise flattens into clean
+    // patches; real edges stay sharp. Every colour still comes from the photo.
+    vec3 kuwahara(sampler2D image, vec2 uv, vec2 step) {
+      vec3 bestMean = vec3(0.0);
+      float bestVariance = 1e9;
+      for (int q = 0; q < 4; q++) {
+        vec2 dir = vec2(q == 1 || q == 3 ? 1.0 : -1.0, q >= 2 ? 1.0 : -1.0);
+        vec3 sum = vec3(0.0), sumSq = vec3(0.0);
+        for (int j = 0; j <= 2; j++) {
+          for (int i = 0; i <= 2; i++) {
+            vec3 c = texture2D(image, uv + dir * vec2(float(i), float(j)) * step).rgb;
+            sum += c; sumSq += c * c;
+          }
+        }
+        vec3 mean = sum / 9.0;
+        float variance = dot(sumSq / 9.0 - mean * mean, vec3(1.0));
+        if (variance < bestVariance) { bestVariance = variance; bestMean = mean; }
+      }
+      return bestMean;
+    }`;
+
 const overlayOutput = 'if (dataOverlay > 0.5) gl_FragColor = vec4(overlayCode, 1.0);';
 
 const groundPatch = {
@@ -138,6 +168,15 @@ const groundPatch = {
     vec4 surface = texture2D(classTexture, groundUv);
     float surfaceClass = floor(surface.r * 255.0 + 0.5);
     vec3 groundColour = texture2D(classColours, vec2((surfaceClass + 0.5) / 32.0, 0.5)).rgb;
+    // BGT records most private gardens as yards. Where the 2026 aerial shows
+    // vegetation on a yard, unpaved or unknown surface, draw it as planted.
+    if (surfaceClass == 10.0 || surfaceClass == 9.0 || surfaceClass == 0.0) {
+      vec3 photo = texture2D(orthoTexture, groundUv).rgb;
+      float greenness = photo.g - max(photo.r, photo.b);
+      if (greenness > 0.025) {
+        groundColour = texture2D(classColours, vec2((greenness > 0.07 ? 7.5 : 6.5) / 32.0, 0.5)).rgb;
+      }
+    }
     if (groundPhotoDetail > 0.0) {
       vec3 photo = texture2D(orthoTexture, groundUv).rgb;
       float shade = dot(photo, vec3(0.299, 0.587, 0.114)) / max(0.05, dot(groundColour, vec3(0.299, 0.587, 0.114)));
@@ -172,24 +211,25 @@ const buildingPatch = {
   declarations: `
     uniform sampler2D orthoTexture;
     uniform float orthoRoofs;
-    uniform float facadeDetail;`,
+    uniform float facadeDetail;
+    uniform float facadeWindowRatio;
+    uniform float facadeRadius;
+    uniform float roofRadius;
+    ${kuwaharaGlsl}`,
   body: `
     if (orthoRoofs > 0.5 && vWorldNormalMini.y > 0.55) {
       vec2 roofUv = clamp(vTileUv, vec2(0.0002), vec2(0.9998));
-      diffuseColor.rgb = texture2D(orthoTexture, roofUv).rgb;
+      diffuseColor.rgb = kuwahara(orthoTexture, roofUv, roofRadius / vec2(textureSize(orthoTexture, 0)));
     } else {
-      // Photo facades carry the shadows of the day they were shot. Lift them
-      // and push colour so the palette reads brick, plaster and glass.
-      vec3 c = diffuseColor.rgb;
+      vec3 luma = vec3(0.299, 0.587, 0.114);
       #ifdef USE_MAP
-        // Blend the facade photo towards its own average colour: keeps brick
-        // versus plaster and the rhythm of windows, drops photographic noise.
-        vec3 average = texture2D(map, vMapUv, 6.0).rgb;
-        c = mix(average, c, facadeDetail);
+        vec3 bestMean = kuwahara(map, vMapUv, facadeRadius / vec2(textureSize(map, 0)));
+        vec3 wall = 1.0 - pow(1.0 - bestMean, vec3(1.5));
+        diffuseColor.rgb = mix(vec3(dot(wall, luma)), wall, 1.3);
+      #else
+        // No photo: a plain wall, deliberately plainer than photographed ones.
+        diffuseColor.rgb = vec3(0.78, 0.73, 0.66);
       #endif
-      c = 1.0 - pow(1.0 - c, vec3(1.35));
-      float grey = dot(c, vec3(0.299, 0.587, 0.114));
-      diffuseColor.rgb = mix(vec3(grey), c, 1.35);
     }
     if (vWorldNormalMini.y > 0.55) diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 1.15, 0.5);`,
 };
@@ -207,6 +247,7 @@ const postFragment = `
   uniform float dither;
   uniform float depthScale;
   uniform float metresPerPixel;
+  uniform float saturation;
   uniform vec3 background;
   in vec2 vUv;
   out vec4 fragColour;
@@ -262,6 +303,8 @@ const postFragment = `
       if (silhouette > 0.5) colour = colour * vec3(0.36, 0.36, 0.44);
       else if (crease > 0.5) colour = colour * 0.80;
     }
+    float grey = dot(colour, vec3(0.299, 0.587, 0.114));
+    colour = clamp(mix(vec3(grey), colour, saturation), 0.0, 1.0);
     if (pixelArt > 0.5) {
       vec3 target = toOklab(clamp(colour + dither * 0.06 * bayer4(gl_FragCoord.xy), 0.0, 1.0));
       float best = 1e9;
@@ -302,8 +345,8 @@ export class Miniature {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0xc9d3dd);
     this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, CAMERA_DISTANCE * 2);
-    this.hemisphere = new THREE.HemisphereLight(0xdfe8ff, 0x6f6450, 1.7);
-    this.sun = new THREE.DirectionalLight(0xfff0d8, 3.4);
+    this.hemisphere = new THREE.HemisphereLight(0xdfe8ff, 0x6f6450, this.style.ambient);
+    this.sun = new THREE.DirectionalLight(0xfff0d8, this.style.sun);
     this.sun.castShadow = true;
     this.sun.shadow.mapSize.set(4096, 4096);
     this.sun.shadow.bias = -0.0004;
@@ -340,6 +383,7 @@ export class Miniature {
         dither: { value: 0.35 },
         depthScale: { value: CAMERA_DISTANCE * 2 },
         metresPerPixel: { value: 0.3 },
+        saturation: { value: 1.2 },
         background: { value: new THREE.Vector3(0xc9 / 255, 0xd3 / 255, 0xdd / 255) },
       },
     });
@@ -371,6 +415,9 @@ export class Miniature {
       orthoTexture: { value: orthoTexture },
       orthoRoofs: { value: this.style.orthoRoofs ? 1 : 0 },
       facadeDetail: { value: this.style.facadeDetail },
+      facadeWindowRatio: { value: this.style.facadeWindowRatio },
+      facadeRadius: { value: this.style.facadeRadius },
+      roofRadius: { value: this.style.roofRadius },
       groundPhotoDetail: { value: this.style.groundPhotoDetail },
       texelsPerArtPixel: { value: this.view.metresPerPixel / 0.1 },
       classTexture: { value: classTexture },
@@ -390,14 +437,14 @@ export class Miniature {
         });
         group.add(ground.scene);
       }
-      // Where the source ground has holes (or is missing), a flat underlay at
-      // street height still shows the BGT surface classes. Lamp bases stand on
-      // the street, so they give the street height better than the mesh does.
-      const lampHeights = (objects?.lamps ?? []).map((lamp) => lamp.z).sort((a, b) => a - b);
+      // Where the source ground has holes, a flat underlay still shows the BGT
+      // surface classes. It sits just below the lowest real surface (the water
+      // or the lowest street), so it never pokes up through real ground at a
+      // tile join; holes read as slightly sunken rather than as raised slabs.
       heights.sort((a, b) => a - b);
-      const streetHeight = lampHeights.length >= 3
-        ? lampHeights[Math.floor(lampHeights.length / 2)]
-        : heights.length ? heights[Math.floor(heights.length * 0.6)] : 3;
+      const lampHeights = (objects?.lamps ?? []).map((lamp) => lamp.z).sort((a, b) => a - b);
+      const lowest = heights.length ? heights[Math.floor(heights.length * 0.02)] : lampHeights[0] ?? 0;
+      const streetHeight = Math.min(lowest, lampHeights.length ? lampHeights[0] : lowest);
       const underlay = new THREE.Mesh(new THREE.PlaneGeometry(TILE_METRES, TILE_METRES).rotateX(-Math.PI / 2), groundMaterial);
       underlay.position.set(TILE_METRES / 2, streetHeight - 0.25, -TILE_METRES / 2);
       underlay.receiveShadow = true;
@@ -459,7 +506,7 @@ export class Miniature {
           new THREE.Vector3(size, size * 0.9, size),
         );
         mesh.setMatrixAt(index, matrix);
-        colour.setRGB(0.27 + 0.06 * tone, 0.47 + 0.07 * tone + 0.03 * k, 0.20);
+        colour.setRGB(0.26 + 0.07 * tone, 0.48 + 0.08 * tone + 0.03 * k, 0.18 + 0.04 * tone, THREE.SRGBColorSpace);
         mesh.setColorAt(index, colour);
         index++;
       }
@@ -583,6 +630,7 @@ export class Miniature {
     u.pixelArt.value = this.style.pixelArt && !overlay ? 1 : 0;
     u.outlines.value = this.style.outlines && !overlay ? 1 : 0;
     u.dither.value = this.style.dither;
+    u.saturation.value = this.style.saturation;
     this.renderer.setRenderTarget(this.colourTarget);
     this.renderer.render(this.scene, this.camera);
     this.scene.overrideMaterial = this.normalMaterial;
