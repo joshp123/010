@@ -59,14 +59,14 @@ def report():
               'verification_scope': 'Numerical source-visible checks; interpreted includes unmeasured synthetic styling. No all-component semantic certification.',
               'tiles': records}
     (directory / 'buildings-report.json').write_text(json.dumps(result, indent=2)+'\n')
-    print('| Tile | Wall verified % | Wall interpreted % | Roof verified % | Image calls (roof + wall) | GLB MB |')
-    print('|---|---:|---:|---:|---:|---:|')
+    print('| Tile | Wall verified % | Wall interpreted % | Roof verified % | Image calls (roof + wall) | GLB MB | Pending elevations |')
+    print('|---|---:|---:|---:|---:|---:|---:|')
     for row in records:
         c = row['completed_image_calls']
         if row['status'] != 'assembled':
-            print(f'| {row["tile"]} | — | — | — | {c["roof"]} + {c["wall"]} | — |')
+            print(f'| {row["tile"]} | — | — | — | {c["roof"]} + {c["wall"]} | — | — |')
             continue
-        print(f'| {row["tile"]} | {100*row["wall"]["verified"]:.2f} | {100*row["wall"]["interpreted"]:.2f} | {100*row["roof"]["verified"]:.2f} | {c["roof"]} + {c["wall"]} | {row["glb_mb"]:.2f} |')
+        print(f'| {row["tile"]} | {100*row["wall"]["verified"]:.2f} | {100*row["wall"]["interpreted"]:.2f} | {100*row["roof"]["verified"]:.2f} | {c["roof"]} + {c["wall"]} | {row["glb_mb"]:.2f} | {len(row["pending_elevations"])} |')
     return result
 
 

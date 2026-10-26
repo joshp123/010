@@ -54,7 +54,11 @@ pipeline/assets/compare_composition.py
 Verification aligns generated elevations and checks visible source edges,
 measured window boundaries and CIEDE2000. Missing source assessment stays
 interpreted. Numerical checks do not certify every architectural component.
-Unchanged inputs reuse derived outputs. Elevation-generator-owned `generated-raw.png`,
+Unchanged inputs reuse derived outputs. A colour-adjusted elevation whose
+model output hash remains in generator metadata is accepted only when the saved
+pre-colour image matches that hash and the documented colour pass reproduces
+every delivered RGB pixel. Derived provenance records both image hashes and the
+read-only postprocessor hash; generator metadata is never rewritten. Elevation-generator-owned `generated-raw.png`,
 `generation.json` and `prompts/` are read-only to these commands.
 
 Composition uses model-made parts under `assets/v1/parts/`, scalar measured
@@ -62,7 +66,9 @@ material colours and the wall's observed opening rectangles. It copies no photo
 texels. Unknown material inherits a same-building measurement, then a tile
 measurement, with interpretation recorded. Source-reviewed corrections for the
 ten comparison walls are hash-bound to their original photos. No uniform window
-grid is inferred. Unmeasured architectural details remain interpreted.
+grid is inferred. New source assessments can record internal window divisions;
+only photo-edge-supported divisions are drawn. Unresolved panes use plain
+frames instead of an invented pane pattern. Unmeasured architectural details remain interpreted.
 
 The parts library is extracted from the ten independently generated comparison
 facades. `derive_parts.py` rebuilds it from those saved outputs; reruns do not
