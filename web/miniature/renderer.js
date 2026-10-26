@@ -1038,7 +1038,8 @@ export class Miniature {
       return material;
     };
     const leaves = crownMaterial(false);
-    const date = this.style.date ? new Date(this.style.date) : new Date();
+    // Season only when asked for (?date=YYYY-MM-DD); otherwise trees are in full leaf.
+    const date = this.style.date ? new Date(this.style.date) : new Date(2026, 6, 1);
     const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 86400000);
     const clumps = [], trunks = [], branches = [], twigs = [];
     for (const tree of trees) {

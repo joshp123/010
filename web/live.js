@@ -482,7 +482,7 @@ export class LiveLayer {
 
   drawWeather(now) {
     const weather = this.weather;
-    if (!weather) return;
+    if (!weather || !this.view) return; // weather can arrive before the first view
     const g = this.context, { width, height } = this.view;
     const overcast = Math.max(0, (weather.cloud_cover - 60) / 40);
     if (overcast > 0) {
