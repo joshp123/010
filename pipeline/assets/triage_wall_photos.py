@@ -4,6 +4,7 @@ Prioritise actual visible facades over roof bleed before detailed C3 measurement
 This source-only classification is an interpretation, never verification.
 """
 import argparse
+import fcntl
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -20,6 +21,10 @@ PROMPT='''Task: source-only photographic evidence triage for a faithful Rotterda
 
 
 def scan(tile,batch_size=96,max_calls=1):
+    work=ROOT/'facts/v1/work'/tile
+    work.mkdir(parents=True,exist_ok=True)
+    tile_lock=(work/'perception.lock').open('a')
+    fcntl.flock(tile_lock,fcntl.LOCK_EX)
     walls_path=prepare_walls(tile)
     walls=load(walls_path)['walls']
     work=walls_path.parent
