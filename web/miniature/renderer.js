@@ -109,8 +109,9 @@ function withTilePosition(material, tileOffset, extraUniforms, fragmentPatch) {
         vWorldNormalMini = normalize(mat3(modelMatrix) * objectNormal);
         ${fragmentPatch.vertexBody ?? ''}`);
     shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', `#include <common>\nvarying vec2 vTileUv;\nvarying vec3 vWorldNormalMini;\nuniform float dataOverlay;\nvec3 overlayCode = vec3(0.0);\n${fragmentPatch.declarations}`)
+      .replace('#include <common>', `#include <common>\nvarying vec2 vTileUv;\nvarying vec3 vWorldNormalMini;\nuniform float dataOverlay;\nuniform float night;\nuniform sampler2D lampTexture;\nvec3 overlayCode = vec3(0.0);\nvec3 nightGlow = vec3(0.0);\n${fragmentPatch.declarations}`)
       .replace('#include <map_fragment>', `#include <map_fragment>\n${fragmentPatch.body}`)
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += nightGlow * night;')
       .replace('#include <opaque_fragment>', `#include <opaque_fragment>\n${fragmentPatch.overlay ?? ''}`);
   };
   material.customProgramCacheKey = () => fragmentPatch.key;
@@ -203,7 +204,11 @@ const groundPatch = {
       float dash = step(0.86, pick) * step(fract(metres.x / 2.5), 0.6) * step(fract(metres.y / 1.25), 0.3);
       groundColour = mix(groundColour, vec3(0.55, 0.72, 0.80), dash * 0.6);
     }
-    diffuseColor.rgb = groundColour;`,
+    diffuseColor.rgb = groundColour;
+    // Street lamps from the municipal register light pools on the ground.
+    float lampLight = texture2D(lampTexture, groundUv).r;
+    nightGlow = groundColour * vec3(1.0, 0.80, 0.55) * lampLight * 1.9;
+    if (surfaceClass == 8.0) nightGlow += vec3(1.0, 0.75, 0.45) * lampLight * 0.25;`,
 };
 
 const buildingPatch = {
@@ -221,6 +226,17 @@ const buildingPatch = {
   declarations: `
     varying vec4 vFeature;
     varying vec3 vWorldPosMini;
+    // Share of windows lit late in the evening, by BAG use: homes are lit
+    // irregularly, offices mostly dark, shops show their ground floor.
+    vec3 windowLight(bool isWindow, float pick, float heightAboveBase, float use) {
+      if (!isWindow) return vec3(0.0);
+      bool shopFloor = abs(use - 3.0) < 0.5 && heightAboveBase < 4.5;
+      float share = shopFloor ? 0.7 : abs(use - 2.0) < 0.5 ? 0.08 : abs(use - 1.0) < 0.5 ? 0.24 : use < 0.5 ? 0.16 : 0.06;
+      if (pick > share) return vec3(0.0);
+      vec3 warm = mix(vec3(1.0, 0.72, 0.38), vec3(1.0, 0.86, 0.60), fract(pick * 7.13));
+      vec3 cool = vec3(0.80, 0.88, 1.0);
+      return (abs(use - 2.0) < 0.5 || shopFloor ? cool * 0.85 : warm * 0.95);
+    }
     uniform sampler2D orthoTexture;
     uniform float orthoRoofs;
     uniform float facadeDetail;
@@ -238,6 +254,19 @@ const buildingPatch = {
         vec3 bestMean = kuwahara(map, vMapUv, facadeRadius / vec2(textureSize(map, 0)));
         vec3 wall = 1.0 - pow(1.0 - bestMean, vec3(1.5));
         diffuseColor.rgb = mix(vec3(dot(wall, luma)), wall, 1.3);
+        // At night only real windows can light: places where the photo is
+        // clearly darker than its own wall. Which ones are lit depends on the
+        // building's use, and varies window by window.
+        if (night > 0.0 && vWorldNormalMini.y < 0.3) {
+          vec3 wallTone = texture2D(map, vMapUv, 5.0).rgb;
+          float darker = dot(bestMean, luma) / max(0.03, dot(wallTone, luma));
+          // Rooms, not pixels: one choice per 2.4 m of wall per storey.
+          vec2 alongDir = normalize(vec2(-vWorldNormalMini.z, vWorldNormalMini.x) + 1e-5);
+          float storeyH = (vFeature.z > 0.0 && vFeature.z < 1945.0) ? 3.3 : 3.0;
+          vec2 room = vec2(floor(dot(vWorldPosMini.xz, alongDir) / 2.4), floor((vWorldPosMini.y - vFeature.x) / storeyH));
+          float pick = fract(sin(dot(room + vFeature.xy * 0.37, vec2(12.9898, 78.233))) * 43758.5453);
+          nightGlow = windowLight(darker < 0.62, pick, vWorldPosMini.y - vFeature.x, vFeature.w);
+        }
       #else
         // No photo: a facade from facts only, deliberately plainer than a
         // photographed one. Construction year sets the storey height and the
@@ -258,6 +287,10 @@ const buildingPatch = {
         bool windowColumn = mod(along, pitch) < width;
         if (height > 0.0 && windowRow && windowColumn) wall = mix(wall, vec3(0.20, 0.24, 0.30), 0.5);
         diffuseColor.rgb = wall;
+        if (night > 0.0 && vWorldNormalMini.y < 0.3) {
+          float pick = fract(sin(dot(vec2(floor(along / pitch), floor(h / storey)) + vFeature.xy, vec2(12.9898, 78.233))) * 43758.5453);
+          nightGlow = windowLight(height > 0.0 && windowRow && windowColumn, pick, h, use);
+        }
       #endif
     }
     if (vWorldNormalMini.y > 0.55) diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * 1.15, 0.5);`,
@@ -386,6 +419,9 @@ export class Miniature {
     this.normalMaterial = new THREE.MeshNormalMaterial();
     this.tiles = new Map();
     this.overlayUniform = { value: 0 };
+    this.nightUniform = { value: 0 };
+    this.blankLamps = new THREE.DataTexture(new Float32Array(4), 1, 1, THREE.RGBAFormat, THREE.FloatType);
+    this.blankLamps.needsUpdate = true;
     this.view = { x: 0, y: 0, bearing: 0, metresPerPixel: 0.3, width: 256, height: 256 };
     this.setupPost();
   }
@@ -452,6 +488,8 @@ export class Miniature {
       classTexture: { value: classTexture },
       classColours: { value: this.classColours },
       dataOverlay: this.overlayUniform,
+      night: this.nightUniform,
+      lampTexture: { value: this.blankLamps },
     };
     if (classTexture) {
       const groundMaterial = withTilePosition(new THREE.MeshLambertMaterial({ color: 0xffffff }), offset, shared, groundPatch);
@@ -495,7 +533,8 @@ export class Miniature {
     if (objects?.trees?.length) group.add(this.treeMesh(objects.trees, offset));
     group.updateMatrixWorld(true);
     this.scene.add(group);
-    const record = { group, shared };
+    const record = { group, shared, lamps: objects?.lamps ?? [] };
+    if (objects?.lamps?.length) group.add(this.lampHeads(objects.lamps, offset));
     this.tiles.set(tile.id, record);
     return record;
   }
@@ -530,6 +569,19 @@ export class Miniature {
     const texture = new THREE.DataTexture(data, count, 1, THREE.RGBAFormat, THREE.FloatType);
     texture.needsUpdate = true;
     return { featureTexture: { value: texture }, featureCount: { value: count } };
+  }
+
+  // The lamp heads themselves, visible only at night.
+  lampHeads(lamps, offset) {
+    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.7, 0.35, 0.7), new THREE.MeshBasicMaterial({ color: 0xffe2a8 }), lamps.length);
+    const matrix = new THREE.Matrix4();
+    lamps.forEach((lamp, i) => {
+      matrix.makeTranslation(lamp.x - this.origin.x - offset.x, lamp.z + (lamp.height_m ?? 5), -(lamp.y - this.origin.y) - offset.z);
+      mesh.setMatrixAt(i, matrix);
+    });
+    mesh.userData.nightOnly = true;
+    mesh.visible = false;
+    return mesh;
   }
 
   treeMesh(trees, offset) {
@@ -578,6 +630,36 @@ export class Miniature {
 
   // Nearest tiles first, a few at a time, so the view under the user arrives
   // before bandwidth is spent on tiles off screen.
+  // Light from every lamp in the register, as a 1 m raster per tile, so a
+  // lamp near a tile edge lights both tiles. Pools scale with mast height.
+  buildLampLight() {
+    const size = 256, scale = size / TILE_METRES;
+    const lamps = [];
+    for (const record of this.tiles.values()) lamps.push(...(record.lamps ?? []));
+    for (const [id, record] of this.tiles) {
+      const tile = this.tileList.find((t) => t.id === id);
+      const data = new Float32Array(size * size * 4);
+      for (const lamp of lamps) {
+        const radius = Math.min(10, Math.max(3.5, 0.7 * (lamp.height_m ?? 6)));
+        const cx = (lamp.x - tile.x_min) * scale, cy = (tile.y_min + TILE_METRES - lamp.y) * scale;
+        const reach = radius * 2 * scale;
+        if (cx < -reach || cy < -reach || cx > size + reach || cy > size + reach) continue;
+        for (let y = Math.max(0, Math.floor(cy - reach)); y < Math.min(size, Math.ceil(cy + reach)); y++) {
+          for (let x = Math.max(0, Math.floor(cx - reach)); x < Math.min(size, Math.ceil(cx + reach)); x++) {
+            const d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy) / scale / radius;
+            data[(y * size + x) * 4] += Math.exp(-d * d * 2.2);
+          }
+        }
+      }
+      for (let i = 0; i < data.length; i += 4) data[i] = 1 - Math.exp(-data[i] * 1.1);
+      const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat, THREE.FloatType);
+      texture.flipY = false;
+      texture.magFilter = THREE.LinearFilter;
+      texture.needsUpdate = true;
+      record.shared.lampTexture.value = texture;
+    }
+  }
+
   async loadAll(onTile = () => {}, near = { x: this.view.x, y: this.view.y }, concurrency = 3) {
     const distance = (t) => Math.hypot(t.x_min + TILE_METRES / 2 - near.x, t.y_min + TILE_METRES / 2 - near.y);
     const queue = [...this.tileList].sort((a, b) => distance(a) - distance(b));
@@ -589,6 +671,7 @@ export class Miniature {
       }
     };
     await Promise.all(Array.from({ length: concurrency }, worker));
+    this.buildLampLight();
   }
 
   tileAt(x, y) {
@@ -684,9 +767,18 @@ export class Miniature {
   render() {
     const u = this.postMaterial.uniforms;
     const overlay = Boolean(this.style.dataOverlay);
+    const night = this.style.night ?? 0;
+    this.nightUniform.value = night;
+    this.sun.intensity = this.style.sun * (1 - night) + 0.35 * night;
+    this.sun.color.setHex(night > 0.5 ? 0x9fb4ff : 0xfff0d8);
+    this.hemisphere.intensity = this.style.ambient * (1 - night) + 0.85 * night;
+    this.hemisphere.color.setHex(night > 0.5 ? 0x3b4a78 : 0xdfe8ff);
+    this.hemisphere.groundColor.setHex(night > 0.5 ? 0x1a1d28 : 0x6f6450);
+    this.scene.traverse((node) => { if (node.userData.nightOnly) node.visible = night > 0.5; });
     this.overlayUniform.value = overlay ? 1 : 0;
-    this.scene.background.set(overlay ? 0x000000 : 0xc9d3dd);
-    u.background.value.set(...(overlay ? [0, 0, 0] : [0xc9 / 255, 0xd3 / 255, 0xdd / 255]));
+    const backgroundHex = overlay ? 0x000000 : night > 0.5 ? 0x161c2c : 0xc9d3dd;
+    this.scene.background.set(backgroundHex);
+    u.background.value.set(((backgroundHex >> 16) & 255) / 255, ((backgroundHex >> 8) & 255) / 255, (backgroundHex & 255) / 255);
     u.pixelArt.value = this.style.pixelArt && !overlay ? 1 : 0;
     u.outlines.value = this.style.outlines && !overlay ? 1 : 0;
     u.dither.value = this.style.dither;
