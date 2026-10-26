@@ -24,7 +24,7 @@ for name in t2 t2n; do
   if [ -d "$data/pyramids/$name-live" ]; then rsync -a --delete --exclude 'd0' --exclude 'd1' "$data/pyramids/$name-live/" "$dist/pyramids/$name/"; fi
 done
 mkdir -p "$dist/networks"
-for kind in cars bikes; do
+for kind in cars bikes transit; do
   [ -f "$data/scene/v1/networks/$kind.json" ] && cp "$data/scene/v1/networks/$kind.json" "$dist/networks/"
 done
 mkdir -p "$dist/compare"
