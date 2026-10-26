@@ -8,7 +8,9 @@
 # lean per tile (roof outlines line up with strong edges in the photo when
 # shifted by height x k), then per building fine-tunes the shift, samples the
 # roof's colour away from edges and registered tree crowns, and names its
-# material from slope and colour. Output: scene/v1/tiles/<tile>/roofs.json.
+# material from slope and colour. It also keeps the roof's fittings (plant,
+# hatches, solar panels, skylights) as flat-colour shapes in roof-detail.png.
+# Output: scene/v1/tiles/<tile>/roofs.json and roof-detail.png.
 # Usage: python3 tools/roof-facts.py TILE [TILE ...]
 import json, sys
 from datetime import datetime, timezone
@@ -108,6 +110,7 @@ def facts(tile):
                 best = (kx, ky, score)
     kx, ky = best[0], best[1]
     out = {}
+    detail = np.zeros(label.shape + (4,), np.uint8)  # roof fittings seen in the aerial, at footprint position
     for index, roof in roofs.items():
         if objects[index] is None:
             continue
@@ -145,7 +148,37 @@ def facts(tile):
             material = "pantiles" if a > 12 and b > 8 else "slate" if L < 48 and chroma < 10 else "tiles"
         rgb = np.median(photo[ys[clear], xs[clear]][(lightness >= lo) & (lightness <= hi)], axis=0)
         solar = float(np.mean((pixels[:, 2] < -4) & (pixels[:, 0] < 40)))
-        out[index] = {"bag_id": features[index].get("bag_id"), "material": material, "flat": bool(is_flat),
+        # Fittings: small parts of the roof clearly brighter than it (plant,
+        # hatches, vents) or blue glass (solar panels, skylights). Dark neutral
+        # blobs are shadows and are left out. Each is one flat colour.
+        sl = objects[index]
+        roof_mask = ndimage.binary_erosion(label[sl] == index + 1, iterations=3)
+        ry, rx = np.nonzero(roof_mask)
+        fy, fx = ry + sl[0].start + dy, rx + sl[1].start + dx
+        inside = (fy >= 0) & (fx >= 0) & (fy < label.shape[0]) & (fx < label.shape[1])
+        ry, rx, fy, fx = ry[inside], rx[inside], fy[inside], fx[inside]
+        fitted = 0
+        if len(ry) > 50:
+            local_lab = lab(photo[fy, fx])
+            bright = (local_lab[:, 0] > L + 16) & is_flat  # on a pitched roof the sunlit face is brighter, not a fitting
+            glass = (local_lab[:, 2] < b - 8) & (local_lab[:, 0] < L + 5)
+            grid = np.zeros(roof_mask.shape, bool)
+            grid[ry, rx] = (bright | glass) & ~trees[fy, fx]
+            parts, count = ndimage.label(grid)
+            if count:
+                sizes = ndimage.sum(grid, parts, range(1, count + 1))
+                boxes = ndimage.find_objects(parts)
+                for k in np.flatnonzero((sizes >= 15) & (sizes <= 1500)) + 1:
+                    h, w = (boxes[k - 1][0].stop - boxes[k - 1][0].start), (boxes[k - 1][1].stop - boxes[k - 1][1].start)
+                    if min(h, w) <= 3 and max(h, w) > 6 * min(h, w):
+                        continue  # a parapet or roof edge: the outline already draws it
+                    if sizes[k - 1] < 0.55 * h * w:
+                        continue  # ragged: sunlit tiles or stains, not an object
+                    py, px_ = np.nonzero(parts == k)
+                    colour = np.median(photo[py + sl[0].start + dy, px_ + sl[1].start + dx], axis=0)
+                    detail[py + sl[0].start, px_ + sl[1].start] = [*colour.astype(np.uint8), 255]
+                    fitted += 1
+        out[index] = {"bag_id": features[index].get("bag_id"), "material": material, "flat": bool(is_flat), "fittings": fitted,
                       "colour": [int(v) for v in rgb], "lab": [round(float(v), 1) for v in (L, a, b)],
                       "shift_m": [dx / PX, -dy / PX], "evidence_pixels": int(clear.sum()), "solar_share": round(solar, 3)}
     result = {"written_by": "AI, Claude Opus 5.5 (tools/roof-facts.py), " + datetime.now(timezone.utc).date().isoformat(),
@@ -153,6 +186,7 @@ def facts(tile):
               "source": str(DATA / f"scene/v1/tiles/{tile}/ortho.jpg"), "lean_per_metre": [round(kx, 3), round(-ky, 3)],
               "material_codes": MATERIALS, "roofs": {str(k): v for k, v in sorted(out.items())}}
     json.dump(result, open(DATA / f"scene/v1/tiles/{tile}/roofs.json", "w"), indent=1)
+    Image.fromarray(detail, "RGBA").save(DATA / f"scene/v1/tiles/{tile}/roof-detail.png", optimize=True)
     known = [v for v in out.values() if v.get("material")]
     counts = {m: sum(1 for v in known if v["material"] == m) for m in MATERIALS}
     print(f"{tile}: lean {kx:+.3f},{ky:+.3f} m/m; {len(known)}/{len(out)} roofs measured; " + ", ".join(f"{m} {n}" for m, n in counts.items() if n))

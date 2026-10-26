@@ -208,13 +208,13 @@ def draw_tile(tile, lines, areas, points, tree, dirs, mids, twoway):
     classes = np.asarray(Image.open(DATA / f"scene/v1/tiles/{tile}/classes.png").convert("RGB"))[..., 0]
     luma = photo @ np.array([0.299, 0.587, 0.114])
     chroma = photo.max(-1) - photo.min(-1)
-    road = np.isin(classes, (1, 2, 4, 15))
+    road = classes == 1  # carriageway only: parked cars and cycle-path grit gave false paint
     local = ndimage.median_filter(luma, size=21)
-    paint = road & (luma - local > 38) & (chroma < 40) & (luma > 120)
+    paint = road & (luma - local > 45) & (chroma < 30) & (luma > 150)
     labels, count = ndimage.label(paint)
     sizes = ndimage.sum(paint, labels, range(1, count + 1))
     keep = np.zeros(count + 1, bool)
-    keep[1:] = (sizes >= 4) & (sizes <= 250)  # 4 cm² .. 2.5 m²
+    keep[1:] = (sizes >= 10) & (sizes <= 250)  # 0.1 .. 2.5 m²
     found = keep[labels]
     image = Image.fromarray(np.maximum(np.asarray(image), found.astype(np.uint8) * 255))
     image.save(DATA / f"scene/v1/tiles/{tile}/markings.png", optimize=True)

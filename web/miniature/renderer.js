@@ -280,6 +280,7 @@ const buildingPatch = {
     varying vec4 vFeature;
     varying vec4 vRoof;
     varying vec3 vWorldPosMini;
+    uniform sampler2D roofDetail;
     // A roof drawn from its facts (tools/roof-facts.py): the colour measured
     // in the aerial and a material named from slope and colour, as courses,
     // joints, seams or gravel in world metres. Roofs without facts are plain
@@ -288,7 +289,9 @@ const buildingPatch = {
     vec3 roofSurface(vec4 facts, vec3 position, vec3 normal) {
       if (facts.w < 0.5) return vec3(0.42, 0.42, 0.40);
       vec3 base = facts.rgb;
-      base = mix(vec3(dot(base, vec3(0.2126, 0.7152, 0.0722))), base, 1.25); // aerial haze
+      float baseLuma = dot(base, vec3(0.2126, 0.7152, 0.0722));
+      base = mix(vec3(baseLuma), base, baseLuma > 0.45 ? 1.0 : 1.25); // aerial haze; light roofs keep their grey
+      if (baseLuma > 0.45) base *= 0.82; // sunlit membranes are overexposed in the aerial
       vec2 down = length(normal.xz) > 0.05 ? normalize(normal.xz) : vec2(1.0, 0.0);
       float s = dot(position.xz, down) / max(normal.y, 0.35);
       float t = dot(position.xz, vec2(-down.y, down.x));
@@ -337,6 +340,10 @@ const buildingPatch = {
     classCode = vWorldNormalMini.y > 0.55 ? 6.0 : 7.0;
     if (vWorldNormalMini.y > 0.55) {
       diffuseColor.rgb = roofSurface(vRoof, vWorldPosMini, vWorldNormalMini);
+      // Fittings the aerial shows on this roof (tools/roof-facts.py): plant,
+      // hatches, solar panels, roof windows, each one flat colour.
+      vec4 fitting = texture2D(roofDetail, clamp(vTileUv, vec2(0.0002), vec2(0.9998)));
+      if (fitting.a > 0.5) diffuseColor.rgb = fitting.rgb * 0.95;
       // Colour fades by moonlight: at night a roof is a grey-blue shape, not an orange one.
       diffuseColor.rgb = mix(diffuseColor.rgb, vec3(dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722))), night * 0.65);
     } else {
@@ -625,7 +632,8 @@ export class Miniature {
       optional(retrying(() => loader.loadAsync(`${base}/ground.glb`))),
       // A tile's building assets (made by the asset maker, pipeline/assets)
       // replace its raw buildings when they exist.
-      (this.assetBase ? loader.loadAsync(`${this.assetBase}/tiles/${tile.id}/${this.assetFile ?? 'buildings.glb'}`).catch(() => null) : Promise.resolve(null))
+      (this.assetBase ? retrying(() => loader.loadAsync(`${this.assetBase}/tiles/${tile.id}/${this.assetFile ?? 'buildings.glb'}`))
+        .catch((error) => { console.warn(`tile ${tile.id}: assets failed to load, drawing raw buildings (${error.message ?? error})`); return null; }) : Promise.resolve(null))
         .then((assets) => assets ?? optional(retrying(() => loader.loadAsync(`${base}/buildings.glb`)))),
       optional(retrying(() => loadRawImageTexture(`${base}/classes.png`))),
       optional(retrying(() => loadPhotoTexture(`${base}/ortho.jpg`))),
@@ -634,6 +642,7 @@ export class Miniature {
     const rails = await fetch(`${base}/rails.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const roofFacts = await fetch(`${base}/roofs.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const markings = await loadRawImageTexture(`${base}/markings.png`).catch(() => null);
+    const roofDetail = await loadRawImageTexture(`${base}/roof-detail.png`).then((t) => { t.colorSpace = THREE.SRGBColorSpace; return t; }).catch(() => null);
     const shared = {
       orthoTexture: { value: orthoTexture },
       facadeDetail: { value: this.style.facadeDetail },
@@ -649,6 +658,7 @@ export class Miniature {
       nightHour: this.nightHourUniform,
       lampTexture: { value: this.blankLamps },
       markingTexture: { value: markings ?? this.blankLamps },
+      roofDetail: { value: roofDetail ?? this.blankLamps },
       trackBedColour: { value: new THREE.Vector3(-1, -1, -1) },
     };
     if (classTexture) {
@@ -700,6 +710,16 @@ export class Miniature {
     if (objects?.trees?.length) group.add(this.treeMesh(objects.trees, offset, rails?.tracks ?? []));
     const sampler = ground && classTexture ? this.groundSampler(offset, ground.scene, classTexture) : null;
     if (sampler && orthoTexture) {
+      // Where the aerial is green a track is grass track: no sleepers show.
+      const photo = new OffscreenCanvas(sampler.width, sampler.height).getContext('2d', { willReadFrequently: true });
+      photo.drawImage(orthoTexture.image, 0, 0, sampler.width, sampler.height);
+      const pixels = photo.getImageData(0, 0, sampler.width, sampler.height).data;
+      sampler.greenAt = (x, y) => {
+        const px = Math.floor((x - sampler.tileX) / TILE_METRES * sampler.width), py = Math.floor((sampler.tileY + TILE_METRES - y) / TILE_METRES * sampler.height);
+        if (px < 0 || py < 0 || px >= sampler.width || py >= sampler.height) return false;
+        const i = (py * sampler.width + px) * 4;
+        return pixels[i + 1] - Math.max(pixels[i], pixels[i + 2]) > 5;
+      };
       const bed = this.trackBedColour(sampler, orthoTexture);
       if (bed) shared.trackBedColour.value.set(...bed);
     }
@@ -742,12 +762,12 @@ export class Miniature {
       const hit = ray.intersectObjects(meshes, false)[0];
       return hit ? hit.point.y : null;
     };
-    return { tileX, tileY, classes, width: canvas.width, height: canvas.height, classAt, heightAt };
+    return { tileX, tileY, classes, width: canvas.width, height: canvas.height, classAt, heightAt, greenAt: () => false };
   }
 
   // The colour of a tile's tram bed in the 2026 aerial: the median of its
   // sunlit, not-green pixels (shadowed and grassed parts say nothing about
-  // the paving). Linear RGB, or null when the tile has too little of it.
+  // the stones). Linear RGB, or null when the tile has too little of it.
   trackBedColour(ground, orthoTexture) {
     const { classes, width, height } = ground;
     const canvas = new OffscreenCanvas(width, height);
@@ -761,9 +781,10 @@ export class Miniature {
       if (g - Math.max(r, b) > 5) continue;
       samples.push([r, g, b, 0.299 * r + 0.587 * g + 0.114 * b]);
     }
-    if (samples.length < 500) return null;
-    samples.sort((a, b) => a[3] - b[3]);
-    const sunlit = samples.slice(Math.floor(samples.length * 0.6));
+    // In sun only: much of a street's bed lies in building shadow, which
+    // carries no colour; an absolute brightness keeps just the sunlit stones.
+    const sunlit = samples.filter((p) => p[3] > 100);
+    if (sunlit.length < 300) return null;
     const median = [0, 1, 2].map((c) => sunlit.map((p) => p[c]).sort((a, b) => a - b)[sunlit.length >> 1]);
     const colour = new THREE.Color().setRGB(median[0] / 255, median[1] / 255, median[2] / 255, THREE.SRGBColorSpace);
     return [colour.r, colour.g, colour.b];
@@ -842,7 +863,8 @@ export class Miniature {
           for (const side of [-0.7175, 0.7175]) {
             railParts.push({ x: mx + nx * side, y: my + ny * side, z: h, angle: Math.atan2(uy, ux), length: step, street });
           }
-          const ballast = surface === 14 || surface === 16; // BGT says nothing about a tram bed's surface: no sleepers there
+          // Ballast shows sleepers: train and metro beds, and tram beds where the aerial is not grass.
+          const ballast = surface === 14 || surface === 16 || (surface === 5 && !ground.greenAt(mx, my));
           if (ballast) {
             for (let k = 0.3; k < step; k += 0.6) {
               const sx = x0 + ux * (s + k), sy = y0 + uy * (s + k);
