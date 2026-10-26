@@ -131,7 +131,7 @@ async function draw() {
     if (!performance.getEntriesByName('map-first-view').length) performance.mark('map-first-view');
     // Simulated traffic needs the road and cycle networks; fetch them only
     // once the map is on screen so they never delay the first view.
-    if (params.get('live') !== 'off') setTimeout(() => live.loadNetworks('./networks'), 300);
+    if (params.get('live') !== 'off') setTimeout(() => { live.loadNetworks('./networks'); live.loadTransitShapes('./networks/transit.json'); }, 300);
     performance.mark('map-complete');
     window.mapReady = true;
   }
@@ -226,6 +226,10 @@ document.getElementById('share').onclick = async () => {
     const button = document.getElementById('share');
     button.textContent = '✓'; setTimeout(() => { button.textContent = '↗'; }, 1500);
   }
+};
+document.getElementById('cutaway').onclick = (event) => {
+  live.cutaway = !live.cutaway;
+  event.currentTarget.classList.toggle('on', live.cutaway);
 };
 const lightButton = document.getElementById('light');
 const showLight = () => { lightButton.textContent = night ? '☾' : '☀'; document.body.classList.toggle('night', night); };

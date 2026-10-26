@@ -64,7 +64,7 @@ export class LiveLayer {
           const known = this.transit.get(vehicle.id) ?? { track: [] };
           if (vehicle.heading !== undefined && known.heading === undefined) known.heading = vehicle.heading;
           const last = known.track.at(-1);
-          if (!last || last.t !== observed) known.track.push({ x: vehicle.x, y: vehicle.y, t: observed });
+          if (!last || last.t !== observed) known.track.push({ x: vehicle.x, y: vehicle.y, t: observed, on: this.snap(mode, line, vehicle.x, vehicle.y) });
           while (known.track.length > 4) known.track.shift();
           Object.assign(known, { mode: vehicle.mode, line: vehicle.line, seen: now });
           this.transit.set(vehicle.id, known);
@@ -84,6 +84,52 @@ export class LiveLayer {
         this.networks[kind] = { ...graph, outgoing };
       } catch { /* network not built for this area yet */ }
     }
+  }
+
+  // Route geometry per (mode, line), with heights and tunnel flags, so a
+  // reported position can be placed on its real track.
+  async loadTransitShapes(url) {
+    try {
+      const data = await fetch(url).then((r) => r.json());
+      this.shapes = new Map();
+      for (const entry of data.lines) {
+        const paths = entry.paths.map((points) => {
+          const along = [0];
+          for (let i = 1; i < points.length; i++) along.push(along[i - 1] + Math.hypot(points[i][0] - points[i - 1][0], points[i][1] - points[i - 1][1]));
+          return { points, along };
+        });
+        this.shapes.set(`${entry.mode}:${entry.line}`, paths);
+      }
+    } catch { /* no shapes: vehicles move in straight lines between reports */ }
+  }
+
+  // Nearest point on the line's track, as (path, distance along it).
+  snap(mode, line, x, y) {
+    const paths = this.shapes?.get(`${mode}:${line}`);
+    if (!paths) return null;
+    let best = null;
+    paths.forEach((path, p) => {
+      const pts = path.points;
+      for (let i = 1; i < pts.length; i++) {
+        const ax = pts[i - 1][0], ay = pts[i - 1][1], dx = pts[i][0] - ax, dy = pts[i][1] - ay;
+        const len2 = dx * dx + dy * dy || 1;
+        const k = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / len2));
+        const d = Math.hypot(ax + dx * k - x, ay + dy * k - y);
+        if (!best || d < best.d) best = { d, path: p, s: path.along[i - 1] + Math.sqrt(len2) * k };
+      }
+    });
+    return best && best.d < 60 ? best : null;
+  }
+
+  pointAt(mode, line, path, s) {
+    const shape = this.shapes.get(`${mode}:${line}`)[path];
+    const { points, along } = shape;
+    let i = 1;
+    while (i < points.length - 1 && along[i] < s) i++;
+    const a = points[i - 1], b = points[i];
+    const k = Math.max(0, Math.min(1, (s - along[i - 1]) / Math.max(0.01, along[i] - along[i - 1])));
+    return { x: a[0] + (b[0] - a[0]) * k, y: a[1] + (b[1] - a[1]) * k, z: a[2] + (b[2] - a[2]) * k,
+      tunnel: (k < 0.5 ? a[3] : b[3]) === 1, heading: Math.atan2(b[0] - a[0], b[1] - a[1]) };
   }
 
   // --- simulation -------------------------------------------------------------
@@ -239,14 +285,14 @@ export class LiveLayer {
   }
 
   // A vehicle as a small box: roof and the two sides facing the camera.
-  drawBox(x, y, z, heading, style, top, side) {
+  drawBox(x, y, z, heading, style, top, side, xray = false) {
     const { length, width, height } = style;
     const c = Math.cos(heading), s = Math.sin(heading);
     const corner = (u, v, h) => this.project(x + s * u + c * v, y + c * u - s * v, z + h);
     const base = [corner(length / 2, width / 2, 0), corner(length / 2, -width / 2, 0), corner(-length / 2, -width / 2, 0), corner(-length / 2, width / 2, 0)];
     const roof = [corner(length / 2, width / 2, height), corner(length / 2, -width / 2, height), corner(-length / 2, -width / 2, height), corner(-length / 2, width / 2, height)];
     const centre = this.project(x, y, z + height / 2);
-    if (this.hidden(centre)) return;
+    if (!xray && this.hidden(centre)) return;
     const g = this.context;
     g.fillStyle = side;
     for (let i = 0; i < 4; i++) {
@@ -287,10 +333,45 @@ export class LiveLayer {
     }
   }
 
+  // Cutaway: the metro tunnels drawn as dark corridors through the ground.
+  drawTunnels() {
+    if (!this.shapes) return;
+    const g = this.context;
+    g.lineCap = 'round';
+    for (const [key, paths] of this.shapes) {
+      if (!key.startsWith('metro:') && !key.startsWith('train:')) continue;
+      for (const { points } of paths) {
+        g.beginPath();
+        let open = false;
+        for (const point of points) {
+          if (point[3] !== 1) { open = false; continue; }
+          const p = this.project(point[0], point[1], point[2]);
+          if (!open) { g.moveTo(p.px, p.py); open = true; } else g.lineTo(p.px, p.py);
+        }
+        g.strokeStyle = 'rgba(20, 22, 32, 0.78)';
+        g.lineWidth = Math.max(3, 9 / this.view.levelInfo.metres_per_pixel);
+        g.stroke();
+      }
+    }
+  }
+
   transitPosition(vehicle, now) {
-    // Shown 15 s behind real time, moving smoothly between observations.
+    // Shown 15 s behind real time, moving smoothly between observations,
+    // along the real track when both reports snap to the same path.
     const t = now - 15000;
     const track = vehicle.track;
+    for (let i = track.length - 1; i >= 0; i--) {
+      const a = track[i - 1] ?? track[i], b = track[i];
+      if (i > 0 && t < a.t) continue;
+      if (a.on && b.on && a.on.path === b.on.path && Math.abs(b.on.s - a.on.s) < 2500) {
+        const k = b.t > a.t ? Math.max(0, Math.min(1, (t - a.t) / (b.t - a.t))) : 1;
+        const p = this.pointAt(vehicle.mode, vehicle.line, a.on.path, a.on.s + (b.on.s - a.on.s) * k);
+        if (b.on.s < a.on.s) p.heading += Math.PI;
+        return p;
+      }
+      if (b.on && i === track.length - 1 && t >= b.t) return this.pointAt(vehicle.mode, vehicle.line, b.on.path, b.on.s);
+      break;
+    }
     if (track.length === 1 || t <= track[0].t) return { ...track[0], heading: vehicle.heading ?? 0 };
     for (let i = 1; i < track.length; i++) {
       const a = track[i - 1], b = track[i];
@@ -323,7 +404,8 @@ export class LiveLayer {
     for (const vehicle of this.transit.values()) {
       const style = modeStyle[vehicle.mode] ?? modeStyle.bus;
       const p = this.transitPosition(vehicle, now);
-      items.push({ ...p, z: STREET_HEIGHT, style, top: style.top, side: style.side });
+      if (p.tunnel && !this.cutaway) continue; // underground, out of sight
+      items.push({ ...p, z: p.z ?? STREET_HEIGHT, style, top: style.top, side: style.side, xray: p.tunnel });
     }
     // Only what is on screen, far to near, so nearer vehicles cover farther ones.
     for (let i = items.length - 1; i >= 0; i--) {
@@ -333,7 +415,8 @@ export class LiveLayer {
     }
     items.sort((a, b) => b.depth - a.depth);
     this.drawn = items.length;
-    for (const item of items) this.drawBox(item.x, item.y, item.z ?? STREET_HEIGHT, item.heading, item.style, item.top, item.side);
+    if (this.cutaway) this.drawTunnels();
+    for (const item of items) this.drawBox(item.x, item.y, item.z ?? STREET_HEIGHT, item.heading, item.style, item.top, item.side, item.xray);
   }
 
   // Current weather over Rotterdam (Open-Meteo, free, CC BY 4.0). Rain is
