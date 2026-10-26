@@ -1,0 +1,12 @@
+{
+  "written_by": "AI, GPT-6 Astra, 2026-10-26",
+  "version": "source-evidence-v1",
+  "edge_agreement_min": 0.5,
+  "mean_ciede2000_max": 25.0,
+  "minimum_evidence_pixels": 64,
+  "sobel_threshold": 0.08,
+  "edge_tolerance_px": 2,
+  "mask_boundary_erosion_px": 2,
+  "generated_resize": "LANCZOS",
+  "notes": "Declared before measuring. Masks are based only on the source, never generated-image disagreement. Colour includes visible facade wall-plane texels, including frames and glazing; no unavailable semantic wall-material mask is claimed."
+}

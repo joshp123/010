@@ -1,0 +1,12 @@
+{
+  "written_by": "AI, GPT-6 Astra, 2026-10-26",
+  "id": "aelbrechtskolk-quay-first-v1",
+  "tile": "x90250_y436000",
+  "bag_ids": ["0599100000760478", "0599100000760479", "0599100000760481", "0599100000760482", "0599100000760483"],
+  "facing_normal_rd": [0.93, -0.37, 0],
+  "max_angle_deg": 8,
+  "max_plane_deviation_m": 1.0,
+  "max_gap_m": 1.25,
+  "selection_basis": "West-bank quay-facing terrace, visually selected from the tile's UV-mapped facade crops and linked archived BAG Aelbrechtskolk addresses. Five contiguous fronts; the northern two bend about six degrees from the southern three. Largest party walls were excluded by choosing the water-facing planes.",
+  "source_views": {"0599100000760478": 3, "0599100000760479": 2, "0599100000760481": 3, "0599100000760482": 2, "0599100000760483": 3}
+}
