@@ -9,7 +9,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { buildPalette, surfaceClassColours } from './palette.js';
-import { citadisTram, car, cyclist } from './vehicles.js';
+import { citadisTram, car, cyclist, parkedBike, rackHoop, bikeLocker } from './vehicles.js';
 
 const TILE_METRES = 250;
 const CAMERA_DISTANCE = 4000;
@@ -641,6 +641,7 @@ export class Miniature {
     ]);
     const rails = await fetch(`${base}/rails.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const roofFacts = await fetch(`${base}/roofs.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+    const bikeParking = await fetch(`${base}/bikes.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const markings = await loadRawImageTexture(`${base}/markings.png`).catch(() => null);
     const roofDetail = await loadRawImageTexture(`${base}/roof-detail.png`).then((t) => { t.colorSpace = THREE.SRGBColorSpace; return t; }).catch(() => null);
     const shared = {
@@ -724,7 +725,7 @@ export class Miniature {
       if (bed) shared.trackBedColour.value.set(...bed);
     }
     if (rails?.tracks?.length && sampler) group.add(this.railMesh(rails.tracks, sampler));
-    if (sampler) group.add(await this.vehicleMesh(tile, sampler, rails?.tracks ?? []));
+    if (sampler) group.add(await this.vehicleMesh(tile, sampler, rails?.tracks ?? [], bikeParking));
     group.updateMatrixWorld(true);
     this.scene.add(group);
     const record = { group, shared, lamps: objects?.lamps ?? [] };
@@ -902,10 +903,10 @@ export class Miniature {
   // style.traffic a moment of moving traffic is added for still pictures:
   // a Citadis on a tram track, cars on the OSM road graph, cyclists on the
   // cycle graph. The live map draws moving traffic itself.
-  async vehicleMesh(tile, ground, tracks) {
+  async vehicleMesh(tile, ground, tracks, bikes) {
     const { tileX, tileY, classAt, heightAt, classes, width, height } = ground;
     const hash = (a, b) => Math.abs(Math.sin(a * 12.9898 + b * 78.233) * 43758.5453) % 1;
-    const placed = { hatchback: [], estate: [], suv: [], cyclist: [], tram: [] };
+    const placed = { hatchback: [], estate: [], suv: [], cyclist: [], tram: [], hoop: [], bike: [], locker: [] };
     const shapes = ['hatchback', 'hatchback', 'estate', 'suv']; // compacts are the commonest
     const put = (kind, x, y, heading, colour, lift = 0) => {
       const h = heightAt(x, y);
@@ -965,6 +966,21 @@ export class Miniature {
       }
     }
 
+    // Bike racks and lockers from the register (tools/build-bike-parking.py):
+    // hoops 0.75 m apart along the street, bikes standing across it, about
+    // three in four places taken (occupancy is not recorded).
+    const frames = [0x23262b, 0x1c2a44, 0x5b1f22, 0x2f3a2c, 0x8a8f96, 0x3a2f2a];
+    for (const rack of bikes?.racks ?? []) {
+      const [ux, uy] = rack.along, heading = Math.atan2(uy, ux);
+      for (let k = 0; k < rack.hoops; k++) {
+        const t = (k - (rack.hoops - 1) / 2) * 0.75, x = rack.x + ux * t, y = rack.y + uy * t;
+        put('hoop', x, y, heading + Math.PI / 2, 0);
+        for (const side of [-0.18, 0.18]) {
+          if (hash(x * 3 + side, y) < 0.75) put('bike', x + ux * side, y + uy * side, heading + Math.PI / 2 + (hash(y, x + side) < 0.5 ? Math.PI : 0), frames[Math.floor(hash(x, y * 2 + side) * frames.length)]);
+        }
+      }
+    }
+    for (const locker of bikes?.lockers ?? []) put('locker', locker.x, locker.y, Math.atan2(locker.along[1], locker.along[0]), 0);
     const carCount = () => placed.hatchback.length + placed.estate.length + placed.suv.length;
     const parkedCars = carCount();
     if (this.style.traffic) {
@@ -1032,7 +1048,7 @@ export class Miniature {
 
     console.log(`vehicles ${tile.id}: ${parkedCars} parked, ${carCount() - parkedCars} moving cars, ${placed.cyclist.length} cyclists, trams at ${placed.tram.map((t) => `${t.x.toFixed(0)},${t.y.toFixed(0)}`).join(" ")}`);
     const group = new THREE.Group();
-    const models = { hatchback: (c) => car(c, 'hatchback'), estate: (c) => car(c, 'estate'), suv: (c) => car(c, 'suv'), cyclist: (c) => cyclist(c), tram: () => citadisTram() };
+    const models = { hatchback: (c) => car(c, 'hatchback'), estate: (c) => car(c, 'estate'), suv: (c) => car(c, 'suv'), cyclist: (c) => cyclist(c), tram: () => citadisTram(), hoop: () => rackHoop(), bike: (c) => parkedBike(c), locker: () => bikeLocker() };
     for (const [kind, items] of Object.entries(placed)) {
       if (!items.length) continue;
       // One instanced mesh per part of the model; paint takes each vehicle's colour.
@@ -1040,7 +1056,7 @@ export class Miniature {
       model.updateMatrixWorld(true);
       model.traverse((part) => {
         if (!part.isMesh) return;
-        const paint = kind !== 'tram' && part.material.color?.getHex() === 0xffffff;
+        const paint = !['tram', 'hoop', 'locker'].includes(kind) && part.material.color?.getHex() === 0xffffff;
         const material = part.material.clone();
         if (this.style.provenance) material.color.lerp(new THREE.Color(0xff00ff), 0.45);
         const mesh = new THREE.InstancedMesh(part.geometry, material, items.length);

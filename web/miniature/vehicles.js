@@ -204,6 +204,33 @@ export function cyclist(colour = 0x3a4a6b) {
   return group;
 }
 
+// A parked Dutch bike, no rider: two wheels, frame, saddle and handlebars.
+export function parkedBike(colour = 0x2a2c30) {
+  const group = new THREE.Group();
+  for (const x of [-0.55, 0.55]) group.add(box(0.7, 0.7, 0.06, palette.tyre, x, 0.35, 0, 0.3));
+  group.add(box(1.1, 0.07, 0.07, mat(colour), 0, 0.62, 0));
+  group.add(box(0.07, 0.45, 0.07, mat(colour), -0.2, 0.75, 0));
+  group.add(box(0.26, 0.06, 0.12, palette.black, -0.22, 0.98, 0));
+  group.add(box(0.08, 0.08, 0.55, palette.black, 0.45, 1.0, 0));
+  group.userData = { length: 1.8, width: 0.55 };
+  return group;
+}
+
+// Municipal bike-rack hoop and bike locker (fietstrommel).
+export function rackHoop() {
+  const group = new THREE.Group();
+  const steel = mat(0x7d8287);
+  for (const x of [-0.3, 0.3]) group.add(box(0.05, 0.8, 0.05, steel, x, 0.4, 0));
+  group.add(box(0.65, 0.05, 0.05, steel, 0, 0.8, 0));
+  return group;
+}
+
+export function bikeLocker() {
+  const group = new THREE.Group();
+  group.add(box(2.0, 1.25, 1.35, mat(0x3c4a44), 0, 0.625, 0, 0.45));
+  return group;
+}
+
 export const vehicleKinds = {
   tram: () => citadisTram(),
   metro: () => retMetro(),

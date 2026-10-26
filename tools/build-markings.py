@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw
 from scipy import ndimage
-from scipy.spatial import cKDTree
+from road_direction import RoadDirections
 
 DATA = Path("/Volumes/Josh Extreme Pro USB4 4TB/010")
 SOURCE = sorted(glob.glob(str(DATA / "sources/rotterdam-markings/*/")))[-1]
@@ -55,23 +55,10 @@ def features(kind):
 
 def load():
     lines, areas, points = features("lines"), features("areas"), features("points")
-    graph = json.load(open(DATA / "scene/v1/networks/cars.json"))
-    nodes = np.array([n[:2] for n in graph["nodes"]])
-    mids, dirs, twoway = [], [], []
-    for index, (a, b, *_rest) in enumerate(graph["edges"]):
-        pa, pb = nodes[a], nodes[b]
-        length = np.hypot(*(pb - pa))
-        if length < 0.5:
-            continue
-        for t in np.arange(0.5, length, 2.0):  # a sample every 2 m along each edge
-            mids.append(pa + (pb - pa) * t / length)
-            dirs.append((pb - pa) / length)
-            way = graph["ways"][graph["edge_ways"][index]]
-            twoway.append(bool(way["directions"][0] and way["directions"][1]))
-    return lines, areas, points, cKDTree(np.array(mids)), np.array(dirs), np.array(mids), np.array(twoway)
+    return lines, areas, points, RoadDirections()
 
 
-def draw_tile(tile, lines, areas, points, tree, dirs, mids, twoway):
+def draw_tile(tile, lines, areas, points, roads):
     x0, y0 = (int(v) for v in tile[1:].split("_y"))
     image = Image.new("L", (250 * PX, 250 * PX), 0)
     draw = ImageDraw.Draw(image)
@@ -83,17 +70,6 @@ def draw_tile(tile, lines, areas, points, tree, dirs, mids, twoway):
         vx, vy = -uy, ux
         corners = [(cx + ux * a * length / 2 + vx * b * width / 2, cy + uy * a * length / 2 + vy * b * width / 2) for a, b in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
         draw.polygon([px(*c) for c in corners], fill=255)
-
-    def road_at(x, y):
-        """Direction of the nearest road, flipped so traffic on the right of it passes (x, y)."""
-        distance, k = tree.query((x, y))
-        ux, uy = dirs[k]
-        if distance > 15:
-            return None
-        rx, ry = x - mids[k][0], y - mids[k][1]
-        if twoway[k] and ux * ry - uy * rx > 0:  # point lies left of this edge: it belongs to the opposite lane
-            ux, uy = -ux, -uy
-        return ux, uy
 
     drawn = {"lines": 0, "areas": 0, "points": 0}
     for f in lines:
@@ -161,7 +137,7 @@ def draw_tile(tile, lines, areas, points, tree, dirs, mids, twoway):
         if "x" not in geometry or not inside(geometry["x"], geometry["y"], 3):
             continue
         x, y = geometry["x"], geometry["y"]
-        road = road_at(x, y)
+        road = roads.at(x, y)
         if road is None:
             continue
         ux, uy = road
