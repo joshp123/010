@@ -1,30 +1,29 @@
 # Status
 
-Written by AI on 2026-10-26 by model Claude Opus 5.5. Kept under one page. Josh's words are in [requirements/steering.md](requirements/steering.md).
+Written by AI on 2026-10-26 by model Claude Opus 5.5. One page. Josh's words: [requirements/steering.md](requirements/steering.md). Design: [requirements/RFC-001-components.md](requirements/RFC-001-components.md).
 
-**Goal.** The whole gemeente Rotterdam as a pixel-art miniature at tiny.london quality or better, fast on a phone, alive: live transit, simulated cars and cyclists, weather, a lit night. Built from one reusable 3D model of the city.
+**Goal.** The whole gemeente Rotterdam as a living pixel-art miniature, true to the city in every object, better than tiny.london on truth, depth, light, craft, life and rotation, under a second on a phone.
 
-**Direction (decided 26 Oct).** The 3D scene is the master asset. The shipped map is the procedural pixel pyramid at four angles, rendered from the scene. An image-model paint pass ships nothing unless a square passes per-building colour and material checks; it is off the site. Walls with no photo get a façade from facts only (height, BAG year and use). Nothing that exists as data is drawn by a model.
+**Where it is.** RFC step 1 (invariants, city-wide) and step 2 (look decided on one tile) run in parallel. Nothing new is published until the POC tile passes; the live site is still version 22 (Delfshaven, old look).
 
-**Live at 010.jjpcodes.com.** Delfshaven to the Euromast, four angles, day and night. **Next deploy: the centre and Kop van Zuid** (Delfshaven to Kralingen, Centraal to the Wilhelminapier, 22 km²) with real trams, metros, buses, trains and ferries on their tracks, simulated cars and cyclists, weather, a metro cutaway and a share button.
+POC tile: **x90250_y436000, Aelbrechtskolk, Historic Delfshaven**. Candidate sheets in `renders/candidates/` (7.5 cm and 0.3 m, night, second bearing, 2026 aerial, tiny.london).
 
-| Piece | Owner | State |
+| Component | Owner | State |
 |---|---|---|
-| Scene, centre and Kop van Zuid: buildings with BAG facts, ground, rails | Sol | done |
-| Coarse model of the whole gemeente (1 km tiles) | Sol | done, not yet rendered |
-| Live transit feed (Worker, `/api/live`) and route geometry with tunnel depths | Sol | done |
-| Car and cycle networks from OpenStreetMap, one connected graph each | Sol | done |
-| Look, night, facts-only façades, living layer, share, cutaway | Opus | done |
-| Pyramids for the centre: four angles, day with depth, night | Opus | rendering |
+| C1 sources | Sol | Delfshaven, centre, gemeente coarse done; vehicle photos and datasheets running |
+| C2 scene | Sol | Delfshaven and centre (351 tiles) done; whole gemeente building; tree species and lamp types being joined |
+| C3 perception, C4 buildings | Sol | first tier-1 elevation done (windows match where the photo shows them); tier-2 parts library and drop-in tile running |
+| C4 vehicles | Opus | 3D models and sprite sheets; RET Citadis to be checked against 8+ current photos |
+| C5 renderer | Opus | multi-scale to 7.5 cm, measured tones, view-relative sun, highlights, night from registers |
+| C6 delivery | Opus | Worker with live feed and packed tiles built; not deployed |
+| C7 living layers | Opus, Sol | live transit on real tracks and tunnels, OSM car and cycle graphs, weather, cutaway |
+| C8 verification | Opus | candidate sheet, palette measurement, speed script; per-class checks in C3 |
 
-**Where I departed from the plan.** T2 uses the live renderer to capture exact windows, so one shader decides the look. Roofs take the 2026 aerial by planar projection. Vehicles are boxes placed in RD/NAP and hidden by depth tiles from the same render.
+**Measured compute.**
+- Renderer: 75 s per km² per bearing on this MacBook for all six levels down to 7.5 cm. Built-up gemeente (about 100 km²) × 4 bearings × day and night ≈ 17 hours.
+- Building assets: 30 to 55 s per image call. One call per tile-1 elevation; tier 2 batches many walls per call (being measured).
+- Hosting: Sites caps a deployment at 256 MiB. Delfshaven at full depth is 243 MB. The Sites docs say nothing about price or quota for the R2 binding, so whole-city deep zoom on R2 is parked until the picture passes.
 
-**Known problems.**
-- Sites serves everything with `max-age=0`; the service worker caches per deploy. Uploads take minutes per 100 MB; the whole gemeente will need packed tiles.
-- Rotterdam's road-marking register has no stated licence: kept, flagged.
-- Façade imagery: Mapillary covers the centre well but its API needs a token (an account); not used. Commons photos are selective. No open source covers façades fully.
-- Tunnel depths are a stated NAP −12 m, not surveyed. Ferries at NAP 0 without tide.
-- Cloudflare allows 20,000 files per deployment; depth tiles are packed four to a file. The whole gemeente will need packed tiles.
-- The networks came from NWB at first and missed a quarter of the streets; rebuilt from OpenStreetMap.
+**Known problems.** Walls are 2018 photo texture until the building assets land; ground floors hidden by trees in the 2018 photos are interpreted and marked; tunnel depth is an assumed NAP −12 m; Rotterdam's marking register states no licence.
 
-**Josh should look at next:** https://010.jjpcodes.com on his phone, day and night (☀/☾).
+**Josh should look at next:** nothing new until the POC tile passes.
