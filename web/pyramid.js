@@ -4,6 +4,7 @@
 // bearing. Rotating swaps to the next bearing around the same street.
 
 import { rdFromWgs84, wgs84FromRd } from './miniature/rd.js';
+import { LiveLayer, liveAxes } from './live.js';
 
 const params = new URLSearchParams(location.search);
 const dayBase = params.get('pyramid') ?? document.body.dataset.pyramid ?? './pyramids/t2';
@@ -70,6 +71,8 @@ function screenPoint(m, levelInfo, x, y, z) {
 }
 
 const tiles = new Map();
+const live = new LiveLayer(container, { depthBase: base });
+if (params.get('live') !== 'off') { live.loadNetworks('./networks'); live.start(); }
 let drawn = 0, firstViewMarked = false, generation = 0;
 
 async function draw() {
@@ -84,6 +87,15 @@ async function draw() {
   const viewLeft = Math.round(centre.sx - innerWidth / 2 / scale);
   const viewTop = Math.round(centre.sy + innerHeight / 2 / scale);
   world.style.transform = `scale(${scale}) translate(${-(viewLeft - levelInfo.left)}px, ${viewTop - levelInfo.top}px)`;
+  live.night = night;
+  live.depthBase = base;
+  live.setView({
+    m, levelInfo, level: zoom.level, bearing, scale, viewLeft, viewTop,
+    width: Math.ceil(innerWidth / scale), height: Math.ceil(innerHeight / scale),
+    axes: liveAxes(m.bearing, m.elevation_degrees),
+    centre: { x: state.x, y: state.y },
+    halfWidthMetres: Math.hypot(innerWidth, innerHeight) / 2 / scale * levelInfo.metres_per_pixel,
+  });
 
   const tile = m.tile;
   const firstColumn = Math.max(0, Math.floor((viewLeft - levelInfo.left) / tile));

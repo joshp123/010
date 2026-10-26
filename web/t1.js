@@ -32,8 +32,9 @@ if (params.get('capture') === '1') {
   // Offline renderer for the pyramid builder: load once, then render any
   // exact window on the global art-pixel grid and hand back a PNG.
   await miniature.loadAll();
-  window.renderWindow = (left, top, width, height, bearing, metresPerPixel, dataOverlay = false) => {
+  window.renderWindow = (left, top, width, height, bearing, metresPerPixel, dataOverlay = false, depthOutput = false) => {
     miniature.style.dataOverlay = dataOverlay;
+    miniature.style.depthOutput = depthOutput;
     miniature.setScreenWindow(left, top, width, height, bearing, metresPerPixel);
     miniature.render();
     return canvas.toDataURL('image/png');

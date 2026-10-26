@@ -310,6 +310,7 @@ const postFragment = `
   uniform float depthScale;
   uniform float metresPerPixel;
   uniform float saturation;
+  uniform float depthOutput;
   uniform vec3 background;
   in vec2 vUv;
   out vec4 fragColour;
@@ -339,6 +340,14 @@ const postFragment = `
     vec3 linearColour = texture(colourTexture, vUv).rgb;
     vec3 colour = mix(linearColour * 12.92, 1.055 * pow(linearColour, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, linearColour));
     float depth = depthAt(vUv);
+    if (depthOutput > 0.5) {
+      // Depth tiles for live layers: distance from the camera in 10 cm units
+      // above 1000 m, as 16 bits in red (high) and green (low). 0 = nothing.
+      if (depth >= depthScale * 0.999) { fragColour = vec4(0.0, 0.0, 0.0, 1.0); return; }
+      float units = clamp((depth - 1000.0) * 10.0, 1.0, 65535.0);
+      fragColour = vec4(floor(units / 256.0) / 255.0, mod(units, 256.0) / 255.0, 0.0, 1.0);
+      return;
+    }
     if (depth >= depthScale * 0.999) {
       // Background stays exactly the page colour, so tile edges never show.
       fragColour = vec4(background, 1.0);
@@ -449,6 +458,7 @@ export class Miniature {
         depthScale: { value: CAMERA_DISTANCE * 2 },
         metresPerPixel: { value: 0.3 },
         saturation: { value: 1.2 },
+        depthOutput: { value: 0 },
         background: { value: new THREE.Vector3(0xc9 / 255, 0xd3 / 255, 0xdd / 255) },
       },
     });
@@ -783,6 +793,7 @@ export class Miniature {
     u.outlines.value = this.style.outlines && !overlay ? 1 : 0;
     u.dither.value = this.style.dither;
     u.saturation.value = this.style.saturation;
+    u.depthOutput.value = this.style.depthOutput ? 1 : 0;
     this.renderer.setRenderTarget(this.colourTarget);
     this.renderer.render(this.scene, this.camera);
     this.scene.overrideMaterial = this.normalMaterial;
