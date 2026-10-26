@@ -18,7 +18,7 @@ export const defaultStyle = {
   elevationDegrees: 40,
   // Sun azimuth relative to the view: from behind the viewer and to one side,
   // so the walls facing the viewer read lit and their sides shaded at every bearing.
-  sunAzimuthRelative: 205,
+  sunAzimuthRelative: 225,
   sunElevationDegrees: 42,
   pixelArt: true,
   outlines: true,
@@ -29,10 +29,10 @@ export const defaultStyle = {
   facadeWindowRatio: 0.7,
   facadeRadius: 1.0,
   roofRadius: 1.0,
-  ambient: 0.85,
+  ambient: 1.05,
   saturation: 1.0,
-  midtones: 1.22,
-  sun: 4.8,
+  midtones: 1.0,
+  sun: 4.3,
 };
 
 // Screen axes for a bearing (degrees clockwise from north at the top of the
@@ -112,7 +112,7 @@ function withTilePosition(material, tileOffset, extraUniforms, fragmentPatch) {
         vWorldNormalMini = normalize(mat3(modelMatrix) * objectNormal);
         ${fragmentPatch.vertexBody ?? ''}`);
     shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', `#include <common>\nvarying vec2 vTileUv;\nvarying vec3 vWorldNormalMini;\nuniform float dataOverlay;\nuniform float night;\nuniform sampler2D lampTexture;\nvec3 overlayCode = vec3(0.0);\nvec3 nightGlow = vec3(0.0);\n${fragmentPatch.declarations}`)
+      .replace('#include <common>', `#include <common>\nvarying vec2 vTileUv;\nvarying vec3 vWorldNormalMini;\nuniform float dataOverlay;\nuniform float classOutput;\nuniform float night;\nuniform sampler2D lampTexture;\nvec3 overlayCode = vec3(0.0);\nfloat classCode = 0.0;\nvec3 nightGlow = vec3(0.0);\n${fragmentPatch.declarations}`)
       .replace('#include <map_fragment>', `#include <map_fragment>\n${fragmentPatch.body}`)
       .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += nightGlow * night;')
       .replace('#include <opaque_fragment>', `#include <opaque_fragment>\n${fragmentPatch.overlay ?? ''}`);
@@ -145,7 +145,7 @@ const kuwaharaGlsl = `
       return bestMean;
     }`;
 
-const overlayOutput = 'if (dataOverlay > 0.5) gl_FragColor = vec4(overlayCode, 1.0);';
+const overlayOutput = 'if (dataOverlay > 0.5) gl_FragColor = vec4(overlayCode, 1.0);\nif (classOutput > 0.5) gl_FragColor = vec4(classCode * 16.0 / 255.0, 0.0, 0.0, 1.0);';
 
 const groundPatch = {
   key: 'mini-ground',
@@ -231,9 +231,13 @@ const groundPatch = {
       groundColour = mix(groundColour, vec3(0.52, 0.62, 0.68), dash * 0.6);
     }
     diffuseColor.rgb = groundColour;
+    // Class codes for measurement (tools/measure-classes.py).
+    classCode = (surfaceClass == 1.0 || surfaceClass == 4.0) ? 1.0
+      : (surfaceClass == 3.0 || surfaceClass == 10.0 || surfaceClass == 15.0) ? 2.0
+      : (surfaceClass == 6.0 || surfaceClass == 7.0) ? 3.0 : surfaceClass == 8.0 ? 4.0 : surfaceClass == 2.0 ? 8.0 : 0.0;
     // Street lamps from the municipal register light pools on the ground.
     float lampLight = texture2D(lampTexture, groundUv).r;
-    nightGlow = groundColour * vec3(1.0, 0.80, 0.55) * lampLight * 1.9;
+    nightGlow = groundColour * vec3(1.0, 0.80, 0.55) * lampLight * 1.3;
     if (surfaceClass == 8.0) nightGlow += vec3(1.0, 0.75, 0.45) * lampLight * 0.25;`,
 };
 
@@ -271,14 +275,17 @@ const buildingPatch = {
     uniform float roofRadius;
     ${kuwaharaGlsl}`,
   body: `
+    classCode = vWorldNormalMini.y > 0.55 ? 6.0 : 7.0;
     if (orthoRoofs > 0.5 && vWorldNormalMini.y > 0.55) {
       vec2 roofUv = clamp(vTileUv, vec2(0.0002), vec2(0.9998));
-      diffuseColor.rgb = kuwahara(orthoTexture, roofUv, roofRadius / vec2(textureSize(orthoTexture, 0)));
+      vec3 roof = kuwahara(orthoTexture, roofUv, roofRadius / vec2(textureSize(orthoTexture, 0)));
+      // Aerial roofs are hazy; restore their colour (measured against tiny.london).
+      diffuseColor.rgb = clamp(mix(vec3(dot(roof, vec3(0.299, 0.587, 0.114))), roof, 1.9), 0.0, 1.0);
     } else {
       vec3 luma = vec3(0.299, 0.587, 0.114);
       #ifdef USE_MAP
         vec3 bestMean = kuwahara(map, vMapUv, facadeRadius / vec2(textureSize(map, 0)));
-        vec3 wall = 1.0 - pow(1.0 - bestMean, vec3(1.5));
+        vec3 wall = 1.0 - pow(1.0 - bestMean, vec3(2.0));
         diffuseColor.rgb = mix(vec3(dot(wall, luma)), wall, 1.3);
         // At night only real windows can light: places where the photo is
         // clearly darker than its own wall. Which ones are lit depends on the
@@ -340,6 +347,7 @@ const postFragment = `
   uniform float metresPerPixel;
   uniform float saturation;
   uniform float midtones;
+  uniform float rawOutput;
   uniform vec3 sunView;
   uniform float depthOutput;
   uniform vec3 background;
@@ -371,6 +379,7 @@ const postFragment = `
     // The scene renders into a linear buffer; everything below works in sRGB.
     vec3 linearColour = texture(colourTexture, vUv).rgb;
     vec3 colour = mix(linearColour * 12.92, 1.055 * pow(linearColour, vec3(1.0 / 2.4)) - 0.055, step(0.0031308, linearColour));
+    if (rawOutput > 0.5) { fragColour = vec4(linearColour, 1.0); return; } // codes, not colours
     float depth = depthAt(vUv);
     if (depthOutput > 0.5) {
       // Depth tiles for live layers: distance from the camera in 10 cm units
@@ -392,8 +401,11 @@ const postFragment = `
       vec3 normal = texture(normalTexture, vUv).xyz * 2.0 - 1.0;
       float silhouette = 0.0, crease = 0.0;
       vec2 offsets[4] = vec2[4](vec2(1, 0), vec2(-1, 0), vec2(0, 1), vec2(0, -1));
-      for (int i = 0; i < 4; i++) {
-        vec2 uv = vUv + offsets[i] * texel;
+      // Lines two pixels wide at deep zoom, so edges hold at 7.5 cm per pixel.
+      float reach = metresPerPixel < 0.1 ? 2.0 : 1.0;
+      for (int i = 0; i < 8; i++) {
+        if (i >= 4 && reach < 1.5) break;
+        vec2 uv = vUv + offsets[i - (i / 4) * 4] * texel * (i >= 4 ? 2.0 : 1.0);
         float neighbourDepth = depthAt(uv);
         // Outline belongs to the nearer surface, so objects keep their size.
         vec3 neighbourNormal = texture(normalTexture, uv).xyz * 2.0 - 1.0;
@@ -407,9 +419,9 @@ const postFragment = `
           crease = dot(normal, sunView) > dot(neighbourNormal, sunView) + 0.15 ? 2.0 : max(crease, 1.0);
         }
       }
-      if (silhouette > 0.5) colour = mix(colour * 0.35, vec3(0.08, 0.08, 0.11), 0.5);
+      if (silhouette > 0.5) colour = mix(colour * 0.3, vec3(0.07, 0.07, 0.10), 0.6);
       else if (crease > 1.5) colour = min(colour * 1.28 + 0.04, vec3(1.0));
-      else if (crease > 0.5) colour = colour * 0.78;
+      else if (crease > 0.5) colour = colour * 0.62;
     }
     float grey = dot(colour, vec3(0.299, 0.587, 0.114));
     colour = clamp(mix(vec3(grey), colour, saturation), 0.0, 1.0);
@@ -468,6 +480,7 @@ export class Miniature {
     this.normalMaterial = new THREE.MeshNormalMaterial();
     this.tiles = new Map();
     this.overlayUniform = { value: 0 };
+    this.classUniform = { value: 0 };
     this.nightUniform = { value: 0 };
     this.blankLamps = new THREE.DataTexture(new Float32Array(4), 1, 1, THREE.RGBAFormat, THREE.FloatType);
     this.blankLamps.needsUpdate = true;
@@ -498,7 +511,8 @@ export class Miniature {
         depthScale: { value: CAMERA_DISTANCE * 2 },
         metresPerPixel: { value: 0.3 },
         saturation: { value: 1.0 },
-        midtones: { value: 1.22 },
+        midtones: { value: 1.0 },
+        rawOutput: { value: 0 },
         sunView: { value: new THREE.Vector3(0, 0, 1) },
         depthOutput: { value: 0 },
         background: { value: new THREE.Vector3(0xc9 / 255, 0xd3 / 255, 0xdd / 255) },
@@ -521,16 +535,20 @@ export class Miniature {
     const group = new THREE.Group();
     group.position.copy(offset);
     const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
-    const optional = (promise) => promise.catch((error) => { console.warn(error.message ?? error); return null; });
+    // Retry a failed download twice before drawing the tile without that part;
+    // a missing part is logged, never silent.
+    const retrying = (start) => start().catch(() => new Promise((r) => setTimeout(r, 300)).then(start))
+      .catch(() => new Promise((r) => setTimeout(r, 1000)).then(start));
+    const optional = (promise) => promise.catch((error) => { console.warn(`tile ${tile.id}: ${error.message ?? error}`); return null; });
     const [ground, buildings, classTexture, orthoTexture, objects] = await Promise.all([
-      optional(loader.loadAsync(`${base}/ground.glb`)),
+      optional(retrying(() => loader.loadAsync(`${base}/ground.glb`))),
       // A tile's building assets (made by the asset maker, pipeline/assets)
       // replace its raw buildings when they exist.
       (this.assetBase ? loader.loadAsync(`${this.assetBase}/tiles/${tile.id}/buildings.glb`).catch(() => null) : Promise.resolve(null))
-        .then((assets) => assets ?? optional(loader.loadAsync(`${base}/buildings.glb`))),
-      optional(loadRawImageTexture(`${base}/classes.png`)),
-      optional(loadPhotoTexture(`${base}/ortho.jpg`)),
-      optional(fetch(`${base}/objects.json`).then((r) => (r.ok ? r.json() : null))),
+        .then((assets) => assets ?? optional(retrying(() => loader.loadAsync(`${base}/buildings.glb`)))),
+      optional(retrying(() => loadRawImageTexture(`${base}/classes.png`))),
+      optional(retrying(() => loadPhotoTexture(`${base}/ortho.jpg`))),
+      optional(retrying(() => fetch(`${base}/objects.json`).then((r) => { if (!r.ok) throw new Error(`objects.json ${r.status}`); return r.json(); }))),
     ]);
     const shared = {
       orthoTexture: { value: orthoTexture },
@@ -544,6 +562,7 @@ export class Miniature {
       classTexture: { value: classTexture },
       classColours: { value: this.classColours },
       dataOverlay: this.overlayUniform,
+      classOutput: this.classUniform,
       night: this.nightUniform,
       lampTexture: { value: this.blankLamps },
     };
@@ -658,13 +677,14 @@ export class Miniature {
         .replace('#include <common>', '#include <common>\nvarying vec3 vLeafWorld;')
         .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvLeafWorld = (modelMatrix * instanceMatrix * vec4(transformed, 1.0)).xyz;');
       shader.fragmentShader = shader.fragmentShader
-        .replace('#include <common>', '#include <common>\nuniform float dataOverlay;\nvarying vec3 vLeafWorld;')
+        .replace('#include <common>', '#include <common>\nuniform float dataOverlay;\nuniform float classOutput;\nvarying vec3 vLeafWorld;')
         .replace('#include <color_fragment>', `#include <color_fragment>
           // Leaf texture: 0.35 m cells, invisible once a pixel covers a cell.
           vec3 cell = floor(vLeafWorld / 0.35);
           float leaf = fract(sin(dot(cell, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
           diffuseColor.rgb *= 0.86 + 0.28 * leaf;`)
-        .replace('#include <opaque_fragment>', '#include <opaque_fragment>\nif (dataOverlay > 0.5) gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);');
+        .replace('#include <opaque_fragment>', '#include <opaque_fragment>\nif (dataOverlay > 0.5) gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);\nif (classOutput > 0.5) gl_FragColor = vec4(80.0 / 255.0, 0.0, 0.0, 1.0);');
+      shader.uniforms.classOutput = this.classUniform;
     };
     const clumps = [];
     const trunks = [];
@@ -684,14 +704,14 @@ export class Miniature {
       // a full crown rather than a few balls on a stick.
       const count = Math.max(6, Math.min(16, Math.round(crown * crown / 5)));
       clumps.push({ position: [x, crownBase + crownHeight * 0.5, z], size: crown * 0.8,
-        colour: [0.24 + 0.07 * tone, 0.44 + 0.08 * tone, 0.17 + 0.04 * tone] });
+        colour: [0.18 + 0.06 * tone, 0.34 + 0.07 * tone, 0.13 + 0.03 * tone] });
       for (let k = 0; k < count; k++) {
         // Points inside an ellipsoid crown, larger clumps near the middle.
         const a = random() * Math.PI * 2, r = Math.sqrt(random()) * 0.32, v = random();
         const size = crown * (0.5 - 0.15 * r) * (0.85 + 0.3 * random());
         clumps.push({
           position: [x + Math.cos(a) * r * crown, crownBase + crownHeight * (0.25 + 0.55 * v), z + Math.sin(a) * r * crown],
-          size, colour: [0.24 + 0.07 * tone + 0.04 * v, 0.44 + 0.08 * tone + 0.07 * v, 0.17 + 0.04 * tone],
+          size, colour: [0.19 + 0.06 * tone + 0.04 * v, 0.36 + 0.07 * tone + 0.07 * v, 0.14 + 0.03 * tone],
         });
       }
       trunks.push({ position: [x, tree.z, z], height: crownBase - tree.z + crownHeight * 0.3, radius: Math.max(0.15, crown * 0.035) });
@@ -724,7 +744,7 @@ export class Miniature {
     const size = 256, scale = size / TILE_METRES;
     const data = new Float32Array(size * size * 4);
     for (const lamp of lamps) {
-      const radius = Math.min(10, Math.max(3.5, 0.7 * (lamp.height_m ?? 6)));
+      const radius = Math.min(6, Math.max(2.5, 0.45 * (lamp.height_m ?? 6)));
       const cx = (lamp.x - tile.x_min) * scale, cy = (tile.y_min + TILE_METRES - lamp.y) * scale;
       const reach = radius * 2 * scale;
       if (cx < -reach || cy < -reach || cx > size + reach || cy > size + reach) continue;
@@ -942,21 +962,23 @@ export class Miniature {
 
   render() {
     const u = this.postMaterial.uniforms;
-    const overlay = Boolean(this.style.dataOverlay);
+    const overlay = Boolean(this.style.dataOverlay || this.style.classOutput);
+    this.classUniform.value = this.style.classOutput ? 1 : 0;
+    u.rawOutput.value = this.style.classOutput ? 1 : 0;
     const night = this.style.night ?? 0;
     this.nightUniform.value = night;
-    this.sun.intensity = this.style.sun * (1 - night) + 0.35 * night;
+    this.sun.intensity = this.style.sun * (1 - night) + 0.7 * night;
     this.sun.color.setHex(night > 0.5 ? 0x9fb4ff : 0xfff0d8);
-    this.hemisphere.intensity = this.style.ambient * (1 - night) + 0.85 * night;
-    this.hemisphere.color.setHex(night > 0.5 ? 0x3b4a78 : 0xdfe8ff);
-    this.hemisphere.groundColor.setHex(night > 0.5 ? 0x1a1d28 : 0x6f6450);
+    this.hemisphere.intensity = this.style.ambient * (1 - night) + 1.4 * night;
+    this.hemisphere.color.setHex(night > 0.5 ? 0x5a6ca0 : 0xdfe8ff);
+    this.hemisphere.groundColor.setHex(night > 0.5 ? 0x2c3346 : 0x6f6450);
     // Depth tiles leave out tree crowns: a tram under street trees should
     // still show on the map.
     this.scene.traverse((node) => {
       if (node.userData.nightOnly) node.visible = night > 0.5;
       if (node.userData.tree) node.visible = !this.style.depthOutput;
     });
-    this.overlayUniform.value = overlay ? 1 : 0;
+    this.overlayUniform.value = this.style.dataOverlay ? 1 : 0;
     const backgroundHex = overlay ? 0x000000 : night > 0.5 ? 0x161c2c : 0xc9d3dd;
     this.scene.background.set(backgroundHex);
     u.background.value.set(((backgroundHex >> 16) & 255) / 255, ((backgroundHex >> 8) & 255) / 255, (backgroundHex & 255) / 255);

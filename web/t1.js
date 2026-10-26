@@ -33,9 +33,10 @@ if (params.get('capture') === '1') {
   // exact window on the global art-pixel grid and hand back a PNG.
   // Large areas: load only the tiles each window needs (see ensureWindow).
   await miniature.loadAllLamps();
-  window.renderWindow = async (left, top, width, height, bearing, metresPerPixel, dataOverlay = false, depthOutput = false) => {
+  window.renderWindow = async (left, top, width, height, bearing, metresPerPixel, dataOverlay = false, depthOutput = false, classOutput = false) => {
     await miniature.ensureWindow(left, top, width, height, bearing, metresPerPixel);
     miniature.style.dataOverlay = dataOverlay;
+    miniature.style.classOutput = classOutput;
     miniature.style.depthOutput = depthOutput;
     miniature.setScreenWindow(left, top, width, height, bearing, metresPerPixel);
     miniature.render();

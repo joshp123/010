@@ -12,19 +12,20 @@ extra = sys.argv[3] if len(sys.argv) > 3 else ""
 DATA = "/Volumes/Josh Extreme Pro USB4 4TB/010"
 X, Y, BEARING = 90330, 436110, 35   # Aelbrechtskolk quay, tile x90250_y436000
 
-def render(page, mpp, size, bearing=BEARING):
+def render(page, mpp, size, bearing=BEARING, classes=False):
     sx, sy = page.evaluate(f"""() => {{ const m = window.miniature, p = m.worldFromRd({X}, {Y}, 3);
       const b = {bearing} * Math.PI / 180, e = m.style.elevationDegrees * Math.PI / 180;
       const right = [Math.cos(b), 0, Math.sin(b)], up = [Math.sin(b) * Math.sin(e), Math.cos(e), -Math.cos(b) * Math.sin(e)];
       return [p.x * right[0] + p.z * right[2], p.x * up[0] + p.y * up[1] + p.z * up[2]]; }}""")
     left, top = round(sx / mpp) - size // 2, round(sy / mpp) + size // 2
-    data = page.evaluate(f"window.renderWindow({left}, {top}, {size}, {size}, {bearing}, {mpp})")
+    data = page.evaluate(f"window.renderWindow({left}, {top}, {size}, {size}, {bearing}, {mpp}, false, false, {'true' if classes else 'false'})")
     return Image.open(io.BytesIO(base64.b64decode(data.split(",", 1)[1]))).convert("RGB")
 
 def page_for(p, light):
     browser = p.chromium.launch(args=["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"])
     page = browser.new_page(viewport={"width": 1100, "height": 1100})
     page.on("pageerror", lambda e: print("pageerror:", e))
+    page.on("console", lambda m: print("warning:", m.text) if m.type == "warning" and m.text.startswith("tile ") else None)
     page.goto(f"http://127.0.0.1:8790/t1.html?capture=1&area=core{light}{extra}")
     page.wait_for_function("window.captureReady === true", timeout=600000)
     return browser, page
@@ -34,6 +35,8 @@ with sync_playwright() as p:
     deep = render(page, 0.075, 1024)
     overview = render(page, 0.3, 1024)
     second = render(page, 0.075, 1024, 215)
+    deep_classes = render(page, 0.075, 1024, classes=True)
+    overview_classes = render(page, 0.3, 1024, classes=True)
     browser.close()
     browser, page = page_for(p, "&light=night")
     night = render(page, 0.3, 1024)
@@ -56,3 +59,24 @@ os.makedirs(f"{DATA}/renders/candidates", exist_ok=True)
 path = f"{DATA}/renders/candidates/{nn}-{name}.png"
 sheet.save(path)
 print(path)
+
+# Per-class numbers for this sheet beside tiny.london's (tools/measure-classes.py).
+import json, subprocess
+here = os.path.dirname(os.path.abspath(__file__))
+work = f"{DATA}/renders/candidates/{nn}-{name}"
+os.makedirs(work, exist_ok=True)
+numbers = {}
+for label, image, classes in [("deep", deep, deep_classes), ("overview", overview, overview_classes)]:
+    image.save(f"{work}/{label}.png"); classes.save(f"{work}/{label}-classes.png")
+    out = subprocess.run([sys.executable, f"{here}/measure-classes.py", f"{work}/{label}.png", "--codes", f"{work}/{label}-classes.png"], capture_output=True, text=True)
+    numbers[label] = json.loads(out.stdout)
+numbers["tiny.london"] = json.load(open(f"{DATA}/renders/reference/tiny-london-classes.json"))
+json.dump(numbers, open(f"{work}/numbers.json", "w"), indent=1)
+classes_order = ["roof", "wall", "asphalt", "paving", "grass", "tree", "water"]
+print("class      " + "".join(f"{k:>18}" for k in numbers))
+for c in classes_order + ["edge_step", "L_median_all"]:
+    row = []
+    for k in numbers:
+        v = numbers[k].get(c)
+        row.append(f"{'-':>18}" if v is None else (f"{v:>18}" if not isinstance(v, dict) else f"{'L%.2f C%.3f' % (v['L'], v['C']):>18}"))
+    print(f"{c:<11}" + "".join(row))
