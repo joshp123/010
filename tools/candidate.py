@@ -3,7 +3,7 @@
 # at 0.3 m per pixel, beside the 2026 aerial of the same place and tiny.london
 # at its closest zoom. Writes renders/candidates/<nn>-<name>.png.
 # Usage: python3 tools/candidate.py NN NAME [EXTRA_QUERY]
-import base64, io, math, os, sys
+import subprocess, base64, io, math, os, sys
 from PIL import Image, ImageDraw
 from playwright.sync_api import sync_playwright
 
@@ -20,6 +20,12 @@ def render(page, mpp, size, bearing=BEARING, classes=False):
     left, top = round(sx / mpp) - size // 2, round(sy / mpp) + size // 2
     data = page.evaluate(f"window.renderWindow({left}, {top}, {size}, {size}, {bearing}, {mpp}, false, false, {'true' if classes else 'false'})")
     return Image.open(io.BytesIO(base64.b64decode(data.split(",", 1)[1]))).convert("RGB")
+
+if "assets=./assets" in extra:
+    # Render from a settled copy: the asset pipeline may be rewriting tiles.
+    subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "snapshot-assets.py")], check=True)
+    extra = extra.replace("assets=./assets", "assets=./assets-snapshot")
+
 
 def page_for(p, light):
     browser = p.chromium.launch(args=["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"])

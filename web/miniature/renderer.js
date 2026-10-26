@@ -344,8 +344,13 @@ const buildingPatch = {
     // Model-made walls keep their own colours. Windows are the asset's dark panes.
     if (night > 0.0 && vWorldNormalMini.y < 0.3) {
       vec3 luma = vec3(0.299, 0.587, 0.114);
+      #ifdef ASSET_PANES
+      // The asset marks its glass panes in alpha (0 = glass): rooms light only there.
+      float darker = texture2D(map, vMapUv).a < 0.5 ? 0.0 : 1.0;
+      #else
       vec3 wallTone = texture2D(map, vMapUv, 4.0).rgb;
       float darker = dot(diffuseColor.rgb, luma) / max(0.03, dot(wallTone, luma));
+      #endif
       vec2 alongDir = normalize(vec2(-vWorldNormalMini.z, vWorldNormalMini.x) + 1e-5);
       float storeyH = (vFeature.z > 0.0 && vFeature.z < 1945.0) ? 3.3 : 3.0;
       vec2 room = vec2(floor(dot(vWorldPosMini.xz, alongDir) / 2.4), floor((vWorldPosMini.y - vFeature.x) / storeyH));
@@ -682,7 +687,7 @@ export class Miniature {
         if (source.userData?.asset) {
           // Asset textures are already clean and stylised: draw them as they are.
           material.map.minFilter = THREE.LinearMipmapLinearFilter;
-          material.defines = { ASSET_MATERIAL: '' };
+          material.defines = source.userData.pane_mask ? { ASSET_MATERIAL: '', ASSET_PANES: '' } : { ASSET_MATERIAL: '' };
           node.material = orthoTexture ? withTilePosition(material, offset, shared, buildingPatch) : material;
         } else {
           node.material = orthoTexture ? withTilePosition(material, offset, shared, buildingPatch) : material;
