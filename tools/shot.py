@@ -14,7 +14,7 @@ with sync_playwright() as p:
     page.on("console", lambda m: print("console:", m.type, m.text) if m.type in ("error", "warning") else None)
     page.on("pageerror", lambda e: print("pageerror:", e))
     started = time.time()
-    page.goto(url)
+    page.goto(url, wait_until="domcontentloaded")
     page.wait_for_function("window.mapReady === true || window.captureReady === true", timeout=120000)
     print(f"ready after {time.time() - started:.2f}s")
     page.screenshot(path=out)

@@ -95,6 +95,7 @@ async function draw() {
   const viewLeft = Math.round(centre.sx - innerWidth / 2 / scale);
   const viewTop = Math.round(centre.sy + innerHeight / 2 / scale);
   world.style.transform = `scale(${scale}) translate(${-(viewLeft - levelInfo.left)}px, ${viewTop - levelInfo.top}px)`;
+  if (compare) compare(m, levelInfo.metres_per_pixel / scale);
   live.night = night;
   live.depthBase = dayBase; // depth is the same by day and night
   live.setView({
@@ -143,6 +144,62 @@ async function draw() {
   }
   drawn++;
 }
+
+// Compare mode (?compare=1): the 2026 aerial photo of the same ground behind
+// a draggable divider, rotated to the map's bearing and foreshortened by the
+// camera angle so streets line up with the map. The photo is the evidence the
+// map is checked against.
+const compare = params.get('compare') === '1' ? (() => {
+  const pane = document.createElement('div');
+  pane.style.cssText = 'position:fixed;inset:0;overflow:hidden;pointer-events:none;background:#000;';
+  const ground = document.createElement('div'); // the ground plane, in aerial-tile pixels
+  ground.style.cssText = 'position:absolute;left:50%;top:50%;transform-origin:0 0;';
+  pane.appendChild(ground);
+  const handle = document.createElement('div');
+  handle.style.cssText = 'position:fixed;top:0;bottom:0;width:3px;background:#f4f1e6;box-shadow:0 0 0 1px #1c1e28;cursor:ew-resize;touch-action:none;z-index:5;';
+  document.body.append(pane, handle);
+  let split = 0.5;
+  const place = () => { pane.style.clipPath = `inset(0 0 0 ${split * 100}%)`; handle.style.left = `${split * innerWidth - 1}px`; };
+  handle.addEventListener('pointerdown', (e) => {
+    handle.setPointerCapture(e.pointerId);
+    const move = (m) => { split = Math.min(0.98, Math.max(0.02, m.clientX / innerWidth)); place(); };
+    handle.addEventListener('pointermove', move);
+    handle.addEventListener('pointerup', () => handle.removeEventListener('pointermove', move), { once: true });
+  });
+  place();
+  // PDOK aerial tiles in the Dutch grid (EPSG:28992 tile matrix set).
+  const ORIGIN_X = -285401.92, ORIGIN_Y = 903401.92, RES0 = 3440.64;
+  const images = new Map();
+  return (m, metresPerCss) => {
+    const z = Math.max(0, Math.min(15, Math.ceil(Math.log2(RES0 / metresPerCss))));
+    const res = RES0 / 2 ** z, tileMetres = res * 256;
+    const reach = Math.hypot(innerWidth, innerHeight) * metresPerCss / Math.sin(m.elevation_degrees * Math.PI / 180) * 0.6;
+    const c0 = Math.floor((state.x - reach - ORIGIN_X) / tileMetres), c1 = Math.floor((state.x + reach - ORIGIN_X) / tileMetres);
+    const r0 = Math.floor((ORIGIN_Y - state.y - reach) / tileMetres), r1 = Math.floor((ORIGIN_Y - state.y + reach) / tileMetres);
+    const wanted = new Set();
+    for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) {
+      const key = `${z}/${c}/${r}`;
+      wanted.add(key);
+      if (!images.has(key)) {
+        const img = new Image(256, 256);
+        img.src = `https://service.pdok.nl/hwh/luchtfotorgb/wmts/v1_0/2026_orthoHR/EPSG:28992/${key}.jpeg`;
+        img.dataset.z = z; img.dataset.c = c; img.dataset.r = r;
+        images.set(key, img);
+      }
+    }
+    for (const [key, img] of images) {
+      if (!wanted.has(key)) { img.remove(); images.delete(key); continue; }
+      // Position relative to the screen-centre ground point, in tile pixels.
+      const x = (ORIGIN_X + Number(img.dataset.c) * tileMetres - state.x) / res;
+      const y = (ORIGIN_Y - Number(img.dataset.r) * tileMetres - state.y) / -res;
+      img.style.cssText = `position:absolute;left:${x}px;top:${y}px;width:257px;height:257px;`;
+      if (img.parentNode !== ground) ground.appendChild(img);
+    }
+    // Tile pixels to CSS pixels, rotated to the bearing, foreshortened by the camera angle.
+    const k = res / metresPerCss;
+    ground.style.transform = `scale(1, ${Math.sin(m.elevation_degrees * Math.PI / 180)}) rotate(${-m.bearing}deg) scale(${k})`;
+  };
+})() : null;
 
 let scheduled = false;
 const requestDraw = () => { if (!scheduled) { scheduled = true; requestAnimationFrame(() => { scheduled = false; draw(); }); } };
