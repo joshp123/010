@@ -23,6 +23,7 @@ if (params.has('elevation')) style.elevationDegrees = Number(params.get('elevati
 if (params.get('style') === 'photo') Object.assign(style, { pixelArt: false, outlines: false });
 if (params.has('detail')) style.groundPhotoDetail = Number(params.get('detail'));
 if (params.get('light') === 'night') style.night = 1;
+if (params.has('hour')) style.nightHour = Number(params.get('hour'));
 for (const key of ['facadeRadius', 'roofRadius', 'ambient', 'sun', 'dither', 'elevationDegrees', 'saturation']) if (params.has(key)) style[key] = Number(params.get(key));
 if (params.get('roofs') === 'model') style.orthoRoofs = false;
 const miniature = new Miniature(canvas, { sceneBase, assetBase: params.get('assets'), manifest, area: params.get('area') ?? 'core', style });

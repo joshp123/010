@@ -43,6 +43,8 @@ export function buildPalette() {
   const neutralSteps = [0.12, 0.2, 0.28, 0.36, 0.44, 0.52, 0.6, 0.68, 0.76, 0.84, 0.91, 0.97];
   for (const lightness of neutralSteps) colours.push(oklchToSrgb(lightness, 0.01, 75));
   for (const lightness of neutralSteps) colours.push(oklchToSrgb(lightness, 0.012, 250));
+  // Warm greys at the chroma measured on Rotterdam's paving and asphalt (about 0.02 to 0.03).
+  for (const lightness of neutralSteps) colours.push(oklchToSrgb(lightness, 0.026, 70));
   return colours;
 }
 
@@ -53,16 +55,16 @@ export function buildPalette() {
 // a cool neutral 0.57, vegetation a deep green, water a muted slate blue.
 export const surfaceClassColours = {
   0: [0.50, 0.50, 0.49], // unknown
-  1: [0.36, 0.37, 0.38], // carriageway
+  1: [0.41, 0.395, 0.375], // carriageway (warm grey: 2026 aerial, sunlit median C 0.021)
   2: [0.55, 0.27, 0.24], // cycle path, red asphalt
-  3: [0.65, 0.645, 0.635], // pavement
-  4: [0.42, 0.425, 0.43], // parking
+  3: [0.69, 0.665, 0.62], // pavement (warm grey: 2026 aerial)
+  4: [0.46, 0.445, 0.425], // parking
   5: [0.42, 0.40, 0.38], // tram track bed
   6: [0.38, 0.49, 0.32], // grass
   7: [0.19, 0.33, 0.15], // shrubs
   8: [0.35, 0.45, 0.51], // water
   9: [0.56, 0.50, 0.40], // unpaved
-  10: [0.60, 0.595, 0.585], // paved yard or square
+  10: [0.63, 0.61, 0.575], // paved yard or square
   11: [0.45, 0.44, 0.43], // building footprint
   12: [0.47, 0.465, 0.46], // bridge deck
   13: [0.40, 0.39, 0.38], // quay wall

@@ -112,7 +112,7 @@ function withTilePosition(material, tileOffset, extraUniforms, fragmentPatch) {
         vWorldNormalMini = normalize(mat3(modelMatrix) * objectNormal);
         ${fragmentPatch.vertexBody ?? ''}`);
     shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', `#include <common>\nvarying vec2 vTileUv;\nvarying vec3 vWorldNormalMini;\nuniform float dataOverlay;\nuniform float classOutput;\nuniform float night;\nuniform sampler2D lampTexture;\nvec3 overlayCode = vec3(0.0);\nfloat classCode = 0.0;\nvec3 nightGlow = vec3(0.0);\n${fragmentPatch.declarations}`)
+      .replace('#include <common>', `#include <common>\nvarying vec2 vTileUv;\nvarying vec3 vWorldNormalMini;\nuniform float dataOverlay;\nuniform float classOutput;\nuniform float night;\nuniform float nightHour;\nuniform sampler2D lampTexture;\nvec3 overlayCode = vec3(0.0);\nfloat classCode = 0.0;\nvec3 nightGlow = vec3(0.0);\n${fragmentPatch.declarations}`)
       .replace('#include <map_fragment>', `#include <map_fragment>\n${fragmentPatch.body}`)
       .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += nightGlow * night;')
       .replace('#include <opaque_fragment>', `#include <opaque_fragment>\n${fragmentPatch.overlay ?? ''}`);
@@ -237,6 +237,7 @@ const groundPatch = {
       : (surfaceClass == 6.0 || surfaceClass == 7.0) ? 3.0 : surfaceClass == 8.0 ? 4.0 : surfaceClass == 2.0 ? 8.0 : 0.0;
     // Street lamps from the municipal register light pools on the ground.
     float lampLight = texture2D(lampTexture, groundUv).r;
+    if (surfaceClass == 6.0 || surfaceClass == 7.0) lampLight *= 0.35; // grass and shrubs take little light
     nightGlow = groundColour * vec3(1.0, 0.80, 0.55) * lampLight * 1.3;
     if (surfaceClass == 8.0) nightGlow += vec3(1.0, 0.75, 0.45) * lampLight * 0.25;`,
 };
@@ -262,6 +263,10 @@ const buildingPatch = {
       if (!isWindow) return vec3(0.0);
       bool shopFloor = abs(use - 3.0) < 0.5 && heightAboveBase < 4.5;
       float share = shopFloor ? 0.7 : abs(use - 2.0) < 0.5 ? 0.08 : abs(use - 1.0) < 0.5 ? 0.24 : use < 0.5 ? 0.16 : 0.06;
+      // Through the night fewer rooms are lit: homes from evening to small
+      // hours, shops close at 21:00, offices empty.
+      float evening = 1.0 - smoothstep(22.0, 26.0, nightHour < 12.0 ? nightHour + 24.0 : nightHour);
+      share *= shopFloor ? step(nightHour < 12.0 ? 99.0 : nightHour, 21.0) * 0.9 + 0.1 : 0.25 + 0.75 * evening;
       if (pick > share) return vec3(0.0);
       vec3 warm = mix(vec3(1.0, 0.72, 0.38), vec3(1.0, 0.86, 0.60), fract(pick * 7.13));
       vec3 cool = vec3(0.80, 0.88, 1.0);
@@ -482,6 +487,7 @@ export class Miniature {
     this.overlayUniform = { value: 0 };
     this.classUniform = { value: 0 };
     this.nightUniform = { value: 0 };
+    this.nightHourUniform = { value: 21 }; // local hour the night is drawn for
     this.blankLamps = new THREE.DataTexture(new Float32Array(4), 1, 1, THREE.RGBAFormat, THREE.FloatType);
     this.blankLamps.needsUpdate = true;
     this.view = { x: 0, y: 0, bearing: 0, metresPerPixel: 0.3, width: 256, height: 256 };
@@ -564,6 +570,7 @@ export class Miniature {
       dataOverlay: this.overlayUniform,
       classOutput: this.classUniform,
       night: this.nightUniform,
+      nightHour: this.nightHourUniform,
       lampTexture: { value: this.blankLamps },
     };
     if (classTexture) {
@@ -744,14 +751,14 @@ export class Miniature {
     const size = 256, scale = size / TILE_METRES;
     const data = new Float32Array(size * size * 4);
     for (const lamp of lamps) {
-      const radius = Math.min(6, Math.max(2.5, 0.45 * (lamp.height_m ?? 6)));
+      const radius = Math.min(4.5, Math.max(1.5, 0.35 * (lamp.height_m ?? 6))); // a short pool under the mast
       const cx = (lamp.x - tile.x_min) * scale, cy = (tile.y_min + TILE_METRES - lamp.y) * scale;
       const reach = radius * 2 * scale;
       if (cx < -reach || cy < -reach || cx > size + reach || cy > size + reach) continue;
       for (let y = Math.max(0, Math.floor(cy - reach)); y < Math.min(size, Math.ceil(cy + reach)); y++) {
         for (let x = Math.max(0, Math.floor(cx - reach)); x < Math.min(size, Math.ceil(cx + reach)); x++) {
           const d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy) / scale / radius;
-          data[(y * size + x) * 4] += Math.exp(-d * d * 2.2);
+          data[(y * size + x) * 4] += Math.exp(-d * d * 3.0);
         }
       }
     }
@@ -967,6 +974,7 @@ export class Miniature {
     u.rawOutput.value = this.style.classOutput ? 1 : 0;
     const night = this.style.night ?? 0;
     this.nightUniform.value = night;
+    this.nightHourUniform.value = this.style.nightHour ?? 21;
     this.sun.intensity = this.style.sun * (1 - night) + 0.7 * night;
     this.sun.color.setHex(night > 0.5 ? 0x9fb4ff : 0xfff0d8);
     this.hemisphere.intensity = this.style.ambient * (1 - night) + 1.4 * night;
