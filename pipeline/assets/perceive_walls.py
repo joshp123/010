@@ -53,7 +53,7 @@ PROMPT='''You are the C3 perception stage for a faithful miniature of Rotterdam.
 The first sheet contains labelled rectified wall photos (2018). Grey is absent evidence. Each wall photo has its OWN displayed pixel coordinates, origin top-left excluding labels/margins, dimensions in inventory. The second sheet has building-labelled north-up aerial crops (2026); a cyan polygon outlines the target roof. A photo texture can be a neighbour's roof, sky, a tree or stretched UVs rather than this facade. Mark such regions occluded/nonfacade, never invent openings. Shadows do not establish concealed detail. Observe ONLY visible actual windows/doors/shop fronts. An opening means ONE COMPLETE OUTER MASONRY APERTURE including its entire frame: paired casements, sash lights, transoms and glazing panes inside one common frame are ONE opening, never separate openings. Separate apertures have visible masonry between them. Fit the outer frame boundary, not the glass alone. Inventory EVERY visible aperture, including small basement and attic apertures; do not substitute a typical count or pattern. Occluded detail is interpreted, never verified.
 Return one object per requested wall_id in a JSON array, exactly:
 {"wall_id":"...","material":"brick|plaster/render|concrete|glass curtain wall|metal cladding|timber|stone|other","wall_boxes":[[left,top,right,bottom]],"window_rows":[{"window_indices":[0,1]}],"openings":[{"kind":"window|door|shop_front","box":[left,top,right,bottom],"type":"sash_with_transom|casement|modern|other|unknown","partial":false}],"cornice":{"type":"none|plain|moulded|dentilled|unknown","box":null},"gable_type":"none|stepped|pointed|bell|neck|other|unknown","occlusion_polygons":[[[x,y],[x,y],[x,y]]],"unusable_photo":false,"roof":{"type":"pitched_tile|flat_bitumen|metal|green|glass|other|unknown","equipment":[{"kind":"solar_panel|skylight|dormer|chimney|ventilation|other","box":[left,top,right,bottom]}]},"note":"uncertainty only"}
-All boxes/polygons integer PIXELS relative to that wall's displayed photo, except roof equipment boxes relative to that building's displayed aerial crop. Small wall_boxes must sample visibly exposed main wall material, excluding windows, trim, vegetation, roofs and heavy shadow. If not distinguishable material=other and wall_boxes=[]. Occlusion polygons must cover ALL trees, foreground objects, roof bleed, nonfacade regions and invisible detail within wall geometry. If the whole photo is not a usable facade set unusable_photo=true, material=other, openings=[], wall_boxes=[]. Do not guess under trees. Include every directly visible opening, not a typical rhythm. Partial openings keep visible extents and partial=true. Do not invent hidden halves or extrapolated rows. Cornice box only if visible. Roof equipment comes ONLY from the aerial, unknown if roof is outside coverage/ambiguous. Roof outline positions are not equipment. Empty/unknown is an honest result. No colours or metric dimensions: code measures texels and transforms positions.
+All boxes/polygons integer PIXELS relative to that wall's displayed photo, except roof equipment boxes relative to that building's displayed aerial crop. Small wall_boxes must sample visibly exposed main wall material, excluding windows, trim, vegetation, roofs and heavy shadow. If the material class cannot be distinguished use material=other, but still select small clearly exposed main-wall colour patches when their surface can be separated from glazing, trim and vegetation. Class uncertainty does not make a visible colour unknown. Use wall_boxes=[] only when no uncontaminated main-wall colour patch is visible. Occlusion polygons must cover ALL trees, foreground objects, roof bleed, nonfacade regions and invisible detail within wall geometry. If the whole photo is not a usable facade set unusable_photo=true, material=other, openings=[], wall_boxes=[]. Do not guess under trees. Include every directly visible opening, not a typical rhythm. Partial openings keep visible extents and partial=true. Do not invent hidden halves or extrapolated rows. Cornice box only if visible. Roof equipment comes ONLY from the aerial, unknown if roof is outside coverage/ambiguous. Roof outline positions are not equipment. Empty/unknown is an honest result. No colours or metric dimensions: code measures texels and transforms positions.
 '''
 
 def sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
@@ -261,7 +261,7 @@ def run_batch(walls, model):
     byid={r['wall_id']:r for r in results}
     if len(results)!=len(walls) or set(byid)!=set(w['wall_id'] for w in walls):raise ValueError('Wall reply missing, duplicate or unexpected ids')
     for wall,inv in zip(walls,inventory):
-        provenance={'model':model,'date':datetime.now(timezone.utc).isoformat(),'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest(),'reference_hashes':{str(ROOT/'scene/v1/tiles'/TILE/'ortho.jpg'):sha(ROOT/'scene/v1/tiles'/TILE/'ortho.jpg'),wall['reference']:sha(wall['reference']),str(directory/'walls.jpg'):sha(directory/'walls.jpg'),str(directory/'roofs.jpg'):sha(directory/'roofs.jpg')},'response':str(answer),'call':str(timing),'method':'model_contact_sheet_v1','opening_definition':'outer_masonry_aperture_v2'}
+        provenance={'model':model,'date':datetime.now(timezone.utc).isoformat(),'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest(),'reference_hashes':{str(ROOT/'scene/v1/tiles'/TILE/'ortho.jpg'):sha(ROOT/'scene/v1/tiles'/TILE/'ortho.jpg'),wall['reference']:sha(wall['reference']),str(directory/'walls.jpg'):sha(directory/'walls.jpg'),str(directory/'roofs.jpg'):sha(directory/'roofs.jpg')},'response':str(answer),'call':str(timing),'method':'model_contact_sheet_v1','opening_definition':'outer_masonry_aperture_v2','material_selection_revision':'independent-class-colour-v2'}
         measure(wall,byid[wall['wall_id']],inv,provenance)
     with PUBLISH_LOCK:
         publish()
@@ -291,7 +291,7 @@ def reuse_completed(model):
             else:
                 wall=byid.get(old_id)
             if wall is None or cached_hash!=wall['reference_sha256']: continue
-            provenance={'model':model,'date':call.get('ended_at'),'prompt_sha256':call.get('prompt_sha256'),'reference_hashes':{str(ROOT/'scene/v1/tiles'/TILE/'ortho.jpg'):sha(ROOT/'scene/v1/tiles'/TILE/'ortho.jpg'),wall['reference']:sha(wall['reference']),str(folder/'walls.jpg'):sha(folder/'walls.jpg'),str(folder/'roofs.jpg'):sha(folder/'roofs.jpg')},'response':str(path),'call':str(folder/'call.json'),'method':'model_contact_sheet_v1','original_wall_id':old_id,'opening_definition':'outer_masonry_aperture_v2' if 'ONE COMPLETE OUTER MASONRY APERTURE' in (folder/'prompt.txt').read_text() else 'original_v1'}
+            provenance={'model':model,'date':call.get('ended_at'),'prompt_sha256':call.get('prompt_sha256'),'reference_hashes':{str(ROOT/'scene/v1/tiles'/TILE/'ortho.jpg'):sha(ROOT/'scene/v1/tiles'/TILE/'ortho.jpg'),wall['reference']:sha(wall['reference']),str(folder/'walls.jpg'):sha(folder/'walls.jpg'),str(folder/'roofs.jpg'):sha(folder/'roofs.jpg')},'response':str(path),'call':str(folder/'call.json'),'method':'model_contact_sheet_v1','original_wall_id':old_id,'opening_definition':'outer_masonry_aperture_v2' if 'ONE COMPLETE OUTER MASONRY APERTURE' in (folder/'prompt.txt').read_text() else 'original_v1','material_selection_revision':'independent-class-colour-v2' if 'Class uncertainty does not make a visible colour unknown' in (folder/'prompt.txt').read_text() else 'class-coupled-v1'}
             measure(wall,results[old_id],inv,provenance)
             count+=1
     return count
@@ -313,6 +313,7 @@ def main():
     parser.add_argument('--max-calls',type=int)
     parser.add_argument('--start',type=int,default=0)
     parser.add_argument('--workers',type=int,default=1)
+    parser.add_argument('--review-material',action='store_true',help='Reassess visible wall colours formerly omitted only because material class was unknown')
     parser.add_argument('--only-triaged',action='store_true',help='Measure only source views classified as visibly usable facades')
     parser.add_argument('--review-openings','--review-observed',action='store_true')
     parser.add_argument('--index-cache-geometry',action='store_true')
@@ -352,6 +353,14 @@ def main():
             if valid_measurement(wall):
                 fact=load(path)
                 if (fact.get('openings') or fact.get('rejected_openings') or fact.get('material_sample_boxes_px')) and fact['provenance'].get('opening_definition')!='outer_masonry_aperture_v2':
+                    eligible.append(wall)
+    if args.review_material:
+        eligible=[]
+        for wall in ALL_WALLS:
+            if valid_measurement(wall):
+                fact=load(Path(wall['reference']).parent/'perception.json')
+                if (not fact.get('mean_colour_srgb') and fact.get('visible_evidence_fraction',0)>.2
+                        and fact.get('provenance',{}).get('material_selection_revision')!='independent-class-colour-v2'):
                     eligible.append(wall)
     triage_path=WORK/'source-triage.json'
     triage=load(triage_path).get('walls',{}) if triage_path.exists() else {}
