@@ -272,10 +272,12 @@ const buildingPatch = {
         // photographed one. Construction year sets the storey height and the
         // material family; use sets the window rhythm. Nothing else is drawn.
         float base = vFeature.x, height = vFeature.y, year = vFeature.z, use = vFeature.w;
-        vec3 wall = year <= 0.0 ? vec3(0.74, 0.70, 0.64)
-          : year < 1945.0 ? vec3(0.58, 0.36, 0.28)
-          : year < 1975.0 ? vec3(0.73, 0.71, 0.65)
-          : vec3(0.67, 0.60, 0.53);
+        // Year only hints at material, so the tones stay close to neutral:
+        // a wrong guess must read as plain, never as a confident colour.
+        vec3 wall = year <= 0.0 ? vec3(0.74, 0.71, 0.66)
+          : year < 1945.0 ? vec3(0.66, 0.58, 0.53)
+          : year < 1975.0 ? vec3(0.74, 0.72, 0.67)
+          : vec3(0.70, 0.67, 0.62);
         float storey = (year > 0.0 && year < 1945.0) ? 3.3 : 2.9;
         float h = vWorldPosMini.y - base;
         vec2 along2 = normalize(vec2(-vWorldNormalMini.z, vWorldNormalMini.x));
@@ -639,38 +641,86 @@ export class Miniature {
     return mesh;
   }
 
-  // Nearest tiles first, a few at a time, so the view under the user arrives
-  // before bandwidth is spent on tiles off screen.
   // Light from every lamp in the register, as a 1 m raster per tile, so a
   // lamp near a tile edge lights both tiles. Pools scale with mast height.
-  buildLampLight() {
+  lampLightFor(tile, lamps) {
     const size = 256, scale = size / TILE_METRES;
-    const lamps = [];
-    for (const record of this.tiles.values()) lamps.push(...(record.lamps ?? []));
-    for (const [id, record] of this.tiles) {
-      const tile = this.tileList.find((t) => t.id === id);
-      const data = new Float32Array(size * size * 4);
-      for (const lamp of lamps) {
-        const radius = Math.min(10, Math.max(3.5, 0.7 * (lamp.height_m ?? 6)));
-        const cx = (lamp.x - tile.x_min) * scale, cy = (tile.y_min + TILE_METRES - lamp.y) * scale;
-        const reach = radius * 2 * scale;
-        if (cx < -reach || cy < -reach || cx > size + reach || cy > size + reach) continue;
-        for (let y = Math.max(0, Math.floor(cy - reach)); y < Math.min(size, Math.ceil(cy + reach)); y++) {
-          for (let x = Math.max(0, Math.floor(cx - reach)); x < Math.min(size, Math.ceil(cx + reach)); x++) {
-            const d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy) / scale / radius;
-            data[(y * size + x) * 4] += Math.exp(-d * d * 2.2);
-          }
+    const data = new Float32Array(size * size * 4);
+    for (const lamp of lamps) {
+      const radius = Math.min(10, Math.max(3.5, 0.7 * (lamp.height_m ?? 6)));
+      const cx = (lamp.x - tile.x_min) * scale, cy = (tile.y_min + TILE_METRES - lamp.y) * scale;
+      const reach = radius * 2 * scale;
+      if (cx < -reach || cy < -reach || cx > size + reach || cy > size + reach) continue;
+      for (let y = Math.max(0, Math.floor(cy - reach)); y < Math.min(size, Math.ceil(cy + reach)); y++) {
+        for (let x = Math.max(0, Math.floor(cx - reach)); x < Math.min(size, Math.ceil(cx + reach)); x++) {
+          const d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy) / scale / radius;
+          data[(y * size + x) * 4] += Math.exp(-d * d * 2.2);
         }
       }
-      for (let i = 0; i < data.length; i += 4) data[i] = 1 - Math.exp(-data[i] * 1.1);
-      const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat, THREE.FloatType);
-      texture.flipY = false;
-      texture.magFilter = THREE.LinearFilter;
-      texture.needsUpdate = true;
-      record.shared.lampTexture.value = texture;
+    }
+    for (let i = 0; i < data.length; i += 4) data[i] = 1 - Math.exp(-data[i] * 1.1);
+    const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat, THREE.FloatType);
+    texture.flipY = false;
+    texture.magFilter = THREE.LinearFilter;
+    texture.needsUpdate = true;
+    return texture;
+  }
+
+  buildLampLight() {
+    const lamps = this.allLamps ?? [...this.tiles.values()].flatMap((record) => record.lamps ?? []);
+    for (const [id, record] of this.tiles) {
+      record.shared.lampTexture.value = this.lampLightFor(this.tileList.find((t) => t.id === id), lamps);
     }
   }
 
+  // For offline rendering of large areas: every lamp up front (small), so any
+  // tile's light can be built when it is loaded.
+  async loadAllLamps() {
+    const lists = await Promise.all(this.tileList.map((tile) => fetch(`${this.sceneBase}/tiles/${tile.id}/objects.json`)
+      .then((r) => (r.ok ? r.json() : null)).then((o) => o?.lamps ?? []).catch(() => [])));
+    this.allLamps = lists.flat();
+  }
+
+  // Ground-plane RD footprint of a screen window, for choosing which tiles to load.
+  windowFootprint(left, top, width, height, bearing, metresPerPixel) {
+    const { right, up, view } = screenAxes(bearing, this.style.elevationDegrees);
+    const xs = [], ys = [];
+    for (const [sx, sy] of [[left, top], [left + width, top], [left, top - height], [left + width, top - height]]) {
+      for (const z of [-8, 80]) {
+        const p = right.clone().multiplyScalar(sx * metresPerPixel).add(up.clone().multiplyScalar(sy * metresPerPixel));
+        p.add(view.clone().multiplyScalar((z - p.y) / view.y));
+        xs.push(p.x + this.origin.x); ys.push(this.origin.y - p.z);
+      }
+    }
+    return { xMin: Math.min(...xs), xMax: Math.max(...xs), yMin: Math.min(...ys), yMax: Math.max(...ys) };
+  }
+
+  // Load the tiles a window needs (plus a margin for shadows and tall
+  // buildings) and drop the ones far from it, so memory stays bounded.
+  async ensureWindow(left, top, width, height, bearing, metresPerPixel, margin = 120) {
+    const f = this.windowFootprint(left, top, width, height, bearing, metresPerPixel);
+    const needed = this.tileList.filter((t) => t.x_min + TILE_METRES > f.xMin - margin && t.x_min < f.xMax + margin
+      && t.y_min + TILE_METRES > f.yMin - margin && t.y_min < f.yMax + margin);
+    const neededIds = new Set(needed.map((t) => t.id));
+    for (const [id, record] of this.tiles) {
+      if (neededIds.has(id) || this.tiles.size <= 40) continue;
+      this.scene.remove(record.group);
+      record.group.traverse((node) => {
+        node.geometry?.dispose();
+        for (const m of [node.material].flat()) { if (!m) continue; m.map?.dispose(); m.dispose(); }
+      });
+      for (const key of ['orthoTexture', 'classTexture', 'lampTexture', 'featureTexture']) record.shared[key]?.value?.dispose?.();
+      this.tiles.delete(id);
+    }
+    await Promise.all(needed.map((tile) => this.loadTile(tile)));
+    for (const tile of needed) {
+      const record = this.tiles.get(tile.id);
+      if (!record.lampReady) { record.shared.lampTexture.value = this.lampLightFor(tile, this.allLamps ?? record.lamps); record.lampReady = true; }
+    }
+  }
+
+  // Nearest tiles first, a few at a time, so the view under the user arrives
+  // before bandwidth is spent on tiles off screen.
   async loadAll(onTile = () => {}, near = { x: this.view.x, y: this.view.y }, concurrency = 3) {
     const distance = (t) => Math.hypot(t.x_min + TILE_METRES / 2 - near.x, t.y_min + TILE_METRES / 2 - near.y);
     const queue = [...this.tileList].sort((a, b) => distance(a) - distance(b));

@@ -31,8 +31,10 @@ window.miniature = miniature;
 if (params.get('capture') === '1') {
   // Offline renderer for the pyramid builder: load once, then render any
   // exact window on the global art-pixel grid and hand back a PNG.
-  await miniature.loadAll();
-  window.renderWindow = (left, top, width, height, bearing, metresPerPixel, dataOverlay = false, depthOutput = false) => {
+  // Large areas: load only the tiles each window needs (see ensureWindow).
+  await miniature.loadAllLamps();
+  window.renderWindow = async (left, top, width, height, bearing, metresPerPixel, dataOverlay = false, depthOutput = false) => {
+    await miniature.ensureWindow(left, top, width, height, bearing, metresPerPixel);
     miniature.style.dataOverlay = dataOverlay;
     miniature.style.depthOutput = depthOutput;
     miniature.setScreenWindow(left, top, width, height, bearing, metresPerPixel);

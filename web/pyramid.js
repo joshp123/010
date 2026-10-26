@@ -73,7 +73,7 @@ function screenPoint(m, levelInfo, x, y, z) {
 const tiles = new Map();
 const live = new LiveLayer(container, { depthBase: base });
 window.live = live;
-if (params.get('live') !== 'off') { live.loadNetworks('./networks'); live.start(); }
+if (params.get('live') !== 'off') live.start();
 let drawn = 0, firstViewMarked = false, generation = 0;
 
 async function draw() {
@@ -128,6 +128,9 @@ async function draw() {
     firstViewMarked = true;
     document.getElementById('first-view')?.remove();
     if (!performance.getEntriesByName('map-first-view').length) performance.mark('map-first-view');
+    // Simulated traffic needs the road and cycle networks; fetch them only
+    // once the map is on screen so they never delay the first view.
+    if (params.get('live') !== 'off') setTimeout(() => live.loadNetworks('./networks'), 300);
     performance.mark('map-complete');
     window.mapReady = true;
   }
