@@ -20,6 +20,7 @@ parser.add_argument("url", help="capture page, e.g. http://127.0.0.1:8790/t1.htm
 parser.add_argument("out")
 parser.add_argument("--bearings", type=float, nargs="+", default=[0])
 parser.add_argument("--quality", type=int, default=90)
+parser.add_argument("--depth", action="store_true", help="also write depth tiles for live layers (levels 0 and 1)")
 args = parser.parse_args()
 
 with sync_playwright() as p:
@@ -55,6 +56,14 @@ with sync_playwright() as p:
                     image = image.crop((MARGIN, MARGIN, MARGIN + TILE, MARGIN + TILE))
                     image.save(os.path.join(folder, str(level), f"{column}_{row}.webp"), quality=args.quality, method=6)
                     count += 1
+                    if args.depth and level <= 1:
+                        # Depth for live layers, at half resolution: enough to
+                        # hide a vehicle behind a building at pixel-art scale.
+                        data = page.evaluate(f"window.renderWindow({left}, {top}, {size}, {size}, {bearing}, {mpp}, false, true)")
+                        depth = Image.open(io.BytesIO(base64.b64decode(data.split(",", 1)[1]))).convert("RGB")
+                        depth = depth.crop((MARGIN, MARGIN, MARGIN + TILE, MARGIN + TILE)).resize((TILE // 2, TILE // 2), Image.NEAREST)
+                        os.makedirs(os.path.join(folder, f"d{level}"), exist_ok=True)
+                        depth.save(os.path.join(folder, f"d{level}", f"{column}_{row}.png"), optimize=True)
         with open(os.path.join(folder, "meta.json"), "w") as f:
             json.dump(meta, f, indent=1)
         print(f"bearing {bearing}: {count} tiles in {time.time() - started:.1f}s")
