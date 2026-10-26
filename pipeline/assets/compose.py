@@ -182,6 +182,11 @@ def compose(facts_root, assets_root, walls_path, tile=TILE):
     walls_document = read_json(walls_path)
     walls = walls_document['walls']
     facts, fact_paths = {}, []
+    fact_snapshot_hashes = {}
+    def read_fact_document(path):
+        content=path.read_bytes()
+        fact_snapshot_hashes[str(path)]=hashlib.sha256(content).hexdigest()
+        return json.loads(content)
     walls_by_id = {wall['wall_id']:wall for wall in walls}
     bag_ids = {str(w['bag_id']) for w in walls}
     for bag in sorted(bag_ids):
@@ -190,7 +195,7 @@ def compose(facts_root, assets_root, walls_path, tile=TILE):
         if not path.exists():
             continue
         fact_paths.append(path)
-        document = read_json(path)
+        document = read_fact_document(path)
         if document.get('tile') != tile:
             continue
         for fact in document.get('walls', []):
@@ -219,7 +224,7 @@ def compose(facts_root, assets_root, walls_path, tile=TILE):
         donor_files = list((facts_root/'buildings').glob('*.json'))+list((facts_root/'work').glob('*/buildings/*.json'))
         donors=[]
         for path in donor_files:
-            document=read_json(path)
+            document=read_fact_document(path)
             donor_tile=document.get('tile')
             if not donor_tile or donor_tile==tile:
                 continue
@@ -250,7 +255,7 @@ def compose(facts_root, assets_root, walls_path, tile=TILE):
         for key in ('photo', 'evidence_mask', 'occlusion_mask'):
             if fact.get(key) and Path(fact[key]).exists():
                 paths.add(Path(fact[key]))
-    hashes = {str(p): sha(p) for p in sorted(paths)}
+    hashes = {str(p): fact_snapshot_hashes.get(str(p)) or sha(p) for p in sorted(paths)}
     fingerprint = hashlib.sha256(json.dumps({'tile': tile, 'hashes': hashes,
                                              'groups': groups, 'source_review':source_review}, sort_keys=True).encode()).hexdigest()
     directory = assets_root/'tiles'/tile/'composed'
@@ -261,6 +266,8 @@ def compose(facts_root, assets_root, walls_path, tile=TILE):
             print(json.dumps({'status': 'unchanged', 'input_fingerprint': fingerprint, 'counts': previous['counts']}))
             return previous
     directory.mkdir(parents=True, exist_ok=True)
+    atlas_directory=directory/fingerprint[:16]
+    atlas_directory.mkdir(exist_ok=True)
     building_samples = defaultdict(list)
     for wall in walls:
         fact = facts.get(wall['wall_id'], {})
@@ -283,11 +290,11 @@ def compose(facts_root, assets_root, walls_path, tile=TILE):
     def save_atlas(canvas=None):
         canvas = atlas if canvas is None else canvas
         canvas_size = canvas.size
-        path = directory/f'wall-atlas-{atlas_index:03d}.webp'
+        path = atlas_directory/f'wall-atlas-{atlas_index:03d}.webp'
         pending_path = path.with_name('.'+path.name+'.pending')
         canvas.save(pending_path, 'WEBP', lossless=True, method=4)
         pending_path.replace(path)
-        mask_path = directory/f'wall-atlas-{atlas_index:03d}-interpreted.png'
+        mask_path = atlas_directory/f'wall-atlas-{atlas_index:03d}-interpreted.png'
         pending_mask = mask_path.with_name('.'+mask_path.name+'.pending')
         Image.new('L',canvas_size,255).save(pending_mask,'PNG')
         pending_mask.replace(mask_path)
@@ -375,6 +382,9 @@ def compose(facts_root, assets_root, walls_path, tile=TILE):
                          'triangle_routes': dict(sum((Counter(r['triangle_route_counts']) for r in records), Counter())),
                          'openings_drawn': sum(len(r['details']['openings_drawn']) for r in records),
                          'colour_routes': dict(Counter(r['details']['colour_route'] for r in records))}}
+    for path,recorded in hashes.items():
+        if path in fact_snapshot_hashes and sha(path)!=recorded:
+            raise RuntimeError(f'Facts changed during composition; rerun: {path}')
     pending_output = output.with_name('.composition.json.pending')
     pending_output.write_text(json.dumps(result, indent=2)+'\n')
     pending_output.replace(output)
