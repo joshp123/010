@@ -3,16 +3,15 @@
 # inside Codex, so each Codex run takes a batch of elevation groups and makes
 # one image call per group with the shared prompt (pipeline/assets/prompts/
 # elevation.md) and the group's rectified 2018 photo as the reference.
-# Usage: python3 tools/generate-elevations.py TILE MIN_M2 RUNS BATCH [--dry-run]
+# Usage: python3 tools/generate-elevations.py TILE[,TILE...] MIN_M2 RUNS BATCH [--dry-run]
 import json, os, subprocess, sys, time
 from pathlib import Path
 
-tile, min_area, runs, batch = sys.argv[1], float(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])
+tiles, min_area, runs, batch = sys.argv[1].split(","), float(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])
 DATA = Path("/Volumes/Josh Extreme Pro USB4 4TB/010")
 REPO = DATA / "repo"
 CODEX = "/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex"
-inventory = json.load(open(DATA / f"assets/v1/tiles/{tile}/elevations-inventory.json"))
-groups = inventory["elevations"] if isinstance(inventory, dict) and "elevations" in inventory else inventory
+groups = [g for tile in tiles for g in json.load(open(DATA / f"assets/v1/tiles/{tile}/elevations-inventory.json"))["elevations"]]
 todo = []
 # Work on the 3:2 chunks made by tools/chunk-elevations.py, largest elevations first.
 for g in sorted(groups, key=lambda g: -g.get("area_m2", 0)):

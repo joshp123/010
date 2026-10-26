@@ -209,6 +209,7 @@ const groundPatch = {
     // Markings and kerbs are narrower than an art pixel at coarse zoom; drawing
     // them there turns roads into speckle. Rails stay: they are the tram network.
     if (texelsPerArtPixel > 3.5) lines &= 3;
+    if (texelsPerArtPixel < 1.6) lines &= ~3; // deep zoom: rails are geometry (railMesh)
     if ((lines & 8) != 0) {
       // Kerb: the stone on the pavement side, the gutter's shadow on the road side.
       bool roadSide = surfaceClass == 1.0 || surfaceClass == 2.0 || surfaceClass == 4.0;
@@ -557,6 +558,7 @@ export class Miniature {
       optional(retrying(() => loadPhotoTexture(`${base}/ortho.jpg`))),
       optional(retrying(() => fetch(`${base}/objects.json`).then((r) => { if (!r.ok) throw new Error(`objects.json ${r.status}`); return r.json(); }))),
     ]);
+    const rails = await fetch(`${base}/rails.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const shared = {
       orthoTexture: { value: orthoTexture },
       orthoRoofs: { value: this.style.orthoRoofs ? 1 : 0 },
@@ -620,12 +622,89 @@ export class Miniature {
       group.add(buildings.scene);
     }
     if (objects?.trees?.length) group.add(this.treeMesh(objects.trees, offset));
+    if (rails?.tracks?.length && ground && classTexture) group.add(this.railMesh(rails.tracks, offset, ground.scene, classTexture));
     group.updateMatrixWorld(true);
     this.scene.add(group);
     const record = { group, shared, lamps: objects?.lamps ?? [] };
     if (objects?.lamps?.length) group.add(this.lampHeads(objects.lamps, offset));
     this.tiles.set(tile.id, record);
     return record;
+  }
+
+  // Track as built: two steel rails at standard gauge on every BGT track
+  // centreline, at the ground's height; on ballast beds also concrete
+  // sleepers every 0.6 m. In-street (grooved) rail sits flush with no
+  // sleepers; grass beds hide their sleepers. Drawn only at deep zoom, where a
+  // rail is a pixel or more wide; coarser levels draw rails from the raster.
+  railMesh(tracks, offset, groundScene, classTexture) {
+    const canvas = new OffscreenCanvas(classTexture.image.width, classTexture.image.height);
+    const context = canvas.getContext('2d', { willReadFrequently: true });
+    context.drawImage(classTexture.image, 0, 0);
+    const classes = context.getImageData(0, 0, canvas.width, canvas.height).data;
+    const tileX = offset.x + this.origin.x, tileY = this.origin.y - offset.z; // tile south-west corner in RD
+    const classAt = (x, y) => {
+      const px = Math.floor((x - tileX) / TILE_METRES * canvas.width), py = Math.floor((tileY + TILE_METRES - y) / TILE_METRES * canvas.height);
+      if (px < 0 || py < 0 || px >= canvas.width || py >= canvas.height) return 0;
+      return classes[(py * canvas.width + px) * 4];
+    };
+    (groundScene.parent ?? groundScene).updateMatrixWorld(true); // ray in world coordinates
+    const meshes = [];
+    groundScene.traverse((n) => { if (n.isMesh) meshes.push(n); });
+    const ray = new THREE.Raycaster();
+    const down = new THREE.Vector3(0, -1, 0);
+    const heightAt = (x, y) => {
+      ray.set(new THREE.Vector3(x - this.origin.x, 200, -(y - this.origin.y)), down);
+      const hit = ray.intersectObjects(meshes, false)[0];
+      return hit ? hit.point.y : null;
+    };
+    const railParts = [], sleeperParts = [];
+    let lastHeight = 3;
+    for (const track of tracks) {
+      const pts = track.points;
+      for (let i = 1; i < pts.length; i++) {
+        const [x0, y0] = pts[i - 1], [x1, y1] = pts[i];
+        const dx = x1 - x0, dy = y1 - y0, length = Math.hypot(dx, dy);
+        if (length < 0.05) continue;
+        const ux = dx / length, uy = dy / length, nx = -uy, ny = ux;
+        for (let s = 0; s < length; s += 1.0) {
+          const step = Math.min(1.0, length - s), mx = x0 + ux * (s + step / 2), my = y0 + uy * (s + step / 2);
+          const h = heightAt(mx, my) ?? lastHeight; lastHeight = h;
+          const surface = classAt(mx, my);
+          const street = surface === 1 || surface === 3 || surface === 10 || surface === 15;
+          for (const side of [-0.7175, 0.7175]) {
+            railParts.push({ x: mx + nx * side, y: my + ny * side, z: h, angle: Math.atan2(uy, ux), length: step, street });
+          }
+          const ballast = surface === 5 || surface === 14 || surface === 16;
+          if (ballast) {
+            for (let k = 0.3; k < step; k += 0.6) {
+              const sx = x0 + ux * (s + k), sy = y0 + uy * (s + k);
+              sleeperParts.push({ x: sx, y: sy, z: h, angle: Math.atan2(uy, ux) });
+            }
+          }
+        }
+      }
+    }
+    const group = new THREE.Group();
+    const unit = new THREE.BoxGeometry(1, 1, 1);
+    const matrix = new THREE.Matrix4(), quaternion = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0);
+    const place = (mesh, parts, size) => parts.forEach((part, i) => {
+      quaternion.setFromAxisAngle(up, part.angle);
+      const [w, hgt, d] = size(part);
+      matrix.compose(new THREE.Vector3(part.x - tileX, part.z + hgt / 2, -(part.y - tileY)), quaternion, new THREE.Vector3(w, hgt, d));
+      mesh.setMatrixAt(i, matrix);
+    });
+    const rails = new THREE.InstancedMesh(unit, new THREE.MeshLambertMaterial({ color: 0x6f7378 }), railParts.length);
+    place(rails, railParts, (p) => [p.length + 0.02, p.street ? 0.03 : 0.16, p.street ? 0.09 : 0.07]);
+    rails.castShadow = true; rails.receiveShadow = true;
+    group.add(rails);
+    if (sleeperParts.length) {
+      const sleepers = new THREE.InstancedMesh(unit, new THREE.MeshLambertMaterial({ color: 0x8f8a82 }), sleeperParts.length);
+      place(sleepers, sleeperParts, () => [0.24, 0.08, 2.4]);
+      sleepers.receiveShadow = true;
+      group.add(sleepers);
+    }
+    group.userData.deepOnly = true; // tile-local coordinates, like the tile's other parts
+    return group;
   }
 
   // Per-building facts for the shader: base height, height, construction
@@ -671,58 +750,129 @@ export class Miniature {
     return mesh;
   }
 
-  // Each tree is drawn from the register: crown width and height set the
-  // size, and the crown is a cluster of leaf clumps (more for bigger trees)
-  // placed by a hash of the tree's position, so a tree always looks the same.
-  // A trunk shows below the crown; leaf texture appears only at deep zoom.
+  // Each tree is drawn from the register: its genus sets crown shape and leaf
+  // colour (Rotterdam's street trees are mostly lime, maple, plane, ash,
+  // cherry, willow and poplar), its height and crown width set the size. The
+  // crown is a cluster of leaf clumps placed by a hash of the tree's position,
+  // so a tree always looks the same; leaf texture appears only at deep zoom.
+  static treeForm(genus) {
+    // ratio: crown width / height when the register has no crown width.
+    // autumn: the colour leaves turn; turn and bare: day of year the colour
+    // starts and the last leaves fall (typical for the Randstad).
+    const forms = {
+      Tilia: { ratio: 0.75, colour: [0.24, 0.42, 0.18], autumn: [0.72, 0.62, 0.20], turn: 272, bare: 315 },
+      Acer: { ratio: 0.8, colour: [0.26, 0.44, 0.17], autumn: [0.82, 0.48, 0.14], turn: 282, bare: 322 },
+      Platanus: { ratio: 0.9, colour: [0.30, 0.45, 0.20], autumn: [0.62, 0.50, 0.24], turn: 295, bare: 340 },
+      Fraxinus: { ratio: 0.8, colour: [0.29, 0.44, 0.20], autumn: [0.55, 0.56, 0.24], turn: 280, bare: 305, airy: true },
+      Prunus: { ratio: 0.9, colour: [0.31, 0.38, 0.20], autumn: [0.74, 0.34, 0.16], turn: 262, bare: 305 },
+      Malus: { ratio: 0.9, colour: [0.30, 0.42, 0.20], autumn: [0.66, 0.52, 0.20], turn: 275, bare: 315 },
+      Pyrus: { ratio: 0.55, colour: [0.27, 0.43, 0.19], autumn: [0.70, 0.30, 0.16], turn: 290, bare: 330 },
+      Salix: { ratio: 1.0, colour: [0.42, 0.52, 0.30], autumn: [0.66, 0.64, 0.30], turn: 295, bare: 335, airy: true },
+      Populus: { ratio: 0.45, colour: [0.30, 0.47, 0.22], autumn: [0.78, 0.66, 0.22], turn: 280, bare: 315, columnar: true },
+      Alnus: { ratio: 0.6, colour: [0.20, 0.36, 0.16], autumn: [0.36, 0.40, 0.18], turn: 300, bare: 330 },
+      Betula: { ratio: 0.55, colour: [0.38, 0.50, 0.24], autumn: [0.80, 0.68, 0.24], turn: 272, bare: 312, airy: true },
+      Quercus: { ratio: 0.95, colour: [0.23, 0.38, 0.15], autumn: [0.56, 0.40, 0.18], turn: 295, bare: 350 },
+      Ulmus: { ratio: 0.85, colour: [0.25, 0.41, 0.17], autumn: [0.70, 0.60, 0.22], turn: 285, bare: 320 },
+      Robinia: { ratio: 0.75, colour: [0.36, 0.48, 0.22], autumn: [0.72, 0.66, 0.26], turn: 280, bare: 312, airy: true },
+      Aesculus: { ratio: 0.85, colour: [0.21, 0.38, 0.15], autumn: [0.62, 0.38, 0.16], turn: 255, bare: 300 },
+      Carpinus: { ratio: 0.6, colour: [0.25, 0.43, 0.18], autumn: [0.74, 0.60, 0.22], turn: 288, bare: 325 },
+      Liquidambar: { ratio: 0.55, colour: [0.25, 0.40, 0.17], autumn: [0.64, 0.18, 0.18], turn: 290, bare: 335 },
+      Gleditsia: { ratio: 0.85, colour: [0.40, 0.52, 0.24], autumn: [0.82, 0.72, 0.22], turn: 272, bare: 300, airy: true },
+      Styphnolobium: { ratio: 0.9, colour: [0.30, 0.45, 0.20], autumn: [0.70, 0.64, 0.24], turn: 290, bare: 325 },
+      Pinus: { ratio: 0.6, colour: [0.15, 0.30, 0.18], conifer: true, evergreen: true },
+      Chamaecyparis: { ratio: 0.35, colour: [0.14, 0.30, 0.20], conifer: true, columnar: true, evergreen: true },
+      Taxus: { ratio: 0.8, colour: [0.12, 0.26, 0.15], evergreen: true },
+      Ilex: { ratio: 0.6, colour: [0.13, 0.28, 0.14], evergreen: true },
+    };
+    return forms[genus] ?? { ratio: 0.8, colour: [0.25, 0.42, 0.18], autumn: [0.66, 0.56, 0.22], turn: 280, bare: 320 };
+  }
+
+  // Leaves on a deciduous tree on a day of the year: share still on the tree
+  // (0 bare, 1 full) and how far the colour has turned (0 green, 1 autumn).
+  static leafState(form, dayOfYear) {
+    if (form.evergreen) return { leaves: 1, turned: 0 };
+    const leafOut = 105, fullLeaf = 135; // mid-April to mid-May
+    if (dayOfYear < leafOut || dayOfYear >= form.bare) return { leaves: 0, turned: 1 };
+    if (dayOfYear < fullLeaf) return { leaves: (dayOfYear - leafOut) / (fullLeaf - leafOut), turned: 0 };
+    if (dayOfYear < form.turn) return { leaves: 1, turned: 0 };
+    const t = (dayOfYear - form.turn) / (form.bare - form.turn);
+    return { leaves: Math.min(1, 1.6 * (1 - t)), turned: Math.min(1, t * 1.7) };
+  }
+
   treeMesh(trees, offset) {
     const group = new THREE.Group();
     const clump = new THREE.IcosahedronGeometry(0.5, 1);
-    const leaves = new THREE.MeshLambertMaterial({ color: 0xffffff, flatShading: true });
-    leaves.onBeforeCompile = (shader) => {
-      shader.uniforms.dataOverlay = this.overlayUniform;
-      shader.vertexShader = shader.vertexShader
-        .replace('#include <common>', '#include <common>\nvarying vec3 vLeafWorld;')
-        .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvLeafWorld = (modelMatrix * instanceMatrix * vec4(transformed, 1.0)).xyz;');
-      shader.fragmentShader = shader.fragmentShader
-        .replace('#include <common>', '#include <common>\nuniform float dataOverlay;\nuniform float classOutput;\nvarying vec3 vLeafWorld;')
-        .replace('#include <color_fragment>', `#include <color_fragment>
-          // Leaf texture: 0.35 m cells, invisible once a pixel covers a cell.
-          vec3 cell = floor(vLeafWorld / 0.35);
-          float leaf = fract(sin(dot(cell, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
-          diffuseColor.rgb *= 0.86 + 0.28 * leaf;`)
-        .replace('#include <opaque_fragment>', '#include <opaque_fragment>\nif (dataOverlay > 0.5) gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);\nif (classOutput > 0.5) gl_FragColor = vec4(80.0 / 255.0, 0.0, 0.0, 1.0);');
-      shader.uniforms.classOutput = this.classUniform;
+    // Leaf clumps get a leaf-sized texture; twig clumps (bare crowns) are a
+    // stable screen of fine cells so the street shows through.
+    const crownMaterial = (twigs) => {
+      const material = new THREE.MeshLambertMaterial({ color: 0xffffff, flatShading: true });
+      material.customProgramCacheKey = () => (twigs ? 'tree-twigs' : 'tree-leaves');
+      material.onBeforeCompile = (shader) => {
+        shader.uniforms.dataOverlay = this.overlayUniform;
+        shader.uniforms.classOutput = this.classUniform;
+        shader.vertexShader = shader.vertexShader
+          .replace('#include <common>', '#include <common>\nvarying vec3 vLeafWorld;')
+          .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvLeafWorld = (modelMatrix * instanceMatrix * vec4(transformed, 1.0)).xyz;');
+        shader.fragmentShader = shader.fragmentShader
+          .replace('#include <common>', '#include <common>\nuniform float dataOverlay;\nuniform float classOutput;\nvarying vec3 vLeafWorld;')
+          .replace('#include <color_fragment>', `#include <color_fragment>
+            vec3 cell = floor(vLeafWorld / ${twigs ? '0.14' : '0.35'});
+            float leaf = fract(sin(dot(cell, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
+            ${twigs ? 'if (leaf > 0.38) discard;' : ''}
+            diffuseColor.rgb *= 0.86 + 0.28 * leaf;`)
+          .replace('#include <opaque_fragment>', '#include <opaque_fragment>\nif (dataOverlay > 0.5) gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);\nif (classOutput > 0.5) gl_FragColor = vec4(80.0 / 255.0, 0.0, 0.0, 1.0);');
+      };
+      return material;
     };
-    const clumps = [];
-    const trunks = [];
+    const leaves = crownMaterial(false);
+    const date = this.style.date ? new Date(this.style.date) : new Date();
+    const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 86400000);
+    const clumps = [], trunks = [], branches = [], twigs = [];
     for (const tree of trees) {
+      const form = Miniature.treeForm(tree.genus);
       const height = Math.max(3, tree.height_m ?? 8);
-      // The register leaves crown width at 0 for some trees; then estimate it
-      // from height (a typical Dutch street tree is about 0.6 as wide as tall).
-      const crown = Math.max(2.5, tree.crown_m >= 1.5 ? tree.crown_m : height * 0.6);
+      // The register leaves crown width at 0 for some trees; then use the genus's proportions.
+      const crown = Math.max(2.0, tree.crown_m >= 1.5 ? tree.crown_m : height * form.ratio);
       const x = tree.x - this.origin.x - offset.x;
       const z = -(tree.y - this.origin.y) - offset.z;
-      const crownHeight = Math.min(height * 0.85, Math.max(crown * 1.1, height * 0.65));
+      const crownHeight = form.columnar ? height * 0.85 : Math.min(height * 0.8, Math.max(crown * 1.05, height * 0.55));
+      const width = form.columnar ? Math.min(crown, height * 0.3) : crown;
       const crownBase = tree.z + height - crownHeight;
       let seed = Math.abs(Math.sin(tree.x * 12.9898 + tree.y * 78.233) * 43758.5453) % 1;
       const random = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
-      const tone = random();
-      // One central mass plus clumps around it, so even a young tree reads as
-      // a full crown rather than a few balls on a stick.
-      const count = Math.max(6, Math.min(16, Math.round(crown * crown / 5)));
-      clumps.push({ position: [x, crownBase + crownHeight * 0.5, z], size: crown * 0.8,
-        colour: [0.18 + 0.06 * tone, 0.34 + 0.07 * tone, 0.13 + 0.03 * tone] });
-      for (let k = 0; k < count; k++) {
-        // Points inside an ellipsoid crown, larger clumps near the middle.
-        const a = random() * Math.PI * 2, r = Math.sqrt(random()) * 0.32, v = random();
-        const size = crown * (0.5 - 0.15 * r) * (0.85 + 0.3 * random());
-        clumps.push({
-          position: [x + Math.cos(a) * r * crown, crownBase + crownHeight * (0.25 + 0.55 * v), z + Math.sin(a) * r * crown],
-          size, colour: [0.19 + 0.06 * tone + 0.04 * v, 0.36 + 0.07 * tone + 0.07 * v, 0.14 + 0.03 * tone],
-        });
+      const tone = random() - 0.5;
+      // Trees of one kind do not turn on the same day: up to a week either way.
+      const { leaves, turned } = Miniature.leafState(form, dayOfYear + Math.round((random() - 0.5) * 14));
+      const turnedHere = Math.min(1, Math.max(0, turned + (random() - 0.5) * 0.4));
+      const [r, g, b] = form.colour.map((c, i) => c + ((form.autumn ?? form.colour)[i] - c) * turnedHere);
+      const colourAt = (v) => [r * (1 + 0.15 * tone) + 0.05 * v, g * (1 + 0.12 * tone) + 0.07 * v, b + 0.03 * v];
+      if (form.conifer) {
+        // Stacked clumps narrowing upward.
+        for (let k = 0; k < 6; k++) {
+          const t = k / 5;
+          clumps.push({ position: [x, crownBase + crownHeight * (0.1 + 0.8 * t), z], size: width * (1 - 0.75 * t), colour: colourAt(0.2 * t) });
+        }
+      } else {
+        if (leaves > 0.75) clumps.push({ position: [x, crownBase + crownHeight * 0.5, z], size: Math.min(width, crownHeight) * (form.airy ? 0.6 : 0.8), colour: colourAt(0) });
+        const count = Math.max(6, Math.min(16, Math.round(width * crownHeight / 5)));
+        for (let k = 0; k < count; k++) {
+          const a = random() * Math.PI * 2, rr = Math.sqrt(random()) * 0.32, v = random();
+          const size = Math.min(width, crownHeight) * (form.airy ? 0.38 : 0.5 - 0.15 * rr) * (0.85 + 0.3 * random());
+          if (leaves < 0.9 && k % 2 === 0) twigs.push({ position: [x + Math.cos(a) * rr * width * 0.8, crownBase + crownHeight * (0.35 + 0.45 * v), z + Math.sin(a) * rr * width * 0.8], size: Math.min(width, crownHeight) * 0.62 });
+          if (random() < leaves) clumps.push({ position: [x + Math.cos(a) * rr * width, crownBase + crownHeight * (0.25 + 0.55 * v), z + Math.sin(a) * rr * width], size: size * (0.6 + 0.4 * leaves), colour: colourAt(v) });
+        }
+        // Main limbs show as the leaves fall: from the top of the trunk up and
+        // out to the edge of the crown.
+        if (leaves < 0.9) {
+          const limbs = 5 + Math.floor(random() * 3);
+          for (let k = 0; k < limbs; k++) {
+            const a = (k / limbs + random() * 0.15) * Math.PI * 2;
+            const out = width * (0.3 + 0.15 * random()), up = crownHeight * (0.6 + 0.3 * random());
+            branches.push({ from: [x, crownBase + crownHeight * 0.15, z], to: [x + Math.cos(a) * out, crownBase + crownHeight * 0.15 + up, z + Math.sin(a) * out], radius: Math.max(0.05, width * 0.015) });
+          }
+        }
       }
-      trunks.push({ position: [x, tree.z, z], height: crownBase - tree.z + crownHeight * 0.3, radius: Math.max(0.15, crown * 0.035) });
+      trunks.push({ position: [x, tree.z, z], height: crownBase - tree.z + crownHeight * (leaves < 0.9 ? 0.75 : 0.3), radius: Math.max(0.15, width * 0.035) });
     }
     const leafMesh = new THREE.InstancedMesh(clump, leaves, clumps.length);
     const matrix = new THREE.Matrix4(), unit = new THREE.Quaternion(), colour = new THREE.Color();
@@ -741,9 +891,34 @@ export class Miniature {
     trunkMesh.castShadow = true;
     trunkMesh.userData.tree = true;
     group.add(leafMesh, trunkMesh);
+    if (branches.length) {
+      const limbMesh = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.5, 1, 1, 4).translate(0, 0.5, 0), trunkMesh.material, branches.length);
+      const up = new THREE.Vector3(0, 1, 0), along = new THREE.Vector3(), turn = new THREE.Quaternion();
+      branches.forEach((limb, i) => {
+        along.set(limb.to[0] - limb.from[0], limb.to[1] - limb.from[1], limb.to[2] - limb.from[2]);
+        const length = along.length();
+        turn.setFromUnitVectors(up, along.normalize());
+        matrix.compose(new THREE.Vector3(...limb.from), turn, new THREE.Vector3(limb.radius * 2, length, limb.radius * 2));
+        limbMesh.setMatrixAt(i, matrix);
+      });
+      limbMesh.castShadow = true;
+      limbMesh.userData.tree = true;
+      group.add(limbMesh);
+    }
+    if (twigs.length) {
+      const twigMesh = new THREE.InstancedMesh(clump, crownMaterial(true), twigs.length);
+      twigs.forEach((t, i) => {
+        matrix.compose(new THREE.Vector3(...t.position), unit, new THREE.Vector3(t.size, t.size * 0.85, t.size));
+        twigMesh.setMatrixAt(i, matrix);
+        twigMesh.setColorAt(i, colour.setHex(0x7a6d60));
+      });
+      twigMesh.userData.tree = true;
+      group.add(twigMesh);
+    }
     group.userData.tree = true;
     return group;
   }
+
 
 
   // Light from every lamp in the register, as a 1 m raster per tile, so a
@@ -986,6 +1161,7 @@ export class Miniature {
     this.scene.traverse((node) => {
       if (node.userData.nightOnly) node.visible = night > 0.5;
       if (node.userData.tree) node.visible = !this.style.depthOutput;
+      if (node.userData.deepOnly) node.visible = (this.screenWindow?.metresPerPixel ?? 1) < 0.16;
     });
     this.overlayUniform.value = this.style.dataOverlay ? 1 : 0;
     const backgroundHex = overlay ? 0x000000 : night > 0.5 ? 0x161c2c : 0xc9d3dd;

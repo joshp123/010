@@ -24,6 +24,7 @@ if (params.get('style') === 'photo') Object.assign(style, { pixelArt: false, out
 if (params.has('detail')) style.groundPhotoDetail = Number(params.get('detail'));
 if (params.get('light') === 'night') style.night = 1;
 if (params.has('hour')) style.nightHour = Number(params.get('hour'));
+if (params.has('date')) style.date = params.get('date'); // trees in that day's season
 if (params.has('assetFile')) style.assetFile = params.get('assetFile');
 for (const key of ['facadeRadius', 'roofRadius', 'ambient', 'sun', 'dither', 'elevationDegrees', 'saturation']) if (params.has(key)) style[key] = Number(params.get(key));
 if (params.get('roofs') === 'model') style.orthoRoofs = false;
