@@ -23,6 +23,10 @@ perl -0pi -e 's#<script type="importmap">.*?</script>\n##s' "$dist/t1.html"
 for name in t2 t2n; do
   if [ -d "$data/pyramids/$name-live" ]; then rsync -a --delete --exclude 'd[0-9]' "$data/pyramids/$name-live/" "$dist/pyramids/$name/"; fi
 done
+# Angles rendered so far (default all four).
+if [ -n "${BEARINGS:-}" ]; then
+  for page in index.html t2.html; do perl -pi -e "s#<body>#<body data-bearings=\"$BEARINGS\">#" "$dist/$page"; done
+fi
 mkdir -p "$dist/networks"
 for kind in cars bikes transit; do
   [ -f "$data/scene/v1/networks/$kind.json" ] && cp "$data/scene/v1/networks/$kind.json" "$dist/networks/"

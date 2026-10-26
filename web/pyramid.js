@@ -192,7 +192,7 @@ container.addEventListener('pointerup', release);
 container.addEventListener('pointercancel', release);
 container.addEventListener('wheel', (event) => { event.preventDefault(); zoomBy(event.deltaY < 0 ? 1 : -1); }, { passive: false });
 container.addEventListener('dblclick', () => zoomBy(1));
-if (bearings.length < 2) document.querySelector('.controls').style.display = 'none';
+if (bearings.length < 2) for (const id of ['rotate-left', 'rotate-right']) document.getElementById(id).style.display = 'none';
 document.getElementById('rotate-left').onclick = () => rotateBy(-1);
 // Share: a picture of exactly this view, with the link and @jjpcodes on it.
 async function viewPicture() {
