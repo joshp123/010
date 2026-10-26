@@ -117,9 +117,11 @@ def texture_wall(wall, fact, inherited_sample, library):
         part_width,part_height = right-left,bottom-top
         extended_width = part_width*(2 if any(e in clipped for e in ['left','right']) else 1)
         extended_height = part_height*(2 if any(e in clipped for e in ['top','bottom']) else 1)
-        part, method = opening_part((extended_width,extended_height), opening['kind'], opening.get('type'),
-                                    wall['wall_id']+str(rectangle), library)
-        if clipped:
+        divisions=opening.get('inner_divisions')
+        requested_size=(right-left,bottom-top) if divisions is not None else (extended_width,extended_height)
+        part, method = opening_part(requested_size, opening['kind'], opening.get('type'),
+                                    wall['wall_id']+str(rectangle), library, divisions, clipped)
+        if clipped and divisions is None:
             crop_left = part_width if 'left' in clipped else 0
             crop_top = part_height if 'top' in clipped else 0
             part = part.crop((crop_left,crop_top,crop_left+part_width,crop_top+part_height))

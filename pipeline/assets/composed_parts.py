@@ -80,8 +80,53 @@ def material_tile(colour, material='brick', seed='', size=(64, 64), library=None
     return restore_mean(Image.fromarray(np.uint8(np.clip(pixels,0,255))), colour)
 
 
-def opening_part(size, kind, window_type, seed, library=None):
+def observed_window_part(size, seed, library, divisions, clip_edges=()):
+    """One generated plain frame; only source-measured internal bars are added."""
+    width,height=size
+    source=part_image(library,'window',seed,'unknown')
+    extended=(width*(2 if any(e in clip_edges for e in ['left','right']) else 1),
+              height*(2 if any(e in clip_edges for e in ['top','bottom']) else 1))
+    if source is None:
+        canvas,_=opening_part(extended,'window','unknown',seed,{'parts':[]})
+        vertical_strip=Image.new('RGB',(1,8),(195,190,170))
+        horizontal_strip=Image.new('RGB',(8,1),(195,190,170))
+        method='drawn-plain-frame'
+    else:
+        # The library's plain frame has an uninterrupted glass interior.
+        # Preserve physical strip widths instead of stretching a narrow part.
+        sw,sh=source.size
+        columns=[0,round(sw*.19),round(sw*.69),sw]
+        rows=[0,round(sh*.15),round(sh*.60),sh]
+        tx=[0,min(2,extended[0]//3),max(0,extended[0]-3),extended[0]]
+        ty=[0,min(2,extended[1]//3),max(0,extended[1]-3),extended[1]]
+        canvas=Image.new('RGB',extended)
+        for row in range(3):
+            for col in range(3):
+                bounds=(tx[col],ty[row],tx[col+1],ty[row+1])
+                if bounds[2]>bounds[0] and bounds[3]>bounds[1]:
+                    patch=source.crop((columns[col],rows[row],columns[col+1],rows[row+1]))
+                    canvas.paste(patch.resize((bounds[2]-bounds[0],bounds[3]-bounds[1]),Image.Resampling.NEAREST),bounds[:2])
+        vertical_strip=source.crop((round(sw*.75),round(sh*.2),round(sw*.81),round(sh*.55)))
+        horizontal_strip=source.crop((round(sw*.25),1,round(sw*.65),2))
+        method='generated-plain-frame-with-source-measured-inner-bars'
+    left=width if 'left' in clip_edges else 0
+    top=height if 'top' in clip_edges else 0
+    canvas=canvas.crop((left,top,left+width,top+height))
+    for fraction in divisions.get('vertical',[]):
+        x=round(fraction*(width-1))
+        if 1<=x<width-1 and height>4:
+            canvas.paste(vertical_strip.resize((1,height-4),Image.Resampling.NEAREST),(x,2))
+    for fraction in divisions.get('horizontal',[]):
+        y=round(fraction*(height-1))
+        if 1<=y<height-1 and width>4:
+            canvas.paste(horizontal_strip.resize((width-4,1),Image.Resampling.NEAREST),(2,y))
+    return canvas,method
+
+
+def opening_part(size, kind, window_type, seed, library=None, divisions=None, clip_edges=()):
     library = library or {'parts': []}
+    if divisions is not None and kind in ('window','shop_front'):
+        return observed_window_part(size,seed,library,divisions,clip_edges)
     style_type = window_type if window_type not in ('unknown','other',None) else 'unknown'
     source = part_image(library, kind, seed, style_type)
     if source is not None:

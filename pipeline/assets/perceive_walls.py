@@ -52,8 +52,8 @@ TILE_X,TILE_Y=90250,436000
 PROMPT='''You are the C3 perception stage for a faithful miniature of Rotterdam. Josh: "the model should get EVERY SINGLE FUCKING COMPONENT RIGHT". Match the photo; "reads as" is not a pass. Interpret only attached source photographs; no tools, files, browsing, writing or delegation. Return JSON only.
 The first sheet contains labelled rectified wall photos (2018). Grey is absent evidence. Each wall photo has its OWN displayed pixel coordinates, origin top-left excluding labels/margins, dimensions in inventory. The second sheet has building-labelled north-up aerial crops (2026); a cyan polygon outlines the target roof. A photo texture can be a neighbour's roof, sky, a tree or stretched UVs rather than this facade. Mark such regions occluded/nonfacade, never invent openings. Shadows do not establish concealed detail. Observe ONLY visible actual windows/doors/shop fronts. An opening means ONE COMPLETE OUTER MASONRY APERTURE including its entire frame: paired casements, sash lights, transoms and glazing panes inside one common frame are ONE opening, never separate openings. Separate apertures have visible masonry between them. Fit the outer frame boundary, not the glass alone. Inventory EVERY visible aperture, including small basement and attic apertures; do not substitute a typical count or pattern. Occluded detail is interpreted, never verified.
 Return one object per requested wall_id in a JSON array, exactly:
-{"wall_id":"...","material":"brick|plaster/render|concrete|glass curtain wall|metal cladding|timber|stone|other","wall_boxes":[[left,top,right,bottom]],"window_rows":[{"window_indices":[0,1]}],"openings":[{"kind":"window|door|shop_front","box":[left,top,right,bottom],"type":"sash_with_transom|casement|modern|other|unknown","partial":false}],"cornice":{"type":"none|plain|moulded|dentilled|unknown","box":null},"gable_type":"none|stepped|pointed|bell|neck|other|unknown","occlusion_polygons":[[[x,y],[x,y],[x,y]]],"unusable_photo":false,"roof":{"type":"pitched_tile|flat_bitumen|metal|green|glass|other|unknown","equipment":[{"kind":"solar_panel|skylight|dormer|chimney|ventilation|other","box":[left,top,right,bottom]}]},"note":"uncertainty only"}
-All boxes/polygons integer PIXELS relative to that wall's displayed photo, except roof equipment boxes relative to that building's displayed aerial crop. Small wall_boxes must sample visibly exposed main wall material, excluding windows, trim, vegetation, roofs and heavy shadow. If the material class cannot be distinguished use material=other, but still select small clearly exposed main-wall colour patches when their surface can be separated from glazing, trim and vegetation. Class uncertainty does not make a visible colour unknown. Use wall_boxes=[] only when no uncontaminated main-wall colour patch is visible. Occlusion polygons must cover ALL trees, foreground objects, roof bleed, nonfacade regions and invisible detail within wall geometry. If the whole photo is not a usable facade set unusable_photo=true, material=other, openings=[], wall_boxes=[]. Do not guess under trees. Include every directly visible opening, not a typical rhythm. Partial openings keep visible extents and partial=true. Do not invent hidden halves or extrapolated rows. Cornice box only if visible. Roof equipment comes ONLY from the aerial, unknown if roof is outside coverage/ambiguous. Roof outline positions are not equipment. Empty/unknown is an honest result. No colours or metric dimensions: code measures texels and transforms positions.
+{"wall_id":"...","material":"brick|plaster/render|concrete|glass curtain wall|metal cladding|timber|stone|other","wall_boxes":[[left,top,right,bottom]],"window_rows":[{"window_indices":[0,1]}],"openings":[{"kind":"window|door|shop_front","box":[left,top,right,bottom],"type":"sash_with_transom|casement|modern|other|unknown","partial":false,"vertical_divisions":[],"horizontal_divisions":[],"divisions_observed":false}],"cornice":{"type":"none|plain|moulded|dentilled|unknown","box":null},"gable_type":"none|stepped|pointed|bell|neck|other|unknown","occlusion_polygons":[[[x,y],[x,y],[x,y]]],"unusable_photo":false,"roof":{"type":"pitched_tile|flat_bitumen|metal|green|glass|other|unknown","equipment":[{"kind":"solar_panel|skylight|dormer|chimney|ventilation|other","box":[left,top,right,bottom]}]},"note":"uncertainty only"}
+For each outer aperture, list only visibly observed internal frame/mullion centrelines as vertical_divisions and horizontal_divisions, normalized 0..1 relative to that aperture box (left-to-right and top-to-bottom). Separate outer apertures remain separate openings; glass lights inside one frame never become extra outer openings. Do not derive internal bars from the type label or a typical grid. Use divisions_observed=false and empty lists when unresolved. A clearly undivided opening has divisions_observed=true and empty lists. All boxes/polygons integer PIXELS relative to that wall's displayed photo, except roof equipment boxes relative to that building's displayed aerial crop. Small wall_boxes must sample visibly exposed main wall material, excluding windows, trim, vegetation, roofs and heavy shadow. If the material class cannot be distinguished use material=other, but still select small clearly exposed main-wall colour patches when their surface can be separated from glazing, trim and vegetation. Class uncertainty does not make a visible colour unknown. Use wall_boxes=[] only when no uncontaminated main-wall colour patch is visible. Occlusion polygons must cover ALL trees, foreground objects, roof bleed, nonfacade regions and invisible detail within wall geometry. If the whole photo is not a usable facade set unusable_photo=true, material=other, openings=[], wall_boxes=[]. Do not guess under trees. Include every directly visible opening, not a typical rhythm. Partial openings keep visible extents and partial=true. Do not invent hidden halves or extrapolated rows. Cornice box only if visible. Roof equipment comes ONLY from the aerial, unknown if roof is outside coverage/ambiguous. Roof outline positions are not equipment. Empty/unknown is an honest result. No colours or metric dimensions: code measures texels and transforms positions.
 '''
 
 def sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
@@ -97,6 +97,63 @@ def sheets(walls,directory):
 
 def validate_box(box,size):
     return isinstance(box,list) and len(box)==4 and all(isinstance(v,(int,float)) for v in box) and 0<=box[0]<box[2]<=size[0] and 0<=box[1]<box[3]<=size[1]
+
+def checked_inner_divisions(opening, box, distance, visible):
+    x0,y0,x1,y1=map(round,box)
+    values={'vertical':[],'horizontal':[],'rejected':[],
+            'status':'observed' if opening.get('divisions_observed') else 'unknown',
+            'position_basis':'fraction-of-visible-outer-aperture-box',
+            'edge_checks':[]}
+    height,width=visible.shape
+    for axis in ('vertical','horizontal'):
+        for fraction in opening.get(axis+'_divisions',[]) or []:
+            if not isinstance(fraction,(int,float)) or isinstance(fraction,bool) or not 0<fraction<1:
+                values['rejected'].append({'axis':axis,'position':fraction,'reason':'invalid-inner-position'});continue
+            line=np.zeros_like(visible)
+            if axis=='vertical':
+                coordinate=round(x0+fraction*max(1,x1-x0-1))
+                if 0<=coordinate<width:line[max(0,y0+2):min(height,y1-2),coordinate]=True
+            else:
+                coordinate=round(y0+fraction*max(1,y1-y0-1))
+                if 0<=coordinate<height:line[coordinate,max(0,x0+2):min(width,x1-2)]=True
+            eligible=line&visible
+            agreement=float((distance[eligible]<=2).mean()) if eligible.any() else 0
+            check={'axis':axis,'position':float(fraction),'edge_agreement':agreement,'visible_samples':int(eligible.sum()),'tolerance_display_px':2}
+            if eligible.sum()>=4 and agreement>=.5:
+                values[axis].append(float(fraction));values['edge_checks'].append(check)
+                values['status']='source-edge-supported'
+            else:values['rejected'].append(dict(check,reason='inner-photo-edge-mismatch-or-occlusion'))
+    return values
+
+
+def apply_division_observations(record,wall):
+    material_path=Path(wall['reference']).parent/'material-observations.json'
+    if material_path.exists():
+        material=load(material_path)
+        if material.get('reference_sha256')==wall['reference_sha256']:
+            pixels=np.asarray(Image.open(wall['reference']).convert('RGB'))
+            visible=np.asarray(Image.open(record['evidence_mask']).convert('L'))>0
+            samples=[]
+            for box in material['sample_boxes_px']:
+                x0,y0,x1,y1=box
+                mask=visible[y0:y1,x0:x1]
+                if mask.size and mask.mean()>=.9:samples.append(pixels[y0:y1,x0:x1][mask])
+            if samples:
+                colour=np.rint(np.concatenate(samples).mean(0)).astype(int)
+                record['mean_colour_srgb']='#'+''.join(f'{value:02x}' for value in colour)
+                record['material_sample_boxes_px']=material['sample_boxes_px']
+                record['material_observations']=material
+    path=Path(wall['reference']).parent/'division-observations.json'
+    if not path.exists():return record
+    observed=load(path)
+    if observed.get('reference_sha256')!=wall['reference_sha256']:return record
+    by_box={(tuple(item['box_px']),item['kind']):item for item in observed.get('openings',[])}
+    for key in ('openings','doors','shop_fronts','source_partial_openings'):
+        for opening in record.get(key,[]):
+            value=by_box.get((tuple(opening.get('box_px',[])),opening['kind']))
+            if value:opening['inner_divisions']=value['inner_divisions']
+    return record
+
 
 def measure(wall,result,inv,provenance):
     pixels=np.asarray(Image.open(wall['reference']).convert('RGB')); photo=np.asarray(Image.open(wall['photo_mask']))>0; geometry=np.asarray(Image.open(wall['geometry_mask']))>0
@@ -165,6 +222,8 @@ def measure(wall,result,inv,provenance):
         share=float((distance[eligible]<=2).mean()) if eligible.any() else 0
         visible_share=float(visible[y0:y1,x0:x1].mean())
         value=dict(opening,source_index=index,box_px=[x0,y0,x1,y1],box_m=[round(v*.05,3) for v in [x0,y0,x1,y1]],edge_agreement=share,evidence_fraction=visible_share,edge_check={'grid':'exact_contact_sheet_source_view','display_size_px':list(display_size),'sobel_threshold':.06,'tolerance_display_px':2,'tolerance_m_xy':[.1/sx,.1/sy],'contrast_percentiles':[2,98],'luminance_range':[float(contrast_low),float(contrast_high)]})
+        if opening.get('kind') in ('window','shop_front'):
+            value['inner_divisions']=checked_inner_divisions(opening,box,distance,displayed_visible)
         if eligible.sum()<8 or share<.5 or visible_share<.85 or opening.get('partial'):
             value['status']='rejected';value['reason']='partial_or_occluded' if opening.get('partial') or visible_share<.85 else 'photo_edge_mismatch';rejected.append(value)
         else: value['status']='edge_supported';openings.append(value)
@@ -184,6 +243,7 @@ def measure(wall,result,inv,provenance):
                                  note='Only visible extent is drawn; cropped edges omit an invented complete outer frame.'))
     record['source_partial_openings']=partials
     # A model selection plus edge support does not establish semantic truth of an entire wall.
+    record=apply_division_observations(record,wall)
     save(folder/'perception.json',record)
     return record
 
@@ -268,6 +328,76 @@ def run_batch(walls, model):
     print(json.dumps({'walls_measured':len(walls),'directory':str(directory)}),flush=True)
 
 
+DIVISION_PROMPT='''Task: measure only visible inner window-frame divisions in the attached actual Rotterdam source photos. Josh: every component must match the photo, never invent. No tools, files, writing, browsing or delegation. The inventory fixes every existing OUTER aperture and source_index. Do not add, remove, split, resize or move any outer aperture. Several glazing lights within one outer frame remain one opening. For each inventory aperture, return only visibly observed vertical/horizontal mullion or sash-bar centre positions, normalized 0..1 relative to that aperture's supplied display box (left-to-right and top-to-bottom). Do not infer a typical count, regular spacing, symmetry or a division from the window type. Distinguish actual pale/dark frame bars from glass reflection streaks and vegetation. If the resolution/occlusion does not resolve a bar, omit it and set divisions_observed=false. A clearly undivided aperture has divisions_observed=true and empty lists. Retain every supplied index even when unknown. Return JSON only: [{"wall_id":"...","openings":[{"source_index":0,"vertical_divisions":[0.2,0.4],"horizontal_divisions":[],"divisions_observed":true}]}]. The example positions are schema examples, never a template.'''
+
+
+def wall_apertures(wall):
+    fact=load(Path(wall['reference']).parent/'perception.json')
+    return [opening for key in ('openings','source_partial_openings') for opening in fact.get(key,[])
+            if opening['kind'] in ('window','shop_front') and opening.get('source_index') is not None]
+
+
+def division_review_needed(wall):
+    if not valid_measurement(wall):return False
+    openings=wall_apertures(wall)
+    if not openings:return False
+    path=Path(wall['reference']).parent/'division-observations.json'
+    if not path.exists():return True
+    current=load(path)
+    expected={(tuple(opening['box_px']),opening['kind']) for opening in openings}
+    observed={(tuple(opening['box_px']),opening['kind']) for opening in current.get('openings',[])}
+    return current.get('reference_sha256')!=wall['reference_sha256'] or not expected.issubset(observed)
+
+
+def run_division_batch(walls,model):
+    apertures={wall['wall_id']:wall_apertures(wall) for wall in walls}
+    identity=hashlib.sha256((DIVISION_PROMPT+model+json.dumps(apertures,sort_keys=True)+''.join(w['reference_sha256'] for w in walls)).encode()).hexdigest()
+    directory=WORK/'division-batches'/identity
+    directory.mkdir(parents=True,exist_ok=True)
+    inventory=sheets(walls,directory)
+    for wall,entry in zip(walls,inventory):
+        sx,sy=entry['wall_scale']
+        entry['openings']=[{'source_index':o['source_index'],'kind':o['kind'],'display_box':[round(v*(sx if i%2==0 else sy),3) for i,v in enumerate(o['box_px'])]} for o in apertures[wall['wall_id']]]
+    prompt=DIVISION_PROMPT+'\nInventory:\n'+json.dumps(inventory)
+    save(directory/'inventory.json',inventory);(directory/'prompt.txt').write_text(prompt)
+    answer=directory/'answer.json';timing=directory/'call.json'
+    if not answer.exists():
+        if STOP.is_set():return
+        started=datetime.now(timezone.utc).isoformat();clock=time.monotonic()
+        command=[CLI,'exec','--json','--skip-git-repo-check','-C',str(REPOSITORY),'-o',str(answer),'-i',str(directory/'walls.jpg'),'-']
+        with (directory/'events.jsonl').open('w') as stdout,(directory/'stderr.txt').open('w') as stderr:
+            try:completed=subprocess.run(command,input=prompt,text=True,stdout=stdout,stderr=stderr,timeout=900)
+            except subprocess.TimeoutExpired:
+                STOP.set();save(timing,{'model':model,'started_at':started,'seconds':time.monotonic()-clock,'wall_count':len(walls),'status':'timeout'});return
+        events=(directory/'events.jsonl').read_text();limited=rate_limit_error(events,(directory/'stderr.txt').read_text())
+        save(timing,{'model':model,'started_at':started,'seconds':time.monotonic()-clock,'wall_count':len(walls),'rate_limited':limited,'returncode':completed.returncode,'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest()})
+        if limited or completed.returncode:STOP.set();return
+        archive_completed(events,directory)
+    text=answer.read_text().strip()
+    if text.startswith('```'):text=text[text.index('\n')+1:text.rfind('```')]
+    values=json.loads(text);by_id={value['wall_id']:value for value in values}
+    if len(values)!=len(walls) or set(by_id)!={wall['wall_id'] for wall in walls}:raise ValueError('Division reply omitted or duplicated a wall')
+    for wall,entry in zip(walls,inventory):
+        selected=by_id[wall['wall_id']]['openings'];by_index={value['source_index']:value for value in selected}
+        expected={opening['source_index'] for opening in apertures[wall['wall_id']]}
+        if len(selected)!=len(expected) or set(by_index)!=expected:raise ValueError('Division reply changed outer aperture inventory')
+        fact_path=Path(wall['reference']).parent/'perception.json';fact=load(fact_path)
+        display_size=tuple(entry['wall_display_size_px'])
+        displayed=Image.open(wall['reference']).convert('L').resize(display_size)
+        visible=np.asarray(Image.open(fact['evidence_mask']).convert('L').resize(display_size,Image.Resampling.NEAREST))>0
+        luminance=np.asarray(displayed)/255.;low,high=np.percentile(luminance[visible],[2,98]) if visible.any() else (0,1)
+        distance=ndimage.distance_transform_edt(~(sobel(np.clip((luminance-low)/max(float(high-low),.001),0,1))>.06))
+        observations=[]
+        for opening,display_opening in zip(apertures[wall['wall_id']],entry['openings']):
+            value=checked_inner_divisions(by_index[opening['source_index']],display_opening['display_box'],distance,visible)
+            value['provenance']={'model':model,'date':datetime.now(timezone.utc).isoformat(),'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest(),'response':str(answer),'reference_hashes':{wall['reference']:wall['reference_sha256'],str(directory/'walls.jpg'):sha(directory/'walls.jpg')}}
+            observations.append({'source_index':opening['source_index'],'box_px':opening['box_px'],'kind':opening['kind'],'inner_divisions':value})
+        save(fact_path.parent/'division-observations.json',{'reference_sha256':wall['reference_sha256'],'wall_id':wall['wall_id'],'openings':observations})
+        save(fact_path,apply_division_observations(fact,wall))
+    with PUBLISH_LOCK:publish()
+    print(json.dumps({'inner_divisions_measured_walls':len(walls),'directory':str(directory)}),flush=True)
+
+
 def reuse_completed(model):
     byid={w['wall_id']:w for w in ALL_WALLS}
     bygeometry={(w['bag_id'],geometry_signature(w),w['reference_sha256']):w for w in ALL_WALLS}
@@ -313,6 +443,8 @@ def main():
     parser.add_argument('--max-calls',type=int)
     parser.add_argument('--start',type=int,default=0)
     parser.add_argument('--workers',type=int,default=1)
+    parser.add_argument('--wall-id',action='append',help='Limit measurement to an explicit existing wall')
+    parser.add_argument('--review-divisions',action='store_true',help='Measure inner bars while preserving all existing outer apertures and material facts')
     parser.add_argument('--review-material',action='store_true',help='Reassess visible wall colours formerly omitted only because material class was unknown')
     parser.add_argument('--only-triaged',action='store_true',help='Measure only source views classified as visibly usable facades')
     parser.add_argument('--review-openings','--review-observed',action='store_true')
@@ -362,6 +494,10 @@ def main():
                 if (not fact.get('mean_colour_srgb') and fact.get('visible_evidence_fraction',0)>.2
                         and fact.get('provenance',{}).get('material_selection_revision')!='independent-class-colour-v2'):
                     eligible.append(wall)
+    if args.review_divisions:
+        eligible=[wall for wall in ALL_WALLS if division_review_needed(wall)]
+    if args.wall_id:
+        eligible=[wall for wall in eligible if wall['wall_id'] in set(args.wall_id)]
     triage_path=WORK/'source-triage.json'
     triage=load(triage_path).get('walls',{}) if triage_path.exists() else {}
     def source_class(wall):
@@ -376,7 +512,7 @@ def main():
     if args.max_calls is not None:batches=batches[:args.max_calls]
     print(json.dumps({'cached_measurements':reused,'pending_walls':len(eligible),'batches':len(batches),'workers':args.workers}),flush=True)
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        futures=[pool.submit(run_batch,walls,model) for walls in batches]
+        futures=[pool.submit(run_division_batch if args.review_divisions else run_batch,walls,model) for walls in batches]
         for future in as_completed(futures):
             future.result()
             if STOP.is_set():
@@ -398,6 +534,7 @@ def main():
          'pending_wall_ids':[wall['wall_id'] for wall in pending],
          'native_visual_calls':len(calls),'image_generation_calls':0,
          'source_triage_calls':len(list((WORK/'source-triage-calls').glob('*/call.json'))),
+         'inner_division_calls':len(list((WORK/'division-batches').glob('*/call.json'))),
          'source_triaged_usable_facades_pending':sum(source_class(wall)==0 for wall in pending),
          'native_visual_seconds':sum(call.get('seconds',0) for call in calls),
          'rate_limited':any(call.get('rate_limited',False) for call in calls),
