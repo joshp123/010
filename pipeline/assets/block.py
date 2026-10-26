@@ -96,7 +96,12 @@ def process_tile(tile, render=False, preserve_existing=False):
                      and existing.get('output_sha256') == hashlib.sha256((roof / 'roof.webp').read_bytes()).hexdigest()
                      and max(path.stat().st_mtime_ns for path in roof_dependencies if path.exists()) <= roof_generation.stat().st_mtime_ns)
             if not fresh:
-                run_step('roofs.py', tile, log, 'assemble')
+                image_dependencies = quadrant_inputs + [roof / 'reference.json', SCRIPTS / 'roofs.py']
+                image_fresh = ((roof / 'roof.webp').exists()
+                               and existing.get('output_sha256') == hashlib.sha256((roof / 'roof.webp').read_bytes()).hexdigest()
+                               and max(path.stat().st_mtime_ns for path in image_dependencies) <= (roof / 'roof.webp').stat().st_mtime_ns)
+                if not image_fresh:
+                    run_step('roofs.py', tile, log, 'assemble')
                 run_step('verify_roofs.py', tile, log)
             state['roof_inputs'] = roof_stamp
         dependencies = [directory / 'composed/composition.json', roof / 'roof.webp', roof_generation,
