@@ -4,6 +4,7 @@ C3: native ChatGPT contact-sheet perception, source-only masks and edge checks.
 """
 import argparse
 import fcntl
+import os
 from collections import defaultdict
 from datetime import datetime, timezone
 import hashlib
@@ -56,7 +57,11 @@ All boxes/polygons integer PIXELS relative to that wall's displayed photo, excep
 '''
 
 def sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
-def save(path,value): Path(path).write_text(json.dumps(value,indent=2)+'\n')
+def save(path,value):
+    path=Path(path)
+    temporary=path.with_name('.'+path.name+f'.{os.getpid()}.pending')
+    temporary.write_text(json.dumps(value,indent=2)+'\n')
+    temporary.replace(path)
 def load(path): return json.loads(Path(path).read_text())
 
 def geometry_signature(wall):
@@ -308,6 +313,7 @@ def main():
     parser.add_argument('--max-calls',type=int)
     parser.add_argument('--start',type=int,default=0)
     parser.add_argument('--workers',type=int,default=1)
+    parser.add_argument('--only-triaged',action='store_true',help='Measure only source views classified as visibly usable facades')
     parser.add_argument('--review-openings','--review-observed',action='store_true')
     parser.add_argument('--index-cache-geometry',action='store_true')
     args=parser.parse_args()
@@ -347,7 +353,16 @@ def main():
                 fact=load(path)
                 if (fact.get('openings') or fact.get('rejected_openings') or fact.get('material_sample_boxes_px')) and fact['provenance'].get('opening_definition')!='outer_masonry_aperture_v2':
                     eligible.append(wall)
-    eligible.sort(key=lambda w:(not (10 <= w['area_m2'] <= 100 and w.get('photo_fraction',0) >= .6), -w['area_m2']))
+    triage_path=WORK/'source-triage.json'
+    triage=load(triage_path).get('walls',{}) if triage_path.exists() else {}
+    def source_class(wall):
+        value=triage.get(wall['wall_id'],{})
+        if value.get('reference_sha256')!=wall['reference_sha256']:
+            return 1
+        return 0 if value.get('usable_facade') else 2
+    if args.only_triaged:
+        eligible=[wall for wall in eligible if source_class(wall)==0]
+    eligible.sort(key=lambda w:(source_class(w),not (10 <= w['area_m2'] <= 100 and w.get('photo_fraction',0) >= .6), -w['area_m2']))
     batches=[eligible[i:i+args.batch_size] for i in range(args.start,len(eligible),args.batch_size)]
     if args.max_calls is not None:batches=batches[:args.max_calls]
     print(json.dumps({'cached_measurements':reused,'pending_walls':len(eligible),'batches':len(batches),'workers':args.workers}),flush=True)
@@ -373,6 +388,8 @@ def main():
          'tier2_photo_walls_pending':sum(10<=wall['area_m2']<=100 and wall.get('photo_fraction',0)>=.6 for wall in pending),
          'pending_wall_ids':[wall['wall_id'] for wall in pending],
          'native_visual_calls':len(calls),'image_generation_calls':0,
+         'source_triage_calls':len(list((WORK/'source-triage-calls').glob('*/call.json'))),
+         'source_triaged_usable_facades_pending':sum(source_class(wall)==0 for wall in pending),
          'native_visual_seconds':sum(call.get('seconds',0) for call in calls),
          'rate_limited':any(call.get('rate_limited',False) for call in calls),
          'status':'stopped' if STOP.is_set() else 'complete' if not pending else 'partial'})

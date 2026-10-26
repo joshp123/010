@@ -77,7 +77,8 @@ def texture_wall(wall, fact, inherited_sample, library):
     target = sample['colour']
     canvas = material_tile(target, material, wall['bag_id'], size=size, library=library)
     same_building = sample['fact']['wall_id'].split(':')[0] == str(wall['bag_id'])
-    colour_route = ('measured' if own else 'same-building-measured-interpretation'
+    colour_route = ('adjacent-tile-measured-interpretation' if sample.get('external_tile') else
+                    'measured' if own else 'same-building-measured-interpretation'
                     if same_building else 'tile-measured-interpretation')
     drawn, rejected, trims = [], [], []
     def draw_components(layer):
@@ -141,6 +142,8 @@ def texture_wall(wall, fact, inherited_sample, library):
                     'colour_route':colour_route,'mean_colour_srgb':target.tolist(),
                     'material_sample':{'wall_id':sample['fact']['wall_id'],
                                        'photo':sample['fact'].get('photo'),
+                                       'source_tile':sample.get('source_tile'),
+                                       'facts_path':sample.get('facts_path'),
                                        'method':'scalar-mean-only-no-photo-texels'},
                     'openings_drawn':drawn,'openings_rejected':rejected,'trims_drawn':trims,
                     'uncomposed_gable_type':fact.get('gable_type','unknown'),
@@ -210,10 +213,33 @@ def compose(facts_root, assets_root, walls_path, tile=TILE):
                 fact['source_review_additions'] = correction.get('add_openings',[])
                 fact['source_review_components'] = correction.get('components',[])
                 fact['source_review'] = str(source_review_path)
+    external_samples, external_paths = [], []
+    if not any(material_sample(fact) for fact in facts.values()):
+        tile_x,tile_y = map(int,tile[1:].split('_y'))
+        donor_files = list((facts_root/'buildings').glob('*.json'))+list((facts_root/'work').glob('*/buildings/*.json'))
+        donors=[]
+        for path in donor_files:
+            document=read_json(path)
+            donor_tile=document.get('tile')
+            if not donor_tile or donor_tile==tile:
+                continue
+            donor_x,donor_y=map(int,donor_tile[1:].split('_y'))
+            for fact in document.get('walls',[]):
+                sample=material_sample(fact)
+                photo=fact.get('photo')
+                recorded=fact.get('provenance',{}).get('reference_hashes',{}).get(photo)
+                if sample and photo and Path(photo).exists() and recorded==sha(photo):
+                    donors.append(((donor_x-tile_x)**2+(donor_y-tile_y)**2,path,sample,donor_tile))
+        if donors:
+            nearest=min(item[0] for item in donors)
+            for distance,path,sample,donor_tile in donors:
+                if distance==nearest:
+                    external_samples.append(dict(sample,external_tile=True,source_tile=donor_tile,facts_path=str(path)))
+                    external_paths.extend([path,Path(sample['fact']['photo'])])
     groups, membership, reference_paths = elevation_groups(assets_root, tile)
     library_directory = assets_root/'parts'
     library = load_library(library_directory)
-    paths = {Path(__file__), Path(__file__).with_name('composed_parts.py'), walls_path, *fact_paths, *reference_paths}
+    paths = {Path(__file__), Path(__file__).with_name('composed_parts.py'), walls_path, *fact_paths, *reference_paths, *external_paths}
     if source_review_path.exists():
         paths.add(source_review_path)
     if library_directory.exists():
@@ -244,7 +270,9 @@ def compose(facts_root, assets_root, walls_path, tile=TILE):
     inherited = {bag: max(samples, key=lambda item: item[0])[1] for bag, samples in building_samples.items()}
     all_samples = [sample for samples in building_samples.values() for _, sample in samples]
     if not all_samples:
-        raise ValueError('No measured tile material exists')
+        all_samples=external_samples
+    if not all_samples:
+        raise ValueError('No measured material exists on this tile or adjacent prepared tiles')
     median_colour = np.median([s['colour'] for s in all_samples], axis=0)
     tile_sample = min(all_samples, key=lambda sample: np.linalg.norm(sample['colour']-median_colour))
     limit, gutter = 4096, 2
