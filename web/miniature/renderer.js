@@ -155,6 +155,21 @@ const groundPatch = {
     uniform sampler2D orthoTexture;
     uniform float groundPhotoDetail;
     uniform float texelsPerArtPixel;
+    uniform sampler2D markingTexture;
+    uniform vec3 trackBedColour;
+    // Paint from the municipal marking register (tools/build-markings.py),
+    // gathered over the art pixel like the line bits so thin lines survive.
+    bool paintAround(vec2 uv) {
+      float step = 1.0 / 2500.0;
+      float reach = max(0.0, floor(texelsPerArtPixel * 0.5));
+      for (float dy = -2.0; dy <= 2.0; dy += 1.0) {
+        for (float dx = -2.0; dx <= 2.0; dx += 1.0) {
+          if (abs(dx) > reach || abs(dy) > reach) continue;
+          if (texture2D(markingTexture, uv + vec2(dx, dy) * step).r > 0.5) return true;
+        }
+      }
+      return false;
+    }
     int lineBitsAround(vec2 uv) {
       float step = 1.0 / 2500.0;
       float reach = max(0.0, floor(texelsPerArtPixel * 0.5));
@@ -191,6 +206,8 @@ const groundPatch = {
     // Track beds: grass track where the aerial shows grass, else the bed colour.
     if ((surfaceClass == 5.0 || surfaceClass == 14.0) && photoGreen > 0.02) {
       groundColour = texture2D(classColours, vec2(6.5 / 32.0, 0.5)).rgb * 0.95;
+    } else if (surfaceClass == 5.0 && trackBedColour.r >= 0.0) {
+      groundColour = trackBedColour; // the tile's tram bed as measured in the aerial
     }
     float deep = 1.0 - smoothstep(1.0, 2.0, texelsPerArtPixel); // 1 at 0.1 m per pixel and finer
     if (deep > 0.0) {
@@ -205,6 +222,7 @@ const groundPatch = {
       }
     }
     int lines = lineBitsAround(groundUv);
+    if (paintAround(groundUv)) lines |= 4;
     // Markings and kerbs are narrower than an art pixel at coarse zoom; drawing
     // them there turns roads into speckle. Rails stay: they are the tram network.
     if (texelsPerArtPixel > 3.5) lines &= 3;
@@ -608,6 +626,7 @@ export class Miniature {
     ]);
     const rails = await fetch(`${base}/rails.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const roofFacts = await fetch(`${base}/roofs.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+    const markings = await loadRawImageTexture(`${base}/markings.png`).catch(() => null);
     const shared = {
       orthoTexture: { value: orthoTexture },
       facadeDetail: { value: this.style.facadeDetail },
@@ -622,6 +641,8 @@ export class Miniature {
       night: this.nightUniform,
       nightHour: this.nightHourUniform,
       lampTexture: { value: this.blankLamps },
+      markingTexture: { value: markings ?? this.blankLamps },
+      trackBedColour: { value: new THREE.Vector3(-1, -1, -1) },
     };
     if (classTexture) {
       const groundMaterial = withTilePosition(new THREE.MeshLambertMaterial({ color: 0xffffff }), offset, shared, groundPatch);
@@ -671,6 +692,10 @@ export class Miniature {
     }
     if (objects?.trees?.length) group.add(this.treeMesh(objects.trees, offset, rails?.tracks ?? []));
     const sampler = ground && classTexture ? this.groundSampler(offset, ground.scene, classTexture) : null;
+    if (sampler && orthoTexture) {
+      const bed = this.trackBedColour(sampler, orthoTexture);
+      if (bed) shared.trackBedColour.value.set(...bed);
+    }
     if (rails?.tracks?.length && sampler) group.add(this.railMesh(rails.tracks, sampler));
     if (sampler) group.add(await this.vehicleMesh(tile, sampler, rails?.tracks ?? []));
     group.updateMatrixWorld(true);
@@ -710,6 +735,30 @@ export class Miniature {
       return hit ? hit.point.y : null;
     };
     return { tileX, tileY, classes, width: canvas.width, height: canvas.height, classAt, heightAt };
+  }
+
+  // The colour of a tile's tram bed in the 2026 aerial: the median of its
+  // sunlit, not-green pixels (shadowed and grassed parts say nothing about
+  // the paving). Linear RGB, or null when the tile has too little of it.
+  trackBedColour(ground, orthoTexture) {
+    const { classes, width, height } = ground;
+    const canvas = new OffscreenCanvas(width, height);
+    const context = canvas.getContext('2d', { willReadFrequently: true });
+    context.drawImage(orthoTexture.image, 0, 0, width, height);
+    const photo = context.getImageData(0, 0, width, height).data;
+    const samples = [];
+    for (let i = 0; i < width * height; i += 3) {
+      if (classes[i * 4] !== 5) continue;
+      const r = photo[i * 4], g = photo[i * 4 + 1], b = photo[i * 4 + 2];
+      if (g - Math.max(r, b) > 5) continue;
+      samples.push([r, g, b, 0.299 * r + 0.587 * g + 0.114 * b]);
+    }
+    if (samples.length < 500) return null;
+    samples.sort((a, b) => a[3] - b[3]);
+    const sunlit = samples.slice(Math.floor(samples.length * 0.6));
+    const median = [0, 1, 2].map((c) => sunlit.map((p) => p[c]).sort((a, b) => a - b)[sunlit.length >> 1]);
+    const colour = new THREE.Color().setRGB(median[0] / 255, median[1] / 255, median[2] / 255, THREE.SRGBColorSpace);
+    return [colour.r, colour.g, colour.b];
   }
 
   railMesh(tracks, ground) {
