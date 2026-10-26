@@ -315,6 +315,7 @@ const postFragment = `
   uniform float saturation;
   uniform float depthOutput;
   uniform vec3 background;
+  uniform float transparentBackground;
   in vec2 vUv;
   out vec4 fragColour;
 
@@ -353,7 +354,7 @@ const postFragment = `
     }
     if (depth >= depthScale * 0.999) {
       // Background stays exactly the page colour, so tile edges never show.
-      fragColour = vec4(background, 1.0);
+      fragColour = vec4(background, 1.0 - transparentBackground);
       return;
     }
     // At coarse scales neighbouring pixels are metres apart in depth; outline
@@ -411,7 +412,7 @@ export class Miniature {
     }
     // A fixed origin keeps every coordinate small; it does not move when the area grows.
     this.origin = { x: 89750, y: 435250 };
-    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+    this.renderer = new THREE.WebGLRenderer({ canvas, alpha: true, premultipliedAlpha: false, antialias: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
     this.renderer.setPixelRatio(1);
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -463,6 +464,7 @@ export class Miniature {
         saturation: { value: 1.2 },
         depthOutput: { value: 0 },
         background: { value: new THREE.Vector3(0xc9 / 255, 0xd3 / 255, 0xdd / 255) },
+        transparentBackground: { value: 0 },
       },
     });
     this.postScene = new THREE.Scene();
@@ -847,6 +849,43 @@ export class Miniature {
     this.normalTarget.setSize(width, height);
     this.postMaterial.uniforms.resolution.value.set(width, height);
     if (this.screenWindow) this.postMaterial.uniforms.metresPerPixel.value = this.screenWindow.metresPerPixel;
+  }
+
+  // A single object (a vehicle) drawn alone with the city's lighting and
+  // pixel-art pass, on a transparent background, centred on its origin.
+  // heading: compass direction of travel in radians (0 = north).
+  renderSprite(object, bearing, metresPerPixel, heading, size) {
+    const scene = new THREE.Scene();
+    const holder = new THREE.Group();
+    holder.add(object);
+    holder.rotation.y = Math.PI / 2 - heading;
+    scene.add(holder, this.hemisphere.clone(), this.sun.clone(), this.sun.target.clone());
+    const sun = scene.children[2];
+    sun.castShadow = false;
+    const az = THREE.MathUtils.degToRad(this.style.sunAzimuthDegrees), el = THREE.MathUtils.degToRad(this.style.sunElevationDegrees);
+    sun.position.set(Math.sin(az) * Math.cos(el) * 100, Math.sin(el) * 100, -Math.cos(az) * Math.cos(el) * 100);
+    sun.target = scene.children[3];
+    sun.target.position.set(0, 0, 0);
+    const { right, up, view } = screenAxes(bearing, this.style.elevationDegrees);
+    const camera = new THREE.OrthographicCamera(-size / 2 * metresPerPixel, size / 2 * metresPerPixel, size / 2 * metresPerPixel, -size / 2 * metresPerPixel, 0, CAMERA_DISTANCE * 2);
+    camera.position.copy(view).multiplyScalar(-CAMERA_DISTANCE);
+    camera.up.copy(up);
+    camera.lookAt(0, 0, 0);
+    camera.updateMatrixWorld();
+    this.resize(size, size);
+    const u = this.postMaterial.uniforms;
+    u.pixelArt.value = 1; u.outlines.value = 1; u.dither.value = 0; u.saturation.value = this.style.saturation;
+    u.depthOutput.value = 0; u.metresPerPixel.value = metresPerPixel; u.transparentBackground.value = 1;
+    this.renderer.setClearColor(0x000000, 0);
+    this.renderer.setRenderTarget(this.colourTarget);
+    this.renderer.render(scene, camera);
+    scene.overrideMaterial = this.normalMaterial;
+    this.renderer.setRenderTarget(this.normalTarget);
+    this.renderer.render(scene, camera);
+    this.renderer.setRenderTarget(null);
+    this.renderer.render(this.postScene, this.postCamera);
+    u.transparentBackground.value = 0;
+    return this.canvas.toDataURL('image/png');
   }
 
   render() {

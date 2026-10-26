@@ -38,7 +38,11 @@ export function buildPalette() {
       });
     }
   }
-  for (const lightness of [0.12, 0.25, 0.38, 0.5, 0.62, 0.74, 0.86, 0.96]) colours.push(oklchToSrgb(lightness, 0.008, 80));
+  // Neutrals: warm greys (brick dust, paving) and cool greys (concrete,
+  // asphalt, steel, glass), finer steps than the colour ramps.
+  const neutralSteps = [0.12, 0.2, 0.28, 0.36, 0.44, 0.52, 0.6, 0.68, 0.76, 0.84, 0.91, 0.97];
+  for (const lightness of neutralSteps) colours.push(oklchToSrgb(lightness, 0.01, 75));
+  for (const lightness of neutralSteps) colours.push(oklchToSrgb(lightness, 0.012, 250));
   return colours;
 }
 

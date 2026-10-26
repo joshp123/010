@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>010 · vehicle sprites</title>
+<script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.js", "three/addons/": "./vendor/three/examples/jsm/" } }</script>
+</head><body style="margin:0;background:#888">
+<canvas id="map"></canvas>
+<script type="module">
+// Written by AI on 2026-10-26 by model Claude Opus 5.5.
+// Renders vehicle sprites with the city renderer, for tools/build-sprites.py.
+import { Miniature } from './miniature/renderer.js';
+import { vehicleKinds } from './miniature/vehicles.js';
+const miniature = new Miniature(document.getElementById('map'), { sceneBase: '.', manifest: { tiles: {} } });
+window.renderSprite = (kind, variant, bearing, mpp, heading, size) =>
+  miniature.renderSprite(vehicleKinds[kind](variant), bearing, mpp, heading, size);
+window.spriteReady = true;
+</script>
+</body></html>
