@@ -161,16 +161,32 @@ def elevation_groups(assets_root, tile):
 
 def compose(facts_root, assets_root, walls_path, tile=TILE):
     start = time.monotonic()
+    source_path = ROOT/'scene/v1/tiles'/tile/'buildings.glb'
+    if (not walls_path.exists() or
+            read_json(walls_path).get('source',{}).get('sha256') != sha(source_path)):
+        from wall_facts import prepare_walls
+        walls_path = prepare_walls(tile)
     walls_document = read_json(walls_path)
     walls = walls_document['walls']
     facts, fact_paths = {}, []
+    walls_by_id = {wall['wall_id']:wall for wall in walls}
     bag_ids = {str(w['bag_id']) for w in walls}
     for bag in sorted(bag_ids):
-        path = facts_root/'buildings'/f'{bag}.json'
+        local_path = facts_root/'work'/tile/'buildings'/f'{bag}.json'
+        path = local_path if local_path.exists() else facts_root/'buildings'/f'{bag}.json'
         if not path.exists():
             continue
         fact_paths.append(path)
-        for fact in read_json(path).get('walls', []):
+        document = read_json(path)
+        if document.get('tile') != tile:
+            continue
+        for fact in document.get('walls', []):
+            wall = walls_by_id.get(fact['wall_id'])
+            if wall is None:
+                continue
+            recorded_hash = fact.get('provenance',{}).get('reference_hashes',{}).get(wall['reference'])
+            if recorded_hash != wall['reference_sha256']:
+                continue
             facts[fact['wall_id']] = fact
     source_review_path = assets_root/'tiles'/tile/'tier2-comparison'/'source-review.json'
     source_review = read_json(source_review_path) if source_review_path.exists() else {}
@@ -226,35 +242,47 @@ def compose(facts_root, assets_root, walls_path, tile=TILE):
     atlases, records = [], []
     x = y = row_height = atlas_index = 0
 
-    def save_atlas():
+    def save_atlas(canvas=None):
+        canvas = atlas if canvas is None else canvas
+        canvas_size = canvas.size
         path = directory/f'wall-atlas-{atlas_index:03d}.webp'
         pending_path = path.with_name('.'+path.name+'.pending')
-        atlas.save(pending_path, 'WEBP', lossless=True, method=4)
+        canvas.save(pending_path, 'WEBP', lossless=True, method=4)
         pending_path.replace(path)
         mask_path = directory/f'wall-atlas-{atlas_index:03d}-interpreted.png'
         pending_mask = mask_path.with_name('.'+mask_path.name+'.pending')
-        Image.new('L',(limit,limit),255).save(pending_mask,'PNG')
+        Image.new('L',canvas_size,255).save(pending_mask,'PNG')
         pending_mask.replace(mask_path)
         atlases.append({'id': f'c4-tier2-{atlas_index:03d}', 'path': str(path),
                         'interpreted_mask': str(mask_path),
-                        'image_size_px': [limit, limit], 'sha256': sha(path)})
+                        'image_size_px': list(canvas_size), 'sha256': sha(path)})
 
-    for wall in sorted(walls, key=lambda item: -item['image_size_px'][1]):
+    def packing_order(wall):
+        oversized = max(wall['image_size_px'])+2*gutter > limit
+        return (not oversized, -wall['image_size_px'][1])
+
+    for wall in sorted(walls, key=packing_order):
         fact = facts.get(wall['wall_id'], {})
         image, details = texture_wall(wall, fact, inherited.get(str(wall['bag_id']), tile_sample), library)
         width, height = image.size
-        if max(width, height)+2*gutter > limit:
-            raise ValueError(f'Wall cannot fit unscaled 5cm atlas: {wall["wall_id"]} {image.size}')
-        if x+width+2*gutter > limit:
+        oversized = max(width, height)+2*gutter > limit
+        if max(width,height)+2*gutter > 16383:
+            raise ValueError(f'Wall exceeds WebP native size limit: {wall["wall_id"]} {image.size}')
+        if not oversized and x+width+2*gutter > limit:
             x, y, row_height = 0, y+row_height, 0
-        if y+height+2*gutter > limit:
+        if not oversized and y+height+2*gutter > limit:
             save_atlas()
             atlas_index += 1
             atlas = Image.new('RGB', (limit, limit), (160, 160, 160))
             x = y = row_height = 0
-        left, top = x+gutter, y+gutter
+        left, top = (gutter,gutter) if oversized else (x+gutter,y+gutter)
         padded = Image.fromarray(np.pad(np.asarray(image), ((gutter,gutter),(gutter,gutter),(0,0)), mode='edge'))
-        atlas.paste(padded, (x, y))
+        if oversized:
+            atlas_size = np.asarray(padded.size)
+            save_atlas(padded)
+        else:
+            atlas_size = np.array([limit,limit])
+            atlas.paste(padded, (x, y))
         triangles, wall_groups, routes = [], {}, Counter()
         for triangle in wall['triangles']:
             key = triangle['primitive_index'], triangle['triangle_index']
@@ -267,7 +295,7 @@ def compose(facts_root, assets_root, walls_path, tile=TILE):
             routes[route] += 1
             for item in candidates:
                 wall_groups[item['id']] = item
-            uv = (np.asarray(triangle['pixel_vertices'])+[left,top])/limit
+            uv = (np.asarray(triangle['pixel_vertices'])+[left,top])/atlas_size
             triangles.append({'primitive_index': key[0], 'triangle_index': key[1], 'uv': uv.tolist(),
                               'composition_route': route, 'elevation_group': group['id'] if group else None})
         route = next(iter(routes)) if len(routes) == 1 else 'mixed'
@@ -277,7 +305,7 @@ def compose(facts_root, assets_root, walls_path, tile=TILE):
                         'rectangle_px': [left,top,left+width,top+height], 'triangles': triangles,
                         'route': 'tier2-composed', 'composition_route': route,
                         'triangle_route_counts': dict(routes), 'elevation_groups': list(wall_groups.values()),
-                        'facts_path': str(facts_root/'buildings'/f'{wall["bag_id"]}.json'),
+                        'facts_path': next((str(p) for p in fact_paths if p.stem == str(wall['bag_id'])), None),
                         'facts_present': bool(fact), 'details': details,
                         'verified_fraction': 0, 'interpreted_fraction': 1, 'occluded_fraction': fact.get('occluded_fraction', 1),
                         'visible_evidence_fraction': fact.get('visible_evidence_fraction', 0),
@@ -286,9 +314,13 @@ def compose(facts_root, assets_root, walls_path, tile=TILE):
                         'source_reference': fact.get('photo', wall['reference']), 'provenance': fact.get('provenance', {}),
                         'verification': {'status': 'drawn-parts-not-independently-verified'},
                         'interpreted': True})
-        x += width+2*gutter
-        row_height = max(row_height, height+2*gutter)
-    save_atlas()
+        if oversized:
+            atlas_index += 1
+        else:
+            x += width+2*gutter
+            row_height = max(row_height, height+2*gutter)
+    if x or y or not atlases:
+        save_atlas()
     elapsed = time.monotonic()-start
     result = {'written_by': 'AI, GPT-6 Astra, 2026-10-26', 'date': datetime.now(timezone.utc).isoformat(),
               'tile': tile, 'method': 'c3-miniature-parts-composition-v3-no-photo-texels', 'pixel_size_m': .05,
