@@ -9,6 +9,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { buildPalette, surfaceClassColours } from './palette.js';
+import { citadisTram, car, cyclist } from './vehicles.js';
 
 const TILE_METRES = 250;
 const CAMERA_DISTANCE = 4000;
@@ -282,6 +283,23 @@ const buildingPatch = {
     ${kuwaharaGlsl}`,
   body: `
     classCode = vWorldNormalMini.y > 0.55 ? 6.0 : 7.0;
+    #ifdef ASSET_MATERIAL
+    // Model-made assets keep their own colours. Roofs are redrawn from a
+    // 12 cm aerial, so flatten their gravel noise at the same edge-preserving
+    // strength the photo roofs get. Windows are the asset's dark panes.
+    if (vWorldNormalMini.y > 0.55) {
+      diffuseColor.rgb = kuwahara(map, vMapUv, 2.0 * roofRadius / vec2(textureSize(map, 0)));
+    } else if (night > 0.0 && vWorldNormalMini.y < 0.3) {
+      vec3 luma = vec3(0.299, 0.587, 0.114);
+      vec3 wallTone = texture2D(map, vMapUv, 4.0).rgb;
+      float darker = dot(diffuseColor.rgb, luma) / max(0.03, dot(wallTone, luma));
+      vec2 alongDir = normalize(vec2(-vWorldNormalMini.z, vWorldNormalMini.x) + 1e-5);
+      float storeyH = (vFeature.z > 0.0 && vFeature.z < 1945.0) ? 3.3 : 3.0;
+      vec2 room = vec2(floor(dot(vWorldPosMini.xz, alongDir) / 2.4), floor((vWorldPosMini.y - vFeature.x) / storeyH));
+      float pick = fract(sin(dot(room + vFeature.xy * 0.37, vec2(12.9898, 78.233))) * 43758.5453);
+      nightGlow = windowLight(darker < 0.6, pick, vWorldPosMini.y - vFeature.x, vFeature.w);
+    }
+    #else
     if (orthoRoofs > 0.5 && vWorldNormalMini.y > 0.55) {
       vec2 roofUv = clamp(vTileUv, vec2(0.0002), vec2(0.9998));
       vec3 roof = kuwahara(orthoTexture, roofUv, roofRadius / vec2(textureSize(orthoTexture, 0)));
@@ -335,6 +353,7 @@ const buildingPatch = {
         }
       #endif
     }
+    #endif
 `,
 };
 
@@ -612,7 +631,8 @@ export class Miniature {
         if (source.userData?.asset) {
           // Asset textures are already clean and stylised: draw them as they are.
           material.map.minFilter = THREE.LinearMipmapLinearFilter;
-          node.material = material;
+          material.defines = { ASSET_MATERIAL: '' };
+          node.material = orthoTexture ? withTilePosition(material, offset, shared, buildingPatch) : material;
         } else {
           node.material = orthoTexture ? withTilePosition(material, offset, shared, buildingPatch) : material;
         }
@@ -622,7 +642,9 @@ export class Miniature {
       group.add(buildings.scene);
     }
     if (objects?.trees?.length) group.add(this.treeMesh(objects.trees, offset));
-    if (rails?.tracks?.length && ground && classTexture) group.add(this.railMesh(rails.tracks, offset, ground.scene, classTexture));
+    const sampler = ground && classTexture ? this.groundSampler(offset, ground.scene, classTexture) : null;
+    if (rails?.tracks?.length && sampler) group.add(this.railMesh(rails.tracks, sampler));
+    if (sampler) group.add(await this.vehicleMesh(tile, sampler, rails?.tracks ?? []));
     group.updateMatrixWorld(true);
     this.scene.add(group);
     const record = { group, shared, lamps: objects?.lamps ?? [] };
@@ -636,7 +658,9 @@ export class Miniature {
   // sleepers every 0.6 m. In-street (grooved) rail sits flush with no
   // sleepers; grass beds hide their sleepers. Drawn only at deep zoom, where a
   // rail is a pixel or more wide; coarser levels draw rails from the raster.
-  railMesh(tracks, offset, groundScene, classTexture) {
+  // Ground class and height at any RD point of one tile, from its class
+  // raster and its ground mesh. Rails and vehicles stand on this.
+  groundSampler(offset, groundScene, classTexture) {
     const canvas = new OffscreenCanvas(classTexture.image.width, classTexture.image.height);
     const context = canvas.getContext('2d', { willReadFrequently: true });
     context.drawImage(classTexture.image, 0, 0);
@@ -657,6 +681,11 @@ export class Miniature {
       const hit = ray.intersectObjects(meshes, false)[0];
       return hit ? hit.point.y : null;
     };
+    return { tileX, tileY, classes, width: canvas.width, height: canvas.height, classAt, heightAt };
+  }
+
+  railMesh(tracks, ground) {
+    const { tileX, tileY, classAt, heightAt } = ground;
     const railParts = [], sleeperParts = [];
     let lastHeight = 3;
     for (const track of tracks) {
@@ -705,6 +734,175 @@ export class Miniature {
     }
     group.userData.deepOnly = true; // tile-local coordinates, like the tile's other parts
     return group;
+  }
+
+  // Vehicles standing in the tile. Parked cars fill the BGT parking bays
+  // (which bays are taken is not known, so they are interpreted). With
+  // style.traffic a moment of moving traffic is added for still pictures:
+  // a Citadis on a tram track, cars on the OSM road graph, cyclists on the
+  // cycle graph. The live map draws moving traffic itself.
+  async vehicleMesh(tile, ground, tracks) {
+    const { tileX, tileY, classAt, heightAt, classes, width, height } = ground;
+    const hash = (a, b) => Math.abs(Math.sin(a * 12.9898 + b * 78.233) * 43758.5453) % 1;
+    const placed = { car: [], cyclist: [], tram: [] };
+    const put = (kind, x, y, heading, colour, lift = 0) => {
+      const h = heightAt(x, y);
+      if (h !== null) placed[kind].push({ x, y, z: h + lift, heading, colour });
+    };
+    // Dutch car colours, roughly by share of the fleet.
+    const carColours = [[0.25, 0x6b6f75], [0.45, 0x1e2024], [0.6, 0xe8e8e6], [0.72, 0x2e4a7a], [0.84, 0xb9bcc0], [0.91, 0x9c2a2a], [0.94, 0x2f4a3a], [0.97, 0x7a6550], [1.01, 0xd08a2a]];
+    const carColour = (r) => carColours.find(([share]) => r < share)[1];
+
+    // Parked cars: each parking-bay area, walked along its long axis.
+    const metres = TILE_METRES / width, label = new Int32Array(width * height);
+    for (let start = 0, next = 1; start < width * height; start++) {
+      if (label[start] || classes[start * 4] !== 4) continue;
+      const pixels = [start];
+      label[start] = next;
+      for (let k = 0; k < pixels.length; k++) {
+        const p = pixels[k], px = p % width, py = (p - px) / width;
+        for (const q of [px > 0 ? p - 1 : -1, px < width - 1 ? p + 1 : -1, py > 0 ? p - width : -1, py < height - 1 ? p + width : -1]) {
+          if (q >= 0 && !label[q] && classes[q * 4] === 4) { label[q] = next; pixels.push(q); }
+        }
+      }
+      next++;
+      if (pixels.length * metres * metres < 9) continue;
+      let mx = 0, my = 0;
+      for (const p of pixels) { mx += p % width; my += Math.floor(p / width); }
+      mx /= pixels.length; my /= pixels.length;
+      let sxx = 0, syy = 0, sxy = 0;
+      for (const p of pixels) { const dx = p % width - mx, dy = Math.floor(p / width) - my; sxx += dx * dx; syy += dy * dy; sxy += dx * dy; }
+      const angle = 0.5 * Math.atan2(2 * sxy, sxx - syy);
+      // Long axis in RD (raster rows run south).
+      const ux = Math.cos(angle), uy = -Math.sin(angle), vx = -uy, vy = ux;
+      const bins = new Map();
+      for (const p of pixels) {
+        const x = tileX + (p % width + 0.5) * metres, y = tileY + TILE_METRES - (Math.floor(p / width) + 0.5) * metres;
+        const u = x * ux + y * uy, v = x * vx + y * vy, key = Math.floor(u / 0.5);
+        const bin = bins.get(key) ?? { v: 0, n: 0 };
+        bin.v += v; bin.n += 1; bins.set(key, bin);
+      }
+      const keys = [...bins.keys()].sort((a, b) => a - b);
+      const across = (key) => { const bin = bins.get(key); return bin ? bin.n * metres * metres / 0.5 : 0; };
+      const centre = (key) => bins.get(key).v / bins.get(key).n;
+      let key = keys[0];
+      while (key <= keys[keys.length - 1]) {
+        const w = across(key);
+        const perpendicular = w >= 4.2, spacing = perpendicular ? 2.5 : 5.6;
+        const mid = key + Math.round(spacing / 2 / 0.5);
+        if (w < 1.6 || !bins.has(mid)) { key += 1; continue; }
+        const u = mid * 0.5 + 0.25, v = centre(mid);
+        const x = u * ux + v * vx, y = u * uy + v * vy;
+        const heading = perpendicular ? Math.atan2(vy, vx) : Math.atan2(uy, ux);
+        const fx = Math.cos(heading) * 2.0, fy = Math.sin(heading) * 2.0;
+        if (classAt(x, y) === 4 && classAt(x + fx, y + fy) === 4 && classAt(x - fx, y - fy) === 4 && hash(x, y) < 0.85) {
+          put('car', x, y, heading + (hash(y, x) < 0.5 ? Math.PI : 0), carColour(hash(x * 3.1, y * 1.7)));
+        }
+        key += Math.round(spacing / 0.5);
+      }
+    }
+
+    const parkedCars = placed.car.length;
+    if (this.style.traffic) {
+      const networks = await this.trafficNetworks();
+      const inside = (x, y) => x >= tileX && x < tileX + TILE_METRES && y >= tileY && y < tileY + TILE_METRES;
+      const along = (graph, perMetre, keep, side, surfaces, kind, colourOf) => {
+        graph.edges.forEach((edge, index) => {
+          const [from, to, , , roadClass] = edge;
+          const a = graph.nodes[from], b = graph.nodes[to];
+          if (!inside((a[0] + b[0]) / 2, (a[1] + b[1]) / 2) || !keep(roadClass) || graph.tunnel?.has(index)) return;
+          const length = Math.hypot(b[0] - a[0], b[1] - a[1]);
+          const ux = (b[0] - a[0]) / length, uy = (b[1] - a[1]) / length;
+          const way = graph.ways[graph.edge_ways[index]];
+          const offset = way?.directions?.[0] && way?.directions?.[1] ? side : 0; // keep right on two-way ways
+          const count = Math.floor(length * perMetre(roadClass) + hash(from, to));
+          for (let k = 0; k < count; k++) {
+            const s = (k + hash(index, k)) / count * length;
+            const x = a[0] + ux * s + uy * offset, y = a[1] + uy * s - ux * offset;
+            if (surfaces.includes(classAt(x, y))) put(kind, x, y, Math.atan2(uy, ux), colourOf(hash(x, y)));
+          }
+        });
+      };
+      const carDensity = { primary: 1 / 22, secondary: 1 / 22, tertiary: 1 / 35, residential: 1 / 70, unclassified: 1 / 70, living_street: 1 / 120 };
+      if (networks.cars) along(networks.cars, (c) => carDensity[c] ?? 0, (c) => c in carDensity, 1.6, [1, 5, 12, 15], 'car', carColour);
+      const clothes = [0x2b2f3a, 0x3a4a6b, 0x6b2f2f, 0x1e1e22, 0x56604a, 0x8a8f96, 0xb5763a];
+      if (networks.bikes) along(networks.bikes, (c) => (c === 'cycleway' ? 1 / 35 : 1 / 140), () => true, 0.7, [1, 2, 10, 15], 'cyclist', (r) => clothes[Math.floor(r * clothes.length)]);
+      // One tram on the longest tram track, running on the right: its other
+      // track lies to its left.
+      const trams = tracks.filter((t) => t.function === 'tram');
+      const lengthOf = (t) => t.points.slice(1).reduce((sum, p, i) => sum + Math.hypot(p[0] - t.points[i][0], p[1] - t.points[i][1]), 0);
+      // style.tramNear = [x, y] puts it on the track point nearest that place.
+      const near = this.style.tramNear;
+      const distanceTo = (t) => Math.min(...t.points.map((p) => Math.hypot(p[0] - near[0], p[1] - near[1])));
+      const track = near ? trams.filter((t) => lengthOf(t) > 35 && distanceTo(t) < 40).sort((a, b) => distanceTo(a) - distanceTo(b))[0]
+        : trams.sort((a, b) => lengthOf(b) - lengthOf(a))[0];
+      if (track && lengthOf(track) > 35) {
+        let target = lengthOf(track) * (0.3 + 0.4 * hash(track.points[0][0], track.points[0][1]));
+        if (near) {
+          let best = Infinity;
+          for (let i = 1, walked = 0; i < track.points.length; i++) {
+            const [x0, y0] = track.points[i - 1], [x1, y1] = track.points[i], segment = Math.hypot(x1 - x0, y1 - y0);
+            const d = Math.hypot(x0 - near[0], y0 - near[1]);
+            if (d < best) { best = d; target = walked; }
+            walked += segment;
+          }
+          target = Math.min(Math.max(target, 16), lengthOf(track) - 16); // the whole tram on the track
+        }
+        let walked = 0;
+        for (let i = 1; i < track.points.length; i++) {
+          const [x0, y0] = track.points[i - 1], [x1, y1] = track.points[i];
+          const segment = Math.hypot(x1 - x0, y1 - y0);
+          if (walked + segment >= target) {
+            const t = (target - walked) / segment, x = x0 + (x1 - x0) * t, y = y0 + (y1 - y0) * t;
+            let ux = (x1 - x0) / segment, uy = (y1 - y0) / segment;
+            const other = trams.filter((o) => o !== track).flatMap((o) => o.points)
+              .map((p) => ({ p, d: Math.hypot(p[0] - x, p[1] - y) })).sort((a, b) => a.d - b.d)[0];
+            if (other && other.d < 8 && (other.p[0] - x) * -uy + (other.p[1] - y) * ux < 0) { ux = -ux; uy = -uy; }
+            if (inside(x, y)) put('tram', x, y, Math.atan2(uy, ux), 0, classAt(x, y) === 5 ? 0.16 : 0.03);
+            break;
+          }
+          walked += segment;
+        }
+      }
+    }
+
+    console.log(`vehicles ${tile.id}: ${parkedCars} parked, ${placed.car.length - parkedCars} moving cars, ${placed.cyclist.length} cyclists, trams at ${placed.tram.map((t) => `${t.x.toFixed(0)},${t.y.toFixed(0)}`).join(" ")}`);
+    const group = new THREE.Group();
+    const models = { car: (c) => car(c), cyclist: (c) => cyclist(c), tram: () => citadisTram() };
+    for (const [kind, items] of Object.entries(placed)) {
+      if (!items.length) continue;
+      // One instanced mesh per part of the model; paint takes each vehicle's colour.
+      const model = models[kind](0xffffff);
+      model.updateMatrixWorld(true);
+      model.traverse((part) => {
+        if (!part.isMesh) return;
+        const paint = kind !== 'tram' && part.material.color?.getHex() === 0xffffff;
+        const material = part.material.clone();
+        if (this.style.provenance) material.color.lerp(new THREE.Color(0xff00ff), 0.45);
+        const mesh = new THREE.InstancedMesh(part.geometry, material, items.length);
+        const matrix = new THREE.Matrix4(), turn = new THREE.Matrix4(), colour = new THREE.Color();
+        items.forEach((item, i) => {
+          // Models run along +x; RD heading is anticlockwise from east, and the scene's z points south.
+          turn.makeRotationY(item.heading).setPosition(item.x - tileX, item.z, -(item.y - tileY));
+          matrix.multiplyMatrices(turn, part.matrixWorld);
+          mesh.setMatrixAt(i, matrix);
+          if (paint) mesh.setColorAt(i, colour.setHex(item.colour));
+        });
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        group.add(mesh);
+      });
+    }
+    group.userData.vehicles = true;
+    return group;
+  }
+
+  // The OSM road and cycle graphs (scene/v1/networks), loaded once.
+  trafficNetworks() {
+    this.networksPromise ??= Promise.all(['cars', 'bikes'].map((kind) => fetch(`${this.sceneBase}/networks/${kind}.json`)
+      .then((r) => r.json()).then((graph) => ({ ...graph, tunnel: new Set(graph.tunnel_edges ?? []) })).catch(() => null)))
+      .then(([cars, bikes]) => ({ cars, bikes }));
+    return this.networksPromise;
   }
 
   // Per-building facts for the shader: base height, height, construction
@@ -846,20 +1044,23 @@ export class Miniature {
       const turnedHere = Math.min(1, Math.max(0, turned + (random() - 0.5) * 0.4));
       const [r, g, b] = form.colour.map((c, i) => c + ((form.autumn ?? form.colour)[i] - c) * turnedHere);
       const colourAt = (v) => [r * (1 + 0.15 * tone) + 0.05 * v, g * (1 + 0.12 * tone) + 0.07 * v, b + 0.03 * v];
+      // Position, genus, height and crown width are register facts; the crown's
+      // exact shape is typical for the genus, so it is interpreted.
+      const shown = this.style.provenance ? (v) => colourAt(v).map((c, i) => c + ([1, 0, 1][i] - c) * 0.45) : colourAt;
       if (form.conifer) {
         // Stacked clumps narrowing upward.
         for (let k = 0; k < 6; k++) {
           const t = k / 5;
-          clumps.push({ position: [x, crownBase + crownHeight * (0.1 + 0.8 * t), z], size: width * (1 - 0.75 * t), colour: colourAt(0.2 * t) });
+          clumps.push({ position: [x, crownBase + crownHeight * (0.1 + 0.8 * t), z], size: width * (1 - 0.75 * t), colour: shown(0.2 * t) });
         }
       } else {
-        if (leaves > 0.75) clumps.push({ position: [x, crownBase + crownHeight * 0.5, z], size: Math.min(width, crownHeight) * (form.airy ? 0.6 : 0.8), colour: colourAt(0) });
+        if (leaves > 0.75) clumps.push({ position: [x, crownBase + crownHeight * 0.5, z], size: Math.min(width, crownHeight) * (form.airy ? 0.6 : 0.8), colour: shown(0) });
         const count = Math.max(6, Math.min(16, Math.round(width * crownHeight / 5)));
         for (let k = 0; k < count; k++) {
           const a = random() * Math.PI * 2, rr = Math.sqrt(random()) * 0.32, v = random();
           const size = Math.min(width, crownHeight) * (form.airy ? 0.38 : 0.5 - 0.15 * rr) * (0.85 + 0.3 * random());
           if (leaves < 0.9 && k % 2 === 0) twigs.push({ position: [x + Math.cos(a) * rr * width * 0.8, crownBase + crownHeight * (0.35 + 0.45 * v), z + Math.sin(a) * rr * width * 0.8], size: Math.min(width, crownHeight) * 0.62 });
-          if (random() < leaves) clumps.push({ position: [x + Math.cos(a) * rr * width, crownBase + crownHeight * (0.25 + 0.55 * v), z + Math.sin(a) * rr * width], size: size * (0.6 + 0.4 * leaves), colour: colourAt(v) });
+          if (random() < leaves) clumps.push({ position: [x + Math.cos(a) * rr * width, crownBase + crownHeight * (0.25 + 0.55 * v), z + Math.sin(a) * rr * width], size: size * (0.6 + 0.4 * leaves), colour: shown(v) });
         }
         // Main limbs show as the leaves fall: from the top of the trunk up and
         // out to the edge of the crown.
@@ -910,7 +1111,7 @@ export class Miniature {
       twigs.forEach((t, i) => {
         matrix.compose(new THREE.Vector3(...t.position), unit, new THREE.Vector3(t.size, t.size * 0.85, t.size));
         twigMesh.setMatrixAt(i, matrix);
-        twigMesh.setColorAt(i, colour.setHex(0x7a6d60));
+        twigMesh.setColorAt(i, colour.setHex(this.style.provenance ? 0xbc4ab0 : 0x7a6d60));
       });
       twigMesh.userData.tree = true;
       group.add(twigMesh);

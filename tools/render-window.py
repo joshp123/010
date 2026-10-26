@@ -14,6 +14,7 @@ with sync_playwright() as p:
     browser = p.chromium.launch(args=["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"])
     page = browser.new_page(viewport={"width": 800, "height": 800})
     page.on("pageerror", lambda e: print("pageerror:", e))
+    page.on("console", lambda m: print(f"console {m.type}:", m.text) if m.type in ("warning", "error") or "--verbose" in sys.argv else None)
     page.goto(f"http://127.0.0.1:8790/t1.html?capture=1{extra or '&area=m1'}")
     page.wait_for_function("window.captureReady === true", timeout=600000)
     sx, sy = page.evaluate(f"""() => {{ const m = window.miniature, p = m.worldFromRd({x}, {y}, 3);

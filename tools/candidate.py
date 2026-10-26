@@ -26,7 +26,7 @@ def page_for(p, light):
     page = browser.new_page(viewport={"width": 1100, "height": 1100})
     page.on("pageerror", lambda e: print("pageerror:", e))
     page.on("console", lambda m: print("warning:", m.text) if m.type == "warning" and m.text.startswith("tile ") else None)
-    page.goto(f"http://127.0.0.1:8790/t1.html?capture=1&area=core{light}{extra}")
+    page.goto(f"http://127.0.0.1:8790/t1.html?capture=1&area=core&traffic=1&tram={X},{Y}{light}{extra}")
     page.wait_for_function("window.captureReady === true", timeout=600000)
     return browser, page
 
@@ -43,7 +43,7 @@ with sync_playwright() as p:
     browser.close()
     provenance = None
     if "assets=" in extra and os.path.exists(f"{DATA}/assets/v1/tiles/x90250_y436000/buildings-provenance.glb"):
-        browser, page = page_for(p, "&assetFile=buildings-provenance.glb")
+        browser, page = page_for(p, "&assetFile=buildings-provenance.glb&provenance=1")
         provenance = render(page, 0.075, 1024)
         browser.close()
 
@@ -81,14 +81,15 @@ for label, image, classes in [("deep", deep, deep_classes), ("overview", overvie
 numbers["tiny.london"] = json.load(open(f"{DATA}/renders/reference/tiny-london-classes.json"))
 assembly = f"{DATA}/assets/v1/tiles/x90250_y436000/buildings.assembly.json"
 if "assets=" in extra and os.path.exists(assembly):
-    a = json.load(open(assembly))
-    numbers["assets"] = {k: a.get(k) for k in ("area_routes_m2", "wall_route_areas_m2", "verified_fractions", "interpreted_fractions", "features") if k in a}
+    out = subprocess.run([sys.executable, f"{here}/tile-numbers.py", "x90250_y436000"], capture_output=True, text=True, check=True)
+    numbers["assets"] = json.loads(out.stdout)
+    print(json.dumps(numbers["assets"], indent=1))
 json.dump(numbers, open(f"{work}/numbers.json", "w"), indent=1)
 classes_order = ["roof", "wall", "asphalt", "paving", "grass", "tree", "water"]
-print("class      " + "".join(f"{k:>18}" for k in numbers))
+print("class      " + "".join(f"{k:>18}" for k in numbers if k != "assets"))
 for c in classes_order + ["edge_step", "L_median_all"]:
     row = []
-    for k in numbers:
+    for k in [k for k in numbers if k != "assets"]:
         v = numbers[k].get(c)
         row.append(f"{'-':>18}" if v is None else (f"{v:>18}" if not isinstance(v, dict) else f"{'L%.2f C%.3f' % (v['L'], v['C']):>18}"))
     print(f"{c:<11}" + "".join(row))
