@@ -183,6 +183,45 @@ container.addEventListener('wheel', (event) => { event.preventDefault(); zoomBy(
 container.addEventListener('dblclick', () => zoomBy(1));
 if (bearings.length < 2) document.querySelector('.controls').style.display = 'none';
 document.getElementById('rotate-left').onclick = () => rotateBy(-1);
+// Share: a picture of exactly this view, with the link and @jjpcodes on it.
+async function viewPicture() {
+  const scale = zoomLevels[state.zoom].cssPerArt;
+  const width = Math.ceil(innerWidth / scale), height = Math.ceil(innerHeight / scale);
+  const factor = Math.max(1, Math.round(1080 / width));
+  const canvas = document.createElement('canvas');
+  canvas.width = width * factor; canvas.height = height * factor;
+  const g = canvas.getContext('2d');
+  g.imageSmoothingEnabled = false;
+  g.fillStyle = getComputedStyle(document.body).backgroundColor;
+  g.fillRect(0, 0, canvas.width, canvas.height);
+  const origin = world.getBoundingClientRect();
+  for (const image of world.querySelectorAll('img')) {
+    if (!image.complete) continue;
+    const r = image.getBoundingClientRect();
+    g.drawImage(image, (r.left / scale) * factor, (r.top / scale) * factor, image.width * factor, image.height * factor);
+  }
+  g.drawImage(live.canvas, 0, 0, canvas.width, canvas.height);
+  const label = '010.jjpcodes.com · @jjpcodes';
+  g.font = `600 ${Math.round(canvas.width / 36)}px ui-monospace, Menlo, monospace`;
+  const pad = Math.round(canvas.width / 60), w = g.measureText(label).width;
+  g.fillStyle = 'rgba(28, 30, 40, 0.82)';
+  g.fillRect(pad, canvas.height - pad * 3.2, w + pad * 2, pad * 2.4);
+  g.fillStyle = '#f4f1e6';
+  g.fillText(label, pad * 2, canvas.height - pad * 1.5);
+  return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+}
+document.getElementById('share').onclick = async () => {
+  const blob = await viewPicture();
+  const file = new File([blob], 'rotterdam-010.png', { type: 'image/png' });
+  const text = 'Rotterdam in miniature by @jjpcodes';
+  if (navigator.canShare?.({ files: [file] })) {
+    await navigator.share({ files: [file], text, url: location.href }).catch(() => {});
+  } else {
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).catch(() => {});
+    const button = document.getElementById('share');
+    button.textContent = '✓'; setTimeout(() => { button.textContent = '↗'; }, 1500);
+  }
+};
 const lightButton = document.getElementById('light');
 const showLight = () => { lightButton.textContent = night ? '☾' : '☀'; document.body.classList.toggle('night', night); };
 showLight();
