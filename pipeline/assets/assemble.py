@@ -197,6 +197,13 @@ def assemble(assets_root, target=None, quality=86, provenance_tint=False, tile=D
     source = ROOT / 'scene/v1/tiles' / tile / 'buildings.glb'
     source_bytes = source.read_bytes()
     source_hash = hashlib.sha256(source_bytes).hexdigest()
+    coordinate_audit_path = ROOT / 'facts/v1/work' / tile / 'reference-coordinate-audit.json'
+    coordinate_audit = None
+    if coordinate_audit_path.exists():
+        coordinate_record = json.loads(coordinate_audit_path.read_text())
+        coordinate_audit = {'path': str(coordinate_audit_path), 'sha256': hashlib.sha256(coordinate_audit_path.read_bytes()).hexdigest(),
+                            'status': coordinate_record['status'],
+                            'note': 'Texture mapping uses source triangle IDs and reference pixels. Legacy translated RD planes are not verified positions.'}
     original, binary = unpack_glb(source_bytes)
     document = deepcopy(original)
     document.update(accessors=[], bufferViews=[], images=[], buffers=[{'byteLength': 0}])
@@ -540,6 +547,7 @@ def assemble(assets_root, target=None, quality=86, provenance_tint=False, tile=D
         feature['asset'] = {
             'provenance': {'method': 'tier1-generated-tier2-drawn-parts-v3', 'assembled_at': now,
                            'source': str(source), 'source_sha256': source_hash,
+                           'reference_coordinate_audit': coordinate_audit,
                            'evidence': sorted(set(evidence for wall in walls for evidence in wall['evidence']))
                                        + ([str(ROOT / 'scene/v1/tiles' / tile / 'ortho.jpg')]
                                           if feature_generated_roof_area[feature_index] else []),
@@ -616,6 +624,7 @@ def assemble(assets_root, target=None, quality=86, provenance_tint=False, tile=D
         tint_report = write_provenance_tint(document, writer.binary, interpreted_texture_masks, target.with_name('buildings-provenance.glb'))
     report = {'written_by': 'AI, GPT-6 Astra, 2026-10-26', 'date': now, 'tile': tile,
               'original_materials': 0,
+              'reference_coordinate_audit': coordinate_audit,
               'delivery_budget': {'target_bytes': 25_000_000, 'within_budget': len(output) < 25_000_000, 'policy': 'Preserve source detail; report oversized tiles without downsampling'},
               'wall_area_fractions': {'basis': 'Assigned triangle area weighted 48-step barycentric mask samples; numeric verification only', 'area_m2': wall_total, 'verified': wall_verified/wall_total, 'interpreted': wall_interpreted/wall_total, 'verified_area_m2': wall_verified, 'interpreted_area_m2': wall_interpreted},
               'building_roof_area_fractions': {'area_m2':building_roof_total,'verified':building_roof_verified/building_roof_total,'interpreted':1-building_roof_verified/building_roof_total,'verified_area_m2':building_roof_verified,'interpreted_area_m2':building_roof_total-building_roof_verified},

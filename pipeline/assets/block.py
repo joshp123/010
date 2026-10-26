@@ -108,7 +108,8 @@ def process_tile(tile, render=False, preserve_existing=False):
             state['roof_inputs'] = roof_stamp
         dependencies = [directory / 'composed/composition.json', roof / 'roof.webp', roof_generation,
                         roof / 'interpreted-mask.png', ROOT / 'scene/v1/tiles' / tile / 'buildings.glb',
-                        SCRIPTS / 'assemble.py', SCRIPTS / 'composed_parts.py']
+                        SCRIPTS / 'assemble.py', SCRIPTS / 'composed_parts.py',
+                        ROOT / 'facts/v1/work' / tile / 'reference-coordinate-audit.json']
         dependencies.extend((ROOT / 'assets/v1/parts').glob('*'))
         for reference_path in (ROOT / 'assets/v1/elevations').glob('*/reference.json'):
             reference = json.loads(reference_path.read_text())
