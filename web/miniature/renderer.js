@@ -184,13 +184,36 @@ const groundPatch = {
       float shade = dot(photo, vec3(0.299, 0.587, 0.114)) / max(0.05, dot(groundColour, vec3(0.299, 0.587, 0.114)));
       groundColour *= mix(1.0, clamp(shade, 0.6, 1.4), groundPhotoDetail);
     }
+    vec3 groundPhoto = texture2D(orthoTexture, groundUv).rgb;
+    float photoGreen = groundPhoto.g - max(groundPhoto.r, groundPhoto.b);
+    // Track beds: grass track where the aerial shows grass, else the bed colour.
+    if ((surfaceClass == 5.0 || surfaceClass == 14.0) && photoGreen > 0.02) {
+      groundColour = texture2D(classColours, vec2(6.5 / 32.0, 0.5)).rgb * 0.95;
+    }
+    float deep = 1.0 - smoothstep(1.0, 2.0, texelsPerArtPixel); // 1 at 0.1 m per pixel and finer
+    if (deep > 0.0) {
+      // At deep zoom, surfaces that are not carriageway take a little texture
+      // from the aerial photo (paving joints, worn grass, ballast); roads stay
+      // clean because parked cars are in the photo.
+      bool textured = surfaceClass == 3.0 || surfaceClass == 10.0 || surfaceClass == 6.0 || surfaceClass == 9.0
+        || surfaceClass == 14.0 || surfaceClass == 16.0 || surfaceClass == 15.0;
+      if (textured) {
+        float shade = dot(groundPhoto, vec3(0.299, 0.587, 0.114)) / max(0.05, dot(groundColour, vec3(0.299, 0.587, 0.114)));
+        groundColour *= mix(1.0, clamp(shade, 0.8, 1.2), 0.35 * deep);
+      }
+    }
     int lines = lineBitsAround(groundUv);
     // Markings and kerbs are narrower than an art pixel at coarse zoom; drawing
     // them there turns roads into speckle. Rails stay: they are the tram network.
     if (texelsPerArtPixel > 3.5) lines &= 3;
-    if ((lines & 8) != 0) groundColour = mix(groundColour, vec3(0.80, 0.78, 0.72), 0.7);
+    if ((lines & 8) != 0) {
+      // Kerb: the stone on the pavement side, the gutter's shadow on the road side.
+      bool roadSide = surfaceClass == 1.0 || surfaceClass == 2.0 || surfaceClass == 4.0;
+      groundColour = roadSide ? groundColour * 0.72 : mix(groundColour, vec3(0.84, 0.83, 0.79), 0.75);
+    }
     if ((lines & 4) != 0) groundColour = vec3(0.93, 0.92, 0.86);
-    if ((lines & 3) != 0) groundColour = vec3(0.30, 0.29, 0.30);
+    // Rails: dark lines read as track from afar; up close they are polished steel.
+    if ((lines & 3) != 0) groundColour = mix(vec3(0.30, 0.29, 0.30), vec3(0.70, 0.71, 0.72), deep);
     // Data overlay: which line features are at this pixel, as pure colours,
     // for compositing data back over a painted image.
     if ((lines & 8) != 0) overlayCode = vec3(0.0, 0.0, 1.0);
@@ -628,16 +651,20 @@ export class Miniature {
       const crown = Math.max(2.5, tree.crown_m >= 1.5 ? tree.crown_m : height * 0.6);
       const x = tree.x - this.origin.x - offset.x;
       const z = -(tree.y - this.origin.y) - offset.z;
-      const crownHeight = Math.min(height * 0.8, Math.max(crown * 1.05, height * 0.6));
+      const crownHeight = Math.min(height * 0.85, Math.max(crown * 1.1, height * 0.65));
       const crownBase = tree.z + height - crownHeight;
       let seed = Math.abs(Math.sin(tree.x * 12.9898 + tree.y * 78.233) * 43758.5453) % 1;
       const random = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
       const tone = random();
-      const count = Math.max(5, Math.min(16, Math.round(crown * crown / 5)));
+      // One central mass plus clumps around it, so even a young tree reads as
+      // a full crown rather than a few balls on a stick.
+      const count = Math.max(6, Math.min(16, Math.round(crown * crown / 5)));
+      clumps.push({ position: [x, crownBase + crownHeight * 0.5, z], size: crown * 0.8,
+        colour: [0.24 + 0.07 * tone, 0.44 + 0.08 * tone, 0.17 + 0.04 * tone] });
       for (let k = 0; k < count; k++) {
         // Points inside an ellipsoid crown, larger clumps near the middle.
-        const a = random() * Math.PI * 2, r = Math.sqrt(random()) * 0.42, v = random();
-        const size = crown * (0.42 - 0.18 * r) * (0.85 + 0.3 * random());
+        const a = random() * Math.PI * 2, r = Math.sqrt(random()) * 0.32, v = random();
+        const size = crown * (0.5 - 0.15 * r) * (0.85 + 0.3 * random());
         clumps.push({
           position: [x + Math.cos(a) * r * crown, crownBase + crownHeight * (0.25 + 0.55 * v), z + Math.sin(a) * r * crown],
           size, colour: [0.24 + 0.07 * tone + 0.04 * v, 0.44 + 0.08 * tone + 0.07 * v, 0.17 + 0.04 * tone],
