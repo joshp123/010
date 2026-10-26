@@ -1,34 +1,31 @@
 # Status
 
-Written by AI on 2026-10-25 by model Claude Opus 5.5. Kept under one page. Josh's words are in [requirements/steering.md](requirements/steering.md); the plan is Claude Fable's of 25 Oct.
+Written by AI on 2026-10-26 by model Claude Opus 5.5. Kept under one page. Josh's words are in [requirements/steering.md](requirements/steering.md).
 
-**Goal.** A pixel-art isometric miniature of the whole gemeente Rotterdam, at the quality of isometric.nyc and tiny.london, fast on a phone, alive with live transit, simulated traffic, weather and a lit night. Built from one reusable 3D model of the city.
+**Goal.** The whole gemeente Rotterdam as a pixel-art miniature at tiny.london quality or better, fast on a phone, alive: live transit, simulated cars and cyclists, weather, a lit night. Built from one reusable 3D model of the city.
 
-**Now: M0, the comparison.** One neighbourhood, one city model, three ways of drawing it, judged side by side.
+**Direction (decided 26 Oct).** The 3D scene is the master asset. The shipped map is the procedural pixel pyramid at four angles, rendered from the scene. An image-model paint pass ships nothing unless a square passes per-building colour and material checks; it is off the site. Walls with no photo get a façade from facts only (height, BAG year and use). Nothing that exists as data is drawn by a model.
 
-- Neighbourhood: **Historic Delfshaven around Aelbrechtskolk**, a 1 × 1 km block (RD x 89750–90750, y 435750–436750). The scene is also built out to Lloydkwartier and the Euromast (54 tiles); the pages show the 1 km block.
-- **T1, live 3D**: the scene drawn in the browser with a pixel-art shader. Rotates freely. `?style=photo` shows the same scene unpixelated at full resolution.
-- **T2, pixel pyramid**: the same shader rendered offline into image tiles, four bearings (35°, 125°, 215°, 305°). About 10 s of MacBook time and 4 MB per bearing per km².
-- **T3, painted pyramid**: T2 repainted square by square by ChatGPT's image tool (54 squares, median 43 s a call, three runs in parallel, no limit hit), each square aligned back onto the render, overlaps blended, rails and road markings stamped back from data. One bearing (35°).
+**Live at 010.jjpcodes.com.** Delfshaven to the Euromast (3.4 km²), four angles, day and night following Rotterdam's real sunset. Neighbourhood under work next: **the centre and Kop van Zuid** (RD x 89750–96500, y 434750–438000).
 
-**Published** at 010.jjpcodes.com: home page is T2; `compare.html` links all three. Phone profile (20 Mbit/s, 80 ms, 4× CPU) against the live site: T1 4.4 s to a picture, 13 s complete (30 MB for the km²); T2 0.9 s first visit, 0.3 s return visit, 8 ms pan frames; T3 0.8 s and 0.23 s. Targets are about 0.35 s and 0.1 s: not met yet. The page HTML still comes from the network on return visits.
+| Piece | Owner | State |
+|---|---|---|
+| Scene: buildings with BAG facts, M1 area | Sol | building |
+| Scene: ground, rails, metro and train beds, M1 | Sol | building |
+| Coarse model of the whole gemeente (1 km tiles) | Sol | building |
+| Live transit feed (Worker, `/api/live`) | Sol | building |
+| Car and cycle networks with heights | Sol | building |
+| Look: photo flattening, palette, gardens, facts-only façades | Opus | done |
+| Night: lamp register pools, real-window rooms by BAG use | Opus | done |
+| Live layer: vehicles with depth occlusion, weather | Opus | built, waiting on feed and networks |
+| First-view speed: inlined preview, preloads, service worker | Opus | done |
 
-**Owners.** Claude Opus 5.5: renderer, shader, pages, judging, publishing. GPT-6.1 Sol (Codex background runs): scene builders, web bake, speed script, paint batches.
-
-**Where I departed from the plan, and why.**
-- T2 is not a separate renderer: it is the live renderer capturing exact windows, so T1 and T2 give the same pixels at the same view and one shader decides the look.
-- Roofs come from the 2026 aerial by planar projection in the shader, not baked roof textures. Simpler; tall buildings show some roof lean.
-- No whole-gemeente low-resolution render yet: the scene exists only for M0. It is the first job of M1.
-- The plan's per-roof structure checks are not built; tonight's judgement is by eye against the aerial.
+**Where I departed from the plan.** T2 uses the live renderer to capture exact windows, so one shader decides the look. Roofs take the 2026 aerial by planar projection. Vehicles are boxes placed in RD/NAP and hidden by depth tiles from the same render.
 
 **Known problems.**
-- Façades: 87% of façade area in the block has a 2018 photo, 72% across the full area. Elsewhere walls are plain.
-- The painter changes façade colours (grey plaster often becomes brick), fills empty background with invented city or water, and sometimes shifts or warps a square by up to ~40 px. The compositor masks background, re-aligns squares and drops the few it cannot align; two paints of the same place differ in palette.
-- Sites serves every file with `max-age=0`; a service worker now caches tiles per deploy.
-- From the cold review: T3 is soft at the two closest zooms (the painting is smooth, not pixel-crisp); the painter draws ballast and sleepers under tram rails; it gives façades generic window grids; private gardens in courtyards are flat grey (BGT records them as yards); a thin dark line crosses the Schie in all three (source not yet found); round tree blobs everywhere; nothing moves yet, no night, no share button.
-- Rotterdam's road-marking register publishes no licence. The markings are used and flagged.
-- 3% of non-building ground has no valid height in the municipal model; a flat underlay at street height fills it.
+- Sites serves everything with `max-age=0`; the service worker caches per deploy. Uploads take minutes per 100 MB; the whole gemeente will need packed tiles.
+- Rotterdam's road-marking register has no stated licence: kept, flagged.
+- Façade imagery: Mapillary covers the centre well but its API needs a token (an account); not used. Commons photos are selective. No open source covers façades fully.
+- Metro positions are drawn at street level until the cutaway uses tunnel depths.
 
-**Open decisions for Josh**: sent once, with links and the comparison table.
-
-**Josh should look at next:** https://010.jjpcodes.com/compare.html on his phone.
+**Josh should look at next:** https://010.jjpcodes.com on his phone, day and night (☀/☾).
