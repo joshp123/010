@@ -1,7 +1,8 @@
 # Written by AI on 2026-10-26 by model Claude Opus 5.5.
 # Road markings from Rotterdam's marking register (sources/rotterdam-markings:
 # lines, areas, points), drawn as paint into a 10 cm mask per tile:
-# scene/v1/tiles/<tile>/markings.png (255 = paint). The register's type names
+# scene/v1/tiles/<tile>/markings.png (255 = paint), and the register's parking
+# bays split into car slots in parking.json. The register's type names
 # give each line's dash pattern and width (Lengte_1.00-1.00_B10 = 1 m dash,
 # 1 m gap, 10 cm wide). Points (zebra stripes, shark teeth, arrows, letters
 # such as "3" "0") carry no rotation; they take the direction of the nearest
@@ -72,6 +73,7 @@ def draw_tile(tile, lines, areas, points, roads):
         draw.polygon([px(*c) for c in corners], fill=255)
 
     drawn = {"lines": 0, "areas": 0, "points": 0}
+    slots = []  # parking slots from the register's bays, for parked cars
     for f in lines:
         kind = f["attributes"]["TYPE"] or ""
         paths = (f.get("geometry") or {}).get("paths") or []
@@ -110,6 +112,21 @@ def draw_tile(tile, lines, areas, points, roads):
             if length > 1e-3:
                 quad((ax + bx) / 2, (ay + by) / 2, (bx - ax) / length, (by - ay) / length, length + 0.1, 0.1)
         bays = re.search(r"_(\d+)P", kind)
+        if bays and kind.startswith("Parkeervak"):
+            # Slots for parked cars: the bay's long side split into its count.
+            pts_ = np.array(ring[:-1])
+            edges_ = [(pts_[i], pts_[(i + 1) % len(pts_)]) for i in range(len(pts_))]
+            la, lb = max(edges_, key=lambda e: np.hypot(*(e[1] - e[0])))
+            u_ = (lb - la) / np.hypot(*(lb - la)); v_ = np.array([-u_[1], u_[0]])
+            al, ac = (pts_ - la) @ u_, (pts_ - la) @ v_
+            n_ = int(bays.group(1))
+            perpendicular = "haaks" in kind
+            for k in range(n_):
+                t = al.min() + (al.max() - al.min()) * (k + 0.5) / n_
+                centre = la + u_ * t + v_ * (ac.min() + ac.max()) / 2
+                if x0 <= centre[0] < x0 + 250 and y0 <= centre[1] < y0 + 250:
+                    heading = math.atan2(*(v_[::-1])) if perpendicular else math.atan2(u_[1], u_[0])
+                    slots.append({"x": round(float(centre[0]), 2), "y": round(float(centre[1]), 2), "heading": round(heading, 3), "kind": "perpendicular" if perpendicular else "parallel"})
         if bays and int(bays.group(1)) > 1:
             pts = np.array(ring[:-1])
             edges = [(pts[i], pts[(i + 1) % len(pts)]) for i in range(len(pts))]
@@ -194,7 +211,8 @@ def draw_tile(tile, lines, areas, points, roads):
     found = keep[labels]
     image = Image.fromarray(np.maximum(np.asarray(image), found.astype(np.uint8) * 255))
     image.save(DATA / f"scene/v1/tiles/{tile}/markings.png", optimize=True)
-    print(f"{tile}: {drawn['lines']} lines, {drawn['areas']} areas, {drawn['points']} points from the register; {int(found.sum())} px of paint from the aerial")
+    json.dump({"source": SOURCE, "slots": slots}, open(DATA / f"scene/v1/tiles/{tile}/parking.json", "w"))
+    print(f"{tile}: {drawn['lines']} lines, {drawn['areas']} areas, {drawn['points']} points from the register; {int(found.sum())} px of paint from the aerial; {len(slots)} parking slots")
 
 
 data = load()

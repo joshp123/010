@@ -642,6 +642,7 @@ export class Miniature {
     const rails = await fetch(`${base}/rails.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const roofFacts = await fetch(`${base}/roofs.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const bikeParking = await fetch(`${base}/bikes.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+    const parkingSlots = await fetch(`${base}/parking.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const markings = await loadRawImageTexture(`${base}/markings.png`).catch(() => null);
     const roofDetail = await loadRawImageTexture(`${base}/roof-detail.png`).then((t) => { t.colorSpace = THREE.SRGBColorSpace; return t; }).catch(() => null);
     const shared = {
@@ -725,7 +726,7 @@ export class Miniature {
       if (bed) shared.trackBedColour.value.set(...bed);
     }
     if (rails?.tracks?.length && sampler) group.add(this.railMesh(rails.tracks, sampler));
-    if (sampler) group.add(await this.vehicleMesh(tile, sampler, rails?.tracks ?? [], bikeParking));
+    if (sampler) group.add(await this.vehicleMesh(tile, sampler, rails?.tracks ?? [], bikeParking, parkingSlots));
     group.updateMatrixWorld(true);
     this.scene.add(group);
     const record = { group, shared, lamps: objects?.lamps ?? [] };
@@ -903,7 +904,7 @@ export class Miniature {
   // style.traffic a moment of moving traffic is added for still pictures:
   // a Citadis on a tram track, cars on the OSM road graph, cyclists on the
   // cycle graph. The live map draws moving traffic itself.
-  async vehicleMesh(tile, ground, tracks, bikes) {
+  async vehicleMesh(tile, ground, tracks, bikes, parking) {
     const { tileX, tileY, classAt, heightAt, classes, width, height } = ground;
     const hash = (a, b) => Math.abs(Math.sin(a * 12.9898 + b * 78.233) * 43758.5453) % 1;
     const placed = { hatchback: [], estate: [], suv: [], cyclist: [], tram: [], hoop: [], bike: [], locker: [] };
@@ -914,12 +915,18 @@ export class Miniature {
       if (h !== null) placed[kind].push({ x, y, z: h + lift, heading, colour });
     };
     // Dutch car colours, roughly by share of the fleet.
-    const carColours = [[0.25, 0x6b6f75], [0.45, 0x1e2024], [0.6, 0xe8e8e6], [0.72, 0x2e4a7a], [0.84, 0xb9bcc0], [0.91, 0x9c2a2a], [0.94, 0x2f4a3a], [0.97, 0x7a6550], [1.01, 0xd08a2a]];
+    const carColours = [[0.27, 0x6b6f75], [0.52, 0x1e2024], [0.7, 0xe8e8e6], [0.84, 0xb9bcc0], [0.92, 0x2e4a7a], [0.96, 0x9c2a2a], [0.98, 0x2f4a3a], [1.01, 0x7a6550]];
     const carColour = (r) => carColours.find(([share]) => r < share)[1];
 
-    // Parked cars: each parking-bay area, walked along its long axis.
+    // Parked cars: the register's marked slots where it has them (about nine
+    // in ten taken, as in the daytime aerial); then each BGT parking area,
+    // walked along its long axis, away from register slots.
+    for (const slot of parking?.slots ?? []) {
+      if (hash(slot.x, slot.y) < 0.9) put('car', slot.x, slot.y, slot.heading + (hash(slot.y, slot.x) < 0.5 ? Math.PI : 0), carColour(hash(slot.x * 3.1, slot.y * 1.7)));
+    }
     const metres = TILE_METRES / width, label = new Int32Array(width * height);
     for (let start = 0, next = 1; start < width * height; start++) {
+
       if (label[start] || classes[start * 4] !== 4) continue;
       const pixels = [start];
       label[start] = next;
@@ -959,7 +966,8 @@ export class Miniature {
         const x = u * ux + v * vx, y = u * uy + v * vy;
         const heading = perpendicular ? Math.atan2(vy, vx) : Math.atan2(uy, ux);
         const fx = Math.cos(heading) * 2.0, fy = Math.sin(heading) * 2.0;
-        if (classAt(x, y) === 4 && classAt(x + fx, y + fy) === 4 && classAt(x - fx, y - fy) === 4 && hash(x, y) < 0.85) {
+        const nearSlot = (parking?.slots ?? []).some((slot) => Math.hypot(slot.x - x, slot.y - y) < 3);
+        if (!nearSlot && classAt(x, y) === 4 && classAt(x + fx, y + fy) === 4 && classAt(x - fx, y - fy) === 4 && hash(x, y) < 0.85) {
           put('car', x, y, heading + (hash(y, x) < 0.5 ? Math.PI : 0), carColour(hash(x * 3.1, y * 1.7)));
         }
         key += Math.round(spacing / 0.5);
