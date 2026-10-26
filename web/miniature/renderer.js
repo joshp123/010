@@ -24,12 +24,10 @@ export const defaultStyle = {
   pixelArt: true,
   outlines: true,
   dither: 0.0,
-  orthoRoofs: true,
   groundPhotoDetail: 0.0,
   facadeDetail: 0.6,
   facadeWindowRatio: 0.7,
   facadeRadius: 1.0,
-  roofRadius: 1.0,
   ambient: 1.05,
   saturation: 1.0,
   midtones: 1.0,
@@ -254,13 +252,49 @@ const buildingPatch = {
     uniform sampler2D featureTexture;
     uniform float featureCount;
     varying vec4 vFeature;
+    varying vec4 vRoof;
     varying vec3 vWorldPosMini;`,
   vertexBody: `
-    vFeature = texture2D(featureTexture, vec2((_feature_id_0 + 0.5) / max(1.0, featureCount), 0.5));
+    vFeature = texture2D(featureTexture, vec2((_feature_id_0 + 0.5) / max(1.0, featureCount), 0.25));
+    vRoof = texture2D(featureTexture, vec2((_feature_id_0 + 0.5) / max(1.0, featureCount), 0.75));
     vWorldPosMini = miniWorld.xyz;`,
   declarations: `
     varying vec4 vFeature;
+    varying vec4 vRoof;
     varying vec3 vWorldPosMini;
+    // A roof drawn from its facts (tools/roof-facts.py): the colour measured
+    // in the aerial and a material named from slope and colour, as courses,
+    // joints, seams or gravel in world metres. Roofs without facts are plain
+    // neutral grey: interpreted. Pattern contrast fades where a course would
+    // be smaller than a pixel.
+    vec3 roofSurface(vec4 facts, vec3 position, vec3 normal) {
+      if (facts.w < 0.5) return vec3(0.42, 0.42, 0.40);
+      vec3 base = facts.rgb;
+      base = mix(vec3(dot(base, vec3(0.2126, 0.7152, 0.0722))), base, 1.25); // aerial haze
+      vec2 down = length(normal.xz) > 0.05 ? normalize(normal.xz) : vec2(1.0, 0.0);
+      float s = dot(position.xz, down) / max(normal.y, 0.35);
+      float t = dot(position.xz, vec2(-down.y, down.x));
+      float material = floor(facts.w + 0.5);
+      float course = material == 1.0 ? 0.33 : material == 2.0 ? 0.22 : material == 3.0 ? 0.30 : 1.0;
+      float detail = 1.0 - smoothstep(0.35, 0.8, fwidth(s) / course);
+      float row = floor(s / course);
+      float shade = 1.0;
+      if (material <= 3.0) {
+        float joint = material == 1.0 ? 0.21 : 0.30;
+        float along = t / joint + (material == 1.0 ? 0.0 : 0.5 * mod(row, 2.0));
+        float cell = fract(sin(dot(vec2(row, floor(along)), vec2(12.9898, 78.233))) * 43758.5453);
+        shade = (fract(s / course) < 0.2 ? 0.80 : 1.0) * (material == 1.0 ? 0.93 + 0.09 * step(0.5, fract(along)) : (fract(along) < 0.08 ? 0.88 : 1.0)) * (0.95 + 0.1 * cell);
+      } else if (material == 5.0 || material == 8.0) {
+        float grain = fract(sin(dot(floor(position.xz / (material == 5.0 ? 0.12 : 0.3)), vec2(12.9898, 78.233))) * 43758.5453);
+        shade = 0.88 + 0.24 * grain;
+        detail = 1.0 - smoothstep(0.08, 0.2, fwidth(position.x));
+      } else {
+        float seam = material == 4.0 ? 1.0 : 2.0;
+        shade = fract(t / seam) < 0.05 ? 1.07 : 1.0;
+        detail = 1.0 - smoothstep(0.05, 0.12, fwidth(t));
+      }
+      return base * mix(1.0, shade, detail);
+    }
     // Share of windows lit late in the evening, by BAG use: homes are lit
     // irregularly, offices mostly dark, shops show their ground floor.
     vec3 windowLight(bool isWindow, float pick, float heightAboveBase, float use) {
@@ -277,21 +311,18 @@ const buildingPatch = {
       return (abs(use - 2.0) < 0.5 || shopFloor ? cool * 0.85 : warm * 0.95);
     }
     uniform sampler2D orthoTexture;
-    uniform float orthoRoofs;
     uniform float facadeDetail;
     uniform float facadeWindowRatio;
     uniform float facadeRadius;
-    uniform float roofRadius;
     ${kuwaharaGlsl}`,
   body: `
     classCode = vWorldNormalMini.y > 0.55 ? 6.0 : 7.0;
-    #ifdef ASSET_MATERIAL
-    // Model-made assets keep their own colours. Roofs are redrawn from a
-    // 12 cm aerial, so flatten their gravel noise at the same edge-preserving
-    // strength the photo roofs get. Windows are the asset's dark panes.
     if (vWorldNormalMini.y > 0.55) {
-      diffuseColor.rgb = kuwahara(map, vMapUv, 2.0 * roofRadius / vec2(textureSize(map, 0)));
-    } else if (night > 0.0 && vWorldNormalMini.y < 0.3) {
+      diffuseColor.rgb = roofSurface(vRoof, vWorldPosMini, vWorldNormalMini);
+    } else {
+    #ifdef ASSET_MATERIAL
+    // Model-made walls keep their own colours. Windows are the asset's dark panes.
+    if (night > 0.0 && vWorldNormalMini.y < 0.3) {
       vec3 luma = vec3(0.299, 0.587, 0.114);
       vec3 wallTone = texture2D(map, vMapUv, 4.0).rgb;
       float darker = dot(diffuseColor.rgb, luma) / max(0.03, dot(wallTone, luma));
@@ -302,12 +333,7 @@ const buildingPatch = {
       nightGlow = windowLight(darker < 0.6, pick, vWorldPosMini.y - vFeature.x, vFeature.w);
     }
     #else
-    if (orthoRoofs > 0.5 && vWorldNormalMini.y > 0.55) {
-      vec2 roofUv = clamp(vTileUv, vec2(0.0002), vec2(0.9998));
-      vec3 roof = kuwahara(orthoTexture, roofUv, roofRadius / vec2(textureSize(orthoTexture, 0)));
-      // Aerial roofs are hazy; restore their colour (measured against tiny.london).
-      diffuseColor.rgb = clamp(mix(vec3(dot(roof, vec3(0.299, 0.587, 0.114))), roof, 1.9), 0.0, 1.0);
-    } else {
+    {
       vec3 luma = vec3(0.299, 0.587, 0.114);
       #ifdef USE_MAP
         vec3 bestMean = kuwahara(map, vMapUv, facadeRadius / vec2(textureSize(map, 0)));
@@ -356,6 +382,7 @@ const buildingPatch = {
       #endif
     }
     #endif
+    }
 `,
 };
 
@@ -580,13 +607,12 @@ export class Miniature {
       optional(retrying(() => fetch(`${base}/objects.json`).then((r) => { if (!r.ok) throw new Error(`objects.json ${r.status}`); return r.json(); }))),
     ]);
     const rails = await fetch(`${base}/rails.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+    const roofFacts = await fetch(`${base}/roofs.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const shared = {
       orthoTexture: { value: orthoTexture },
-      orthoRoofs: { value: this.style.orthoRoofs ? 1 : 0 },
       facadeDetail: { value: this.style.facadeDetail },
       facadeWindowRatio: { value: this.style.facadeWindowRatio },
       facadeRadius: { value: this.style.facadeRadius },
-      roofRadius: { value: this.style.roofRadius },
       groundPhotoDetail: { value: this.style.groundPhotoDetail },
       texelsPerArtPixel: { value: this.view.metresPerPixel / 0.1 },
       classTexture: { value: classTexture },
@@ -624,7 +650,7 @@ export class Miniature {
       group.add(underlay);
     }
     if (buildings) {
-      Object.assign(shared, this.featureTexture(buildings));
+      Object.assign(shared, this.featureTexture(buildings, roofFacts));
       buildings.scene.traverse((node) => {
         if (!node.isMesh) return;
         const source = node.material;
@@ -909,10 +935,23 @@ export class Miniature {
 
   // Per-building facts for the shader: base height, height, construction
   // year and use, one texel per feature in the tile's feature table.
-  featureTexture(buildings) {
+  // Row 1: base height, height, year, use. Row 2: the roof's measured colour
+  // (linear) and material code from roofs.json; 0 = no facts (interpreted).
+  featureTexture(buildings, roofFacts) {
     const features = buildings.parser.json.extras?.features ?? [];
     const count = Math.max(1, features.length);
-    const data = new Float32Array(count * 4);
+    const data = new Float32Array(count * 8);
+    const colour = new THREE.Color();
+    for (let i = 0; i < count; i++) {
+      const roof = roofFacts?.roofs?.[i];
+      const code = roof?.material ? roofFacts.material_codes[roof.material] : 0;
+      if (code) {
+        colour.setRGB(roof.colour[0] / 255, roof.colour[1] / 255, roof.colour[2] / 255, THREE.SRGBColorSpace);
+        data.set([colour.r, colour.g, colour.b, code], (count + i) * 4);
+      } else if (this.style.provenance) {
+        data.set([0.6, 0.1, 0.6, 6], (count + i) * 4); // interpreted roof, shown magenta
+      }
+    }
     const useCodes = { woonfunctie: 1, kantoorfunctie: 2, winkelfunctie: 3, industriefunctie: 4 };
     features.forEach((feature, i) => {
       const uses = Array.isArray(feature.use) ? feature.use : feature.use ? [feature.use] : [];
@@ -932,7 +971,7 @@ export class Miniature {
       }
     });
     for (let i = 0; i < count; i++) if (data[i * 4] > 1e8) data[i * 4] = 0;
-    const texture = new THREE.DataTexture(data, count, 1, THREE.RGBAFormat, THREE.FloatType);
+    const texture = new THREE.DataTexture(data, count, 2, THREE.RGBAFormat, THREE.FloatType);
     texture.needsUpdate = true;
     return { featureTexture: { value: texture }, featureCount: { value: count } };
   }

@@ -30,7 +30,6 @@ if (params.has('tram')) style.tramNear = params.get('tram').split(',').map(Numbe
 if (params.get('provenance') === '1') style.provenance = true; // interpreted appearance tinted magenta
 if (params.has('assetFile')) style.assetFile = params.get('assetFile');
 for (const key of ['facadeRadius', 'roofRadius', 'ambient', 'sun', 'dither', 'elevationDegrees', 'saturation']) if (params.has(key)) style[key] = Number(params.get(key));
-if (params.get('roofs') === 'model') style.orthoRoofs = false;
 const miniature = new Miniature(canvas, { sceneBase, assetBase: params.get('assets'), manifest, area: params.get('area') ?? 'core', style });
 window.miniature = miniature;
 
