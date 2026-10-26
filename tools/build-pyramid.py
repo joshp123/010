@@ -23,14 +23,30 @@ parser.add_argument("--quality", type=int, default=90)
 parser.add_argument("--depth", action="store_true", help="also write depth tiles for live layers (levels 0 and 1)")
 args = parser.parse_args()
 
-with sync_playwright() as p:
+def open_page(p):
     browser = p.chromium.launch(args=["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"])
     page = browser.new_page(viewport={"width": 800, "height": 800})
     page.on("pageerror", lambda e: print("pageerror:", e))
+    page.set_default_timeout(180000)
     page.goto(args.url)
     page.wait_for_function("window.captureReady === true", timeout=600000)
+    return browser, page
+
+
+def capture(page, left, top, size, bearing, mpp, depth=False):
+    data = page.evaluate(f"window.renderWindow({left}, {top}, {size}, {size}, {bearing}, {mpp}, false, {'true' if depth else 'false'})")
+    return Image.open(io.BytesIO(base64.b64decode(data.split(",", 1)[1]))).convert("RGB")
+
+
+with sync_playwright() as p:
     for bearing in args.bearings:
         folder = os.path.join(args.out, f"b{int(bearing)}")
+        if os.path.exists(os.path.join(folder, "meta.json")):
+            print(f"bearing {bearing}: already complete")
+            continue
+        # A fresh browser per bearing keeps memory bounded; it is also
+        # restarted if it crashes, and tiles already written are kept.
+        browser, page = open_page(p)
         camera = page.evaluate("({origin: window.miniature.origin, elevation: window.miniature.style.elevationDegrees})")
         # Everything a viewer needs to map RD coordinates to pyramid pixels:
         # screen x = (p . right) / mpp, screen y (up) = (p . up) / mpp, where p is
@@ -48,23 +64,36 @@ with sync_playwright() as p:
             os.makedirs(os.path.join(folder, str(level)), exist_ok=True)
             for row in range(rows):
                 for column in range(columns):
+                    path = os.path.join(folder, str(level), f"{column}_{row}.webp")
+                    depth_path = os.path.join(folder, f"d{level}", f"{column}_{row}.png")
+                    want_depth = args.depth and level <= 1
+                    if os.path.exists(path) and (not want_depth or os.path.exists(depth_path)):
+                        continue
                     left = bounds["left"] + column * TILE - MARGIN
                     top = bounds["top"] - row * TILE + MARGIN
                     size = TILE + 2 * MARGIN
-                    data = page.evaluate(f"window.renderWindow({left}, {top}, {size}, {size}, {bearing}, {mpp})")
-                    image = Image.open(io.BytesIO(base64.b64decode(data.split(",", 1)[1]))).convert("RGB")
-                    image = image.crop((MARGIN, MARGIN, MARGIN + TILE, MARGIN + TILE))
-                    image.save(os.path.join(folder, str(level), f"{column}_{row}.webp"), quality=args.quality, method=6)
-                    count += 1
-                    if args.depth and level <= 1:
+                    for attempt in range(3):
+                        try:
+                            image = capture(page, left, top, size, bearing, mpp)
+                            depth = capture(page, left, top, size, bearing, mpp, True) if want_depth else None
+                            break
+                        except Exception as error:
+                            print(f"restarting browser after: {str(error)[:120]}")
+                            try:
+                                browser.close()
+                            except Exception:
+                                pass
+                            browser, page = open_page(p)
+                    else:
+                        raise SystemExit(f"tile {level}/{column}_{row} failed three times")
+                    image.crop((MARGIN, MARGIN, MARGIN + TILE, MARGIN + TILE)).save(path, quality=args.quality, method=6)
+                    if depth is not None:
                         # Depth for live layers, at half resolution: enough to
                         # hide a vehicle behind a building at pixel-art scale.
-                        data = page.evaluate(f"window.renderWindow({left}, {top}, {size}, {size}, {bearing}, {mpp}, false, true)")
-                        depth = Image.open(io.BytesIO(base64.b64decode(data.split(",", 1)[1]))).convert("RGB")
-                        depth = depth.crop((MARGIN, MARGIN, MARGIN + TILE, MARGIN + TILE)).resize((TILE // 2, TILE // 2), Image.NEAREST)
-                        os.makedirs(os.path.join(folder, f"d{level}"), exist_ok=True)
-                        depth.save(os.path.join(folder, f"d{level}", f"{column}_{row}.png"), optimize=True)
+                        os.makedirs(os.path.dirname(depth_path), exist_ok=True)
+                        depth.crop((MARGIN, MARGIN, MARGIN + TILE, MARGIN + TILE)).resize((TILE // 2, TILE // 2), Image.NEAREST).save(depth_path, optimize=True)
+                    count += 1
         with open(os.path.join(folder, "meta.json"), "w") as f:
             json.dump(meta, f, indent=1)
-        print(f"bearing {bearing}: {count} tiles in {time.time() - started:.1f}s")
-    browser.close()
+        print(f"bearing {bearing}: {count} tiles in {time.time() - started:.1f}s", flush=True)
+        browser.close()
