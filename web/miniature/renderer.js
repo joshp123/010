@@ -1157,7 +1157,7 @@ export class Miniature {
 
   treeMesh(trees, offset, tracks = []) {
     const group = new THREE.Group();
-    const clump = new THREE.IcosahedronGeometry(0.5, 1);
+    const clump = new THREE.IcosahedronGeometry(0.5, 2);
     // Leaf clumps get a leaf-sized texture; twig clumps (bare crowns) are a
     // stable screen of fine cells so the street shows through.
     const crownMaterial = (twigs) => {
@@ -1220,13 +1220,20 @@ export class Miniature {
           clumps.push({ position: [x, crownBase + crownHeight * (0.1 + 0.8 * t), z], size: width * (1 - 0.75 * t), colour: shown(0.2 * t) });
         }
       } else {
-        if (leaves > 0.75) clumps.push({ position: [x, crownBase + crownHeight * 0.5, z], size: Math.min(width, crownHeight) * (form.airy ? 0.6 : 0.8), colour: shown(0) });
-        const count = Math.max(6, Math.min(16, Math.round(width * crownHeight / 5)));
-        for (let k = 0; k < count; k++) {
+        // One crown per tree, the register's width and height, with three
+        // lobes on top for a living outline; airy genera get smaller lobes.
+        if (leaves > 0.05) {
+          const crownScale = 0.65 + 0.35 * leaves;
+          clumps.push({ position: [x, crownBase + crownHeight * 0.48, z], scale: [width * crownScale, crownHeight * 0.92 * crownScale, width * crownScale], colour: shown(0.2) });
+          const lobe = Math.min(width, crownHeight) * (form.airy ? 0.42 : 0.5) * crownScale;
+          for (let k = 0; k < 3; k++) {
+            const a = (k / 3 + random() * 0.2) * Math.PI * 2;
+            clumps.push({ position: [x + Math.cos(a) * width * 0.22, crownBase + crownHeight * (0.62 + 0.12 * random()), z + Math.sin(a) * width * 0.22], size: lobe, colour: shown(0.55 + 0.3 * random()) });
+          }
+        }
+        for (let k = 0; k < 8 && leaves < 0.9; k++) {
           const a = random() * Math.PI * 2, rr = Math.sqrt(random()) * 0.32, v = random();
-          const size = Math.min(width, crownHeight) * (form.airy ? 0.38 : 0.5 - 0.15 * rr) * (0.85 + 0.3 * random());
-          if (leaves < 0.9 && k % 2 === 0) twigs.push({ position: [x + Math.cos(a) * rr * width * 0.8, crownBase + crownHeight * (0.35 + 0.45 * v), z + Math.sin(a) * rr * width * 0.8], size: Math.min(width, crownHeight) * 0.62 });
-          if (random() < leaves) clumps.push({ position: [x + Math.cos(a) * rr * width, crownBase + crownHeight * (0.25 + 0.55 * v), z + Math.sin(a) * rr * width], size: size * (0.6 + 0.4 * leaves), colour: shown(v) });
+          if (k % 2 === 0) twigs.push({ position: [x + Math.cos(a) * rr * width * 0.8, crownBase + crownHeight * (0.35 + 0.45 * v), z + Math.sin(a) * rr * width * 0.8], size: Math.min(width, crownHeight) * 0.62 });
         }
         // Main limbs show as the leaves fall: from the top of the trunk up and
         // out to the edge of the crown.
@@ -1244,7 +1251,7 @@ export class Miniature {
     const leafMesh = new THREE.InstancedMesh(clump, leaves, clumps.length);
     const matrix = new THREE.Matrix4(), unit = new THREE.Quaternion(), colour = new THREE.Color();
     clumps.forEach((c, i) => {
-      matrix.compose(new THREE.Vector3(...c.position), unit, new THREE.Vector3(c.size, c.size * 0.88, c.size));
+      matrix.compose(new THREE.Vector3(...c.position), unit, c.scale ? new THREE.Vector3(...c.scale) : new THREE.Vector3(c.size, c.size * 0.88, c.size));
       leafMesh.setMatrixAt(i, matrix);
       leafMesh.setColorAt(i, colour.setRGB(...c.colour, THREE.SRGBColorSpace));
     });
