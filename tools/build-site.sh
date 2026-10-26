@@ -21,7 +21,7 @@ esbuild "$repo/web/t1.js" --bundle --minify --format=esm --target=es2022 \
 perl -0pi -e 's#<script type="importmap">.*?</script>\n##s' "$dist/t1.html"
 # Pyramids without the raw per-tile depth (the site uses the packed dd/).
 for name in t2 t2n; do
-  if [ -d "$data/pyramids/$name-live" ]; then rsync -a --delete --exclude 'd0' --exclude 'd1' "$data/pyramids/$name-live/" "$dist/pyramids/$name/"; fi
+  if [ -d "$data/pyramids/$name-live" ]; then rsync -a --delete --exclude 'd[0-9]' "$data/pyramids/$name-live/" "$dist/pyramids/$name/"; fi
 done
 mkdir -p "$dist/networks"
 for kind in cars bikes transit; do
@@ -34,7 +34,9 @@ cp "$data/renders/compare/og.jpg" "$dist/og.jpg"
 esbuild "$repo/web/pyramid.js" --bundle --minify --format=esm --target=es2022 --outfile="$out/pyramid.bundle.js" --log-level=warning
 python3 "$repo/tools/inline-first-view.py" "$dist" index.html "$out/pyramid.bundle.js" pyramids/t2 35
 python3 "$repo/tools/inline-first-view.py" "$dist" t2.html "$out/pyramid.bundle.js" pyramids/t2 35
+python3 "$repo/tools/pack-tiles.py" "$dist/pyramids"
 build_id="$(git -C "$repo" rev-parse --short HEAD)-$(date +%Y%m%d%H%M%S)"
+export SITE_BUILD="$build_id"
 perl -pi -e "s/__BUILD__/$build_id/" "$dist/sw.js"
 node "$repo/worker/build.mjs" "$out"
 echo "files: $(find "$dist" -type f | wc -l)  bytes: $(du -sk "$dist" | cut -f1) KB"

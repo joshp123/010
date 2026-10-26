@@ -272,9 +272,9 @@ export class LiveLayer {
   // pixels, one sample per 4 x 4 pixels (tools/pack-depth.py).
   hidden(point) {
     const { m, levelInfo } = this.view;
-    const level0 = m.levels[0];
+    const level0 = m.levels[m.depth_level ?? 0];
     const scale = levelInfo.metres_per_pixel / level0.metres_per_pixel;
-    if (scale > 2) return false;
+    if (scale > 2 || scale < 0.2) return false;
     const fx = point.sx * scale - level0.left, fy = level0.top - point.sy * scale;
     const column = Math.floor(fx / 1024), row = Math.floor(fy / 1024);
     if (column < 0 || row < 0 || column * 2 >= level0.columns || row * 2 >= level0.rows) return false;

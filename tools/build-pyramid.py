@@ -13,7 +13,7 @@ from playwright.sync_api import sync_playwright
 
 TILE = 512
 MARGIN = 8  # outlines look at neighbours; render a border and crop it off
-LEVELS = [0.3, 0.6, 1.2, 2.4]
+LEVELS = [0.3, 0.6, 1.2, 2.4]  # default; --levels overrides
 
 parser = argparse.ArgumentParser()
 parser.add_argument("url", help="capture page, e.g. http://127.0.0.1:8790/t1.html?capture=1")
@@ -21,8 +21,12 @@ parser.add_argument("out")
 parser.add_argument("--bearings", type=float, nargs="+", default=[0])
 parser.add_argument("--quality", type=int, default=90)
 parser.add_argument("--depth", action="store_true", help="also write depth tiles for live layers (levels 0 and 1)")
+parser.add_argument("--levels", type=float, nargs="+", help="metres per pixel of each level, finest first (default 0.3 0.6 1.2 2.4)")
+parser.add_argument("--depth-mpp", type=float, default=0.3, help="scale at which to write depth tiles for live layers")
 parser.add_argument("--render-levels", type=int, default=len(LEVELS), help="render this many finest levels; coarser ones are downsampled 2x from the level below (much faster for large areas)")
 args = parser.parse_args()
+if args.levels:
+    LEVELS = args.levels
 
 def open_page(p):
     browser = p.chromium.launch(args=["--use-angle=metal", "--enable-gpu", "--ignore-gpu-blocklist"])
@@ -53,7 +57,7 @@ with sync_playwright() as p:
         # screen x = (p . right) / mpp, screen y (up) = (p . up) / mpp, where p is
         # (RD x - origin x, NAP z, -(RD y - origin y)) and right/up follow from
         # the bearing and camera elevation (web/miniature/renderer.js, screenAxes).
-        meta = {"tile": TILE, "bearing": bearing, "origin_rd": [camera["origin"]["x"], camera["origin"]["y"]],
+        meta = {"tile": TILE, "bearing": bearing, "depth_level": next((i for i, m in enumerate(LEVELS) if abs(m - args.depth_mpp) < 1e-6), None), "origin_rd": [camera["origin"]["x"], camera["origin"]["y"]],
                 "elevation_degrees": camera["elevation"], "levels": []}
         started = time.time()
         count = 0
@@ -84,7 +88,7 @@ with sync_playwright() as p:
                 for column in range(columns):
                     path = os.path.join(folder, str(level), f"{column}_{row}.webp")
                     depth_path = os.path.join(folder, f"d{level}", f"{column}_{row}.png")
-                    want_depth = args.depth and level <= 1
+                    want_depth = args.depth and abs(mpp - args.depth_mpp) < 1e-6
                     if os.path.exists(path) and (not want_depth or os.path.exists(depth_path)):
                         continue
                     left = bounds["left"] + column * TILE - MARGIN

@@ -552,8 +552,6 @@ export class Miniature {
     return record;
   }
 
-  // Each tree is a few overlapping leaf clumps placed by a hash of its
-  // position, so the same tree always looks the same. Size comes from data.
   // Per-building facts for the shader: base height, height, construction
   // year and use, one texel per feature in the tile's feature table.
   featureTexture(buildings) {
@@ -597,50 +595,75 @@ export class Miniature {
     return mesh;
   }
 
+  // Each tree is drawn from the register: crown width and height set the
+  // size, and the crown is a cluster of leaf clumps (more for bigger trees)
+  // placed by a hash of the tree's position, so a tree always looks the same.
+  // A trunk shows below the crown; leaf texture appears only at deep zoom.
   treeMesh(trees, offset) {
+    const group = new THREE.Group();
     const clump = new THREE.IcosahedronGeometry(0.5, 1);
-    const material = new THREE.MeshLambertMaterial({ color: 0xffffff, flatShading: true });
-    material.onBeforeCompile = (shader) => {
+    const leaves = new THREE.MeshLambertMaterial({ color: 0xffffff, flatShading: true });
+    leaves.onBeforeCompile = (shader) => {
       shader.uniforms.dataOverlay = this.overlayUniform;
+      shader.vertexShader = shader.vertexShader
+        .replace('#include <common>', '#include <common>\nvarying vec3 vLeafWorld;')
+        .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvLeafWorld = (modelMatrix * instanceMatrix * vec4(transformed, 1.0)).xyz;');
       shader.fragmentShader = shader.fragmentShader
-        .replace('#include <common>', '#include <common>\nuniform float dataOverlay;')
+        .replace('#include <common>', '#include <common>\nuniform float dataOverlay;\nvarying vec3 vLeafWorld;')
+        .replace('#include <color_fragment>', `#include <color_fragment>
+          // Leaf texture: 0.35 m cells, invisible once a pixel covers a cell.
+          vec3 cell = floor(vLeafWorld / 0.35);
+          float leaf = fract(sin(dot(cell, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
+          diffuseColor.rgb *= 0.86 + 0.28 * leaf;`)
         .replace('#include <opaque_fragment>', '#include <opaque_fragment>\nif (dataOverlay > 0.5) gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);');
     };
-    const clumpsPerTree = 5;
-    const mesh = new THREE.InstancedMesh(clump, material, trees.length * clumpsPerTree);
-    const matrix = new THREE.Matrix4();
-    const colour = new THREE.Color();
-    const unit = new THREE.Quaternion();
-    let index = 0;
-    trees.forEach((tree) => {
-      const crown = Math.max(2.5, tree.crown_m ?? (tree.height_m ?? 8) * 0.6);
+    const clumps = [];
+    const trunks = [];
+    for (const tree of trees) {
       const height = Math.max(3, tree.height_m ?? 8);
+      // The register leaves crown width at 0 for some trees; then estimate it
+      // from height (a typical Dutch street tree is about 0.6 as wide as tall).
+      const crown = Math.max(2.5, tree.crown_m >= 1.5 ? tree.crown_m : height * 0.6);
       const x = tree.x - this.origin.x - offset.x;
       const z = -(tree.y - this.origin.y) - offset.z;
-      const centreY = tree.z + height - crown * 0.5;
-      let seed = Math.abs(Math.sin(tree.x * 12.9898 + tree.y * 78.233) * 43758.5453);
+      const crownHeight = Math.min(height * 0.8, Math.max(crown * 1.05, height * 0.6));
+      const crownBase = tree.z + height - crownHeight;
+      let seed = Math.abs(Math.sin(tree.x * 12.9898 + tree.y * 78.233) * 43758.5453) % 1;
       const random = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
       const tone = random();
-      for (let k = 0; k < clumpsPerTree; k++) {
-        const angle = k * 2.4 + random();
-        const spread = k === 0 ? 0 : crown * 0.26;
-        const size = crown * (k === 0 ? 0.78 : 0.5 + 0.12 * random());
-        matrix.compose(
-          new THREE.Vector3(x + Math.cos(angle) * spread, centreY + (k === 0 ? 0 : (random() - 0.35) * crown * 0.35), z + Math.sin(angle) * spread),
-          unit,
-          new THREE.Vector3(size, size * 0.9, size),
-        );
-        mesh.setMatrixAt(index, matrix);
-        colour.setRGB(0.26 + 0.07 * tone, 0.48 + 0.08 * tone + 0.03 * k, 0.18 + 0.04 * tone, THREE.SRGBColorSpace);
-        mesh.setColorAt(index, colour);
-        index++;
+      const count = Math.max(5, Math.min(16, Math.round(crown * crown / 5)));
+      for (let k = 0; k < count; k++) {
+        // Points inside an ellipsoid crown, larger clumps near the middle.
+        const a = random() * Math.PI * 2, r = Math.sqrt(random()) * 0.42, v = random();
+        const size = crown * (0.42 - 0.18 * r) * (0.85 + 0.3 * random());
+        clumps.push({
+          position: [x + Math.cos(a) * r * crown, crownBase + crownHeight * (0.25 + 0.55 * v), z + Math.sin(a) * r * crown],
+          size, colour: [0.24 + 0.07 * tone + 0.04 * v, 0.44 + 0.08 * tone + 0.07 * v, 0.17 + 0.04 * tone],
+        });
       }
+      trunks.push({ position: [x, tree.z, z], height: crownBase - tree.z + crownHeight * 0.3, radius: Math.max(0.15, crown * 0.035) });
+    }
+    const leafMesh = new THREE.InstancedMesh(clump, leaves, clumps.length);
+    const matrix = new THREE.Matrix4(), unit = new THREE.Quaternion(), colour = new THREE.Color();
+    clumps.forEach((c, i) => {
+      matrix.compose(new THREE.Vector3(...c.position), unit, new THREE.Vector3(c.size, c.size * 0.88, c.size));
+      leafMesh.setMatrixAt(i, matrix);
+      leafMesh.setColorAt(i, colour.setRGB(...c.colour, THREE.SRGBColorSpace));
     });
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    mesh.userData.tree = true;
-    return mesh;
+    leafMesh.castShadow = leafMesh.receiveShadow = true;
+    leafMesh.userData.tree = true;
+    const trunkMesh = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.7, 1, 1, 6).translate(0, 0.5, 0), new THREE.MeshLambertMaterial({ color: 0x5b4636 }), trunks.length);
+    trunks.forEach((t, i) => {
+      matrix.compose(new THREE.Vector3(...t.position), unit, new THREE.Vector3(t.radius * 2, t.height, t.radius * 2));
+      trunkMesh.setMatrixAt(i, matrix);
+    });
+    trunkMesh.castShadow = true;
+    trunkMesh.userData.tree = true;
+    group.add(leafMesh, trunkMesh);
+    group.userData.tree = true;
+    return group;
   }
+
 
   // Light from every lamp in the register, as a 1 m raster per tile, so a
   // lamp near a tile edge lights both tiles. Pools scale with mast height.

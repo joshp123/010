@@ -15,10 +15,11 @@ for (const directory of [out, dist]) {
 }
 await build({ entryPoints: [fileURLToPath(new URL('./index.js', import.meta.url))],
   outfile: path.join(dist, 'server/index.js'), bundle: true, minify: true,
-  format: 'esm', target: 'es2022', platform: 'browser' });
+  format: 'esm', target: 'es2022', platform: 'browser',
+  define: { 'globalThis.SITE_BUILD': JSON.stringify(process.env.SITE_BUILD ?? new Date().toISOString()) } });
 await writeFile(path.join(dist, 'server/wrangler.json'), JSON.stringify({
   name: 'rotterdam-010', main: 'index.js', compatibility_date: '2026-05-22',
   assets: { directory: '../client', binding: 'ASSETS', html_handling: 'auto-trailing-slash',
-    not_found_handling: 'none', run_worker_first: ['/api/*'] },
+    not_found_handling: 'none', run_worker_first: ['/api/*', '/pyramids/*'] },
 }, null, 2) + '\n');
 console.log(`Worker: ${dist}/server/index.js; static assets: ${dist}/client`);

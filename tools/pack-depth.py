@@ -1,5 +1,6 @@
 # Written by AI on 2026-10-26 by model Claude Opus 5.5.
-# Pack a pyramid's level-0 depth tiles (d0/, 256 px per 512 px image tile)
+# Pack a pyramid's depth tiles (d<level>/, 256 px per 512 px image tile, at
+# the level named by meta.depth_level)
 # into dd/: one 256 px file per 2 x 2 image tiles, 1.2 m per depth sample.
 # Each output sample keeps the nearest surface of the four it covers, so a
 # building edge still hides what is behind it. Cuts depth files by 75%.
@@ -10,14 +11,15 @@ from PIL import Image
 
 folder = sys.argv[1]
 meta = json.load(open(os.path.join(folder, "meta.json")))
-level = meta["levels"][0]
+depth_level = meta.get("depth_level") or 0
+level = meta["levels"][depth_level]
 os.makedirs(os.path.join(folder, "dd"), exist_ok=True)
 for row in range(-(-level["rows"] // 2)):
     for column in range(-(-level["columns"] // 2)):
         units = np.zeros((512, 512), np.int32)
         for dy in (0, 1):
             for dx in (0, 1):
-                path = os.path.join(folder, "d0", f"{2 * column + dx}_{2 * row + dy}.png")
+                path = os.path.join(folder, f"d{depth_level}", f"{2 * column + dx}_{2 * row + dy}.png")
                 if os.path.exists(path):
                     a = np.asarray(Image.open(path).convert("RGB")).astype(np.int32)
                     units[dy * 256:(dy + 1) * 256, dx * 256:(dx + 1) * 256] = a[..., 0] * 256 + a[..., 1]

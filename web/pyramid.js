@@ -24,14 +24,20 @@ let night = document.documentElement.dataset.night === '1' || (params.has('light
 let base = night ? `${dayBase}n` : dayBase;
 const bearings = (params.get('bearings') ?? document.body.dataset.bearings ?? '35,125,215,305').split(',').map(Number);
 const STREET_HEIGHT = 3; // NAP metres; the point under the screen centre is at street level
-const zoomLevels = [
-  { level: 3, cssPerArt: 1 },
-  { level: 2, cssPerArt: 1 },
-  { level: 1, cssPerArt: 1 },
-  { level: 0, cssPerArt: 1 },
-  { level: 0, cssPerArt: 2 },
-  { level: 0, cssPerArt: 3 },
-];
+// Zoom steps, coarsest first: every pyramid level at one CSS pixel per art
+// pixel, then the finest level enlarged 2x. Each level is rendered natively at
+// its own scale, so zooming in shows more detail, not bigger pixels. Built
+// from the first pyramid's metadata (inlined in the page).
+const firstMeta = Object.values(window.inlinedPyramidMeta ?? {})[0];
+const levelCount = firstMeta?.levels.length ?? 4;
+const zoomLevels = [...Array(levelCount).keys()].reverse().map((level) => ({ level, cssPerArt: 1 }));
+zoomLevels.push({ level: 0, cssPerArt: 2 });
+// Default: 0.3 m per pixel on a phone, 0.6 m on a desktop.
+const defaultZoom = (() => {
+  const want = innerWidth < 700 ? 0.3 : 0.6;
+  const i = zoomLevels.findIndex((z) => z.cssPerArt === 1 && Math.abs((firstMeta?.levels[z.level].metres_per_pixel ?? 0) - want) < 1e-6);
+  return i >= 0 ? i : Math.max(0, zoomLevels.length - 3);
+})();
 
 const container = document.getElementById('map');
 const world = document.createElement('div');
@@ -45,7 +51,7 @@ const state = {
   x: start.x,
   y: start.y,
   bearingIndex: Math.max(0, bearings.indexOf(Number(params.get('bearing') ?? bearings[0]))),
-  zoom: Number(params.get('z') ?? (innerWidth < 700 ? 3 : 2)),
+  zoom: Math.min(zoomLevels.length - 1, Number(params.get('z') ?? defaultZoom)),
 };
 
 const metas = new Map();

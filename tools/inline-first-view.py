@@ -16,14 +16,17 @@ x, y, z = start["x"] - meta["origin_rd"][0], 3.0, -(start["y"] - meta["origin_rd
 b, e = math.radians(meta["bearing"]), math.radians(meta["elevation_degrees"])
 right = (math.cos(b), 0, math.sin(b))
 up = (math.sin(b) * math.sin(e), math.cos(e), -math.cos(b) * math.sin(e))
-level = meta["levels"][0]
+# The first view is the 0.3 m level (the phone default in web/pyramid.js);
+# the placeholder is cut from the level four times coarser.
+first_level = next(i for i, l in enumerate(meta["levels"]) if abs(l["metres_per_pixel"] - 0.3) < 1e-6)
+level = meta["levels"][first_level]
 mpp = level["metres_per_pixel"]
 sx = (right[0] * x + right[2] * z) / mpp
 sy = (up[0] * x + up[1] * y + up[2] * z) / mpp
 left, top = round(sx - 195), round(sy + 422)
 columns = range(max(0, int((left - level["left"]) // 512)), min(level["columns"] - 1, int((left + 390 - level["left"]) // 512)) + 1)
 rows = range(max(0, int((level["top"] - top) // 512)), min(level["rows"] - 1, int((level["top"] - top + 844) // 512)) + 1)
-first_tiles = [f"b{bearing}/0/{c}_{r}.webp" for r in rows for c in columns]
+first_tiles = [f"b{bearing}/{first_level}/{c}_{r}.webp" for r in rows for c in columns]
 # Preload the first tiles of whichever pyramid (day or night) this visit shows.
 preloads = ('<script>if (innerWidth < 700) for (const t of ' + json.dumps(first_tiles) + ') {'
             'const l = document.createElement("link"); l.rel = "preload"; l.as = "image";'
@@ -35,16 +38,16 @@ preloads = ('<script>if (innerWidth < 700) for (const t of ' + json.dumps(first_
 # lines up exactly with the tiles that replace it.
 import base64, io, os
 from PIL import Image
-coarse = meta["levels"][2]
+coarse = meta["levels"][first_level + 2]
 scale = coarse["metres_per_pixel"] / mpp
 csx, csy = sx / scale, sy / scale
 half_w, half_h = 60, 118  # covers phones up to 480 x 944 CSS pixels
 def placeholder_for(pyramid):
-    coarse_meta = json.load(open(f"{dist}/{pyramid}/b{bearing}/meta.json"))["levels"][2]
+    coarse_meta = json.load(open(f"{dist}/{pyramid}/b{bearing}/meta.json"))["levels"][first_level + 2]
     mosaic = Image.new("RGB", (coarse_meta["columns"] * 512, coarse_meta["rows"] * 512), (0xc9, 0xd3, 0xdd))
     for r in range(coarse_meta["rows"]):
         for c in range(coarse_meta["columns"]):
-            mosaic.paste(Image.open(f"{dist}/{pyramid}/b{bearing}/2/{c}_{r}.webp"), (c * 512, r * 512))
+            mosaic.paste(Image.open(f"{dist}/{pyramid}/b{bearing}/{first_level + 2}/{c}_{r}.webp"), (c * 512, r * 512))
     cx, cy = csx - coarse_meta["left"], coarse_meta["top"] - csy
     crop = mosaic.crop((round(cx - half_w), round(cy - half_h), round(cx + half_w), round(cy + half_h)))
     buffer = io.BytesIO()
