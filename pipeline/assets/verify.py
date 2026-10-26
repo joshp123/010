@@ -109,6 +109,9 @@ def project_sources(sidecar, shape, sources):
 def verify(directory, occlusions_path=None, config_path=CONFIG):
     directory = Path(directory)
     raw_path = directory / 'generated-raw.png'
+    chunks = list((directory / 'chunks').glob('*/reference.png'))
+    if chunks and any(not (path.parent / 'generated-raw.png').exists() for path in chunks):
+        raise OSError('Elevation chunks are still generating; retry after stitching')
     reference_path = directory / 'reference.png'
     metadata_path = directory / 'generation.json'
     # Load/validate complete generator-owned inputs before touching derived output.
