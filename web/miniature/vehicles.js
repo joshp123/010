@@ -86,7 +86,9 @@ export function citadisTram() {
       group.add(box(0.26, 1.5, 0.06, blue, x + d - 0.95, 1.2, width / 2 + 0.03));
       group.add(box(0.26, 1.5, 0.06, red, x + d - 1.2, 1.2, width / 2 + 0.03));
     }
-    group.add(box(len - 0.8, 0.14, width - 0.6, mat(0x9a9ea2), cx, height + 0.07, 0));
+    // Roof: light grey, with a long equipment fairing on the cab and centre sections.
+    group.add(box(len - 0.1, 0.06, width - 0.1, mat(0xd5d8dc), cx, height + 0.03, 0));
+    if (len > 5) group.add(box(len - 1.6, 0.34, width - 0.7, mat(0xe3e5e7), cx, height + 0.2, 0, 0.12));
     if (i < lengths.length - 1) group.add(box(joint, height - 0.4, width - 0.15, skirt, x + len + joint / 2, 0.3 + (height - 0.4) / 2, 0));
     x += len + joint;
   });
@@ -99,10 +101,13 @@ export function citadisTram() {
     group.add(box(0.09, 0.2, 0.8, red, nx + sign * 0.31, 0.62, 0));
     for (const s of [-0.85, 0.85]) group.add(box(0.06, 0.16, 0.22, palette.lamp, nx + sign * 0.31, 0.75, s));
   }
-  // Pantograph on the centre section and roof equipment boxes.
-  group.add(box(1.8, 0.1, 1.5, palette.bogie, 0, height + 0.55, 0));
-  for (const dx of [-0.5, 0.5]) group.add(box(0.07, 0.5, 0.07, palette.bogie, dx, height + 0.3, 0));
-  for (const dx of [-11, 11]) group.add(box(2.4, 0.3, 1.4, mat(0x8d9196), dx, height + 0.15, 0));
+  // Pantograph on the centre section: a dark diamond frame with its collector bar.
+  for (const [dx, tilt] of [[-0.45, 0.6], [0.45, -0.6]]) {
+    const arm = box(0.06, 1.0, 0.06, palette.bogie, dx, height + 0.75, 0);
+    arm.rotation.z = tilt;
+    group.add(arm);
+  }
+  group.add(box(0.12, 0.06, 1.7, palette.bogie, 0, height + 1.15, 0));
   group.userData = { length, width };
   return group;
 }
@@ -151,24 +156,50 @@ export function retBus() {
   return group;
 }
 
-export function car(colour = 0xc9ccd0) {
+// Dutch cars by side profile (x along the car, y up), extruded to width:
+// a compact hatchback (VW Golf, Toyota Yaris class), an estate (Skoda Octavia,
+// VW Passat) and a compact SUV (Kia Niro, VW T-Roc), the shapes most seen
+// parked in Rotterdam streets.
+const carProfiles = {
+  hatchback: { length: 4.25, width: 1.79, body: [[-2.12, 0.3], [-2.12, 0.95], [-1.95, 1.05], [-1.7, 1.45], [0.35, 1.48], [1.15, 0.98], [2.12, 0.82], [2.12, 0.3]], glass: [[-1.75, 1.02], [-1.6, 1.38], [0.3, 1.41], [0.98, 1.0]] },
+  estate: { length: 4.7, width: 1.83, body: [[-2.35, 0.3], [-2.35, 0.95], [-2.25, 1.1], [-2.05, 1.45], [0.45, 1.47], [1.3, 0.98], [2.35, 0.8], [2.35, 0.3]], glass: [[-2.1, 1.08], [-1.95, 1.38], [0.4, 1.4], [1.12, 1.0]] },
+  suv: { length: 4.4, width: 1.84, body: [[-2.2, 0.35], [-2.2, 1.1], [-2.0, 1.2], [-1.85, 1.62], [0.4, 1.65], [1.15, 1.12], [2.2, 0.98], [2.2, 0.35]], glass: [[-1.85, 1.17], [-1.72, 1.55], [0.35, 1.58], [1.0, 1.15]] },
+};
+
+function profile(points, width, material) {
+  const shape = new THREE.Shape(points.map(([x, y]) => new THREE.Vector2(x, y)));
+  const geometry = new THREE.ExtrudeGeometry(shape, { depth: width, bevelEnabled: true, bevelThickness: 0.06, bevelSize: 0.06, bevelSegments: 1 });
+  geometry.translate(0, 0, -width / 2);
+  return new THREE.Mesh(geometry, material);
+}
+
+export function car(colour = 0xc9ccd0, kind = 'hatchback') {
   const group = new THREE.Group();
-  const paint = mat(colour);
-  group.add(box(4.4, 0.75, 1.8, paint, 0, 0.55, 0, 0.18));
-  group.add(box(2.4, 0.6, 1.62, palette.glass, -0.25, 1.2, 0, 0.15));
-  group.add(box(2.2, 0.08, 1.5, paint, -0.25, 1.52, 0));
-  for (const x of [-1.4, 1.4]) for (const s of [-1, 1]) group.add(box(0.65, 0.65, 0.22, palette.tyre, x, 0.33, s * 0.8));
-  group.userData = { length: 4.4, width: 1.8 };
+  const { length, width, body, glass } = carProfiles[kind];
+  group.add(profile(body, width - 0.12, mat(colour)));
+  group.add(profile(glass, width - 0.04, palette.glass)); // side windows and screens, a little proud of the body
+  for (const x of [-length * 0.32, length * 0.31]) for (const s of [-1, 1]) {
+    const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.22, 10).rotateX(Math.PI / 2), palette.tyre);
+    wheel.position.set(x, 0.32, s * (width / 2 - 0.1));
+    group.add(wheel);
+  }
+  for (const s of [-0.6, 0.6]) group.add(box(0.05, 0.1, 0.3, palette.lamp, length / 2 + 0.02, 0.72, s));
+  group.add(box(0.05, 0.1, 0.3, palette.red, -length / 2 - 0.02, 0.9, 0.6));
+  group.add(box(0.05, 0.1, 0.3, palette.red, -length / 2 - 0.02, 0.9, -0.6));
+  group.userData = { length, width };
   return group;
 }
 
+// A Dutch upright bike and rider, drawn a little stocky so it still reads as
+// a person on a bike at 7.5 cm per pixel.
 export function cyclist(colour = 0x3a4a6b) {
   const group = new THREE.Group();
-  for (const x of [-0.55, 0.55]) group.add(box(0.7, 0.7, 0.06, palette.tyre, x, 0.35, 0));
-  group.add(box(1.1, 0.06, 0.06, palette.black, 0, 0.62, 0));
-  group.add(box(0.36, 0.7, 0.36, mat(colour), -0.12, 1.15, 0));
-  group.add(box(0.24, 0.24, 0.24, palette.skin, -0.02, 1.62, 0));
-  group.add(box(0.12, 0.5, 0.12, palette.rider, -0.05, 0.75, 0.12));
+  for (const x of [-0.55, 0.55]) group.add(box(0.7, 0.7, 0.08, palette.tyre, x, 0.35, 0, 0.3));
+  group.add(box(1.1, 0.08, 0.08, palette.black, 0, 0.62, 0));
+  group.add(box(0.1, 0.5, 0.6, palette.black, 0.45, 1.0, 0)); // handlebars
+  group.add(box(0.4, 0.72, 0.5, mat(colour), -0.1, 1.2, 0, 0.12));
+  group.add(box(0.28, 0.3, 0.28, palette.skin, 0.02, 1.72, 0, 0.1));
+  group.add(box(0.5, 0.18, 0.44, palette.rider, 0.05, 0.86, 0));
   group.userData = { length: 1.8, width: 0.6 };
   return group;
 }
@@ -179,6 +210,6 @@ export const vehicleKinds = {
   train: () => nsSprinter(),
   bus: () => retBus(),
   ferry: () => retBus(),
-  car: (i) => car([0xd8d8d4, 0x2f3440, 0x8a1f22, 0x3b5c8c, 0xc9ccd0, 0x151719][i % 6]),
+  car: (i) => car([0xd8d8d4, 0x2f3440, 0x8a1f22, 0x3b5c8c, 0xc9ccd0, 0x151719][i % 6], ['hatchback', 'estate', 'suv'][i % 3]),
   bike: (i) => cyclist([0x3a4a6b, 0x8a2a2a, 0x2f6b3a, 0x6b5a2f][i % 4]),
 };

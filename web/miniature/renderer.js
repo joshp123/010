@@ -337,6 +337,8 @@ const buildingPatch = {
     classCode = vWorldNormalMini.y > 0.55 ? 6.0 : 7.0;
     if (vWorldNormalMini.y > 0.55) {
       diffuseColor.rgb = roofSurface(vRoof, vWorldPosMini, vWorldNormalMini);
+      // Colour fades by moonlight: at night a roof is a grey-blue shape, not an orange one.
+      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722))), night * 0.65);
     } else {
     #ifdef ASSET_MATERIAL
     // Model-made walls keep their own colours. Windows are the asset's dark panes.
@@ -876,9 +878,11 @@ export class Miniature {
   async vehicleMesh(tile, ground, tracks) {
     const { tileX, tileY, classAt, heightAt, classes, width, height } = ground;
     const hash = (a, b) => Math.abs(Math.sin(a * 12.9898 + b * 78.233) * 43758.5453) % 1;
-    const placed = { car: [], cyclist: [], tram: [] };
+    const placed = { hatchback: [], estate: [], suv: [], cyclist: [], tram: [] };
+    const shapes = ['hatchback', 'hatchback', 'estate', 'suv']; // compacts are the commonest
     const put = (kind, x, y, heading, colour, lift = 0) => {
       const h = heightAt(x, y);
+      if (kind === 'car') kind = shapes[Math.floor(hash(y * 1.3, x * 0.7) * shapes.length)];
       if (h !== null) placed[kind].push({ x, y, z: h + lift, heading, colour });
     };
     // Dutch car colours, roughly by share of the fleet.
@@ -934,7 +938,8 @@ export class Miniature {
       }
     }
 
-    const parkedCars = placed.car.length;
+    const carCount = () => placed.hatchback.length + placed.estate.length + placed.suv.length;
+    const parkedCars = carCount();
     if (this.style.traffic) {
       const networks = await this.trafficNetworks();
       const inside = (x, y) => x >= tileX && x < tileX + TILE_METRES && y >= tileY && y < tileY + TILE_METRES;
@@ -998,9 +1003,9 @@ export class Miniature {
       }
     }
 
-    console.log(`vehicles ${tile.id}: ${parkedCars} parked, ${placed.car.length - parkedCars} moving cars, ${placed.cyclist.length} cyclists, trams at ${placed.tram.map((t) => `${t.x.toFixed(0)},${t.y.toFixed(0)}`).join(" ")}`);
+    console.log(`vehicles ${tile.id}: ${parkedCars} parked, ${carCount() - parkedCars} moving cars, ${placed.cyclist.length} cyclists, trams at ${placed.tram.map((t) => `${t.x.toFixed(0)},${t.y.toFixed(0)}`).join(" ")}`);
     const group = new THREE.Group();
-    const models = { car: (c) => car(c), cyclist: (c) => cyclist(c), tram: () => citadisTram() };
+    const models = { hatchback: (c) => car(c, 'hatchback'), estate: (c) => car(c, 'estate'), suv: (c) => car(c, 'suv'), cyclist: (c) => cyclist(c), tram: () => citadisTram() };
     for (const [kind, items] of Object.entries(placed)) {
       if (!items.length) continue;
       // One instanced mesh per part of the model; paint takes each vehicle's colour.
