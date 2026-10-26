@@ -64,7 +64,7 @@ export class LiveLayer {
           const known = this.transit.get(vehicle.id) ?? { track: [] };
           if (vehicle.heading !== undefined && known.heading === undefined) known.heading = vehicle.heading;
           const last = known.track.at(-1);
-          if (!last || last.t !== observed) known.track.push({ x: vehicle.x, y: vehicle.y, t: observed, on: this.snap(mode, line, vehicle.x, vehicle.y) });
+          if (!last || last.t !== observed) known.track.push({ x: vehicle.x, y: vehicle.y, t: observed });
           while (known.track.length > 4) known.track.shift();
           Object.assign(known, { mode: vehicle.mode, line: vehicle.line, seen: now });
           this.transit.set(vehicle.id, known);
@@ -364,6 +364,8 @@ export class LiveLayer {
     // along the real track when both reports snap to the same path.
     const t = now - 15000;
     const track = vehicle.track;
+    // Snap reports to the track once the route geometry has loaded.
+    if (this.shapes) for (const point of track) if (point.on === undefined) point.on = this.snap(vehicle.mode, vehicle.line, point.x, point.y);
     for (let i = track.length - 1; i >= 0; i--) {
       const a = track[i - 1] ?? track[i], b = track[i];
       if (i > 0 && t < a.t) continue;
