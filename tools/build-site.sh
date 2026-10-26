@@ -22,6 +22,10 @@ perl -0pi -e 's#<script type="importmap">.*?</script>\n##s' "$dist/t1.html"
 for name in t2 t2n; do
   if [ -d "$data/pyramids/$name-live" ]; then rsync -a --delete "$data/pyramids/$name-live/" "$dist/pyramids/$name/"; fi
 done
+mkdir -p "$dist/networks"
+for kind in cars bikes; do
+  [ -f "$data/scene/v1/networks/$kind.json" ] && cp "$data/scene/v1/networks/$kind.json" "$dist/networks/"
+done
 mkdir -p "$dist/compare"
 cp "$data/renders/compare/"t[12].webp "$dist/compare/"
 cp "$data/renders/compare/og.jpg" "$dist/og.jpg"

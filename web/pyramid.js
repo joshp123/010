@@ -5,6 +5,7 @@
 
 import { rdFromWgs84, wgs84FromRd } from './miniature/rd.js';
 import { LiveLayer, liveAxes } from './live.js';
+import startView from './start.json' with { type: 'json' };
 
 const params = new URLSearchParams(location.search);
 const dayBase = params.get('pyramid') ?? document.body.dataset.pyramid ?? './pyramids/t2';
@@ -39,7 +40,7 @@ container.appendChild(world);
 
 const start = params.has('lat')
   ? rdFromWgs84(Number(params.get('lat')), Number(params.get('lon')))
-  : { x: Number(params.get('x') ?? 90341), y: Number(params.get('y') ?? 436174) };
+  : { x: Number(params.get('x') ?? startView.x), y: Number(params.get('y') ?? startView.y) };
 const state = {
   x: start.x,
   y: start.y,

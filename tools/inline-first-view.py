@@ -10,8 +10,9 @@ meta = json.load(open(f"{dist}/{base}/b{bearing}/meta.json"))
 code = open(bundle).read()
 
 # Tiles in view for a 390 x 844 phone at the default zoom (level 0, one CSS
-# pixel per art pixel) centred on Aelbrechtskolk at street height.
-x, y, z = 90341 - meta["origin_rd"][0], 3.0, -(436174 - meta["origin_rd"][1])
+# pixel per art pixel) centred on the default view (web/start.json).
+start = json.load(open(f"{dist}/start.json"))
+x, y, z = start["x"] - meta["origin_rd"][0], 3.0, -(start["y"] - meta["origin_rd"][1])
 b, e = math.radians(meta["bearing"]), math.radians(meta["elevation_degrees"])
 right = (math.cos(b), 0, math.sin(b))
 up = (math.sin(b) * math.sin(e), math.cos(e), -math.cos(b) * math.sin(e))
