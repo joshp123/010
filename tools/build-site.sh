@@ -19,7 +19,7 @@ esbuild "$repo/web/t1.js" --bundle --minify --format=esm --target=es2022 \
   --alias:three/addons="$repo/web/vendor/three/examples/jsm" \
   --legal-comments=eof --outfile="$dist/t1.js"
 perl -0pi -e 's#<script type="importmap">.*?</script>\n##s' "$dist/t1.html"
-for name in t2; do
+for name in t2 t2n; do
   if [ -d "$data/pyramids/$name-live" ]; then rsync -a --delete "$data/pyramids/$name-live/" "$dist/pyramids/$name/"; fi
 done
 mkdir -p "$dist/compare"

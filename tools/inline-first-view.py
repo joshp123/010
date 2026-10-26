@@ -22,7 +22,11 @@ sy = (up[0] * x + up[1] * y + up[2] * z) / mpp
 left, top = round(sx - 195), round(sy + 422)
 columns = range(max(0, int((left - level["left"]) // 512)), min(level["columns"] - 1, int((left + 390 - level["left"]) // 512)) + 1)
 rows = range(max(0, int((level["top"] - top) // 512)), min(level["rows"] - 1, int((level["top"] - top + 844) // 512)) + 1)
-preloads = "".join(f'<link rel="preload" as="image" href="./{base}/b{bearing}/0/{c}_{r}.webp" media="(max-width: 700px)">\n' for r in rows for c in columns)
+first_tiles = [f"b{bearing}/0/{c}_{r}.webp" for r in rows for c in columns]
+# Preload the first tiles of whichever pyramid (day or night) this visit shows.
+preloads = ('<script>if (innerWidth < 700) for (const t of ' + json.dumps(first_tiles) + ') {'
+            'const l = document.createElement("link"); l.rel = "preload"; l.as = "image";'
+            f'l.href = "./{base}" + (document.documentElement.dataset.night ? "n/" : "/") + t; document.head.appendChild(l); }}</script>\n')
 
 # A low-resolution picture of the first view, inside the HTML: on a phone it
 # is on screen after one round trip, and the real tiles replace it. It is cut
@@ -47,15 +51,22 @@ first_view = (
     f'<img id="first-view" alt="" src="data:image/webp;base64,{placeholder}" '
     f'style="position:fixed;left:calc(50vw - {half_w * scale}px);top:calc(50vh - {half_h * scale}px);'
     f'width:{2 * half_w * scale}px;height:{2 * half_h * scale}px;image-rendering:pixelated;pointer-events:none">'
-    '<script>if (innerWidth < 700 && !location.search) requestAnimationFrame(() => performance.mark("map-first-view")); '
+    '<script>if (innerWidth < 700 && !location.search && document.documentElement.dataset.night !== "1") requestAnimationFrame(() => performance.mark("map-first-view")); '
     'else document.getElementById("first-view").remove();</script>'
 )
 html = html.replace('<div id="map" class="pyramid"></div>', '<div id="map" class="pyramid"></div>\n' + first_view)
 
 inline = f'<script>window.inlinedPyramidMeta = {{"./{base}/b{bearing}": {json.dumps(meta, separators=(",", ":"))}}};</script>\n'
-html = html.replace("</head>", preloads + inline + "</head>")
+# Decide day or night before anything paints, so a night visitor never sees
+# the day placeholder or day tiles. Same rule as web/pyramid.js (sun above -4°).
+night_check = ('<script>(function(){var q=new URLSearchParams(location.search).get("light");var d=new Date(),r=Math.PI/180,'
+  'n=(Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())-Date.UTC(d.getUTCFullYear(),0,0))/864e5,'
+  'de=-23.44*r*Math.cos(2*Math.PI/365*(n+10)),h=d.getUTCHours()+d.getUTCMinutes()/60+4.48/15,'
+  'e=Math.asin(Math.sin(51.92*r)*Math.sin(de)+Math.cos(51.92*r)*Math.cos(de)*Math.cos((h-12)*15*r));'
+  'if(q?q==="night":e<-4*r)document.documentElement.dataset.night="1";})()</script>\n')
+html = html.replace("</head>", night_check + preloads + inline + "</head>")
 html = re.sub(r'<script type="module" src="\./pyramid\.js"></script>', lambda _: f'<script type="module">{code}</script>', html)
 css = open(f"{dist}/miniature/page.css").read()
 html = html.replace('<link rel="stylesheet" href="./miniature/page.css">', f"<style>{css}</style>")
 open(f"{dist}/{page}", "w").write(html)
-print(f"{page}: placeholder {len(placeholder)} chars, preloads {len(list(rows)) * len(list(columns))} tiles, html {len(html)} bytes")
+print(f"{page}: placeholder {len(placeholder)} chars, preloads {len(first_tiles)} tiles, html {len(html)} bytes")

@@ -6,7 +6,20 @@
 import { rdFromWgs84, wgs84FromRd } from './miniature/rd.js';
 
 const params = new URLSearchParams(location.search);
-const base = params.get('pyramid') ?? document.body.dataset.pyramid ?? './pyramids/t2';
+const dayBase = params.get('pyramid') ?? document.body.dataset.pyramid ?? './pyramids/t2';
+
+// Day or night follows the real sun over Rotterdam unless the link says otherwise.
+function sunIsUp(date = new Date()) {
+  const rad = Math.PI / 180, lat = 51.92 * rad, lon = 4.48;
+  const day = (Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) - Date.UTC(date.getUTCFullYear(), 0, 0)) / 864e5;
+  const declination = -23.44 * rad * Math.cos(2 * Math.PI / 365 * (day + 10));
+  const hours = date.getUTCHours() + date.getUTCMinutes() / 60 + lon / 15;
+  const hourAngle = (hours - 12) * 15 * rad;
+  const elevation = Math.asin(Math.sin(lat) * Math.sin(declination) + Math.cos(lat) * Math.cos(declination) * Math.cos(hourAngle));
+  return elevation > -4 * rad;
+}
+let night = document.documentElement.dataset.night === '1' || (params.has('light') ? params.get('light') === 'night' : !sunIsUp());
+let base = night ? `${dayBase}n` : dayBase;
 const bearings = (params.get('bearings') ?? document.body.dataset.bearings ?? '35,125,215,305').split(',').map(Number);
 const STREET_HEIGHT = 3; // NAP metres; the point under the screen centre is at street level
 const zoomLevels = [
@@ -117,6 +130,7 @@ function writeUrl() {
   for (const k of ['x', 'y']) next.delete(k);
   next.set('lat', lat.toFixed(5)); next.set('lon', lon.toFixed(5));
   next.set('bearing', String(bearings[state.bearingIndex])); next.set('z', String(state.zoom));
+  if (night !== !sunIsUp()) next.set('light', night ? 'night' : 'day');
   history.replaceState(null, '', `?${next}`);
 }
 
@@ -157,6 +171,19 @@ container.addEventListener('wheel', (event) => { event.preventDefault(); zoomBy(
 container.addEventListener('dblclick', () => zoomBy(1));
 if (bearings.length < 2) document.querySelector('.controls').style.display = 'none';
 document.getElementById('rotate-left').onclick = () => rotateBy(-1);
+const lightButton = document.getElementById('light');
+const showLight = () => { lightButton.textContent = night ? '☾' : '☀'; document.body.classList.toggle('night', night); };
+showLight();
+lightButton.onclick = () => {
+  night = !night;
+  base = night ? `${dayBase}n` : dayBase;
+  for (const image of tiles.values()) image.remove();
+  tiles.clear();
+  metas.clear();
+  showLight(); requestDraw();
+  const next = new URLSearchParams(location.search); next.set('light', night ? 'night' : 'day');
+  history.replaceState(null, '', `?${next}`);
+};
 document.getElementById('rotate-right').onclick = () => rotateBy(1);
 addEventListener('resize', requestDraw);
 draw();
