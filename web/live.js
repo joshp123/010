@@ -7,13 +7,15 @@
 const CAMERA_DISTANCE = 4000; // web/miniature/renderer.js
 const STREET_HEIGHT = 3;
 
+// Liveries: RET (Rotterdam's trams, metros and buses) is white with red;
+// NS trains are yellow with blue. Window bands mark the sides.
 const modeStyle = {
-  tram: { length: 30, width: 2.4, height: 3.4, top: '#f2c230', side: '#b8861c' },
-  metro: { length: 42, width: 2.7, height: 3.6, top: '#e8453c', side: '#a42a24' },
-  bus: { length: 12, width: 2.5, height: 3.1, top: '#d9dde3', side: '#8f97a3' },
-  train: { length: 80, width: 2.9, height: 4.0, top: '#f5d31f', side: '#2c4fa0' },
-  ferry: { length: 20, width: 5, height: 3, top: '#f0f0ea', side: '#3a6b8f' },
-  car: { length: 4.5, width: 1.8, height: 1.5 },
+  tram: { length: 30, width: 2.4, height: 3.4, top: '#ecebe6', side: '#d4d1c8', band: '#2b3442', stripe: '#d4302b' },
+  metro: { length: 42, width: 2.7, height: 3.6, top: '#e6e6e2', side: '#c9c8c2', band: '#2b3442', stripe: '#d4302b' },
+  bus: { length: 12, width: 2.5, height: 3.1, top: '#efefec', side: '#d6d6d1', band: '#2b3442', stripe: '#d4302b' },
+  train: { length: 80, width: 2.9, height: 4.0, top: '#f4cf1d', side: '#e5bd12', band: '#1f3c88', stripe: '#1f3c88' },
+  ferry: { length: 20, width: 5, height: 3, top: '#f0f0ea', side: '#3a6b8f', band: '#1d2a38' },
+  car: { length: 4.5, width: 1.8, height: 1.5, band: '#1d2430' },
   bike: { length: 1.8, width: 0.6, height: 1.6, top: '#2b2f3a', side: '#1d2029' },
 };
 const carColours = [['#d8d8d4', '#9a9a96'], ['#2f3440', '#1c2028'], ['#8a1f22', '#5c1416'], ['#3b5c8c', '#26405f'], ['#c9ccd0', '#8b8f95'], ['#151719', '#0b0c0d']];
@@ -52,9 +54,15 @@ export class LiveLayer {
       if (response.ok) {
         const feed = await response.json();
         const now = Date.now();
-        for (const vehicle of feed.vehicles ?? []) {
+        for (const [id, lineIndex, , x, y, bearing, observedAt] of feed.vehicles ?? []) {
+          const [mode, line] = feed.lines[lineIndex] ?? [];
+          if (!mode || !observedAt) continue;
+          const observed = observedAt * 1000;
+          if (now - observed > 120000) continue; // stale reports are not shown as live
+          const vehicle = { id, mode, line, x, y };
+          if (Number.isFinite(bearing)) vehicle.heading = bearing * Math.PI / 180;
           const known = this.transit.get(vehicle.id) ?? { track: [] };
-          const observed = (vehicle.observed ?? feed.timestamp ?? now / 1000) * 1000;
+          if (vehicle.heading !== undefined && known.heading === undefined) known.heading = vehicle.heading;
           const last = known.track.at(-1);
           if (!last || last.t !== observed) known.track.push({ x: vehicle.x, y: vehicle.y, t: observed });
           while (known.track.length > 4) known.track.shift();
@@ -173,6 +181,7 @@ export class LiveLayer {
     if (level > 1) return false;
     const fx = point.sx - levelInfo.left, fy = levelInfo.top - point.sy;
     const column = Math.floor(fx / 512), row = Math.floor(fy / 512);
+    if (column < 0 || row < 0 || column >= levelInfo.columns || row >= levelInfo.rows) return false;
     const data = this.depthTile(level, column, row);
     if (!data) return false;
     const x = Math.floor((fx - column * 512) / 2), y = Math.floor((fy - row * 512) / 2);
@@ -203,6 +212,24 @@ export class LiveLayer {
       g.lineTo(Math.round(roof[i].px), Math.round(roof[i].py));
       g.fill();
     }
+    // Window band and livery stripe along the sides that face the camera.
+    const band = (low, high, colour) => {
+      if (!colour) return;
+      const a = [corner(length / 2, width / 2, low), corner(length / 2, -width / 2, low), corner(-length / 2, -width / 2, low), corner(-length / 2, width / 2, low)];
+      const b = [corner(length / 2, width / 2, high), corner(length / 2, -width / 2, high), corner(-length / 2, -width / 2, high), corner(-length / 2, width / 2, high)];
+      g.fillStyle = colour;
+      for (let i = 0; i < 4; i++) {
+        const j = (i + 1) % 4;
+        g.beginPath();
+        g.moveTo(Math.round(a[i].px), Math.round(a[i].py));
+        g.lineTo(Math.round(a[j].px), Math.round(a[j].py));
+        g.lineTo(Math.round(b[j].px), Math.round(b[j].py));
+        g.lineTo(Math.round(b[i].px), Math.round(b[i].py));
+        g.fill();
+      }
+    };
+    band(height * 0.45, height * 0.8, style.band);
+    band(height * 0.18, height * 0.3, style.stripe);
     g.fillStyle = top;
     g.beginPath();
     roof.forEach((p, i) => (i ? g.lineTo(Math.round(p.px), Math.round(p.py)) : g.moveTo(Math.round(p.px), Math.round(p.py))));
@@ -252,9 +279,14 @@ export class LiveLayer {
       const p = this.transitPosition(vehicle, now);
       items.push({ ...p, z: STREET_HEIGHT, style, top: style.top, side: style.side });
     }
-    // Far to near, so nearer vehicles cover farther ones.
-    for (const item of items) item.depth = this.project(item.x, item.y, item.z ?? STREET_HEIGHT).depth;
+    // Only what is on screen, far to near, so nearer vehicles cover farther ones.
+    for (let i = items.length - 1; i >= 0; i--) {
+      const p = this.project(items[i].x, items[i].y, items[i].z ?? STREET_HEIGHT);
+      if (p.px < -120 || p.py < -120 || p.px > width + 120 || p.py > height + 120) items.splice(i, 1);
+      else items[i].depth = p.depth;
+    }
     items.sort((a, b) => b.depth - a.depth);
+    this.drawn = items.length;
     for (const item of items) this.drawBox(item.x, item.y, item.z ?? STREET_HEIGHT, item.heading, item.style, item.top, item.side);
   }
 

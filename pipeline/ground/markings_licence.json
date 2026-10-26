@@ -1,0 +1,154 @@
+{
+  "_annotation": "Written by AI on 2026-10-26 by model GPT-6.1 Sol.",
+  "dataset": "Rotterdam municipal road marking register",
+  "source_dataset": "rotterdam-markings",
+  "licence_status": "unlicensed",
+  "stated_licence": null,
+  "checked_on": "2026-10-26",
+  "finding": "No stated licence found for this municipal marking register. All three municipal iteminfo licenseInfo fields are empty, and metadata useLimit fields are empty. No matching municipal dataset page was found in Rotterdam or national catalogue searches. Unlicensed here means no licence has been found, not an assertion that permission can never be granted.",
+  "derived_marking_mask": "retained; Claude decides how to use it",
+  "evidence": [
+    {
+      "url": "https://diensten.rotterdam.nl/arcgis/rest/services/SB_Infra/Wegmarkeringen_Lijnen/MapServer/info/iteminfo?f=pjson",
+      "raw_file": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/markings-licence-evidence/2026-10-26/Wegmarkeringen_Lijnen_iteminfo.json",
+      "kind": "municipal-iteminfo",
+      "stated_licence": "",
+      "access_information": ""
+    },
+    {
+      "url": "https://diensten.rotterdam.nl/arcgis/rest/services/SB_Infra/Wegmarkeringen_Lijnen/MapServer/info/metadata",
+      "raw_file": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/markings-licence-evidence/2026-10-26/Wegmarkeringen_Lijnen_metadata.xml",
+      "kind": "municipal-xml-metadata",
+      "stated_constraints": [
+        ""
+      ]
+    },
+    {
+      "url": "https://diensten.rotterdam.nl/arcgis/rest/services/SB_Infra/Wegmarkering_Vlakken/MapServer/info/iteminfo?f=pjson",
+      "raw_file": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/markings-licence-evidence/2026-10-26/Wegmarkering_Vlakken_iteminfo.json",
+      "kind": "municipal-iteminfo",
+      "stated_licence": "",
+      "access_information": ""
+    },
+    {
+      "url": "https://diensten.rotterdam.nl/arcgis/rest/services/SB_Infra/Wegmarkering_Vlakken/MapServer/info/metadata",
+      "raw_file": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/markings-licence-evidence/2026-10-26/Wegmarkering_Vlakken_metadata.xml",
+      "kind": "municipal-xml-metadata",
+      "stated_constraints": [
+        ""
+      ]
+    },
+    {
+      "url": "https://diensten.rotterdam.nl/arcgis/rest/services/SB_Infra/Wegmarkeringen_Punten/MapServer/info/iteminfo?f=pjson",
+      "raw_file": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/markings-licence-evidence/2026-10-26/Wegmarkeringen_Punten_iteminfo.json",
+      "kind": "municipal-iteminfo",
+      "stated_licence": "",
+      "access_information": ""
+    },
+    {
+      "url": "https://diensten.rotterdam.nl/arcgis/rest/services/SB_Infra/Wegmarkeringen_Punten/MapServer/info/metadata",
+      "raw_file": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/markings-licence-evidence/2026-10-26/Wegmarkeringen_Punten_metadata.xml",
+      "kind": "municipal-xml-metadata",
+      "stated_constraints": [
+        ""
+      ]
+    },
+    {
+      "url": "https://data.rotterdam.nl/api/explore/v2.1/catalog/datasets?where=search%28%22wegmarkering%22%29&limit=100",
+      "raw_file": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/markings-licence-evidence/2026-10-26/rotterdam_catalog_wegmarkering.json",
+      "kind": "rotterdam-catalog-search",
+      "matching_dataset_count": 0,
+      "dataset_titles": []
+    },
+    {
+      "url": "https://data.rotterdam.nl/api/explore/v2.1/catalog/datasets?where=search%28%22wegmarkeringen%22%29&limit=100",
+      "raw_file": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/markings-licence-evidence/2026-10-26/rotterdam_catalog_wegmarkeringen.json",
+      "kind": "rotterdam-catalog-search",
+      "matching_dataset_count": 0,
+      "dataset_titles": []
+    },
+    {
+      "url": "https://data.rotterdam.nl/api/explore/v2.1/catalog/datasets?where=search%28%22markering%22%29&limit=100",
+      "raw_file": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/markings-licence-evidence/2026-10-26/rotterdam_catalog_markering.json",
+      "kind": "rotterdam-catalog-search",
+      "matching_dataset_count": 1,
+      "dataset_titles": [
+        "Oppervlakte water"
+      ]
+    },
+    {
+      "url": "https://data.overheid.nl/data/api/3/action/package_search?q=wegmarkering+Rotterdam&rows=100",
+      "raw_file": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/markings-licence-evidence/2026-10-26/national_catalog_0.json",
+      "kind": "national-catalog-search",
+      "matching_dataset_count": 0,
+      "datasets": [],
+      "interpretation": "No matching municipal register. Any returned KernGis records are Rijkswaterstaat datasets, not Rotterdam municipal SB_Infra register."
+    },
+    {
+      "url": "https://data.overheid.nl/data/api/3/action/package_search?q=wegmarkeringen+Rotterdam&rows=100",
+      "raw_file": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/markings-licence-evidence/2026-10-26/national_catalog_1.json",
+      "kind": "national-catalog-search",
+      "matching_dataset_count": 0,
+      "datasets": [],
+      "interpretation": "No matching municipal register. Any returned KernGis records are Rijkswaterstaat datasets, not Rotterdam municipal SB_Infra register."
+    },
+    {
+      "url": "https://data.overheid.nl/data/api/3/action/package_search?q=%22Wegmarkeringen_Lijnen%22&rows=100",
+      "raw_file": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/markings-licence-evidence/2026-10-26/national_catalog_2.json",
+      "kind": "national-catalog-search",
+      "matching_dataset_count": 1,
+      "datasets": [
+        {
+          "name": "83910-lijnmarkeringen-kerngis--lijnen-",
+          "title": "Lijnmarkeringen KernGis (lijnen)",
+          "licence": "http://creativecommons.org/publicdomain/zero/1.0/deed.nl"
+        }
+      ],
+      "interpretation": "No matching municipal register. Any returned KernGis records are Rijkswaterstaat datasets, not Rotterdam municipal SB_Infra register."
+    },
+    {
+      "url": "https://data.overheid.nl/data/api/3/action/package_search?q=%22diensten.rotterdam.nl%22&rows=100",
+      "raw_file": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/markings-licence-evidence/2026-10-26/national_catalog_3.json",
+      "kind": "national-catalog-search",
+      "matching_dataset_count": 0,
+      "datasets": [],
+      "interpretation": "No matching municipal register. Any returned KernGis records are Rijkswaterstaat datasets, not Rotterdam municipal SB_Infra register."
+    },
+    {
+      "url": "https://data.overheid.nl/data/api/3/action/package_search?q=wegmarkering&rows=100",
+      "raw_file": "/Volumes/Josh Extreme Pro USB4 4TB/010/sources/markings-licence-evidence/2026-10-26/national_catalog_4.json",
+      "kind": "national-catalog-search",
+      "matching_dataset_count": 4,
+      "datasets": [
+        {
+          "name": "83910-lijnmarkeringen-kerngis--lijnen-",
+          "title": "Lijnmarkeringen KernGis (lijnen)",
+          "licence": "http://creativecommons.org/publicdomain/zero/1.0/deed.nl"
+        },
+        {
+          "name": "47103-markering-kerngis--vlakken-",
+          "title": "Markering KernGis (vlakken)",
+          "licence": "http://creativecommons.org/publicdomain/zero/1.0/deed.nl"
+        },
+        {
+          "name": "47133-markering-kerngis--punten-",
+          "title": "Markering KernGis (punten)",
+          "licence": "http://creativecommons.org/publicdomain/zero/1.0/deed.nl"
+        },
+        {
+          "name": "utrecht-weginrichtingselement",
+          "title": "Weginrichtingselement",
+          "licence": "http://creativecommons.org/publicdomain/zero/1.0/deed.nl"
+        }
+      ],
+      "interpretation": "No matching municipal register. Any returned KernGis records are Rijkswaterstaat datasets, not Rotterdam municipal SB_Infra register."
+    }
+  ],
+  "scope_limit": "Targeted official catalogue and source metadata checks; absence of a licence is bounded by these searches. Licences on Rijkswaterstaat or Brabant marking datasets do not apply to the Rotterdam register.",
+  "unavailable_checks": [
+    {
+      "url": "https://rotterdam.dataplatform.nl/dataset/wegmarkeringen",
+      "result": "Legacy host timed out after 35 seconds; no dataset page or licence obtained."
+    }
+  ]
+}

@@ -26,7 +26,7 @@ APPEARANCE_CLASSES={'grasland agrarisch':6,'grasland overig':6,'groenvoorziening
  'bouwland':6,'akkerbouw':6,'heide':6,'loofbos':7,'naaldbos':7,'gemengd bos':7,
  'struiken':7,'struikrozen':7,'heesters':7,'houtwal':7,'haag':7,'rietland':6,
  'onverhard':9,'zand':9,'open verharding':10,'gesloten verharding':10,
- 'half verhard':9,'erf':10,'spoorbaan':16}
+ 'half verhard':9,'erf':10,'spoorbaan':14,'ballast':16}
 PLUS_APPEARANCE_CLASSES={'heesters':7,'bosplantsoen':7,'struikrozen':7,'haag':7,'gras- en kruidachtigen':6,'planten':6}
 DEFAULT_CLASSES={'waterdeel':8,'ondersteunendwaterdeel':9,'pand':11,'overbruggingsdeel':12,
  'kunstwerkdeel_vlak':13,'scheiding_vlak':13,'overigbouwwerk':13,
@@ -36,6 +36,8 @@ PALETTE=np.array([[220,40,180],[90,93,100],[170,67,55],[211,191,158],[117,120,13
 def classify(collection,properties):
  function=str(properties.get('functie') or properties.get('FUNCTIE') or '').strip()
  physical=str(properties.get('fysiek_voorkomen') or properties.get('FYSIEKVK') or '').strip()
+ if function=='spoorbaan' or physical=='spoorbaan':return 14
+ if physical=='ballast':return 16
  if collection in DEFAULT_CLASSES:return DEFAULT_CLASSES[collection]
  if collection=='begroeidterreindeel' and properties.get('plus_fysiek_voorkomen') in PLUS_APPEARANCE_CLASSES:return PLUS_APPEARANCE_CLASSES[properties['plus_fysiek_voorkomen']]
  if collection=='ondersteunendwegdeel' and function=='berm' and physical in ('open verharding','gesloten verharding'):return 10
@@ -47,8 +49,9 @@ def load_collection(collection,bounds):
  params={'bbox':','.join(map(str,bounds)),'bbox-crs':CRS,'crs':CRS,'limit':1000,'f':'json','filter':'eind_registratie IS NULL','filter-lang':'cql2-text'}
  url=f'https://api.pdok.nl/lv/bgt/ogc/v1/collections/{collection}/items?'+urlencode(params)
  records=[];page=0
+ archive_prefix='m0-buffer' if tuple(bounds)==(89745,435245,92005,436755) else 'bbox_'+'_'.join(map(str,bounds))
  while url:
-  j=json.loads(fetch('bgt',f'{collection}/m0-buffer-page{page:03}.json',url))
+  j=json.loads(fetch('bgt',f'{collection}/{archive_prefix}-page{page:03}.json',url))
   for feature in j['features']:
    p=feature['properties']
    # The OGC API exposes history by default. Do not draw retired versions or tunnels.

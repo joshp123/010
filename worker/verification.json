@@ -1,0 +1,113 @@
+{
+  "writtenBy": "AI, GPT-6, 2026-10-26",
+  "testedAt": "2026-10-26T14:59:33.101936+00:00",
+  "feedTimestamp": 1793026706,
+  "feedUtc": "2026-10-26T14:58:26+00:00",
+  "nsFeedTimestamp": 1793026735.443,
+  "counts": {
+    "bus": 194,
+    "tram": 81,
+    "unknown": 104,
+    "metro": 39,
+    "ferry": 2,
+    "train": 24
+  },
+  "unmatched": {
+    "ovapi": 104,
+    "ns": 0
+  },
+  "sources": {
+    "ovapi": "ok",
+    "ns": "ok"
+  },
+  "rawJsonBytes": 25631,
+  "gzipTransferBytes": 7754,
+  "metroLines": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+  ],
+  "tramLines": [
+    "1",
+    "11",
+    "14",
+    "18",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8"
+  ],
+  "examples": [
+    {
+      "id": "RET:2021",
+      "x": 92371.8,
+      "y": 438984.9,
+      "bearing": null,
+      "observedAt": 1793026703,
+      "mode": "tram",
+      "line": "4",
+      "headsign": "Molenlaan"
+    },
+    {
+      "id": "RET:5359",
+      "x": 86647.8,
+      "y": 430834.8,
+      "bearing": null,
+      "observedAt": 1793026673,
+      "mode": "metro",
+      "line": "D",
+      "headsign": "De Akkers"
+    },
+    {
+      "id": "RET:1278",
+      "x": 89973.8,
+      "y": 432717.9,
+      "bearing": null,
+      "observedAt": 1793026698,
+      "mode": "bus",
+      "line": "68",
+      "headsign": "Heijplaat RDM Campus"
+    },
+    {
+      "id": "NS:4055",
+      "x": 92831.5,
+      "y": 439727.1,
+      "bearing": 257.42,
+      "observedAt": 1793026712,
+      "mode": "train",
+      "line": "Sprinter",
+      "headsign": null
+    },
+    {
+      "id": "QBUZZ:6713",
+      "x": 101765.8,
+      "y": 433769.6,
+      "bearing": null,
+      "observedAt": 1793026696,
+      "mode": "ferry",
+      "line": "20",
+      "headsign": "Dordrecht Merwekade"
+    }
+  ],
+  "staticVerification": {
+    "allExistingFilesCopiedByteIdentically": 2312,
+    "curlByteIdenticalPaths": [
+      "/",
+      "/t2",
+      "/pyramids/t2/b305/2/2_2.webp"
+    ]
+  },
+  "cacheVerification": {
+    "localHttpRequests": 6,
+    "ovapiFetches": 1,
+    "nsFetches": 1,
+    "repeatBodiesIdentical": true,
+    "additionalReplay": "20 concurrent requests coalesce; no refresh at 9.999 s; conditional refresh at 10 s; 304 preserves observation/feed timestamps"
+  },
+  "deployment": "not performed"
+}

@@ -25,6 +25,8 @@ _TRIANGLES = None
 _SOURCE_CLASSES = None
 _SOURCE_STATS = None
 _EXCLUDED_TRIANGLES = None
+_TILE_TRIANGLE_INDICES = {}
+_TILE_EXCLUDED_TRIANGLE_INDICES = {}
 
 # Municipal feature semantics are also kept in code, including vertical faces.
 MUNICIPAL_CLASSES = {
@@ -40,8 +42,38 @@ MUNICIPAL_CLASSES = {
  'Lage Trafo':13, 'Pijler Overbrugging':13, 'Sloof':13, 'Rooster':13, 'Sluis':13,
  'Bosplantsoen':7, 'Struik':7, 'Haag':7, 'Berm Groenvoorziening':6,
  'Greppel':9, 'Onverhard':9, 'Half Verhard':9, 'Zand':9,
- 'Oever Slootkant':6, 'Toegangstrap':3, 'Bassin':8,
+ 'Oever Slootkant':6, 'Toegangstrap':3, 'Bassin':8, 'Spoorbaan':14,
+ 'Autosnelweg':1, 'Autoweg':1, 'Inrit':1, 'Bebouwing':11,
+ 'Gebouwinstallaties':13, 'Gemaal':13, 'Gemengd Bos':7, 'Grasland Overig':6,
+ 'Open Loods':11, 'Opslagtank':13, 'Overbruggingsdelen':12,
+ 'Overig Bouwwerk':13, 'Overweg':15, 'Perron':3, 'Ruiterpad':3,
+ 'Strekdam':13, 'Transitie':0, 'Verkeerseiland Groenvoorziening':15,
+ 'Voetgangersgebied':3, 'Waterdeel':8, 'Watervlakte':8,
+ 'Wegdeel':0, 'Begroeid Terreindeel':0, 'Onbegroeid Terreindeel':0,
+ 'Ondersteunend Waterdeel':0,
 }
+
+
+MUNICIPAL_ROAD_FUNCTION_CLASSES = {
+ 'fietspad':2, 'voetpad':3, 'voetgangersgebied':3, 'parkeren':4,
+ 'rijbaan autosnelweg':1, 'rijbaan autoweg':1, 'rijbaan lokale weg':1,
+ 'rijbaan regionale weg':1, 'inrit':1, 'ov-baan':5, 'overweg':15,
+ 'spoorbaan':14, 'transitie':0,
+}
+MUNICIPAL_APPEARANCE_CLASSES = {
+ 'gesloten verharding':10, 'open verharding':10, 'half verhard':9,
+ 'onverhard':9, 'transitie':0, 'rietland':6, 'grasland overig':6,
+ 'groenvoorziening':7, 'gemengd bos':7,
+}
+
+def _municipal_surface_class(metadata):
+    source_class=metadata.get('KLASSE','')
+    if source_class=='Wegdeel':
+        return MUNICIPAL_ROAD_FUNCTION_CLASSES.get(metadata.get('FUNCTIE',''),0)
+    if source_class in ('Begroeid Terreindeel','Onbegroeid Terreindeel'):
+        return MUNICIPAL_APPEARANCE_CLASSES.get(metadata.get('FYSIEKVK',''),0)
+    return MUNICIPAL_CLASSES.get(source_class,0)
+
 
 def _accessor(document, binary, index):
     accessor = document['accessors'][index]
@@ -101,16 +133,17 @@ def _decode_ground(uri, transformer):
             missing += int((~valid).sum())
             excluded_triangles.append(rd[indices[~valid]])
             indices = indices[valid]
-            source_classes = np.array([MUNICIPAL_CLASSES.get(m['KLASSE'],0) for m in metadata],dtype=np.uint8)
+            source_classes = np.array([_municipal_surface_class(m) for m in metadata],dtype=np.uint8)
             triangles.append(rd[indices])
             classes.append(source_classes[batch[indices[:,0]]])
     dates = [str(m.get('INWIN','')) for m in metadata if m.get('INWIN')]
     return np.concatenate(triangles),np.concatenate(classes),{'uri':uri,'triangles_missing_height':missing,'rejected_features':rejected,
-       'excluded_projected_triangle_area_m2_sum':float(sum(np.abs((t[:,1,0]-t[:,0,0])*(t[:,2,1]-t[:,0,1])-(t[:,1,1]-t[:,0,1])*(t[:,2,0]-t[:,0,0])).sum()/2 for t in excluded_triangles)),'survey_date_min':min(dates,default=None),'survey_date_max':max(dates,default=None),'unmapped_classes':sorted({m['KLASSE'] for m in metadata if m['KLASSE'] not in MUNICIPAL_CLASSES})},np.concatenate(excluded_triangles)
+       'excluded_projected_triangle_area_m2_sum':float(sum(np.abs((t[:,1,0]-t[:,0,0])*(t[:,2,1]-t[:,0,1])-(t[:,1,1]-t[:,0,1])*(t[:,2,0]-t[:,0,0])).sum()/2 for t in excluded_triangles)),'survey_date_min':min(dates,default=None),'survey_date_max':max(dates,default=None),'unmapped_classes':sorted({m['KLASSE'] for m in metadata if m['KLASSE'] not in MUNICIPAL_CLASSES}),
+       'unmapped_attributes':[dict(zip(('KLASSE','FYSIEKVK','FUNCTIE'),values)) for values in sorted({tuple(str(m.get(key,'')) for key in ('KLASSE','FYSIEKVK','FUNCTIE')) for m in metadata if m['KLASSE'] not in MUNICIPAL_CLASSES})]},np.concatenate(excluded_triangles)
 
 def prepare_geometry(bounds):
     """Archive intersecting source tiles and hold their RD/NAP triangles in memory."""
-    global _TRIANGLES,_SOURCE_CLASSES,_SOURCE_STATS,_EXCLUDED_TRIANGLES
+    global _TRIANGLES,_SOURCE_CLASSES,_SOURCE_STATS,_EXCLUDED_TRIANGLES,_TILE_TRIANGLE_INDICES,_TILE_EXCLUDED_TRIANGLE_INDICES
     for name in ['nl_nsgi_nlgeo2018.tif','nl_nsgi_rdtrans2018.tif']:
         fetch('proj-grids',name,'https://cdn.proj.org/'+name)
     pyproj.network.set_network_enabled(False)
@@ -122,23 +155,49 @@ def prepare_geometry(bounds):
     uris = []
     def walk(node):
         region = node['boundingVolume']['region']
-        east,north = geographic.transform(np.rad2deg([region[0],region[2]]),np.rad2deg([region[1],region[3]]))
+        east,north = geographic.transform(np.rad2deg([region[0],region[0],region[2],region[2]]),np.rad2deg([region[1],region[3],region[1],region[3]]))
         if max(east)<bounds[0]-5 or min(east)>bounds[2]+5 or max(north)<bounds[1]-5 or min(north)>bounds[3]+5:return
         if 'content' in node:uris.append(node['content']['uri'])
         for child in node.get('children',[]):walk(child)
     walk(tileset['root'])
     with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
         results = list(executor.map(lambda uri:_decode_ground(uri,transformer),uris))
-    _TRIANGLES = np.concatenate([r[0] for r in results])
-    _SOURCE_CLASSES = np.concatenate([r[1] for r in results])
-    _EXCLUDED_TRIANGLES = np.concatenate([r[3] for r in results])
+    _TRIANGLES = np.concatenate([r[0] for r in results]) if results else np.empty((0,3,3),dtype=np.float64)
+    _SOURCE_CLASSES = np.concatenate([r[1] for r in results]) if results else np.empty(0,dtype=np.uint8)
+    _EXCLUDED_TRIANGLES = np.concatenate([r[3] for r in results]) if results else np.empty((0,3,3),dtype=np.float64)
+    _TILE_TRIANGLE_INDICES = _index_triangles_by_tile(_TRIANGLES,bounds)
+    _TILE_EXCLUDED_TRIANGLE_INDICES = _index_triangles_by_tile(_EXCLUDED_TRIANGLES,bounds)
+    # Fork workers inherit these large arrays without copying. Tile construction
+    # works on advanced-indexed copies; all shared source storage stays read-only.
+    for array in (_TRIANGLES,_SOURCE_CLASSES,_EXCLUDED_TRIANGLES):array.flags.writeable=False
     _SOURCE_STATS = {'transform':TRANSFORM_DESCRIPTION,'transform_pipeline':transformer.definition,
        'municipal_class_mapping':MUNICIPAL_CLASSES,
+       'municipal_road_function_mapping':MUNICIPAL_ROAD_FUNCTION_CLASSES,
+       'municipal_appearance_mapping':MUNICIPAL_APPEARANCE_CLASSES,
        'height_datum_evidence':{'rtc_ellipsoid_height_m':0,'representative_source_water_nap_m':[-0.71,-0.66],'literal_ecef_to_nap_water_m':[-44.33,-44.28],
          'interpretation':'Municipal source stores NAP as local up against zero-ellipsoid RTC; preserving local up prevents double geoid subtraction. Local tangent plane introduces centimetre curvature uncertainty.'},
        'height_defect_policy':'Discard entire source features containing local Y below -10m in this bounded ground extract: observed nodata interpolation near -50/-100m. Leave holes; no replacement heights.',
+       'triangle_index':{'tile_count':len(_TILE_TRIANGLE_INDICES),'source_triangles':len(_TRIANGLES),'source_array_bytes':int(_TRIANGLES.nbytes+_SOURCE_CLASSES.nbytes+_EXCLUDED_TRIANGLES.nbytes),'index_bytes':sum(a.nbytes for a in [*_TILE_TRIANGLE_INDICES.values(),*_TILE_EXCLUDED_TRIANGLE_INDICES.values()]),'empty_source_tiles':[f'x{x}_y{y}' for (x,y),indices in _TILE_TRIANGLE_INDICES.items() if not len(indices)]},
        'tiles':[r[2] for r in results]}
     return _SOURCE_STATS
+
+
+def _index_triangles_by_tile(triangles,bounds):
+    """Build compact immutable candidate lists once, before forking tile workers."""
+    minimum=triangles[:,:,:2].min(1)
+    maximum=triangles[:,:,:2].max(1)
+    tile_indices={}
+    # Bounds are calculated once; workers never scan the municipality per tile.
+    for x in range(int(bounds[0]//250)*250,int(np.ceil(bounds[2]/250))*250,250):
+        intersects_east=(maximum[:,0]>=x)&(minimum[:,0]<=x+250)
+        east_candidates=np.flatnonzero(intersects_east)
+        for y in range(int(bounds[1]//250)*250,int(np.ceil(bounds[3]/250))*250,250):
+            intersects_north=(maximum[east_candidates,1]>=y)&(minimum[east_candidates,1]<=y+250)
+            indices=east_candidates[intersects_north].astype(np.uint32)
+            indices.flags.writeable=False
+            tile_indices[(x,y)]=indices
+    return tile_indices
+
 
 def _clip_triangle(triangle, xmin,ymin,xmax,ymax):
     polygon = list(triangle)
@@ -156,6 +215,14 @@ def _clip_triangle(triangle, xmin,ymin,xmax,ymax):
     return [np.array([polygon[0],polygon[i],polygon[i+1]]) for i in range(1,len(polygon)-1)]
 
 def _write_glb(path, triangles, classes, extras):
+    if not len(triangles):
+        # A valid empty glTF scene represents missing source geometry honestly.
+        document={'asset':{'version':'2.0','generator':'010 municipal ground pipeline'},'scene':0,'scenes':[{}],'extras':extras}
+        json_bytes=json.dumps(document,separators=(',',':')).encode()
+        json_bytes+=b' '*((-len(json_bytes))%4)
+        path.parent.mkdir(parents=True,exist_ok=True)
+        path.write_bytes(struct.pack('<4sII',b'glTF',2,20+len(json_bytes))+struct.pack('<I4s',len(json_bytes),b'JSON')+json_bytes)
+        return
     vertices = triangles.reshape(-1,3).astype('<f4')
     normals=np.cross(triangles[:,1]-triangles[:,0],triangles[:,2]-triangles[:,0])
     normals /= np.maximum(np.linalg.norm(normals,axis=1,keepdims=True),1e-20)
@@ -181,14 +248,14 @@ def build_tile_geometry(x,y,class_map):
     """Write one ground.glb. class_map is the 2500-square R-channel ndarray."""
     if _TRIANGLES is None:raise RuntimeError('Call prepare_geometry first')
     bounds=(x,y,x+250,y+250)
-    minimum=_TRIANGLES[:,:,:2].min(1);maximum=_TRIANGLES[:,:,:2].max(1)
-    intersects=(maximum[:,0]>=x)&(minimum[:,0]<=x+250)&(maximum[:,1]>=y)&(minimum[:,1]<=y+250)
-    candidates=_TRIANGLES[intersects];candidate_classes=_SOURCE_CLASSES[intersects]
+    if (x,y) not in _TILE_TRIANGLE_INDICES:raise ValueError('Tile outside prepared geometry bounds')
+    candidate_indices=_TILE_TRIANGLE_INDICES[(x,y)]
+    candidates=_TRIANGLES[candidate_indices];candidate_classes=_SOURCE_CLASSES[candidate_indices]
     inside=(candidates[:,:,0]>=x).all(1)&(candidates[:,:,0]<=x+250).all(1)&(candidates[:,:,1]>=y).all(1)&(candidates[:,:,1]<=y+250).all(1)
     triangles=list(candidates[inside]);classes=list(candidate_classes[inside])
     for triangle,source_class in zip(candidates[~inside],candidate_classes[~inside]):
         clipped=_clip_triangle(triangle,*bounds);triangles.extend(clipped);classes.extend([source_class]*len(clipped))
-    triangles=np.array(triangles);classes=np.array(classes,dtype=np.uint8)
+    triangles=np.array(triangles,dtype=np.float64).reshape(-1,3,3);classes=np.array(classes,dtype=np.uint8)
     areas=np.linalg.norm(np.cross(triangles[:,1]-triangles[:,0],triangles[:,2]-triangles[:,0]),axis=1)
     valid=areas>1e-8;triangles=triangles[valid];classes=classes[valid]
     centroids=triangles.mean(1)
@@ -199,13 +266,11 @@ def build_tile_geometry(x,y,class_map):
     override=(sampled!=0)&(classes!=13)
     classes[override]=sampled[override]
     local=triangles.copy();local[:,:,0]-=x;local[:,:,1]=triangles[:,:,2];local[:,:,2]=-(triangles[:,:,1]-y)
-    stats={'ground_triangles':len(local),'ground_nap_range_m':[float(triangles[:,:,2].min()),float(triangles[:,:,2].max())],
+    stats={'ground_triangles':len(local),'ground_nap_range_m':[float(triangles[:,:,2].min()),float(triangles[:,:,2].max())] if len(triangles) else None,
        'ground_vertical_faces':int((np.abs(np.cross(triangles[:,1]-triangles[:,0],triangles[:,2]-triangles[:,0])[:,2])<areas[valid]*0.1).sum()),
        'ground_class_triangle_counts':{str(k):int(v) for k,v in zip(*np.unique(classes,return_counts=True))}}
-    excluded_minimum=_EXCLUDED_TRIANGLES[:,:,:2].min(1);excluded_maximum=_EXCLUDED_TRIANGLES[:,:,:2].max(1)
-    excluded_intersects=(excluded_maximum[:,0]>=x)&(excluded_minimum[:,0]<=x+250)&(excluded_maximum[:,1]>=y)&(excluded_minimum[:,1]<=y+250)
     excluded_clipped=[]
-    for triangle in _EXCLUDED_TRIANGLES[excluded_intersects]:excluded_clipped.extend(_clip_triangle(triangle,*bounds))
+    for triangle in _EXCLUDED_TRIANGLES[_TILE_EXCLUDED_TRIANGLE_INDICES[(x,y)]]:excluded_clipped.extend(_clip_triangle(triangle,*bounds))
     if excluded_clipped:
         excluded_clipped=np.array(excluded_clipped)
         projected=excluded_clipped[:,:,:2]

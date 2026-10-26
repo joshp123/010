@@ -14,3 +14,4 @@ __pycache__/
 dist/
 node_modules/
 work/
+source-data/transit/worker-lookup.json

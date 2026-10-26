@@ -8,7 +8,7 @@ set -euo pipefail
 repo="$(cd "$(dirname "$0")/.." && pwd)"
 data="/Volumes/Josh Extreme Pro USB4 4TB/010"
 out="${1:?output directory}"
-dist="$out/dist"
+dist="$out/dist/client"
 mkdir -p "$dist"
 rsync -a --delete --exclude 'transit-feed.js' --exclude 'vendor' "$repo/web/" "$dist/"
 mkdir -p "$dist/scene" "$dist/pyramids"
@@ -31,13 +31,5 @@ python3 "$repo/tools/inline-first-view.py" "$dist" index.html "$out/pyramid.bund
 python3 "$repo/tools/inline-first-view.py" "$dist" t2.html "$out/pyramid.bundle.js" pyramids/t2 35
 build_id="$(git -C "$repo" rev-parse --short HEAD)-$(date +%Y%m%d%H%M%S)"
 perl -pi -e "s/__BUILD__/$build_id/" "$dist/sw.js"
-mkdir -p "$out/.openai"
-cat > "$out/.openai/hosting.json" <<'EOF'
-{
-  "project_id": "appgprj_6adbd00c69208191bb5e4884a7b60303",
-  "static": {"directory": "dist"},
-  "d1": null,
-  "r2": null
-}
-EOF
+node "$repo/worker/build.mjs" "$out"
 echo "files: $(find "$dist" -type f | wc -l)  bytes: $(du -sk "$dist" | cut -f1) KB"

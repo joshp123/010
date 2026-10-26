@@ -635,6 +635,7 @@ export class Miniature {
     });
     mesh.castShadow = true;
     mesh.receiveShadow = true;
+    mesh.userData.tree = true;
     return mesh;
   }
 
@@ -784,7 +785,12 @@ export class Miniature {
     this.hemisphere.intensity = this.style.ambient * (1 - night) + 0.85 * night;
     this.hemisphere.color.setHex(night > 0.5 ? 0x3b4a78 : 0xdfe8ff);
     this.hemisphere.groundColor.setHex(night > 0.5 ? 0x1a1d28 : 0x6f6450);
-    this.scene.traverse((node) => { if (node.userData.nightOnly) node.visible = night > 0.5; });
+    // Depth tiles leave out tree crowns: a tram under street trees should
+    // still show on the map.
+    this.scene.traverse((node) => {
+      if (node.userData.nightOnly) node.visible = night > 0.5;
+      if (node.userData.tree) node.visible = !this.style.depthOutput;
+    });
     this.overlayUniform.value = overlay ? 1 : 0;
     const backgroundHex = overlay ? 0x000000 : night > 0.5 ? 0x161c2c : 0xc9d3dd;
     this.scene.background.set(backgroundHex);

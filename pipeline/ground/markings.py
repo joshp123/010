@@ -45,18 +45,25 @@ def fetch_markings(bounds):
         endpoint = BASE + service + '/MapServer'
         archive.fetch(DATASET, service + '_iteminfo.json', endpoint + '/info/iteminfo?f=pjson')
         archive.fetch(DATASET, service + '_layer.json', endpoint + f'/{layer}?f=pjson')
-        offset = 0
-        while True:
-            params = dict(f='json', where='1=1', geometry=','.join(map(str, bounds)),
-                          geometryType='esriGeometryEnvelope', inSR=28992,
-                          spatialRel='esriSpatialRelIntersects', outSR=28992,
-                          outFields='*', returnGeometry='true',
-                          orderByFields='ID', resultOffset=offset, resultRecordCount=2000)
+        selection = dict(f='json', where='1=1', geometry=','.join(map(str,bounds)),
+                         geometryType='esriGeometryEnvelope', inSR=28992,
+                         spatialRel='esriSpatialRelIntersects', returnIdsOnly='true')
+        identifiers = json.loads(archive.fetch(DATASET, f'{kind}_{bbox_name}_ids.json',
+                                endpoint+f'/{layer}/query?'+urlencode(selection)))
+        if 'error' in identifiers:
+            raise RuntimeError(identifiers['error'])
+        identifiers = sorted(identifiers.get('objectIds', []))
+        for offset in range(0,len(identifiers),500):
+            batch = identifiers[offset:offset+500]
+            params = dict(f='json', objectIds=','.join(map(str,batch)), outSR=28992,
+                          outFields='*', returnGeometry='true')
             url = endpoint + f'/{layer}/query?' + urlencode(params)
-            response = json.loads(archive.fetch(DATASET, f'{kind}_{bbox_name}_{offset}.json', url))
+            response = json.loads(archive.fetch(DATASET, f'{kind}_{bbox_name}_ids_batch_{offset}.json', url))
             if 'error' in response:
                 raise RuntimeError(response['error'])
             features = response.get('features', [])
+            if {feature['attributes']['ID'] for feature in features} != set(batch):
+                raise RuntimeError('Municipal marking ID batch is incomplete')
             for feature in features:
                 source = feature.get('geometry')
                 if not source:
@@ -72,11 +79,6 @@ def fetch_markings(bounds):
                     geometries = [Point(source['x'], source['y'])]
                 for geometry in geometries:
                     records.append(dict(kind=kind, attributes=feature['attributes'], geometry=geometry))
-            if not response.get('exceededTransferLimit'):
-                break
-            if not features:
-                raise RuntimeError('Municipal marking pagination returned an empty intermediate page')
-            offset += len(features)
     return records
 
 
@@ -95,12 +97,15 @@ def _draw_geometry(mask, geometry, bounds, pixel_size):
 
 
 def marking_mask(records, bounds, aerial_rgb, surface_classes, pixel_size=0.1):
-    """Return bool paint mask and method counts, without synthesising symbols.
+    """Extract thin bright neutral aerial structures, never invented paint.
 
-    Actual bright, neutral aerial structures are accepted only inside official
-    line widths plus 15 cm registration tolerance, or at official symbol/area
-    positions. White cars are rejected by component width, area and shape.
-    This also locates real dash phases instead of choosing an arbitrary phase.
+    Register geometry is archived and measured as comparison support. It does
+    not gate extraction: the M1 visual check found missing recorded dashes.
+    Broad neutral components at a lower brightness threshold reject vehicle
+    roofs before extraction, with 50 cm dilation to suppress bumpers. Remaining
+    candidates must be elongated, narrow and at least about 1.2 m long.
+    Parking is deliberately omitted: bumper highlights there outnumbered paint.
+    Shadows, short dashes, fat symbols and zebra stripes can be missed.
     """
     height, width = surface_classes.shape
     support_image = Image.new('L', (width, height))
@@ -138,18 +143,19 @@ def marking_mask(records, bounds, aerial_rgb, surface_classes, pixel_size=0.1):
     bright_neutral = (brightness > 165) & (saturation < 40) & eligible_surface
     # Detect broad white roofs before clipping to narrow vector corridors;
     # otherwise a corridor could turn a car roof into a convincing thin line.
-    bright_labels, _ = ndimage.label(bright_neutral)
+    roof_candidates = (brightness > 145) & (saturation < 60)
+    roof_candidates = ndimage.binary_closing(roof_candidates, iterations=2)
+    bright_labels, _ = ndimage.label(roof_candidates)
     vehicle_pixels = np.zeros(bright_neutral.shape, dtype=bool)
     for index, slices in enumerate(ndimage.find_objects(bright_labels), 1):
         if slices is None:
             continue
         component = bright_labels[slices] == index
-        if component.sum() > 80 and ndimage.distance_transform_edt(component).max() * pixel_size > .45:
+        if 50 < component.sum() < 8000 and ndimage.distance_transform_edt(component).max() * pixel_size > .25:
             vehicle_pixels[slices] |= component
-    vehicle_pixels = ndimage.binary_dilation(vehicle_pixels, iterations=2)
+    vehicle_pixels = ndimage.binary_dilation(vehicle_pixels, iterations=5)
     candidates = (bright_neutral & ~vehicle_pixels &
-                  (white_tophat > 18) & eligible_surface &
-                  (np.asarray(support_image) != 0))
+                  (white_tophat > 18) & eligible_surface & (surface_classes != 4))
     # Preserve narrow dashes and painted symbols; reject broad car-roof blobs.
     labels, total = ndimage.label(candidates)
     mask = np.zeros(candidates.shape, dtype=bool)
@@ -158,7 +164,7 @@ def marking_mask(records, bounds, aerial_rgb, surface_classes, pixel_size=0.1):
             continue
         component = labels[slices] == index
         area = int(component.sum())
-        if area < 3 or area > 1400:
+        if area < 8 or area > 1400:
             continue
         max_radius = ndimage.distance_transform_edt(component).max() * pixel_size
         if max_radius > .35:
@@ -168,8 +174,10 @@ def marking_mask(records, bounds, aerial_rgb, surface_classes, pixel_size=0.1):
             eigenvalues = np.linalg.eigvalsh(np.cov(np.stack([xx, yy])))
             # Compact medium/large white blobs are vehicle-like; a few lost
             # fat symbol pieces are preferable to white cars becoming paint.
-            if area > 60 and eigenvalues[1] / max(eigenvalues[0], .01) < 2.8:
+            if eigenvalues[1] / max(eigenvalues[0], .01) < 8 or np.sqrt(eigenvalues[1])*pixel_size < .35:
                 continue
         mask[slices] |= component
-    counts.update(candidate_pixels=int(candidates.sum()), painted_pixels=int(mask.sum()))
+    counts.update(candidate_pixels=int(candidates.sum()), painted_pixels=int(mask.sum()),
+                  municipal_supported_painted_pixels=int((mask & (np.asarray(support_image)!=0)).sum()),
+                  method='aerial white top-hat, neutral brightness, thin elongated components; vehicle rejection; parking omitted; municipal vectors diagnostic only')
     return mask, counts

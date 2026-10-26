@@ -1,0 +1,32 @@
+{
+  "writtenBy": "AI, GPT-6, 2026-10-26",
+  "source": "https://gtfs.ovapi.nl/nl/gtfs-nl.zip",
+  "sha256": "196f5bac25c0de957fd642ee92d5e4354b1c05ab3a1c5942698a6f406a04b6d4",
+  "feedInfo": [
+    {
+      "feed_publisher_name": "OVapi",
+      "feed_id": "NL",
+      "feed_publisher_url": "http://www.ovapi.nl",
+      "feed_lang": "nl",
+      "feed_start_date": "20261023",
+      "feed_end_date": "20261212",
+      "feed_version": "9644"
+    }
+  ],
+  "tablesLicense": "CC0-1.0",
+  "boundary": "Kadaster / PDOK GM0599, CC BY 4.0; source-data/transit/municipality.geojson",
+  "selection": "Routes with at least one stop covered by the exact municipality polygon; all trips on those routes, including realtime_trip_id aliases. No shapes used.",
+  "boundsRdNewWith2kmMargin": [
+    53500.0,
+    426647.4,
+    103032.6,
+    449000.0
+  ],
+  "counts": {
+    "routes": 155,
+    "tripKeys": 104593,
+    "trainNumbers": 1476,
+    "headsigns": 203
+  },
+  "lookupBytes": 2466316
+}

@@ -72,6 +72,7 @@ function screenPoint(m, levelInfo, x, y, z) {
 
 const tiles = new Map();
 const live = new LiveLayer(container, { depthBase: base });
+window.live = live;
 if (params.get('live') !== 'off') { live.loadNetworks('./networks'); live.start(); }
 let drawn = 0, firstViewMarked = false, generation = 0;
 
@@ -88,7 +89,7 @@ async function draw() {
   const viewTop = Math.round(centre.sy + innerHeight / 2 / scale);
   world.style.transform = `scale(${scale}) translate(${-(viewLeft - levelInfo.left)}px, ${viewTop - levelInfo.top}px)`;
   live.night = night;
-  live.depthBase = base;
+  live.depthBase = dayBase; // depth is the same by day and night
   live.setView({
     m, levelInfo, level: zoom.level, bearing, scale, viewLeft, viewTop,
     width: Math.ceil(innerWidth / scale), height: Math.ceil(innerHeight / scale),
