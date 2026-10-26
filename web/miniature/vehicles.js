@@ -57,25 +57,53 @@ function cab(group, x, sign, { width, height, body }) {
   for (const s of [-0.75, 0.75]) group.add(box(0.05, 0.14, 0.2, palette.lamp, x + sign * 1.07, 0.95, s));
 }
 
+// RET Citadis 302, 2100 series in current livery, checked against 8 Commons
+// photos (sources/vehicle-photos/2026-10-26/ret-tram-citadis-2100): 30.85 m x
+// 2.40 m x 3.34 m, five sections, four double doors on the right side only.
+// Silver body (#b9bec2 in sun), dark grey skirt (#858379), tall dark windows
+// almost to the roof between silver pillars, a large black front mask with
+// the destination display above it and the red RET logo below, and blue
+// (#34649e) and red (#e8553c) stripes beside the doors.
 export function citadisTram() {
   const group = new THREE.Group();
-  const width = 2.4, height = 3.3;
-  // Five sections: cab 7.7, short 3.2 (bogie), middle 8.6, short 3.2, cab 7.7 (= 30.4 + joints ~ 31.5).
-  const lengths = [7.7, 3.2, 8.6, 3.2, 7.7];
-  let x = -31.5 / 2 + 0.55;
-  const spec = { body: palette.silver, glassFrom: 1.25, glassTo: 2.55, height, width };
-  lengths.forEach((length, i) => {
-    const doors = i === 0 ? [5.4] : i === 2 ? [2.3, 6.3] : i === 4 ? [2.3] : [];
-    section(group, x, length, { ...spec, doors, stripe: [palette.red, palette.green] });
-    if (i < lengths.length - 1) group.add(box(0.28, height - 0.5, width - 0.2, palette.skirt, x + length + 0.14, 0.35 + (height - 0.5) / 2, 0));
-    x += length + 0.28;
+  const width = 2.4, height = 3.34, length = 30.85;
+  const silver = mat(0xb0bac6), skirt = mat(0x6e717a), glass = mat(0x1b222c), blue = mat(0x34649e), red = mat(0xe8553c);
+  const lengths = [7.4, 3.1, 8.6, 3.1, 7.4]; // cab, bogie module, centre, bogie module, cab
+  const joint = 0.25;
+  let x = -length / 2;
+  const doorsAt = [[5.0], [], [1.9, 6.7], [], [2.4]]; // door centres from each section's start
+  lengths.forEach((len, i) => {
+    const cx = x + len / 2;
+    group.add(box(len, height - 0.3, width, silver, cx, 0.3 + (height - 0.3) / 2, 0, 0.2));
+    group.add(box(len - 0.06, 0.55, width + 0.02, skirt, cx, 0.42, 0));
+    // Windows: one tall dark band from 0.95 m to 2.85 m, broken by pillars.
+    group.add(box(len - 0.4, 1.9, width + 0.03, glass, cx, 1.9, 0));
+    for (let px = x + 0.9; px < x + len - 0.5; px += 1.45) group.add(box(0.16, 1.9, width + 0.05, silver, px, 1.9, 0));
+    for (const d of doorsAt[i]) {
+      // Right side (+z) only: a silver-framed double door, with the stripes.
+      group.add(box(1.32, 2.2, 0.06, glass, x + d, 1.35, width / 2 + 0.03));
+      group.add(box(0.05, 2.2, 0.08, silver, x + d, 1.35, width / 2 + 0.035));
+      group.add(box(0.26, 1.5, 0.06, blue, x + d - 0.95, 1.2, width / 2 + 0.03));
+      group.add(box(0.26, 1.5, 0.06, red, x + d - 1.2, 1.2, width / 2 + 0.03));
+    }
+    group.add(box(len - 0.8, 0.14, width - 0.6, mat(0x9a9ea2), cx, height + 0.07, 0));
+    if (i < lengths.length - 1) group.add(box(joint, height - 0.4, width - 0.15, skirt, x + len + joint / 2, 0.3 + (height - 0.4) / 2, 0));
+    x += len + joint;
   });
-  cab(group, -31.5 / 2 + 0.55, -1, spec);
-  cab(group, 31.5 / 2 - 0.55, 1, spec);
-  // Pantograph on the middle section.
-  group.add(box(1.6, 0.08, 1.4, palette.bogie, 0, height + 0.5, 0));
-  group.add(box(0.06, 0.55, 0.06, palette.bogie, -0.4, height + 0.25, 0));
-  group.userData = { length: 31.5, width };
+  for (const sign of [-1, 1]) {
+    const nx = sign * (length / 2);
+    // Rounded nose, black mask with windscreen, destination display, lamps, logo.
+    group.add(box(1.0, height - 0.4, width - 0.04, silver, nx - sign * 0.2, 0.3 + (height - 0.4) / 2, 0, 0.45));
+    group.add(box(0.08, 2.15, width - 0.35, mat(0x111316), nx + sign * 0.31, 1.95, 0));
+    group.add(box(0.09, 0.28, width - 0.8, mat(0x3a2a10), nx + sign * 0.32, 2.85, 0));
+    group.add(box(0.09, 0.2, 0.8, red, nx + sign * 0.31, 0.62, 0));
+    for (const s of [-0.85, 0.85]) group.add(box(0.06, 0.16, 0.22, palette.lamp, nx + sign * 0.31, 0.75, s));
+  }
+  // Pantograph on the centre section and roof equipment boxes.
+  group.add(box(1.8, 0.1, 1.5, palette.bogie, 0, height + 0.55, 0));
+  for (const dx of [-0.5, 0.5]) group.add(box(0.07, 0.5, 0.07, palette.bogie, dx, height + 0.3, 0));
+  for (const dx of [-11, 11]) group.add(box(2.4, 0.3, 1.4, mat(0x8d9196), dx, height + 0.15, 0));
+  group.userData = { length, width };
   return group;
 }
 
