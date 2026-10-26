@@ -127,6 +127,12 @@ def checked_inner_divisions(opening, box, distance, visible):
 
 
 def apply_division_observations(record,wall):
+    geometry_path=Path(wall['reference']).parent/'geometry-observations.json'
+    if geometry_path.exists():
+        geometry=load(geometry_path)
+        if geometry.get('reference_sha256')==wall['reference_sha256']:
+            record.update(geometry['aperture_facts'])
+            record['geometry_observations']=geometry['provenance']
     material_path=Path(wall['reference']).parent/'material-observations.json'
     if material_path.exists():
         material=load(material_path)
@@ -155,14 +161,14 @@ def apply_division_observations(record,wall):
     return record
 
 
-def measure(wall,result,inv,provenance):
+def measure(wall,result,inv,provenance,preserved=None):
     pixels=np.asarray(Image.open(wall['reference']).convert('RGB')); photo=np.asarray(Image.open(wall['photo_mask']))>0; geometry=np.asarray(Image.open(wall['geometry_mask']))>0
     height,width=photo.shape; sx,sy=inv['wall_scale']; mask=Image.new('L',(width,height),0);draw=ImageDraw.Draw(mask)
     for polygon in result.get('occlusion_polygons',[]):
         if len(polygon)>=3: draw.polygon([(round(p[0]/sx),round(p[1]/sy)) for p in polygon],fill=255)
     occluded=np.asarray(mask)>0
     if result.get('unusable_photo'): occluded|=geometry
-    visible=photo&geometry&~occluded
+    visible=(np.asarray(Image.open(preserved['evidence_mask']).convert('L'))>0) if preserved else photo&geometry&~occluded
     # Source coverage holes and semantic masks remain interpreted, not verified.
     interpreted=geometry&~visible
     folder=Path(wall['reference']).parent
@@ -243,7 +249,11 @@ def measure(wall,result,inv,provenance):
                                  note='Only visible extent is drawn; cropped edges omit an invented complete outer frame.'))
     record['source_partial_openings']=partials
     # A model selection plus edge support does not establish semantic truth of an entire wall.
-    record=apply_division_observations(record,wall)
+    if preserved:
+        aperture_keys=('window_rows','openings','rejected_openings','doors','shop_fronts','source_partial_openings')
+        record=dict(preserved,**{key:record[key] for key in aperture_keys},geometry_observations=provenance)
+    else:
+        record=apply_division_observations(record,wall)
     save(folder/'perception.json',record)
     return record
 
@@ -535,6 +545,7 @@ def main():
          'native_visual_calls':len(calls),'image_generation_calls':0,
          'source_triage_calls':len(list((WORK/'source-triage-calls').glob('*/call.json'))),
          'inner_division_calls':len(list((WORK/'division-batches').glob('*/call.json'))),
+         'source_geometry_calls':len(list((WORK/'geometry-batches').glob('*/call.json'))),
          'source_triaged_usable_facades_pending':sum(source_class(wall)==0 for wall in pending),
          'native_visual_seconds':sum(call.get('seconds',0) for call in calls),
          'rate_limited':any(call.get('rate_limited',False) for call in calls),
