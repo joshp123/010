@@ -1,6 +1,6 @@
 # Building conversion coordinates
 
-Written by AI on 2026-10-25 by model GPT-6.1 Sol.
+Written by AI on 2026-10-26 by model GPT-6.1 Sol.
 
 `transform.ecef_to_rdnap()` returns the municipal-source transformer. It decodes
 Earth-centred coordinates with GRS80, transforms longitude and latitude using the
@@ -69,11 +69,11 @@ renderer, styling or scene files are written by this debug command.
 From the repository, with the archived grids in place:
 
 ```sh
-devenv shell -- python pipeline/buildings/rebuild.py
+devenv shell -- python pipeline/buildings/rebuild.py --area m1 --workers 8
 ```
 
-This downloads missing municipal source files, retains raw archives, builds core
-then M0, renders inspection images, measures two roof/photo samples and merges
+This downloads missing municipal source files, retains raw archives, builds the selected area (M1 by default) with parallel source and tile workers,
+renders inspection images and merges
 only building/object metadata into the shared scene manifest under its lock.
 It never writes ground.glb, ortho.jpg or classes.png. No packages were added for
 this pipeline. Run a stage directly when only that stage needs replacing:
@@ -99,12 +99,23 @@ mesh only if it contributes source images. Otherwise keep LOD2. Old objects with
 no newer counterpart are counted in the report but omitted; do not silently
 restore possibly removed structures. Tile ownership uses the current geometry's
 projected footprint centroid, computed from the union of projected triangles.
+The footprint union uses a 0.1 mm precision grid to avoid GEOS numerical topology
+failures at shared triangle edges; mesh coordinates remain unchanged.
 Whole selected buildings stay together. Bridges are selected independently from
 the textured bridge source. Their source IDs remain in the feature table.
-Source construction year and use are retained where supplied. No separate PDOK
-BAG enrichment was needed or requested for completion.
+BAG facts come from archived PDOK pand records and every explicitly linked VBO.
+Year is oorspronkelijk bouwjaar; use is the sorted union of VBO gebruiksdoelen,
+with an empty list for a proven zero-VBO building. Status is the stated pand
+status. Unavailable facts use null, with an explicit BAG coverage flag; zero VBOs use [].
+Coverage distinguishes unavailable current BAG records from zero VBOs.
+BAG does not state storeys, so no storey count is inferred or emitted. Per-feature
+provenance identifies archived response hashes and source fields.
 
-Reports in scene/v1/buildings-{core,m0}-report.json record the actual chosen
+PDOK migrated the old /lv/bag/ogc/v1 endpoint to
+https://api.pdok.nl/kadaster/bag/ogc/v2. The BAG stage follows explicit VBO links
+outside the spatial query too; boundary clipping cannot silently lose a use.
+
+Reports in scene/v1/buildings-{core,m0,m1}-report.json record the actual chosen
 source counts and the source manifest snapshots, not padded download counts.
 Each tile's glTF root extras.features identifies its objects; _FEATURE_ID_0
 indexes this table for every vertex. Immutable source manifest snapshots preserve
@@ -124,7 +135,7 @@ baked into walls; missing photographs remain untextured.
 
 The core result is 86.7428068% photo-covered wall area; M0 is 72.1275698%.
 Source capture dates vary and newer LOD2 is not a complete statement of 2026
-construction. Two source trees have zero crown diameter and retain that value.
+construction. Zero source dimensions remain zero and are counted in the objects report.
 Lamp height means mounting height, not a measured highest point of the fixture.
 
 The alignment check compares original roof outlines with the explicit PDOK 2026
@@ -141,3 +152,37 @@ The two primary debug images are overlay-x90250_y436000.png and
 oblique-x90250_y436000.png under renders/debug-buildings beside the repo.
 Euromast uses tile x91500_y435500. Debug HTML and its temporary localhost server
 are inspection tools only; they are not part of the product renderer.
+
+## M1 result (2026-10-26)
+
+M1 has 351 building/object tile pairs: 21,611 textured2018 buildings, 1,478 LOD2
+buildings, 11 bridges, 33,150 trees and 17,697 lamps. All 23,089 buildings have
+resolved BAG year/status/use; 5,253 explicitly have zero VBOs. Storeys are absent.
+Photo-covered wall area is 12,675,987.2803 / 17,672,615.8907 m² (71.7267175%).
+The M1 report lists the 20 largest buildings with zero photo-covered wall area,
+with their BAG facts, tile ownership and measured wall area.
+
+All 351 actual GLBs were checked for valid feature indices, finite positions,
+JPEG dimensions and unique BAG IDs. A separate audit joins every feature back
+to its archived pand record and every linked VBO, including response hashes.
+Both audits found no issues. The BAG audit can be repeated with:
+
+```sh
+devenv shell -- python pipeline/buildings/bag.py --audit-scene
+```
+
+Current BAG marks 493 retained meshes demolished, 20 incorrectly registered,
+17 with demolition permission, four out of use and 76 under renovation. These
+are municipal-model/current-register conflicts, not missing BAG lookups. The
+conversion preserves the specified municipal geometry inventory and exposes
+the status instead of inventing a replacement or silently deleting geometry.
+BAG use is a building-level union; it does not locate uses on floors or walls.
+
+Landmark proof images cover Erasmusbrug (x93000_y436000) and Centraal
+(x91750_y437500), with neighbouring owner tiles loaded. The bridge itself is
+br05A040 in x92750_y436000; the station roof is BAG 0599100100007430 in
+x91750_y437750. The Centraal overlay has an apparent roof-tip discrepancy of
+2.96 m against the 2026 photo; Erasmusbrug deck-edge samples have a median
+perpendicular discrepancy of 0.43 m (range 0.39–0.77 m). These are image-edge
+measurements, not surveyed transformation residuals. These images do not
+establish uniform 0.3 m roof agreement; no offset was applied to conceal the discrepancy.

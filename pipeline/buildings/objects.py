@@ -1,5 +1,5 @@
 """Municipal tree/lamp instance extraction. Written by AI, GPT-6, 2026-10-25."""
-import argparse, collections, datetime, gzip, hashlib, json, math, struct
+import argparse, collections, concurrent.futures, datetime, gzip, hashlib, json, math, struct, threading
 from pathlib import Path
 from urllib.parse import urljoin
 import numpy as np
@@ -10,13 +10,18 @@ ROOT = Path('/Volumes/Josh Extreme Pro USB4 4TB/010')
 DATASETS = {'trees': 'b9294d5b-79e0-4744-ac88-b61e3e90d5bc', 'lamps': '2602863a-3d22-44c2-8c95-bbf88a20bf37'}
 CORE = (89750,435750,90750,436750)
 M0 = (89750,435250,92000,436750)
+M1 = (89750,434750,96500,438000)
+AREAS = {"core": CORE, "m0": M0, "m1": M1}
 
 def decoded(raw):
     return gzip.decompress(raw) if raw[:2] == b'\x1f\x8b' else raw
 
 class Archive:
     def __init__(self, dataset):
-        self.directory = ROOT/'sources'/dataset/datetime.date.today().isoformat()
+        existing_snapshots=sorted((ROOT/'sources'/dataset).glob('????-??-??/manifest.json'))
+        self.directory = existing_snapshots[-1].parent if existing_snapshots else ROOT/'sources'/dataset/datetime.date.today().isoformat()
+        self.manifest_lock=threading.Lock()
+        self.download_locks={}
         self.directory.mkdir(parents=True, exist_ok=True)
         self.files = {}
         manifest = self.directory/'manifest.json'
@@ -25,6 +30,11 @@ class Archive:
         self.base = 'https://www.3drotterdam.nl/datasource-data/'+DATASETS[dataset]+'/'
         self.dataset=dataset
     def get(self, url):
+        with self.manifest_lock:
+            download_lock=self.download_locks.setdefault(url,threading.Lock())
+        with download_lock:
+            return self.get_locked(url)
+    def get_locked(self, url):
         relative = url.removeprefix(self.base)
         if relative.startswith('http') or '..' in Path(relative).parts:
             relative='external/'+hashlib.sha256(url.encode()).hexdigest()+Path(url).suffix
@@ -32,8 +42,9 @@ class Archive:
         if not path.exists():
             response=requests.get(url, timeout=120); response.raise_for_status()
             path.parent.mkdir(parents=True,exist_ok=True); path.write_bytes(response.content)
-            self.files[relative]={'path':relative,'url':url,'sha256':hashlib.sha256(response.content).hexdigest(),'bytes':len(response.content),'fetched_at':datetime.datetime.now(datetime.timezone.utc).isoformat()}
-            self.save()
+            with self.manifest_lock:
+                self.files[relative]={'path':relative,'url':url,'sha256':hashlib.sha256(response.content).hexdigest(),'bytes':len(response.content),'fetched_at':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+                self.save()
         return decoded(path.read_bytes())
     def save(self):
         (self.directory/'manifest.json').write_text(json.dumps({'dataset':self.dataset,'licence':'Public domain','credit':'Gemeente Rotterdam','source':'https://www.rotterdam.nl/rotterdam-in-3d','files':sorted(self.files.values(),key=lambda x:x['path'])},indent=2)+'\n')
@@ -86,11 +97,11 @@ def read_instances(data):
     rows=[(positions[i],str(batch_table['id'][int(batches[i])]),batch_table['attributes'][int(batches[i])]) for i in range(count)]
     return rows,model
 
-def build(area='core'):
+def build(area='core', workers=8):
     from transform import ecef_to_rdnap
     transform=ecef_to_rdnap(preserve_source_height=False)
     geodetic=Transformer.from_crs(4978,4979,always_xy=True)
-    bounds=CORE if area=='core' else M0
+    bounds=AREAS[area]
     tiles={f'x{x}_y{y}':{'trees':[],'lamps':[]} for x in range(bounds[0],bounds[2],250) for y in range(bounds[1],bounds[3],250)}
     summary={'area':area,'bounds_rd':bounds,'datasets':{},'method':{
         'trees':'One record per Boom_id from tree_part=stam. height_m=height and crown_m=crownDiameter, municipal attributes, not mesh estimates.',
@@ -99,6 +110,17 @@ def build(area='core'):
     for dataset in DATASETS:
         archive=Archive(dataset)
         selected=select_contents(json.loads(archive.get(archive.base+'tileset.json')),bounds)
+        print(f'{dataset}: acquiring {len(selected)} source tiles with {workers} workers',flush=True)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
+            for _ in executor.map(archive.get,(archive.base+uri for uri,_ in selected)):pass
+        prototype_urls=set()
+        for uri,_ in selected:
+            for part in parts(archive.get(archive.base+uri)):
+                if part[:4]!=b'i3dm':raise ValueError(f'Unexpected object tile format {part[:4]}: {uri}')
+                _,model=read_instances(part)
+                if model:prototype_urls.add(urljoin(archive.base+uri,model))
+        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
+            for _ in executor.map(archive.get,sorted(prototype_urls)):pass
         unique={}; lamp_groups=collections.defaultdict(list); duplicate_count=0; ignored_parts=0; missing_dimensions=[]; zero_dimensions=[]; height_diagnostic=[]
         for uri,matrix in selected:
             url=archive.base+uri
@@ -145,18 +167,21 @@ def build(area='core'):
         manifest_hash=hashlib.sha256(manifest_bytes).hexdigest()
         manifest_snapshot=archive.directory/f'manifest-{manifest_hash}.json'
         if not manifest_snapshot.exists():manifest_snapshot.write_bytes(manifest_bytes)
-        summary['datasets'][dataset]={'count':len(unique),'source_tiles':len(selected),'height_diagnostic':height_diagnostic,'duplicate_parts_collapsed':duplicate_count,'crown_parts_ignored':ignored_parts,'missing_dimensions_skipped':missing_dimensions,'nonpositive_source_dimensions_retained':zero_dimensions,'source_manifest':str(manifest_snapshot),'source_manifest_sha256':manifest_hash}
-        print(dataset, {key: value for key,value in summary['datasets'][dataset].items() if key!='height_diagnostic'},flush=True)
+        output_dimension_issues={name:[record['source_id'] for record in unique.values() if record[field]<=0] for name,field in ([('height_m','height_m'),('crown_m','crown_m')] if dataset=='trees' else [('height_m','height_m')])}
+        summary['datasets'][dataset]={'output_nonpositive_dimensions':output_dimension_issues,'count':len(unique),'source_tiles':len(selected),'height_diagnostic':height_diagnostic,'duplicate_parts_collapsed':duplicate_count,'crown_parts_ignored':ignored_parts,'missing_dimensions_skipped':missing_dimensions,'nonpositive_source_dimensions_retained':zero_dimensions,'source_manifest':str(manifest_snapshot),'source_manifest_sha256':manifest_hash}
+        print(dataset, {'count':len(unique),'source_tiles':len(selected),'duplicate_parts_collapsed':duplicate_count,'missing_dimensions_skipped':len(missing_dimensions),'nonpositive_source_dimensions_retained':len(zero_dimensions),'source_manifest_sha256':manifest_hash},flush=True)
     for tile,objects in tiles.items():
         directory=ROOT/'scene/v1/tiles'/tile;directory.mkdir(parents=True,exist_ok=True)
         for values in objects.values(): values.sort(key=lambda x:x['source_id'])
         (directory/'objects.json').write_text(json.dumps(objects,indent=2)+'\n')
     summary['tiles']={tile:{k:len(v) for k,v in objects.items()} for tile,objects in tiles.items()}
+    summary['code_sha256']=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     (ROOT/'scene/v1'/f'objects-{area}-report.json').write_text(json.dumps(summary,indent=2)+'\n')
     return summary
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--area',choices=['core','m0'],default='core')
+    parser.add_argument('--area',choices=sorted(AREAS),default='core')
+    parser.add_argument('--workers',type=int,default=8)
     arguments=parser.parse_args()
-    build(arguments.area)
+    build(arguments.area,arguments.workers)

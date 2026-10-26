@@ -3,6 +3,9 @@ import fcntl, hashlib, json
 from pathlib import Path
 ROOT=Path('/Volumes/Josh Extreme Pro USB4 4TB/010/scene/v1')
 def merge_buildings(report):
+ report=dict(report)
+ report['tiles']={tile:{**record,'buildings':{key:value for key,value in record['buildings'].items() if key!='features'}} for tile,record in report['tiles'].items()}
+ if 'largest_without_photo' in report:report['largest_without_photo']=[{key:value for key,value in feature.items() if key!='bag'} for feature in report['largest_without_photo']]
  ROOT.mkdir(parents=True,exist_ok=True)
  with (ROOT/'.manifest.lock').open('a') as lock:
   fcntl.flock(lock,fcntl.LOCK_EX)
@@ -21,7 +24,8 @@ def merge_buildings(report):
    for tile,record in report['tiles'].items():tiles.setdefault(tile,{}).update(record)
   j.setdefault('sources',{}).update(report['sources'])
   j.setdefault('buildings',{})[report['area']]={k:v for k,v in report.items() if k!='tiles'}
-  objects=ROOT/'objects-m0-report.json'
+  objects=ROOT/'objects-m1-report.json'
+  if not objects.exists():objects=ROOT/'objects-m0-report.json'
   if not objects.exists():objects=ROOT/'objects-core-report.json'
   if objects.exists():j['objects']=json.loads(objects.read_text())
   temp=path.with_suffix('.buildings.tmp');temp.write_text(json.dumps(j,indent=2));temp.replace(path)

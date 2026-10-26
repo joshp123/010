@@ -15,14 +15,15 @@ function call(method,params={}) {const id=++sequence;return new Promise((resolve
 await call('Page.enable');
 await call('Runtime.enable');
 await call('Emulation.setDeviceMetricsOverride',{width:2500,height:2500,deviceScaleFactor:1,mobile:false});
-await call('Page.navigate',{url:tab.url});
+const captureUrl=new URL(tab.url);captureUrl.searchParams.set('capture',crypto.randomUUID());
+await call('Page.navigate',{url:captureUrl.href});
 let ready=false;let lastValue;
-for(let attempt=0;attempt<600;attempt++) {
+for(let attempt=0;attempt<1200;attempt++) {
   const result=await call('Runtime.evaluate',{expression:'JSON.stringify({ready:window.renderComplete===true,failed:document.title==="FAILED",body:document.body.innerText,url:location.href,title:document.title})',returnByValue:true});
   const value=JSON.parse(result.result.value);
   lastValue=value;
   if(value.failed)throw new Error(value.body);
-  if(value.ready){ready=true;break;}
+  if(value.ready&&value.url===captureUrl.href){ready=true;break;}
   await new Promise(r=>setTimeout(r,100));
 }
 if(!ready)throw new Error('Debug renderer did not report READY: '+JSON.stringify(lastValue));
