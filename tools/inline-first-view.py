@@ -32,27 +32,34 @@ preloads = ('<script>if (innerWidth < 700) for (const t of ' + json.dumps(first_
 # is on screen after one round trip, and the real tiles replace it. It is cut
 # from the coarse level (4 art pixels per pixel) around the same centre, so it
 # lines up exactly with the tiles that replace it.
-import base64, io
+import base64, io, os
 from PIL import Image
 coarse = meta["levels"][2]
 scale = coarse["metres_per_pixel"] / mpp
 csx, csy = sx / scale, sy / scale
 half_w, half_h = 60, 118  # covers phones up to 480 x 944 CSS pixels
-mosaic = Image.new("RGB", (coarse["columns"] * 512, coarse["rows"] * 512), (0xc9, 0xd3, 0xdd))
-for r in range(coarse["rows"]):
-    for c in range(coarse["columns"]):
-        mosaic.paste(Image.open(f"{dist}/{base}/b{bearing}/2/{c}_{r}.webp"), (c * 512, r * 512))
-cx, cy = csx - coarse["left"], coarse["top"] - csy
-crop = mosaic.crop((round(cx - half_w), round(cy - half_h), round(cx + half_w), round(cy + half_h)))
-buffer = io.BytesIO()
-crop.save(buffer, "WEBP", quality=45)
-placeholder = base64.b64encode(buffer.getvalue()).decode()
+def placeholder_for(pyramid):
+    coarse_meta = json.load(open(f"{dist}/{pyramid}/b{bearing}/meta.json"))["levels"][2]
+    mosaic = Image.new("RGB", (coarse_meta["columns"] * 512, coarse_meta["rows"] * 512), (0xc9, 0xd3, 0xdd))
+    for r in range(coarse_meta["rows"]):
+        for c in range(coarse_meta["columns"]):
+            mosaic.paste(Image.open(f"{dist}/{pyramid}/b{bearing}/2/{c}_{r}.webp"), (c * 512, r * 512))
+    cx, cy = csx - coarse_meta["left"], coarse_meta["top"] - csy
+    crop = mosaic.crop((round(cx - half_w), round(cy - half_h), round(cx + half_w), round(cy + half_h)))
+    buffer = io.BytesIO()
+    crop.save(buffer, "WEBP", quality=45)
+    return base64.b64encode(buffer.getvalue()).decode()
+
+placeholder = placeholder_for(base)
+night_placeholder = placeholder_for(base + "n") if os.path.isdir(f"{dist}/{base}n") else placeholder
 first_view = (
-    f'<img id="first-view" alt="" src="data:image/webp;base64,{placeholder}" '
+    f'<img id="first-view" alt="" '
     f'style="position:fixed;left:calc(50vw - {half_w * scale}px);top:calc(50vh - {half_h * scale}px);'
     f'width:{2 * half_w * scale}px;height:{2 * half_h * scale}px;image-rendering:pixelated;pointer-events:none">'
-    '<script>if (innerWidth < 700 && !location.search && document.documentElement.dataset.night !== "1") requestAnimationFrame(() => performance.mark("map-first-view")); '
-    'else document.getElementById("first-view").remove();</script>'
+    '<script>(function(){var i=document.getElementById("first-view");'
+    'if (innerWidth >= 700 || location.search) { i.remove(); return; }'
+    f'i.src="data:image/webp;base64,"+(document.documentElement.dataset.night?"{night_placeholder}":"{placeholder}");'
+    'requestAnimationFrame(function(){performance.mark("map-first-view");});})()</script>'
 )
 html = html.replace('<div id="map" class="pyramid"></div>', '<div id="map" class="pyramid"></div>\n' + first_view)
 
