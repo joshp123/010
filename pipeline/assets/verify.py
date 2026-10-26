@@ -5,6 +5,7 @@ Incremental source-masked elevation verification. Generator raw images and metad
 are read-only. Missing source assessment is interpreted, never verified.
 """
 import argparse
+import ast
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -106,6 +107,44 @@ def project_sources(sidecar, shape, sources):
     return evidence, windows
 
 
+def colour_postprocess(directory, generation, raw_image):
+    """Bind Claude's colour-only output to its recorded model image."""
+    before = directory / 'generated-raw-before-colour.png'
+    if not before.exists() or sha256(before) != generation.get('output_sha256'):
+        raise ValueError('Raw image and generator metadata hashes differ; pending metadata completion')
+    script = Path(__file__).resolve().parents[2] / 'tools/colour-match.py'
+    syntax = ast.parse(script.read_text())
+    functions = [node for node in syntax.body if isinstance(node, ast.FunctionDef)
+                 and node.name in {'to_lab', 'from_lab'}]
+    scope = {'np': np}
+    exec(compile(ast.Module(body=functions, type_ignores=[]), str(script), 'exec'), scope)
+    original = np.asarray(Image.open(before).convert('RGB')).astype(float)
+    reference = np.asarray(Image.open(directory/'reference.png').convert('RGB')).astype(float)
+    delivered = np.asarray(raw_image)
+    if original.shape != reference.shape or delivered.shape != reference.shape:
+        raise ValueError('Colour postprocess changed image framing')
+    ids = np.asarray(Image.open(directory/'wall-ids.png').convert('RGB')).astype(int)
+    keys = ids[...,0]*65536 + ids[...,1]*256 + ids[...,2]
+    photo = np.asarray(Image.open(directory/'photo-mask.png').convert('L')) > 127
+    original_lab, reference_lab = scope['to_lab'](original), scope['to_lab'](reference)
+    expected_lab = original_lab.copy()
+    minimum = next(ast.literal_eval(node.value) for node in syntax.body
+                   if isinstance(node, ast.Assign) and any(isinstance(t,ast.Name) and t.id=='MIN_PHOTO_PIXELS' for t in node.targets))
+    for value in np.unique(keys):
+        region = keys == value
+        evidence = region & photo
+        if value == 0 or evidence.sum() < minimum:
+            continue
+        expected_lab[region] += (reference_lab[evidence].mean(0)-original_lab[evidence].mean(0))*np.array([.5,1.,1.])
+    if not np.array_equal(scope['from_lab'](expected_lab), delivered):
+        raise ValueError('Raw image does not match recorded model image plus documented colour pass')
+    return {'method':'exact-pixel-recomputed-photo-colour-postprocess',
+            'model_output':str(before),'model_output_sha256':sha256(before),
+            'postprocessor':str(script),'postprocessor_sha256':sha256(script),
+            'output_sha256':sha256(directory/'generated-raw.png'),
+            'pixel_equality':True}
+
+
 def verify(directory, occlusions_path=None, config_path=CONFIG):
     directory = Path(directory)
     raw_path = directory / 'generated-raw.png'
@@ -123,8 +162,9 @@ def verify(directory, occlusions_path=None, config_path=CONFIG):
         raise OSError('Generator metadata not ready; retry next invocation')
     generation = json.loads(metadata_path.read_text())
     reference = np.asarray(Image.open(reference_path).convert('RGB'))
+    postprocess = None
     if generation.get('output_sha256') and generation['output_sha256'] != raw_hash:
-        raise ValueError('Raw image and generator metadata hashes differ; pending metadata completion')
+        postprocess = colour_postprocess(directory, generation, raw_image)
     if generation.get('reference_sha256') and generation['reference_sha256'] != sha256(reference_path):
         raise ValueError('Generator reference hash differs from current reference; pending generation update')
     height, width = reference.shape[:2]
@@ -135,6 +175,9 @@ def verify(directory, occlusions_path=None, config_path=CONFIG):
         raise ValueError('Reference masks are not on the reference grid')
     config = json.loads(config_path.read_text())
     inputs = {str(path): sha256(path) for path in [raw_path, reference_path, directory/'reference.json', directory/'photo-mask.png', directory/'wall-ids.png', config_path, Path(__file__)]}
+    if postprocess:
+        inputs[postprocess['model_output']] = postprocess['model_output_sha256']
+        inputs[postprocess['postprocessor']] = postprocess['postprocessor_sha256']
     if metadata_path.exists():
         inputs[str(metadata_path)] = sha256(metadata_path)
     sources, source_inputs = source_facts(sidecar['tile'], {w['bag_id'] for w in sidecar['walls']})
@@ -161,6 +204,8 @@ def verify(directory, occlusions_path=None, config_path=CONFIG):
     interpreted = (wall_ids > 0) & ~evidence
     # Existing reviewed registration is applicable only to the exact retained raw.
     alignment = {'method':'full-image-resize','raw_sha256':raw_hash,'output_size_px':[width,height], 'note':'No reviewed crop available; full output mapped to reference, comparison can fail.'}
+    if postprocess:
+        alignment['postprocess'] = postprocess
     image = raw_image
     registration = generation.get('registration') or {}
     if generation.get('output_sha256') == raw_hash and registration.get('crop_px'):
@@ -227,7 +272,7 @@ def verify(directory, occlusions_path=None, config_path=CONFIG):
     save_json(directory/'masks.json',masks)
     verification = {'written_by':'AI, GPT-6 Astra, 2026-10-26','version':VERSION,'date':datetime.now(timezone.utc).isoformat(),'input_fingerprint':fingerprint,'inputs':inputs,'raw_sha256':raw_hash,'reference_sha256':inputs[str(reference_path)],'compared_texture':str(output_path),'compared_texture_sha256':sha256(output_path),'alignment':alignment,'status':'checked-with-failures-or-insufficient-evidence' if any(r['checks']['passed'] is not True for r in records) else 'screen-passed-with-interpretation' if interpreted.any() else 'screen-passed','method':'source-visible-nearby-sobel-edge-and-CIEDE2000','thresholds':config,'evidence_masks':str(directory/'masks.json'),'source_only_mask':True,'evidence_limit':'Photo mapping alone never establishes visibility. Occlusions/unassessed regions are interpreted. Window checks use only projected C3 window boundaries; null means no assessed window support. Numerical screens do not certify every component or semantic completeness.','walls':records,'aggregate':aggregate}
     geometry_count = int((wall_ids>0).sum())
-    provenance = {'written_by':'AI, GPT-6 Astra, 2026-10-26','model':generation.get('model'),'model_version':generation.get('model_version'),'date':generation.get('ended_at') or generation.get('date'),'prompt_sha256':generation.get('prompt_sha256'),'prompt_source':generation.get('prompt_source'),'generation_metadata_sha256':inputs[str(metadata_path)],'reference_hashes':{str(reference_path):inputs[str(reference_path)],str(directory/'reference.json'):inputs[str(directory/'reference.json')]},'raw_sha256':raw_hash,'generation_record':str(metadata_path),'verification_record':str(verification_path),'asset':str(output_path),'verified_fraction':sum(r['geometry_pixels']*r['verified_share'] for r in records)/geometry_count if geometry_count else 0,'verified_fraction_scope':'Numerical source-visible edge/colour/window-boundary screen only','semantic_verified_fraction':0,'occluded_fraction':int(interpreted.sum())/geometry_count if geometry_count else 1,'interpreted_fraction':int(interpreted.sum())/geometry_count if geometry_count else 1,'interpreted_regions':str(directory/'masks.json'),'all_components_verified':False,'walls':records}
+    provenance = {'written_by':'AI, GPT-6 Astra, 2026-10-26','model':generation.get('model'),'model_version':generation.get('model_version'),'date':generation.get('ended_at') or generation.get('date'),'prompt_sha256':generation.get('prompt_sha256'),'prompt_source':generation.get('prompt_source'),'generation_metadata_sha256':inputs[str(metadata_path)],'reference_hashes':{str(reference_path):inputs[str(reference_path)],str(directory/'reference.json'):inputs[str(directory/'reference.json')]},'raw_sha256':raw_hash,'generation_record':str(metadata_path),'postprocess':postprocess,'verification_record':str(verification_path),'asset':str(output_path),'verified_fraction':sum(r['geometry_pixels']*r['verified_share'] for r in records)/geometry_count if geometry_count else 0,'verified_fraction_scope':'Numerical source-visible edge/colour/window-boundary screen only','semantic_verified_fraction':0,'occluded_fraction':int(interpreted.sum())/geometry_count if geometry_count else 1,'interpreted_fraction':int(interpreted.sum())/geometry_count if geometry_count else 1,'interpreted_regions':str(directory/'masks.json'),'all_components_verified':False,'walls':records}
     save_json(directory/'provenance.json',provenance)
     verification['derived_hashes'] = {str(path):sha256(path) for path in [output_path,directory/'evidence-mask.png',directory/'interpreted-mask.png',directory/'masks.json',directory/'provenance.json']}
     save_json(verification_path,verification)
