@@ -88,37 +88,83 @@ export class LiveLayer {
 
   // --- simulation -------------------------------------------------------------
 
-  // Keep a fixed number of agents near the view: cars on the car network,
-  // cyclists on the cycle network, each choosing a random onward edge at every
-  // junction and never turning back unless the street ends.
+  // Traffic over a day in Rotterdam: share of peak traffic by hour.
+  static dayProfile(hour) {
+    const profile = [0.08, 0.05, 0.04, 0.04, 0.06, 0.15, 0.45, 0.9, 1.0, 0.75, 0.6, 0.62,
+      0.68, 0.65, 0.66, 0.75, 0.92, 1.0, 0.85, 0.6, 0.45, 0.35, 0.25, 0.14];
+    return profile[Math.floor(hour) % 24];
+  }
+
+  // How much traffic an edge carries relative to a residential street.
+  static edgeWeight(kind, edge) {
+    const cls = edge[4] ?? edge.class;
+    if (kind === 'bikes') return cls === 'cycleway' ? 2.5 : 1;
+    return { motorway: 6, trunk: 6, primary: 5, secondary: 4, tertiary: 2.5, unclassified: 1, residential: 0.7, living_street: 0.25, service: 0.2 }[cls] ?? 1;
+  }
+
+  // Agents near the view, spawned in proportion to road importance and the
+  // time of day; each picks an onward edge at junctions (weighted by road
+  // importance), keeps a gap to the one ahead, and sometimes stops at
+  // junctions as at lights or priority.
   simulate(dt) {
-    const want = { cars: 160, bikes: 140 };
+    if (!this.view) return;
+    const hour = new Date().toLocaleString('en-GB', { timeZone: 'Europe/Amsterdam', hour: 'numeric', hour12: false });
+    const busy = LiveLayer.dayProfile(Number(hour));
+    const areaKm2 = Math.PI * (this.view.halfWidthMetres * 1.6) ** 2 / 1e6;
+    const want = { cars: Math.min(400, Math.round(260 * busy * areaKm2)), bikes: Math.min(400, Math.round(320 * Math.max(0.15, busy) * areaKm2)) };
     for (const kind of ['cars', 'bikes']) {
       const graph = this.networks[kind];
       if (!graph) continue;
+      graph.weights ??= graph.edges.map((edge) => LiveLayer.edgeWeight(kind, edge));
       let count = this.agents.filter((a) => a.kind === kind).length;
-      for (let attempts = 0; count < want[kind] && attempts < 400; attempts++) {
+      for (let attempts = 0; count < want[kind] && attempts < 600; attempts++) {
         const edge = Math.floor(Math.random() * graph.edges.length);
-        const [from] = graph.edges[edge];
-        const node = graph.nodes[from];
+        if (Math.random() * 6 > graph.weights[edge]) continue;
+        const node = graph.nodes[graph.edges[edge][0]];
         if (!this.nearView(node[0], node[1], 1.6)) continue;
-        this.agents.push({ kind, edge, along: Math.random(), colour: carColours[Math.floor(Math.random() * carColours.length)], pace: 0.8 + Math.random() * 0.4 });
+        this.agents.push({ kind, edge, along: Math.random(), wait: 0, colour: carColours[Math.floor(Math.random() * carColours.length)], pace: 0.85 + Math.random() * 0.3 });
         count++;
       }
+      while (count > want[kind] * 1.2) {
+        const i = this.agents.findIndex((a) => a.kind === kind);
+        this.agents.splice(i, 1); count--;
+      }
     }
+    // Gap keeping: order agents along each edge.
+    const byEdge = new Map();
+    for (const agent of this.agents) {
+      const key = `${agent.kind}:${agent.edge}`;
+      if (!byEdge.has(key)) byEdge.set(key, []);
+      byEdge.get(key).push(agent);
+    }
+    for (const list of byEdge.values()) list.sort((a, b) => b.along - a.along);
     this.agents = this.agents.filter((agent) => {
       const graph = this.networks[agent.kind];
       let [from, to, speed] = graph.edges[agent.edge];
       const a = graph.nodes[from], b = graph.nodes[to];
       const length = Math.max(0.5, Math.hypot(b[0] - a[0], b[1] - a[1]));
-      const metresPerSecond = (agent.kind === 'bikes' ? 4.5 : Math.min(speed ?? 30, 50) / 3.6 * 0.7) * agent.pace;
+      if (agent.wait > 0) { agent.wait -= dt; return true; }
+      const limit = graph.edges[agent.edge][5] ?? speed ?? 30;
+      let metresPerSecond = (agent.kind === 'bikes' ? 4.6 : Math.min(limit, 70) / 3.6 * 0.75) * agent.pace;
+      const list = byEdge.get(`${agent.kind}:${agent.edge}`);
+      const ahead = list[list.indexOf(agent) - 1];
+      if (ahead) {
+        const gap = (ahead.along - agent.along) * length;
+        const keep = agent.kind === 'cars' ? 7 : 2.5;
+        if (gap < keep) metresPerSecond = 0;
+        else if (gap < keep * 3) metresPerSecond *= (gap - keep) / (keep * 2);
+      }
       agent.along += metresPerSecond * dt / length;
       while (agent.along >= 1) {
         agent.along -= 1;
         const options = graph.outgoing[to].filter((e) => graph.edges[e][1] !== from);
         const next = options.length ? options : graph.outgoing[to];
         if (!next.length) return false;
-        agent.edge = next[Math.floor(Math.random() * next.length)];
+        if (next.length >= 2 && Math.random() < (agent.kind === 'cars' ? 0.3 : 0.15)) agent.wait = 2 + Math.random() * 10;
+        let total = 0;
+        for (const e of next) total += graph.weights[e];
+        let pick = Math.random() * total;
+        agent.edge = next.find((e) => (pick -= graph.weights[e]) <= 0) ?? next[0];
         [from, to] = graph.edges[agent.edge];
       }
       const p = this.agentPosition(agent);
