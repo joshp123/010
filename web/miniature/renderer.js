@@ -345,7 +345,7 @@ const buildingPatch = {
       vec4 fitting = texture2D(roofDetail, clamp(vTileUv, vec2(0.0002), vec2(0.9998)));
       if (fitting.a > 0.5) diffuseColor.rgb = fitting.rgb * 0.95;
       // Colour fades by moonlight: at night a roof is a grey-blue shape, not an orange one.
-      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722))), night * 0.65);
+      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722))), night * 0.85);
     } else {
     #ifdef ASSET_MATERIAL
     // Model-made walls keep their own colours. Windows are the asset's dark panes.
@@ -1357,7 +1357,7 @@ export class Miniature {
     const size = 256, scale = size / TILE_METRES;
     const data = new Float32Array(size * size * 4);
     for (const lamp of lamps) {
-      const radius = Math.min(4.5, Math.max(1.5, 0.35 * (lamp.height_m ?? 6))); // a short pool under the mast
+      const radius = Math.min(6.5, Math.max(1.5, 0.5 * (lamp.height_m ?? 6))); // a pool about the mast's height across
       const cx = (lamp.x - tile.x_min) * scale, cy = (tile.y_min + TILE_METRES - lamp.y) * scale;
       const reach = radius * 2 * scale;
       if (cx < -reach || cy < -reach || cx > size + reach || cy > size + reach) continue;
